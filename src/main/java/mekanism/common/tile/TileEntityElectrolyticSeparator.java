@@ -19,11 +19,7 @@ import mekanism.api.gas.ITubeConnection;
 import mekanism.common.Mekanism;
 import mekanism.common.Upgrade;
 import mekanism.common.Upgrade.IUpgradeInfoHandler;
-import mekanism.common.base.IActiveState;
-import mekanism.common.base.IRedstoneControl;
-import mekanism.common.base.ISustainedData;
-import mekanism.common.base.ITankManager;
-import mekanism.common.base.IUpgradeTile;
+import mekanism.common.base.*;
 import mekanism.common.block.BlockMachine.MachineType;
 import mekanism.common.integration.IComputerIntegration;
 import mekanism.common.network.PacketTileEntity.TileEntityMessage;
@@ -67,6 +63,8 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
 	/** The amount of hydrogen this block is storing. */
 	public GasTank rightTank = new GasTank(MAX_GAS);
 
+	public FluidTank extraTank = new FluidTank(24000);
+
 	/** How fast this block can output gas. */
 	public int output = 512;
 
@@ -102,6 +100,8 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
 	{
 		super("ElectrolyticSeparator", MachineType.ELECTROLYTIC_SEPARATOR.baseEnergy);
 		inventory = new ItemStack[5];
+
+		upgradeComponent.setSupported(Upgrade.FILTER);
 	}
 
 	@Override
@@ -133,7 +133,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
             }
 
 			ChargeUtils.discharge(3, this);
-			
+
 			if(inventory[0] != null)
 			{
 				if(RecipeHandler.Recipe.ELECTROLYTIC_SEPARATOR.containsRecipe(inventory[0]))
@@ -180,24 +180,28 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
 			
 			SeparatorRecipe recipe = getRecipe();
 
-			if(canOperate(recipe) && getEnergy() >= energyPerTick && MekanismUtils.canFunction(this))
-			{
-                setActive(true);
+			if(canOperate(recipe) && getEnergy() >= energyPerTick && MekanismUtils.canFunction(this)) {
+				setActive(true);
 
 				boolean update = BASE_ENERGY_USAGE != recipe.energyUsage;
-				
+
 				BASE_ENERGY_USAGE = recipe.energyUsage;
-				
-				if(update)
-				{
+
+				if (update) {
 					recalculateUpgradables(Upgrade.ENERGY);
 				}
-				
+
 				int operations = operate(recipe);
 				double prev = getEnergy();
-				
-				setEnergy(getEnergy() - energyPerTick*operations);
-				clientEnergyUsed = prev-getEnergy();
+
+				setEnergy(getEnergy() - energyPerTick * operations);
+				clientEnergyUsed = prev - getEnergy();
+
+				if (hasFilter()){
+					extraTank.fill(new FluidStack(FluidRegistry.getFluid("heavywater"), 5), true);
+				if (extraTank.getFluid() != null)
+					System.out.println("Capacity" + extraTank.getFluid().getUnlocalizedName());
+				}
 			}
 			else {
                 if(prevEnergy >= getEnergy())
@@ -284,6 +288,10 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
 		possibleProcess = Math.min((int)(getEnergy()/energyPerTick), possibleProcess);
 		
 		return Math.min(fluidTank.getFluidAmount()/recipe.recipeInput.ingredient.amount, possibleProcess);
+	}
+	public boolean hasFilter()
+	{
+		return upgradeComponent.getInstalledTypes().contains(Upgrade.FILTER);
 	}
 
 	public SeparatorRecipe getRecipe()
