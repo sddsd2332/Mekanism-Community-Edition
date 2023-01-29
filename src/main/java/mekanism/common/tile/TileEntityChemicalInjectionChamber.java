@@ -100,7 +100,7 @@ public class TileEntityChemicalInjectionChamber extends TileEntityAdvancedElectr
 	@Override
 	public boolean isValidGas(Gas gas)
 	{
-		return (gas == GasRegistry.getGas("water") || GasifyableItems.isGasValidGasifyable(gas));
+		return GasifyableItems.isGasValidGasifyable(gas);
 	}
 
 	@Override
