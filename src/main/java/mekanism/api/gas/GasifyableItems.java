@@ -14,10 +14,6 @@ public class GasifyableItems {
     static List<Gas> validGases = new ArrayList<>();
 
     public static void registerGasifyables(String oredict, Gas gas, Integer quantity) {
-        System.out.println("oredict = " + oredict);
-        System.out.println("gas = " + gas);
-        System.out.println("quantity = " + quantity);
-
         GasStack gasifyEntry = new GasStack(gas, quantity);
 
         gasifyableItems.put(oredict, gasifyEntry);
