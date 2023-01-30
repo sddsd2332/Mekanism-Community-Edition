@@ -175,7 +175,7 @@ artifactory {
     contextUrl = System.getenv("MAVEN_URL")
     publish {
         repository {
-            repoKey = 'thorfusion'
+            repoKey = System.getenv("MAVEN_REPO")
             username = System.getenv("MAVEN_USERNAME")
             password = System.getenv("MAVEN_PASSWORD")
             maven = true
@@ -189,7 +189,7 @@ artifactory {
     }
     resolve {
         repository {
-            repoKey = 'central'
+            repoKey = System.getenv("MAVEN_REPO")
             username = System.getenv("MAVEN_USERNAME")
             password = System.getenv("MAVEN_PASSWORD")
             maven = true
@@ -203,7 +203,7 @@ publishing {
         mavenJava(MavenPublication) {
             artifactId = project.archivesBaseName
             groupId = project.group
-            version = project.version
+            version = project.version + System.getenv("BUILD_VER")
             artifacts = [toolsJar, coreJar, generatorsJar, MDKZip, alltJar, apiJar]
             components.java.withVariantsFromConfiguration(configurations.runtimeElements) {
                 skip()
