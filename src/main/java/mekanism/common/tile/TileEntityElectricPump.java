@@ -83,8 +83,9 @@ public class TileEntityElectricPump extends TileEntityElectricBlock implements I
 	{
 		super("ElectricPump", 10000);
 		inventory = new ItemStack[4];
-		
-		upgradeComponent.setSupported(Upgrade.FILTER);
+
+		if (!general.accurateHeavyWaterCapture)
+			upgradeComponent.setSupported(Upgrade.FILTER);
 	}
 
 	@Override
@@ -160,7 +161,9 @@ public class TileEntityElectricPump extends TileEntityElectricBlock implements I
 	
 	public boolean hasFilter()
 	{
-		return upgradeComponent.getInstalledTypes().contains(Upgrade.FILTER);
+		if (!general.accurateHeavyWaterCapture)
+			return upgradeComponent.getInstalledTypes().contains(Upgrade.FILTER);
+		return false;
 	}
 
 	public boolean suck(boolean take)

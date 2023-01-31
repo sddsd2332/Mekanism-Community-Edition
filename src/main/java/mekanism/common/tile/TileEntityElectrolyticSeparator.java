@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import mekanism.api.Coord4D;
 import mekanism.api.MekanismConfig;
@@ -63,7 +64,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
 	/** The amount of hydrogen this block is storing. */
 	public GasTank rightTank = new GasTank(MAX_GAS);
 
-	public FluidTank extraTank = new FluidTank(24000);
+	public FluidTank extraTank = new FluidTank(12000);
 
 	/** How fast this block can output gas. */
 	public int output = 512;
@@ -95,13 +96,15 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
 
     /** This machine's current RedstoneControl type. */
     public RedstoneControl controlType = RedstoneControl.DISABLED;
+	public static final Random rnd = new Random();
+	public static int captureHeavyWaterChance = 5;
 
 	public TileEntityElectrolyticSeparator()
 	{
 		super("ElectrolyticSeparator", MachineType.ELECTROLYTIC_SEPARATOR.baseEnergy);
 		inventory = new ItemStack[5];
-
-		upgradeComponent.setSupported(Upgrade.FILTER);
+		if (MekanismConfig.general.accurateHeavyWaterCapture)
+			upgradeComponent.setSupported(Upgrade.FILTER);
 	}
 
 	@Override
@@ -196,11 +199,9 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
 
 				setEnergy(getEnergy() - energyPerTick * operations);
 				clientEnergyUsed = prev - getEnergy();
-
-				if (hasFilter()){
-					extraTank.fill(new FluidStack(FluidRegistry.getFluid("heavywater"), 5), true);
-				if (extraTank.getFluid() != null)
-					System.out.println("Capacity" + extraTank.getFluid().getUnlocalizedName());
+				if (hasFilter() && rnd.nextInt(captureHeavyWaterChance) == 0) {
+						if (fluidTank.getFluid() != null && fluidTank.getFluid().getFluid() == FluidRegistry.WATER)
+							extraTank.fill(new FluidStack(FluidRegistry.getFluid("heavywater"), operations), true);
 				}
 			}
 			else {
@@ -291,7 +292,9 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
 	}
 	public boolean hasFilter()
 	{
-		return upgradeComponent.getInstalledTypes().contains(Upgrade.FILTER);
+		if (MekanismConfig.general.accurateHeavyWaterCapture)
+			return upgradeComponent.getInstalledTypes().contains(Upgrade.FILTER);
+		return false;
 	}
 
 	public SeparatorRecipe getRecipe()
@@ -435,6 +438,13 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
 			else {
 				rightTank.setGas(null);
 			}
+			if(dataStream.readBoolean())
+			{
+				extraTank.setFluid(new FluidStack(FluidRegistry.getFluid(dataStream.readInt()), dataStream.readInt()));
+			}
+			else {
+				extraTank.setFluid(null);
+			}
 	
 	        controlType = RedstoneControl.values()[dataStream.readInt()];
 			dumpLeft = GasMode.values()[dataStream.readInt()];
@@ -485,6 +495,15 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
 		else {
 			data.add(false);
 		}
+		if(extraTank.getFluid() != null)
+		{
+			data.add(true);
+			data.add(extraTank.getFluid().getFluid().getID());
+			data.add(extraTank.getFluidAmount());
+		}
+		else {
+			data.add(false);
+		}
 
         data.add(controlType.ordinal());
 		data.add(dumpLeft.ordinal());
@@ -510,6 +529,10 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
 		{
 			fluidTank.readFromNBT(nbtTags.getCompoundTag("fluidTank"));
 		}
+		if(nbtTags.hasKey("extraTank"))
+		{
+			extraTank.readFromNBT(nbtTags.getCompoundTag("extraTank"));
+		}
 
         isActive = nbtTags.getBoolean("isActive");
         controlType = RedstoneControl.values()[nbtTags.getInteger("controlType")];
@@ -530,6 +553,10 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
 		{
 			nbtTags.setTag("fluidTank", fluidTank.writeToNBT(new NBTTagCompound()));
 		}
+		if(extraTank.getFluid() != null)
+		{
+			nbtTags.setTag("extraTank", extraTank.writeToNBT(new NBTTagCompound()));
+		}
 
         nbtTags.setBoolean("isActive", isActive);
         nbtTags.setInteger("controlType", controlType.ordinal());
@@ -541,7 +568,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
 		nbtTags.setInteger("dumpRight", dumpRight.ordinal());
 	}
 
-	private static final String[] methods = new String[] {"getEnergy", "getOutput", "getMaxEnergy", "getEnergyNeeded", "getWater", "getWaterNeeded", "getHydrogen", "getHydrogenNeeded", "getOxygen", "getOxygenNeeded"};
+	private static final String[] methods = new String[] {"getEnergy", "getOutput", "getMaxEnergy", "getEnergyNeeded", "getWater", "getWaterNeeded", "getHydrogen", "getHydrogenNeeded", "getOxygen", "getOxygenNeeded", "getHeavyWater", "getHeavyWaterNeeded",};
 
 	@Override
 	public String[] getMethods()
@@ -574,6 +601,10 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
 				return new Object[] {rightTank.getStored()};
 			case 9:
 				return new Object[] {rightTank.getNeeded()};
+			case 10:
+				return new Object[] {extraTank.getFluid() != null ? extraTank.getFluid().amount : 0};
+			case 11:
+				return new Object[] {extraTank.getFluid() != null ? (extraTank.getCapacity()- extraTank.getFluid().amount) : 0};
 			default:
 				throw new NoSuchMethodException();
 		}
@@ -602,6 +633,11 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
 		{
 			itemStack.stackTagCompound.setTag("rightTank", rightTank.getGas().write(new NBTTagCompound()));
 		}
+		if(extraTank.getFluid() != null)
+		{
+			itemStack.stackTagCompound.setTag("extraTank", extraTank.getFluid().writeToNBT(new NBTTagCompound()));
+		}
+
 	}
 
 	@Override
@@ -610,6 +646,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
 		fluidTank.setFluid(FluidStack.loadFluidStackFromNBT(itemStack.stackTagCompound.getCompoundTag("fluidTank")));
 		leftTank.setGas(GasStack.readFromNBT(itemStack.stackTagCompound.getCompoundTag("leftTank")));
 		rightTank.setGas(GasStack.readFromNBT(itemStack.stackTagCompound.getCompoundTag("rightTank")));
+		extraTank.setFluid(FluidStack.loadFluidStackFromNBT(itemStack.stackTagCompound.getCompoundTag("extraTank")));
 	}
 
 	@Override
@@ -627,7 +664,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
 	@Override
 	public boolean canDrain(ForgeDirection from, Fluid fluid)
 	{
-		return false;
+		return hasFilter();
 	}
 
 	@Override
@@ -644,6 +681,9 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
 	@Override
 	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain)
 	{
+		if (hasFilter())
+			return extraTank.drain(maxDrain, doDrain);
+
 		return null;
 	}
 
@@ -794,6 +834,6 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
 	@Override
 	public Object[] getTanks() 
 	{
-		return new Object[] {fluidTank, leftTank, rightTank};
+		return new Object[] {fluidTank, leftTank, rightTank, extraTank};
 	}
 }

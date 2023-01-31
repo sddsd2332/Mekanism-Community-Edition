@@ -68,14 +68,14 @@ public class GuiElectrolyticSeparator extends GuiMekanism
 				return tileEntity.fluidTank;
 			}
 		}, GuiGauge.Type.STANDARD, this, MekanismUtils.getResource(ResourceType.GUI, "GuiElectrolyticSeparator.png"), 5, 10));
-
-		guiElements.add(new GuiFluidGauge(new IFluidInfoHandler() {
-			@Override
-			public FluidTank getTank()
-			{
-				return tileEntity.extraTank;
-			}
-		}, GuiGauge.Type.SMALL, this, MekanismUtils.getResource(ResourceType.GUI, "GuiElectrolyticSeparator.png"), 142, 51));
+		if (tileEntity.hasFilter())
+			guiElements.add(new GuiFluidGauge(new IFluidInfoHandler() {
+				@Override
+				public FluidTank getTank()
+				{
+					return tileEntity.extraTank;
+				}
+			}, GuiGauge.Type.SMALL, this, MekanismUtils.getResource(ResourceType.GUI, "GuiElectrolyticSeparator.png"), 142, 51));
 		guiElements.add(new GuiGasGauge(new IGasInfoHandler() {
 			@Override
 			public GasTank getTank()
@@ -96,7 +96,6 @@ public class GuiElectrolyticSeparator extends GuiMekanism
 		guiElements.add(new GuiSlot(SlotType.NORMAL, this, MekanismUtils.getResource(ResourceType.GUI, "GuiElectrolyticSeparator.png"), 25, 34));
 		guiElements.add(new GuiSlot(SlotType.NORMAL, this, MekanismUtils.getResource(ResourceType.GUI, "GuiElectrolyticSeparator.png"), 58, 51));
 		guiElements.add(new GuiSlot(SlotType.NORMAL, this, MekanismUtils.getResource(ResourceType.GUI, "GuiElectrolyticSeparator.png"), 100, 51));
-		if (tileEntity.hasFilter())
 		guiElements.add(new GuiSlot(SlotType.NORMAL, this, MekanismUtils.getResource(ResourceType.GUI, "GuiElectrolyticSeparator.png"), 142, 34).with(SlotOverlay.POWER));
 
 		guiElements.add(new GuiProgress(new IProgressInfoHandler()
