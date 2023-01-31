@@ -203,7 +203,11 @@ publishing {
         mavenJava(MavenPublication) {
             artifactId = project.archivesBaseName
             groupId = project.group
-            version = project.version + System.getenv("BUILD_VER")
+            if (System.getenv("BUILD_VER") == null){
+                version = project.version
+            } else {
+                version = project.version + System.getenv("BUILD_VER")
+            }
             artifacts = [toolsJar, coreJar, generatorsJar, MDKZip, alltJar, apiJar]
             components.java.withVariantsFromConfiguration(configurations.runtimeElements) {
                 skip()
