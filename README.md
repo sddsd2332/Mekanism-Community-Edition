@@ -19,6 +19,7 @@ You will find the files inside ./output/
 ## Mod examples on how to use the new api for MEK:CE
 + [Thorfusion/TerralizationCompat](https://github.com/Thorfusion/TerralizationCompat)
 + [Thorfusion/Titanpower](https://github.com/Thorfusion/Titanpower)
+Also visit our [wiki](https://github.com/Thorfusion/Mekanism-Community-Edition/wiki/API) explaining how to use the new MEK:CE api
 
 ## Official Modpacks
 ### [Terralization](https://www.technicpack.net/modpack/terralization.654195)
@@ -28,6 +29,8 @@ You will find the files inside ./output/
 You need to include the [LICENSE](https://raw.githubusercontent.com/Thorfusion/Mekanism-1.7.10-Community-Edition/1.7.10/LICENSE.md) for Mekanism 1.7.10 Community Edition and Aidanbrady as author, if your system supports it indicate that this is an custom version and give appreciable credits
 
 Mekanism CE has continued the use of the update notifier but changed the config name to v2. This is to notify people making the switch to CE of this feature. It is recommended for modpacks to disable this.
+
+Also visit our [wiki](https://github.com/Thorfusion/Mekanism-Community-Edition/wiki/Configuration) regarding configuration.
 
 ## Required Dependencies
 Mekanism CE also has two dependencies that it requires, as a modpack creator DO NOT USE the automatic downloader to get those file. It puts alot of strain to my server network.
