@@ -4,6 +4,7 @@ import mekanism.common.util.MekanismUtils;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -49,6 +50,7 @@ public class GasifyableItems {
         }
         return null;
     }
+
 
     /**
      * defines which gases the Chemical Injection Chamber can accept.
