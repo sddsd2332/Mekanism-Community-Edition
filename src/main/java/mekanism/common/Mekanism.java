@@ -1450,6 +1450,8 @@ public class Mekanism
 		GasifyableItems.registerGasifyables("dustSugar", GasRegistry.getGas("molasse"), 90);
 		GasifyableItems.registerGasifyables("listAllSugar", GasRegistry.getGas("molasse"), 90);
 
+		GasifyableItems.registerGasifyables(GasRegistry.getGas("water"));
+
 		Mekanism.proxy.preInit();
 
 		//Register blocks and items

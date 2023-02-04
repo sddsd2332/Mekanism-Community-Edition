@@ -68,6 +68,9 @@ public class MekanismConfig
 		public static double heatPerFuelTick = 4;
 		public static boolean allowTransmitterAlloyUpgrade;
 		public static boolean allowProtection = true;
+		public static boolean accurateHeavyWaterCapture = true;
+		public static int heavyWaterChance = 4;
+
 		public static boolean EnableQuartzCompat;
 		public static boolean EnableDiamondCompat;
 		public static boolean EnablePoorOresCompat;
@@ -136,9 +139,9 @@ public class MekanismConfig
 		public static double pressurizedReactionBaseUsage;
 		public static double fluidicPlenisherUsage;
 		public static double laserUsage;
-		public static double gasCentrifugeUsage;
 		public static double heavyWaterElectrolysisUsage;
 		public static double formulaicAssemblicatorUsage;
+		public static double gasCentrifugeUsage;
 	}
 
 	public static class generators
