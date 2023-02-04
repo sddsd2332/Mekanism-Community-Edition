@@ -97,7 +97,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
     /** This machine's current RedstoneControl type. */
     public RedstoneControl controlType = RedstoneControl.DISABLED;
 	public static final Random rnd = new Random();
-	public static int captureHeavyWaterChance = 5;
+	public static int captureHeavyWaterChance = MekanismConfig.general.heavyWaterChance;
 
 	public TileEntityElectrolyticSeparator()
 	{
