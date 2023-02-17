@@ -1,5 +1,6 @@
 package mekanism.client.gui.element;
 
+import codechicken.lib.vec.Rectangle4i;
 import mekanism.client.gui.IGuiWrapper;
 import mekanism.client.sound.SoundHandler;
 import mekanism.common.tile.TileEntityDigitalMiner;
@@ -7,7 +8,6 @@ import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.util.ResourceLocation;
-import codechicken.lib.vec.Rectangle4i;
 
 public class GuiVisualsTab extends GuiElement
 {

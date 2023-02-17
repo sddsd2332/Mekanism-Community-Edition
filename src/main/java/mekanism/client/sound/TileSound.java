@@ -1,9 +1,9 @@
 package mekanism.client.sound;
 
-import mekanism.common.base.IHasSound;
-import net.minecraft.util.ResourceLocation;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mekanism.common.base.IHasSound;
+import net.minecraft.util.ResourceLocation;
 
 @SideOnly(Side.CLIENT)
 public class TileSound extends Sound implements IResettableSound 

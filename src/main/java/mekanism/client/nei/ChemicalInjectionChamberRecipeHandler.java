@@ -1,9 +1,5 @@
 package mekanism.client.nei;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasifyableItems;
 import mekanism.client.gui.GuiChemicalInjectionChamber;
@@ -15,6 +11,10 @@ import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class ChemicalInjectionChamberRecipeHandler extends AdvancedMachineRecipeHandler
 {

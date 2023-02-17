@@ -1,5 +1,8 @@
 package mekanism.client.gui.element;
 
+import codechicken.lib.vec.Rectangle4i;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mekanism.api.Coord4D;
 import mekanism.api.EnumColor;
 import mekanism.api.MekanismConfig.general;
@@ -21,9 +24,6 @@ import mekanism.common.util.SecurityUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import codechicken.lib.vec.Rectangle4i;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiSecurityTab extends GuiElement

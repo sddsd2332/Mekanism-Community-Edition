@@ -1,12 +1,7 @@
 package mekanism.client.gui;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mekanism.api.Coord4D;
 import mekanism.api.EnumColor;
 import mekanism.api.MekanismConfig;
@@ -14,11 +9,7 @@ import mekanism.client.render.MekanismRenderer;
 import mekanism.client.sound.SoundHandler;
 import mekanism.common.Mekanism;
 import mekanism.common.OreDictCache;
-import mekanism.common.content.miner.MItemStackFilter;
-import mekanism.common.content.miner.MMaterialFilter;
-import mekanism.common.content.miner.MModIDFilter;
-import mekanism.common.content.miner.MOreDictFilter;
-import mekanism.common.content.miner.MinerFilter;
+import mekanism.common.content.miner.*;
 import mekanism.common.inventory.container.ContainerNull;
 import mekanism.common.network.PacketDigitalMinerGui.DigitalMinerGuiMessage;
 import mekanism.common.network.PacketDigitalMinerGui.MinerGuiPacket;
@@ -31,13 +22,11 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.*;
 
 @SideOnly(Side.CLIENT)
 public class GuiDigitalMinerConfig extends GuiMekanism

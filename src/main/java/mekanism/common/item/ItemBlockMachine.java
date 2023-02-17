@@ -1,11 +1,13 @@
 package mekanism.common.item;
 
+import cofh.api.energy.IEnergyContainerItem;
+import cpw.mods.fml.common.Optional.Interface;
+import cpw.mods.fml.common.Optional.InterfaceList;
+import cpw.mods.fml.common.Optional.Method;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import ic2.api.item.IElectricItemManager;
 import ic2.api.item.ISpecialElectricItem;
-
-import java.util.List;
-import java.util.Map;
-
 import mekanism.api.Coord4D;
 import mekanism.api.EnumColor;
 import mekanism.api.MekanismConfig.general;
@@ -15,15 +17,8 @@ import mekanism.client.MekanismKeyHandler;
 import mekanism.common.Tier.BaseTier;
 import mekanism.common.Tier.FluidTankTier;
 import mekanism.common.Upgrade;
-import mekanism.common.base.IFactory;
-import mekanism.common.base.IRedstoneControl;
+import mekanism.common.base.*;
 import mekanism.common.base.IRedstoneControl.RedstoneControl;
-import mekanism.common.base.ISideConfiguration;
-import mekanism.common.base.ISustainedData;
-import mekanism.common.base.ISustainedInventory;
-import mekanism.common.base.ISustainedTank;
-import mekanism.common.base.ITierItem;
-import mekanism.common.base.IUpgradeTile;
 import mekanism.common.block.BlockMachine.MachineType;
 import mekanism.common.integration.IC2ItemManager;
 import mekanism.common.inventory.InventoryPersonalChest;
@@ -57,12 +52,9 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
-import cofh.api.energy.IEnergyContainerItem;
-import cpw.mods.fml.common.Optional.Interface;
-import cpw.mods.fml.common.Optional.InterfaceList;
-import cpw.mods.fml.common.Optional.Method;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Item class for handling multiple machine block IDs.

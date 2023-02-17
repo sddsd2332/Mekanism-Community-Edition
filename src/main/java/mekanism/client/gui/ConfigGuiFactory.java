@@ -1,10 +1,10 @@
 package mekanism.client.gui;
 
-import java.util.Set;
-
+import cpw.mods.fml.client.IModGuiFactory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import cpw.mods.fml.client.IModGuiFactory;
+
+import java.util.Set;
 
 public class ConfigGuiFactory implements IModGuiFactory
 {

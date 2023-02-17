@@ -1,11 +1,11 @@
 package mekanism.api.recipe;
 
-import java.lang.reflect.Method;
-
 import mekanism.api.gas.GasStack;
 import mekanism.api.infuse.InfuseType;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+
+import java.lang.reflect.Method;
 
 /**
  * SET TO BE REMOVED NEXT MINOR MEKANISM VERSION, PLEASE USE IMC INSTEAD.

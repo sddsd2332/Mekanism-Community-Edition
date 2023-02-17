@@ -1,8 +1,8 @@
 package mekanism.client.gui.element;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import codechicken.lib.vec.Rectangle4i;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mekanism.api.MekanismConfig.general;
 import mekanism.api.util.UnitDisplayUtils.TempType;
 import mekanism.client.gui.IGuiWrapper;
@@ -10,9 +10,9 @@ import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.util.ResourceLocation;
-import codechicken.lib.vec.Rectangle4i;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class GuiHeatInfo extends GuiElement

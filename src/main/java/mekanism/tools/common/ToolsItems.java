@@ -1,17 +1,11 @@
 package mekanism.tools.common;
 
-import mekanism.common.Mekanism;
-import mekanism.tools.item.ItemMekanismArmor;
-import mekanism.tools.item.ItemMekanismAxe;
-import mekanism.tools.item.ItemMekanismHoe;
-import mekanism.tools.item.ItemMekanismPaxel;
-import mekanism.tools.item.ItemMekanismPickaxe;
-import mekanism.tools.item.ItemMekanismShovel;
-import mekanism.tools.item.ItemMekanismSword;
-import net.minecraft.item.Item;
-import net.minecraft.item.Item.ToolMaterial;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.ObjectHolder;
+import mekanism.common.Mekanism;
+import mekanism.tools.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.Item.ToolMaterial;
 
 @ObjectHolder("MekanismTools")
 public class ToolsItems

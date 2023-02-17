@@ -1,23 +1,20 @@
 package mekanism.api.transmitters;
 
-import java.util.HashMap;
-import java.util.HashSet;
-
-import mekanism.api.Coord4D;
-import mekanism.api.MekanismAPI;
-import net.minecraftforge.common.util.ForgeDirection;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent;
 import cpw.mods.fml.relauncher.Side;
+import mekanism.api.Coord4D;
+import mekanism.api.MekanismAPI;
+import net.minecraftforge.common.util.ForgeDirection;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class TransmitterNetworkRegistry
 {

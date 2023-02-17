@@ -1,17 +1,17 @@
 package mekanism.client.nei;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import codechicken.nei.PositionedStack;
+import codechicken.nei.recipe.ShapedRecipeHandler;
 import mekanism.common.recipe.ShapedMekanismRecipe;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.RecipeUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
-import codechicken.nei.PositionedStack;
-import codechicken.nei.recipe.ShapedRecipeHandler;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class ShapedMekanismRecipeHandler extends ShapedRecipeHandler
 {

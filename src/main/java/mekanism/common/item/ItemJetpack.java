@@ -1,7 +1,7 @@
 package mekanism.common.item;
 
-import java.util.List;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mekanism.api.EnumColor;
 import mekanism.api.MekanismConfig.general;
 import mekanism.api.gas.Gas;
@@ -26,8 +26,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.util.EnumHelper;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor
 {

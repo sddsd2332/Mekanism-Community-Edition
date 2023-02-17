@@ -1,8 +1,6 @@
 package mekanism.common.item;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import cpw.mods.fml.relauncher.Side;
 import mekanism.api.Coord4D;
 import mekanism.api.EnumColor;
 import mekanism.api.MekanismConfig.general;
@@ -37,7 +35,9 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
-import cpw.mods.fml.relauncher.Side;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ItemBlockGasTank extends ItemBlock implements IGasItem, ISustainedInventory, ITierItem, ISecurityItem
 {

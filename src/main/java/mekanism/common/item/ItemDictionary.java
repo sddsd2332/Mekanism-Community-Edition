@@ -1,7 +1,5 @@
 package mekanism.common.item;
 
-import java.util.List;
-
 import mekanism.api.EnumColor;
 import mekanism.common.Mekanism;
 import mekanism.common.util.LangUtils;
@@ -11,6 +9,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 public class ItemDictionary extends ItemMekanism
 {

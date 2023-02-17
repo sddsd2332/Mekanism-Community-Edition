@@ -1,11 +1,11 @@
 package mekanism.client.render;
 
+import net.minecraft.block.Block;
+import net.minecraft.world.IBlockAccess;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-
-import net.minecraft.block.Block;
-import net.minecraft.world.IBlockAccess;
 
 /**
  * CTM Logic adapted from Chisel. Code licensed under GPLv2

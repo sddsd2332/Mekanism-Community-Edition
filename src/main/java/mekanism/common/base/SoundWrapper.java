@@ -1,12 +1,12 @@
 package mekanism.common.base;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mekanism.client.sound.IResettableSound;
 import mekanism.client.sound.ISoundSource;
 import mekanism.client.sound.SoundHandler;
 import mekanism.client.sound.TileSound;
 import net.minecraft.util.ResourceLocation;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class SoundWrapper
 {

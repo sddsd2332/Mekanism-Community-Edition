@@ -1,13 +1,17 @@
 package mekanism.tools.common;
 
+import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import io.netty.buffer.ByteBuf;
-
-import java.io.IOException;
-
-import mekanism.api.MekanismConfig;
 import mekanism.api.MekanismConfig.tools;
 import mekanism.common.Mekanism;
-import mekanism.common.MekanismItems;
 import mekanism.common.Version;
 import mekanism.common.base.IModule;
 import mekanism.common.recipe.ShapedMekanismRecipe;
@@ -21,16 +25,9 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
-import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.io.IOException;
 
 @Mod(modid = "MekanismTools", name = "MekanismTools", version = "GRADLE_MODVERSION", dependencies = "required-after:Mekanism", guiFactory = "mekanism.tools.client.gui.ToolsGuiFactory")
 public class MekanismTools implements IModule

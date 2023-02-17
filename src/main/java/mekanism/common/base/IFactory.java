@@ -1,7 +1,5 @@
 package mekanism.common.base;
 
-import java.util.Map;
-
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.util.StackUtils;
@@ -22,6 +20,8 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.Map;
 
 /**
  * Internal interface for managing various Factory types.

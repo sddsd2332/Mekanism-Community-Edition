@@ -1,7 +1,7 @@
 package mekanism.tools.item;
 
-import java.util.List;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mekanism.api.util.StackUtils;
 import mekanism.client.render.ModelCustomArmor;
 import mekanism.common.Mekanism;
@@ -17,8 +17,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 public class ItemMekanismArmor extends ItemArmor
 {

@@ -1,8 +1,19 @@
 package mekanism.client.render;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import codechicken.lib.colour.Colour;
+import codechicken.lib.colour.ColourRGBA;
+import codechicken.lib.lighting.LightModel;
+import codechicken.lib.lighting.LightModel.Light;
+import codechicken.lib.render.CCModel;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.ColourMultiplier;
+import codechicken.lib.render.TextureUtils;
+import codechicken.lib.render.TextureUtils.IIconSelfRegister;
+import codechicken.lib.render.uv.IconTransformation;
+import codechicken.lib.vec.Translation;
+import codechicken.lib.vec.Vector3;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mekanism.api.Coord4D;
 import mekanism.api.EnumColor;
 import mekanism.client.model.ModelTransporterBox;
@@ -10,15 +21,8 @@ import mekanism.client.render.MekanismRenderer.DisplayInteger;
 import mekanism.client.render.MekanismRenderer.Model3D;
 import mekanism.common.content.transporter.TransporterStack;
 import mekanism.common.item.ItemConfigurator;
-import mekanism.common.multipart.PartDiversionTransporter;
-import mekanism.common.multipart.PartLogisticalTransporter;
-import mekanism.common.multipart.PartMechanicalPipe;
-import mekanism.common.multipart.PartPressurizedTube;
-import mekanism.common.multipart.PartSidedPipe;
+import mekanism.common.multipart.*;
 import mekanism.common.multipart.PartSidedPipe.ConnectionType;
-import mekanism.common.multipart.PartThermodynamicConductor;
-import mekanism.common.multipart.PartUniversalCable;
-import mekanism.common.multipart.TransmitterType;
 import mekanism.common.multipart.TransmitterType.Size;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
@@ -39,23 +43,10 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
-
 import org.lwjgl.opengl.GL11;
 
-import codechicken.lib.colour.Colour;
-import codechicken.lib.colour.ColourRGBA;
-import codechicken.lib.lighting.LightModel;
-import codechicken.lib.lighting.LightModel.Light;
-import codechicken.lib.render.CCModel;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.ColourMultiplier;
-import codechicken.lib.render.TextureUtils;
-import codechicken.lib.render.TextureUtils.IIconSelfRegister;
-import codechicken.lib.render.uv.IconTransformation;
-import codechicken.lib.vec.Translation;
-import codechicken.lib.vec.Vector3;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.HashMap;
+import java.util.Map;
 
 @SideOnly(Side.CLIENT)
 public class RenderPartTransmitter implements IIconSelfRegister
