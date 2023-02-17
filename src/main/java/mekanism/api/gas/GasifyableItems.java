@@ -4,13 +4,13 @@ import mekanism.common.util.MekanismUtils;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
-
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GasifyableItems {
 
-    static HashMap<String, GasStack> gasifyableItems = new HashMap<String, GasStack>();
+    static HashMap<String, GasStack> gasifyableItems = new HashMap<>();
     static List<Gas> validGases = new ArrayList<>();
 
     /**
@@ -51,9 +51,23 @@ public class GasifyableItems {
         return null;
     }
 
+    /**
+     * Returns the oredict associated to a gas.
+     * @param gas type of gas to check its paired oredict
+     * @return oredict associated to this gas
+     */
+    public static String getItemFromGas(Gas gas) {
+
+        for (Map.Entry<String, GasStack> map : gasifyableItems.entrySet()) {
+            if(map.getValue().getGas() == gas)
+                return map.getKey();
+        }
+        return null;
+    }
+
 
     /**
-     * defines which gases the Chemical Injection Chamber can accept.
+     * Defines which gases the Chemical Injection Chamber can accept.
      * @param gas type of gas to check validity
      * @return if block accepts gas
      */
