@@ -78,11 +78,7 @@ minecraft {
     replaceIn "mekanism/common/Mekanism.java"
     replaceIn "mekanism/generators/common/MekanismGenerators.java"
     replaceIn "mekanism/tools/common/MekanismTools.java"
-    if (System.getenv("BUILD_VER") == null){
-        replace "GRADLE_MODVERSION", config.mod_version
-    } else {
-        replace "GRADLE_MODVERSION", config.mod_version + System.getenv("BUILD_VER")
-    }
+    replace "GRADLE_MODVERSION", project.version
     replace "GRADLE_VERSIONMOD", config.alt_version
 }
 
