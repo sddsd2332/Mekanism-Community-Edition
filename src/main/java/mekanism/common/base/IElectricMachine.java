@@ -1,10 +1,10 @@
 package mekanism.common.base;
 
-import java.util.Map;
-
 import mekanism.common.recipe.inputs.MachineInput;
 import mekanism.common.recipe.machines.MachineRecipe;
 import mekanism.common.recipe.outputs.MachineOutput;
+
+import java.util.Map;
 
 /**
  * Internal interface containing methods that are shared by many core Mekanism machines.  TODO: remove next minor MC

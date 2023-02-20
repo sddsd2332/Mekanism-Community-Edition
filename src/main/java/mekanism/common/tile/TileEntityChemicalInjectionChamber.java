@@ -45,7 +45,7 @@ public class TileEntityChemicalInjectionChamber extends TileEntityAdvancedElectr
 		}
 		else
 		if(Block.getBlockFromItem(itemstack.getItem()) == MekanismBlocks.GasTank && ((IGasItem)itemstack.getItem()).getGas(itemstack) != null &&
-				isValidGas(((IGasItem)itemstack.getItem()).getGas(itemstack).getGas())) return new GasStack(GasRegistry.getGas("sulfuricAcid"), 1);
+				isValidGas(((IGasItem)itemstack.getItem()).getGas(itemstack).getGas())) return new GasStack(((IGasItem)itemstack.getItem()).getGas(itemstack).getGas(), 1);
 
 		return null;
 	}

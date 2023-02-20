@@ -1,5 +1,7 @@
 package mekanism.client.gui;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mekanism.client.gui.element.GuiSecurityTab;
 import mekanism.common.inventory.container.ContainerPersonalChest;
 import mekanism.common.tile.TileEntityPersonalChest;
@@ -8,11 +10,7 @@ import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
-
 import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiPersonalChest extends GuiMekanism

@@ -1,17 +1,17 @@
 package mekanism.client;
 
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mekanism.api.Coord4D;
-import mekanism.api.MekanismConfig.general;
 import mekanism.api.MekanismConfig.client;
+import mekanism.api.MekanismConfig.general;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 
 @SideOnly(Side.CLIENT)
 public class SparkleAnimation

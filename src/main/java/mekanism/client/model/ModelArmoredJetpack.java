@@ -3,7 +3,6 @@ package mekanism.client.model;
 import mekanism.client.render.MekanismRenderer;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
-
 import org.lwjgl.opengl.GL11;
 
 public class ModelArmoredJetpack extends ModelBase

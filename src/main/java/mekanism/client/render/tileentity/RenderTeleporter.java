@@ -1,7 +1,5 @@
 package mekanism.client.render.tileentity;
 
-import java.util.HashMap;
-
 import mekanism.api.Coord4D;
 import mekanism.api.EnumColor;
 import mekanism.api.gas.GasRegistry;
@@ -14,8 +12,9 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-
 import org.lwjgl.opengl.GL11;
+
+import java.util.HashMap;
 
 public class RenderTeleporter extends TileEntitySpecialRenderer
 {

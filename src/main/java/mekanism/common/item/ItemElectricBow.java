@@ -1,7 +1,5 @@
 package mekanism.common.item;
 
-import java.util.List;
-
 import mekanism.api.EnumColor;
 import mekanism.common.util.LangUtils;
 import net.minecraft.enchantment.Enchantment;
@@ -13,6 +11,8 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 public class ItemElectricBow extends ItemEnergized
 {

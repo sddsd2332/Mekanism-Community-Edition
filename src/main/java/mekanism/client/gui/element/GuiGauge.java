@@ -1,5 +1,6 @@
 package mekanism.client.gui.element;
 
+import codechicken.lib.vec.Rectangle4i;
 import mekanism.api.EnumColor;
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.client.gui.GuiMekanism;
@@ -14,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
-import codechicken.lib.vec.Rectangle4i;
 
 public abstract class GuiGauge<T> extends GuiElement
 {

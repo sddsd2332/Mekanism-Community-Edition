@@ -1,7 +1,7 @@
 package mekanism.api;
 
-import net.minecraft.entity.player.EntityPlayer;
 import cpw.mods.fml.common.FMLCommonHandler;
+import net.minecraft.entity.player.EntityPlayer;
 
 public class Range4D 
 {

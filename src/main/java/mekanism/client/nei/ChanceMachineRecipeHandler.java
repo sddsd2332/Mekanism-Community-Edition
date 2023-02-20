@@ -1,12 +1,8 @@
 package mekanism.client.nei;
 
-import static codechicken.lib.gui.GuiDraw.changeTexture;
-import static codechicken.lib.gui.GuiDraw.drawString;
-import static codechicken.lib.gui.GuiDraw.drawTexturedModalRect;
-
-import java.awt.Rectangle;
-import java.util.Collection;
-
+import codechicken.nei.NEIServerUtils;
+import codechicken.nei.PositionedStack;
+import codechicken.nei.recipe.TemplateRecipeHandler;
 import mekanism.client.gui.element.GuiElement;
 import mekanism.client.gui.element.GuiPowerBar;
 import mekanism.client.gui.element.GuiPowerBar.IPowerInfoHandler;
@@ -21,12 +17,12 @@ import mekanism.common.recipe.outputs.ChanceOutput;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.item.ItemStack;
-
 import org.lwjgl.opengl.GL11;
 
-import codechicken.nei.NEIServerUtils;
-import codechicken.nei.PositionedStack;
-import codechicken.nei.recipe.TemplateRecipeHandler;
+import java.awt.*;
+import java.util.Collection;
+
+import static codechicken.lib.gui.GuiDraw.*;
 
 public abstract class ChanceMachineRecipeHandler extends BaseRecipeHandler
 {

@@ -1,20 +1,13 @@
 package mekanism.client.gui;
 
-import java.util.List;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mekanism.api.util.ListUtils;
 import mekanism.client.gui.element.GuiElement.IInfoHandler;
-import mekanism.client.gui.element.GuiEnergyInfo;
-import mekanism.client.gui.element.GuiFluidGauge;
+import mekanism.client.gui.element.*;
 import mekanism.client.gui.element.GuiFluidGauge.IFluidInfoHandler;
-import mekanism.client.gui.element.GuiGauge;
-import mekanism.client.gui.element.GuiPowerBar;
-import mekanism.client.gui.element.GuiRedstoneControl;
-import mekanism.client.gui.element.GuiSecurityTab;
-import mekanism.client.gui.element.GuiSlot;
 import mekanism.client.gui.element.GuiSlot.SlotOverlay;
 import mekanism.client.gui.element.GuiSlot.SlotType;
-import mekanism.client.gui.element.GuiUpgradeTab;
 import mekanism.common.inventory.container.ContainerFluidicPlenisher;
 import mekanism.common.tile.TileEntityFluidicPlenisher;
 import mekanism.common.util.LangUtils;
@@ -23,11 +16,9 @@ import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidTank;
-
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class GuiFluidicPlenisher extends GuiMekanism

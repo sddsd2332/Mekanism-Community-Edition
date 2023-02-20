@@ -1,9 +1,5 @@
 package mekanism.client.nei;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasRegistry;
 import mekanism.api.util.ListUtils;
@@ -16,6 +12,10 @@ import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class PurificationChamberRecipeHandler extends AdvancedMachineRecipeHandler
 {

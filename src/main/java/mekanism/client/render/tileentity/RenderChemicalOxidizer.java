@@ -1,8 +1,5 @@
 package mekanism.client.render.tileentity;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import mekanism.api.gas.Gas;
 import mekanism.client.model.ModelChemicalOxidizer;
 import mekanism.client.render.MekanismRenderer.DisplayInteger;
@@ -12,8 +9,10 @@ import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-
 import org.lwjgl.opengl.GL11;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RenderChemicalOxidizer extends TileEntitySpecialRenderer
 {

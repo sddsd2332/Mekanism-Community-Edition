@@ -1,7 +1,7 @@
 package mekanism.client.gui;
 
-import java.util.ArrayList;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mekanism.api.Coord4D;
 import mekanism.client.gui.element.GuiAmplifierTab;
 import mekanism.client.gui.element.GuiGauge.Type;
@@ -20,12 +20,10 @@ import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.IIcon;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.ArrayList;
 
 @SideOnly(Side.CLIENT)
 public class GuiLaserAmplifier extends GuiMekanism

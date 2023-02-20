@@ -1,5 +1,6 @@
 package mekanism.common.base;
 
+import cofh.api.energy.IEnergyReceiver;
 import ic2.api.energy.tile.IEnergySink;
 import mekanism.api.Coord4D;
 import mekanism.api.MekanismConfig.general;
@@ -8,7 +9,6 @@ import mekanism.common.util.CableUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-import cofh.api.energy.IEnergyReceiver;
 
 public abstract class EnergyAcceptorWrapper implements IStrictEnergyAcceptor
 {

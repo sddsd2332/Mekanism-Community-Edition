@@ -1,9 +1,9 @@
 package mekanism.client.gui;
 
-import java.util.List;
-
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.IIcon;
+
+import java.util.List;
 
 public interface IGuiWrapper
 {

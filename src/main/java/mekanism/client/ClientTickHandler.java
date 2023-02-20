@@ -1,14 +1,11 @@
 package mekanism.client;
 
-import static mekanism.client.sound.SoundHandler.Channel.FLAMETHROWER;
-import static mekanism.client.sound.SoundHandler.Channel.GASMASK;
-import static mekanism.client.sound.SoundHandler.Channel.JETPACK;
-
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mekanism.api.IClientTicker;
 import mekanism.api.MekanismConfig.client;
 import mekanism.api.gas.GasStack;
@@ -16,12 +13,8 @@ import mekanism.client.sound.SoundHandler;
 import mekanism.common.CommonPlayerTickHandler;
 import mekanism.common.KeySync;
 import mekanism.common.Mekanism;
-import mekanism.common.item.ItemFlamethrower;
-import mekanism.common.item.ItemFreeRunners;
-import mekanism.common.item.ItemGasMask;
-import mekanism.common.item.ItemJetpack;
+import mekanism.common.item.*;
 import mekanism.common.item.ItemJetpack.JetpackMode;
-import mekanism.common.item.ItemScubaTank;
 import mekanism.common.network.PacketFlamethrowerData;
 import mekanism.common.network.PacketFlamethrowerData.FlamethrowerDataMessage;
 import mekanism.common.network.PacketJetpackData.JetpackDataMessage;
@@ -34,12 +27,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.Phase;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import static mekanism.client.sound.SoundHandler.Channel.*;
 
 /**
  * Client-side tick handler for Mekanism. Used mainly for the update check upon startup.

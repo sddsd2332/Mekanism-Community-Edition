@@ -1,13 +1,8 @@
 package mekanism.client.nei;
 
-import static codechicken.lib.gui.GuiDraw.changeTexture;
-import static codechicken.lib.gui.GuiDraw.drawTexturedModalRect;
-import static codechicken.lib.gui.GuiDraw.gui;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import codechicken.nei.recipe.GuiCraftingRecipe;
+import codechicken.nei.recipe.GuiUsageRecipe;
+import codechicken.nei.recipe.TemplateRecipeHandler;
 import mekanism.api.gas.GasStack;
 import mekanism.client.gui.IGuiWrapper;
 import mekanism.client.gui.element.GuiElement;
@@ -15,9 +10,12 @@ import mekanism.client.render.MekanismRenderer;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.FluidStack;
-import codechicken.nei.recipe.GuiCraftingRecipe;
-import codechicken.nei.recipe.GuiUsageRecipe;
-import codechicken.nei.recipe.TemplateRecipeHandler;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static codechicken.lib.gui.GuiDraw.*;
 
 public abstract class BaseRecipeHandler extends TemplateRecipeHandler implements IGuiWrapper
 {

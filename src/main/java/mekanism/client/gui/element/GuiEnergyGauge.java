@@ -1,5 +1,6 @@
 package mekanism.client.gui.element;
 
+import codechicken.lib.vec.Rectangle4i;
 import mekanism.api.energy.IStrictEnergyStorage;
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.client.gui.IGuiWrapper;
@@ -8,7 +9,6 @@ import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
-import codechicken.lib.vec.Rectangle4i;
 
 public class GuiEnergyGauge extends GuiGauge
 {

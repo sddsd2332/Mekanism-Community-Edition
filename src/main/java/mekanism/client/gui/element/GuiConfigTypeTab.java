@@ -1,5 +1,8 @@
 package mekanism.client.gui.element;
 
+import codechicken.lib.vec.Rectangle4i;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.client.gui.GuiSideConfiguration;
 import mekanism.client.gui.IGuiWrapper;
@@ -8,9 +11,6 @@ import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import codechicken.lib.vec.Rectangle4i;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiConfigTypeTab extends GuiElement
