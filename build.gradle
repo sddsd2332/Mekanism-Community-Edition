@@ -62,11 +62,12 @@ dependencies {
 }
 
 if (System.getenv("BUILD_VER") == null){
-    version = "${config.minecraft_version}-${config.mod_version}"
+    config.mod_version = config.mod_version
 } else {
-    version = "${config.minecraft_version}-${config.mod_version}" + System.getenv("BUILD_VER")
+    config.mod_version = config.mod_version + "-" + System.getenv("BUILD_VER")
 }
-group= "mekanism"
+version = config.minecraft_version + "-" + config.mod_version
+group = "mekanism"
 archivesBaseName = "Mekanism-Community-Edition"
 libsDirName = "../output"
 distsDirName = "../output"
@@ -78,7 +79,7 @@ minecraft {
     replaceIn "mekanism/common/Mekanism.java"
     replaceIn "mekanism/generators/common/MekanismGenerators.java"
     replaceIn "mekanism/tools/common/MekanismTools.java"
-    replace "GRADLE_MODVERSION", project.version
+    replace "GRADLE_MODVERSION", config.mod_version
     replace "GRADLE_VERSIONMOD", config.alt_version
 }
 
@@ -127,7 +128,7 @@ task toolsJar(type: Jar) {
     classifier = 'Tools'
     from('etc/tools') {
         include '*.info'
-        expand 'version':config.mod_version,'mc_version':config.minecraft_version,'fmp_version':config.FMP_version
+        expand 'version': config.mod_version,'mc_version': config.minecraft_version,'fmp_version': config.FMP_version
     }
 
     from zipTree(jar.outputs.getFiles().getSingleFile()).matching {
@@ -140,7 +141,7 @@ task generatorsJar(type: Jar) {
     classifier = 'Generators'
     from('etc/generators') {
         include '*.info'
-        expand 'version':config.mod_version,'mc_version':config.minecraft_version,'fmp_version':config.FMP_version
+        expand 'version': config.mod_version,'mc_version': config.minecraft_version,'fmp_version': config.FMP_version
     }
 
     from zipTree(jar.outputs.getFiles().getSingleFile()).matching {
