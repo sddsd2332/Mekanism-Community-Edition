@@ -5,10 +5,12 @@ import java.lang.ref.WeakReference;
 
 import mekanism.api.Coord4D;
 import mekanism.api.MekanismAPI;
+import mekanism.api.MekanismConfig;
 import mekanism.api.MekanismConfig.general;
 import mekanism.api.MekanismConfig.recipes;
 import mekanism.api.MekanismConfig.machines;
 import mekanism.api.MekanismConfig.usage;
+import mekanism.api.MekanismConfig.mekce;
 import mekanism.api.Pos3D;
 import mekanism.api.util.UnitDisplayUtils.EnergyType;
 import mekanism.api.util.UnitDisplayUtils.TempType;
@@ -255,7 +257,7 @@ public class CommonProxy implements IGuiProvider
 		general.dynamicTankEasterEgg = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "DynamicTankEasterEgg", false).getBoolean();
 		general.cardboardSpawners = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "AllowSpawnerBoxPickup", true).getBoolean();
 		general.enableWorldRegeneration = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "EnableWorldRegeneration", false).getBoolean();
-		general.enableBoPProgression = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "enableBoPProgression", true).getBoolean();
+		mekce.enableBoPProgression = Mekanism.configurationce.get("mekce", "enableBoPProgression", true, "when true and biome's o plenty is installed atomic alloy is made by using ender instead of obsidian").getBoolean();
 		general.spawnBabySkeletons = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "SpawnBabySkeletons", true).getBoolean();
 		general.obsidianTNTDelay = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "ObsidianTNTDelay", 100).getInt();
 		general.obsidianTNTBlastRadius = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "ObsidianTNTBlastRadius", 12).getInt();
@@ -307,18 +309,18 @@ public class CommonProxy implements IGuiProvider
 		general.blacklistIC2 = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "BlacklistIC2Power", false).getBoolean();
 		general.blacklistRF = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "BlacklistRFPower", false).getBoolean();
 
-		general.EnableQuartzCompat = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "EnableQuartzCompat", true).getBoolean();
-		general.EnableDiamondCompat = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "EnableDiamondCompat", true).getBoolean();
-		general.EnablePoorOresCompat = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "EnablePoorOresCompat", true).getBoolean();
-		general.OreDictOsmium = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "OreDictOsmium", true).getBoolean();
-		general.OreDictPlatinum = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "OreDictPlatinum", false).getBoolean();
-		general.enableSiliconCompat = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "EnableSiliconCompat", true).getBoolean();
-		general.digitalMinerMaxRadius = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "DigitalMinerMaxRadius", 32, "Select range from 1 to 64, we do not recommend going over 32", 1, 64).getInt();
-		general.enableSingleUseCardboxes = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "EnableSingleUseCardboxes", true).getBoolean();
+		mekce.EnableQuartzCompat = Mekanism.configuration.get("mekce", "EnableQuartzCompat", true, "Allows quartz dust to be enriched into quartz Also allows quartz ore to be enriched into quartz dust").getBoolean();
+		mekce.EnableDiamondCompat = Mekanism.configuration.get("mekce", "EnableDiamondCompat", true, "Allows oredict'ed diamonds to be used in the enrichment chamber, like synthetic diamonds.").getBoolean();
+		mekce.EnablePoorOresCompat = Mekanism.configuration.get("mekce", "EnablePoorOresCompat", true, "Allows poor ores from railcraft to be used in the purification chamber and gives one clump ie one ingot.").getBoolean();
+		mekce.OreDictOsmium = Mekanism.configuration.get("mekce", "OreDictOsmium", true, "Adds the oredict (osmium) to osmium").getBoolean();
+		mekce.OreDictPlatinum = Mekanism.configuration.get("mekce", "OreDictPlatinum", false, "Adds the oredict (platinum) to osmium").getBoolean();
+		mekce.enableSiliconCompat = Mekanism.configuration.get("mekce", "EnableSiliconCompat", true, "When a mod that adds silicon (galacticraft, enderio and projectred) is detected, recipe for control circuit is changed from using iron to silicon in the metalurgic infuser").getBoolean();
+		mekce.digitalMinerMaxRadius = Mekanism.configuration.get("mekce", "DigitalMinerMaxRadius", 32, "Select range from 1 to 64, we do not recommend going over 32", 1, 64).getInt();
+		mekce.enableSingleUseCardboxes = Mekanism.configuration.get("mekce", "EnableSingleUseCardboxes", true, "This allows to force single use on cardboxes or not").getBoolean();
 
 
-		general.IC2SinkTier = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "IC2SinkTier", 4, "Tier level for machines, we recommend setting it to tier 2 for ic2 classic", 1, 4).getInt();
-		general.IC2SourceTier = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "IC2SourceTier", 4, "Tier level for generators, we recommend setting it to tier 2 for ic2 classic", 1, 4).getInt();
+		mekce.IC2SinkTier = Mekanism.configuration.get("mekce", "IC2SinkTier", 4, "Tier level for machines, we recommend setting it to tier 2 for ic2 classic", 1, 4).getInt();
+		mekce.IC2SourceTier = Mekanism.configuration.get("mekce", "IC2SourceTier", 4, "Tier level for generators, we recommend setting it to tier 2 for ic2 classic", 1, 4).getInt();
 
 		String s = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "EnergyType", "RF", null, new String[]{"J", "RF", "MJ", "EU"}).getString();
 
@@ -509,6 +511,10 @@ public class CommonProxy implements IGuiProvider
 		if(Mekanism.configuration.hasChanged())
 		{
 			Mekanism.configuration.save();
+		}
+		if(Mekanism.configurationce.hasChanged())
+		{
+			Mekanism.configurationce.save();
 		}
 	}
 

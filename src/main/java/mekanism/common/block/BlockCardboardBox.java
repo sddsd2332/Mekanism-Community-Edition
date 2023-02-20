@@ -106,7 +106,7 @@ public class BlockCardboardBox extends BlockContainer
 					data.block.onBlockPlacedBy(world, x, y, z, entityplayer, new ItemStack(data.block, 1, data.meta));
 					data.block.onPostBlockPlaced(world, x, y, z, data.meta);
 				}
-				if(!MekanismConfig.general.enableSingleUseCardboxes) {
+				if(!MekanismConfig.mekce.enableSingleUseCardboxes) {
 					float motion = 0.7F;
 					double motionX = (world.rand.nextFloat() * motion) + (1.0F - motion) * 0.5D;
 					double motionY = (world.rand.nextFloat() * motion) + (1.0F - motion) * 0.5D;

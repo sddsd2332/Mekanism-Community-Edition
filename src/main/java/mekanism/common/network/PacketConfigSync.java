@@ -5,6 +5,7 @@ import mekanism.api.MekanismConfig.general;
 import mekanism.api.MekanismConfig.machines;
 import mekanism.api.MekanismConfig.usage;
 import mekanism.api.MekanismConfig.recipes;
+import mekanism.api.MekanismConfig.mekce;
 import mekanism.api.util.UnitDisplayUtils.EnergyType;
 import mekanism.common.Mekanism;
 import mekanism.common.Tier;
@@ -35,7 +36,7 @@ public class PacketConfigSync implements IMessageHandler<ConfigSyncMessage, IMes
 			dataStream.writeBoolean(general.dynamicTankEasterEgg);
 			dataStream.writeBoolean(general.cardboardSpawners);
 			dataStream.writeBoolean(general.spawnBabySkeletons);
-			dataStream.writeBoolean(general.enableBoPProgression);
+			dataStream.writeBoolean(mekce.enableBoPProgression);
 			dataStream.writeInt(general.obsidianTNTDelay);
 			dataStream.writeInt(general.obsidianTNTBlastRadius);
 			dataStream.writeInt(general.UPDATE_DELAY);
@@ -76,16 +77,16 @@ public class PacketConfigSync implements IMessageHandler<ConfigSyncMessage, IMes
 			dataStream.writeBoolean(general.allowProtection);
 			dataStream.writeBoolean(general.accurateHeavyWaterCapture);
 			dataStream.writeInt(general.heavyWaterChance);
-			dataStream.writeBoolean(general.EnableQuartzCompat);
-			dataStream.writeBoolean(general.EnableDiamondCompat);
-			dataStream.writeBoolean(general.EnablePoorOresCompat);
-			dataStream.writeBoolean(general.OreDictOsmium);
-			dataStream.writeBoolean(general.OreDictPlatinum);
-			dataStream.writeBoolean(general.enableSiliconCompat);
-			dataStream.writeInt(general.IC2SinkTier);
-			dataStream.writeInt(general.IC2SourceTier);
-			dataStream.writeInt(general.digitalMinerMaxRadius);
-			dataStream.writeBoolean(general.enableSingleUseCardboxes);
+			dataStream.writeBoolean(mekce.EnableQuartzCompat);
+			dataStream.writeBoolean(mekce.EnableDiamondCompat);
+			dataStream.writeBoolean(mekce.EnablePoorOresCompat);
+			dataStream.writeBoolean(mekce.OreDictOsmium);
+			dataStream.writeBoolean(mekce.OreDictPlatinum);
+			dataStream.writeBoolean(mekce.enableSiliconCompat);
+			dataStream.writeInt(mekce.IC2SinkTier);
+			dataStream.writeInt(mekce.IC2SourceTier);
+			dataStream.writeInt(mekce.digitalMinerMaxRadius);
+			dataStream.writeBoolean(mekce.enableSingleUseCardboxes);
 			
 			for(MachineType type : MachineType.getValidMachines())
 			{
@@ -231,7 +232,7 @@ public class PacketConfigSync implements IMessageHandler<ConfigSyncMessage, IMes
 			general.dynamicTankEasterEgg = dataStream.readBoolean();
 			general.cardboardSpawners = dataStream.readBoolean();
 			general.spawnBabySkeletons = dataStream.readBoolean();
-			general.enableBoPProgression = dataStream.readBoolean();
+			mekce.enableBoPProgression = dataStream.readBoolean();
 			general.obsidianTNTDelay = dataStream.readInt();
 			general.obsidianTNTBlastRadius = dataStream.readInt();
 			general.UPDATE_DELAY = dataStream.readInt();
@@ -272,16 +273,16 @@ public class PacketConfigSync implements IMessageHandler<ConfigSyncMessage, IMes
 			general.allowProtection = dataStream.readBoolean();
 			general.accurateHeavyWaterCapture = dataStream.readBoolean();
 			general.heavyWaterChance = dataStream.readInt();
-			general.EnableQuartzCompat = dataStream.readBoolean();
-			general.EnableDiamondCompat = dataStream.readBoolean();
-			general.EnablePoorOresCompat = dataStream.readBoolean();
-			general.OreDictOsmium = dataStream.readBoolean();
-			general.OreDictPlatinum = dataStream.readBoolean();
-			general.enableSiliconCompat = dataStream.readBoolean();
-      		general.IC2SinkTier = dataStream.readInt();
-			general.IC2SourceTier = dataStream.readInt();
-			general.digitalMinerMaxRadius = dataStream.readInt();
-			general.enableSingleUseCardboxes = dataStream.readBoolean();
+			mekce.EnableQuartzCompat = dataStream.readBoolean();
+			mekce.EnableDiamondCompat = dataStream.readBoolean();
+			mekce.EnablePoorOresCompat = dataStream.readBoolean();
+			mekce.OreDictOsmium = dataStream.readBoolean();
+			mekce.OreDictPlatinum = dataStream.readBoolean();
+			mekce.enableSiliconCompat = dataStream.readBoolean();
+			mekce.IC2SinkTier = dataStream.readInt();
+			mekce.IC2SourceTier = dataStream.readInt();
+			mekce.digitalMinerMaxRadius = dataStream.readInt();
+			mekce.enableSingleUseCardboxes = dataStream.readBoolean();
 			
 			for(MachineType type : MachineType.getValidMachines())
 			{

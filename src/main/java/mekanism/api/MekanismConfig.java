@@ -18,7 +18,6 @@ public class MekanismConfig
 		public static boolean cardboardSpawners = true;
 		public static boolean enableWorldRegeneration = true;
 		public static boolean spawnBabySkeletons = true;
-		public static boolean enableBoPProgression = true;
 		public static int obsidianTNTBlastRadius = 12;
 		public static int osmiumPerChunk = 12;
 		public static int copperPerChunk = 16;
@@ -71,17 +70,22 @@ public class MekanismConfig
 		public static boolean accurateHeavyWaterCapture = true;
 		public static int heavyWaterChance = 4;
 
+
+	}
+	public static class mekce {
+		public static boolean enableBoPProgression = true;
 		public static boolean EnableQuartzCompat;
 		public static boolean EnableDiamondCompat;
 		public static boolean EnablePoorOresCompat;
 		public static boolean OreDictOsmium;
 		public static boolean OreDictPlatinum;
 		public static boolean enableSiliconCompat;
-    	public static int IC2SinkTier;
+		public static int IC2SinkTier;
 		public static int IC2SourceTier;
-    	public static int digitalMinerMaxRadius;
+		public static int digitalMinerMaxRadius;
 		public static boolean enableSingleUseCardboxes;
 	}
+
 
 	public static class client
 	{

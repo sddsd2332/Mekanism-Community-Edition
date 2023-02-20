@@ -16,6 +16,7 @@ import mekanism.api.EnumColor;
 import mekanism.api.MekanismAPI;
 import mekanism.api.MekanismAPI.BoxBlacklistEvent;
 import mekanism.api.MekanismConfig;
+import mekanism.api.MekanismConfig.mekce;
 import mekanism.api.MekanismConfig.general;
 import mekanism.api.MekanismConfig.usage;
 import mekanism.api.gas.*;
@@ -158,6 +159,8 @@ public class Mekanism
 	public static Configuration configurationgenerators;
 	public static Configuration configurationtools;
 	public static Configuration configurationrecipes;
+
+	public static Configuration configurationce;
 
 	/** Mekanism version number */
 	public static Version versionNumber = new Version(GRADLE_VERSIONMOD);
@@ -821,12 +824,12 @@ public class Mekanism
 				MachineType.BASIC_FACTORY.addRecipe(new ShapedMekanismRecipe(MekanismUtils.getFactory(FactoryTier.BASIC, type), new Object[]{
 						"RCR", "iOi", "RCR", Character.valueOf('R'), "alloyBasic", Character.valueOf('C'), MekanismUtils.getControlCircuit(BaseTier.BASIC), Character.valueOf('i'), "ingotIron", Character.valueOf('O'), type.getStack()
 				}));
-				if (general.OreDictOsmium) {
+				if (mekce.OreDictOsmium) {
 					MachineType.ADVANCED_FACTORY.addRecipe(new ShapedMekanismRecipe(MekanismUtils.getFactory(FactoryTier.ADVANCED, type), new Object[]{
 							"ECE", "oOo", "ECE", Character.valueOf('E'), "alloyAdvanced", Character.valueOf('C'), MekanismUtils.getControlCircuit(BaseTier.ADVANCED), Character.valueOf('o'), "ingotOsmium", Character.valueOf('O'), MekanismUtils.getFactory(FactoryTier.BASIC, type)
 					}));
 				}
-				if (general.OreDictPlatinum) {
+				if (mekce.OreDictPlatinum) {
 					MachineType.ADVANCED_FACTORY.addRecipe(new ShapedMekanismRecipe(MekanismUtils.getFactory(FactoryTier.ADVANCED, type), new Object[]{
 							"ECE", "oOo", "ECE", Character.valueOf('E'), "alloyAdvanced", Character.valueOf('C'), MekanismUtils.getControlCircuit(BaseTier.ADVANCED), Character.valueOf('o'), "ingotPlatinum", Character.valueOf('O'), MekanismUtils.getFactory(FactoryTier.BASIC, type)
 					}));
@@ -986,12 +989,12 @@ public class Mekanism
 				CraftingManager.getInstance().getRecipeList().add(new ShapelessMekanismRecipe(new ItemStack(MekanismBlocks.GlowPlasticBlock, 3, i), new Object[]{
 						new ItemStack(MekanismBlocks.PlasticBlock, 1, i), new ItemStack(MekanismBlocks.PlasticBlock, 1, i), new ItemStack(MekanismBlocks.PlasticBlock, 1, i), new ItemStack(Items.glowstone_dust)
 				}));
-				if (general.OreDictOsmium) {
+				if (mekce.OreDictOsmium) {
 					CraftingManager.getInstance().getRecipeList().add(new ShapedMekanismRecipe(new ItemStack(MekanismBlocks.ReinforcedPlasticBlock, 4, i), new Object[]{
 							" P ", "POP", " P ", Character.valueOf('P'), new ItemStack(MekanismBlocks.PlasticBlock, 1, i), Character.valueOf('O'), "dustOsmium"
 					}));
 				}
-				if (general.OreDictPlatinum) {
+				if (mekce.OreDictPlatinum) {
 					CraftingManager.getInstance().getRecipeList().add(new ShapedMekanismRecipe(new ItemStack(MekanismBlocks.ReinforcedPlasticBlock, 4, i), new Object[]{
 							" P ", "POP", " P ", Character.valueOf('P'), new ItemStack(MekanismBlocks.PlasticBlock, 1, i), Character.valueOf('O'), "dustPlatinum"
 					}));
@@ -1037,7 +1040,7 @@ public class Mekanism
 		RecipeHandler.addEnrichmentChamberRecipe(new ItemStack(MekanismBlocks.SaltBlock), new ItemStack(MekanismItems.Salt, 4));
 		RecipeHandler.addEnrichmentChamberRecipe(new ItemStack(Items.diamond), new ItemStack(MekanismItems.CompressedDiamond));
 		RecipeHandler.addEnrichmentChamberRecipe(new ItemStack(MekanismItems.Polyethene, 3, 0), new ItemStack(MekanismItems.Polyethene, 1, 2));
-		if (MekanismConfig.general.enableBoPProgression && Loader.isModLoaded("BiomesOPlenty")) {
+		if (MekanismConfig.mekce.enableBoPProgression && Loader.isModLoaded("BiomesOPlenty")) {
 			RecipeHandler.addEnrichmentChamberRecipe(Amethyst, new ItemStack(MekanismItems.CompressedEnder));
 		}
 
@@ -1124,7 +1127,7 @@ public class Mekanism
         RecipeHandler.addMetallurgicInfuserRecipe(InfuseRegistry.get("BIO"), 10, new ItemStack(Blocks.sand), new ItemStack(Blocks.dirt));
         RecipeHandler.addMetallurgicInfuserRecipe(InfuseRegistry.get("BIO"), 10, new ItemStack(Blocks.dirt), new ItemStack(Blocks.dirt, 1, 2));
         RecipeHandler.addMetallurgicInfuserRecipe(InfuseRegistry.get("DIAMOND"), 10, new ItemStack(MekanismItems.EnrichedAlloy), new ItemStack(MekanismItems.ReinforcedAlloy));
-		if (MekanismConfig.general.enableBoPProgression && Loader.isModLoaded("BiomesOPlenty")) {
+		if (MekanismConfig.mekce.enableBoPProgression && Loader.isModLoaded("BiomesOPlenty")) {
 			RecipeHandler.addMetallurgicInfuserRecipe(InfuseRegistry.get("ENDER"), 10, new ItemStack(MekanismItems.ReinforcedAlloy), new ItemStack(MekanismItems.AtomicAlloy));
 		} else {
 			RecipeHandler.addMetallurgicInfuserRecipe(InfuseRegistry.get("OBSIDIAN"), 10, new ItemStack(MekanismItems.ReinforcedAlloy), new ItemStack(MekanismItems.AtomicAlloy));
@@ -1158,7 +1161,7 @@ public class Mekanism
 
 				RecipeHandler.addChemicalWasherRecipe(new GasStack(oreGas, 1), new GasStack(oreGas.getCleanGas(), 1));
 				if (Resource.getFromName(oreGas.getName()) != null) {
-					if (Resource.getFromName(oreGas.getName()) == Resource.OSMIUM && (!general.OreDictOsmium && general.OreDictPlatinum)) continue;
+					if (Resource.getFromName(oreGas.getName()) == Resource.OSMIUM && (!mekce.OreDictOsmium && mekce.OreDictPlatinum)) continue;
 
 					RecipeHandler.addChemicalCrystallizerRecipe(new GasStack(oreGas.getCleanGas(), 200), new ItemStack(MekanismItems.Crystal, 1, Resource.getFromName(oreGas.getName()).ordinal()));
 			}
@@ -1201,7 +1204,7 @@ public class Mekanism
 		InfuseRegistry.registerInfuseObject(new ItemStack(MekanismItems.CompressedDiamond), new InfuseObject(InfuseRegistry.get("DIAMOND"), 80));
 		InfuseRegistry.registerInfuseObject(new ItemStack(MekanismItems.CompressedObsidian), new InfuseObject(InfuseRegistry.get("OBSIDIAN"), 80));
 		InfuseRegistry.registerInfuseObject(new ItemStack(MekanismItems.CompressedEnder), new InfuseObject(InfuseRegistry.get("ENDER"), 80));
-		if (MekanismConfig.general.enableBoPProgression && Loader.isModLoaded("BiomesOPlenty")) {
+		if (MekanismConfig.mekce.enableBoPProgression && Loader.isModLoaded("BiomesOPlenty")) {
 			InfuseRegistry.registerInfuseObject(Amethyst, new InfuseObject(InfuseRegistry.get("ENDER"), 10));
 		}
 
@@ -1295,13 +1298,13 @@ public class Mekanism
 			OreDictionary.registerOre("shard" + resource.getName(), new ItemStack(MekanismItems.Shard, 1, resource.ordinal()));
 			OreDictionary.registerOre("crystal" + resource.getName(), new ItemStack(MekanismItems.Crystal, 1, resource.ordinal()));
 		}
-		if(general.OreDictOsmium)
+		if(mekce.OreDictOsmium)
 		{
 			OreDictionary.registerOre("oreOsmium", new ItemStack(MekanismBlocks.OreBlock, 1, 0));
 			OreDictionary.registerOre("ingotOsmium", new ItemStack(MekanismItems.Ingot, 1, 1));
 			OreDictionary.registerOre("blockOsmium", new ItemStack(MekanismBlocks.BasicBlock, 1, 0));
 		}
-		if(general.OreDictPlatinum)
+		if(mekce.OreDictPlatinum)
 		{
 			OreDictionary.registerOre("orePlatinum", new ItemStack(MekanismBlocks.OreBlock, 1, 0));
 			OreDictionary.registerOre("ingotPlatinum", new ItemStack(MekanismItems.Ingot, 1, 1));
@@ -1407,6 +1410,7 @@ public class Mekanism
 		configurationgenerators = new Configuration(new File("config/mekanism/MekanismGenerators.cfg"));
 		configurationtools = new Configuration(new File("config/mekanism/MekanismTools.cfg"));
 		configurationrecipes = new Configuration(new File("config/mekanism/MekanismRecipes.cfg"));
+		configurationce = new Configuration(new File("config/mekanism/MekanismCE.cfg"));
 
         //Register tier information
         Tier.init();
@@ -1519,7 +1523,7 @@ public class Mekanism
 			}
 		}
 		//Silicon Module
-		if (MekanismConfig.general.enableSiliconCompat)
+		if (MekanismConfig.mekce.enableSiliconCompat)
 		{
 			if (Loader.isModLoaded("EnderIO") || Loader.isModLoaded("GalacticraftCore") || Loader.isModLoaded("ProjRed|Core")) {
 				isSiliconLoaded = true;
@@ -1529,7 +1533,7 @@ public class Mekanism
 		registerOreDict();
 
 		//Platinum Oredict Module
-		if (general.OreDictPlatinum)
+		if (mekce.OreDictPlatinum)
 		{
 			OreGas clean = (OreGas) GasRegistry.register(new OreGas("cleanPlatinum", "oregas.Platinum").setVisible(false));
 			GasRegistry.register(new OreGas("platinum", "oregas." + "platinum").setCleanGas(clean).setVisible(false));

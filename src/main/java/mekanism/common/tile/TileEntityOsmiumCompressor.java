@@ -31,7 +31,7 @@ public class TileEntityOsmiumCompressor extends TileEntityAdvancedElectricMachin
 	public GasStack getItemGas(ItemStack itemstack)
 	{
 		int amount = 0;
-		boolean replaceWithPlat = MekanismConfig.general.OreDictPlatinum && !MekanismConfig.general.OreDictOsmium;
+		boolean replaceWithPlat = MekanismConfig.mekce.OreDictPlatinum && !MekanismConfig.mekce.OreDictOsmium;
 		
 		if (replaceWithPlat) {
 			for (ItemStack ore : OreDictionary.getOres("ingotPlatinum")) {

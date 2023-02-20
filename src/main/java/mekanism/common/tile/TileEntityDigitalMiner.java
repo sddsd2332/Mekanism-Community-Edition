@@ -648,7 +648,7 @@ public class TileEntityDigitalMiner extends TileEntityElectricBlock implements I
 	{
 		super.readFromNBT(nbtTags);
 
-		radius = Math.min(nbtTags.getInteger("radius"), MekanismConfig.general.digitalMinerMaxRadius);
+		radius = Math.min(nbtTags.getInteger("radius"), MekanismConfig.mekce.digitalMinerMaxRadius);
 		minY = nbtTags.getInteger("minY");
 		maxY = nbtTags.getInteger("maxY");
 		doEject = nbtTags.getBoolean("doEject");
@@ -743,7 +743,7 @@ public class TileEntityDigitalMiner extends TileEntityElectricBlock implements I
 			}
 			else if(type == 6)
 			{
-				radius = Math.min(dataStream.readInt(), MekanismConfig.general.digitalMinerMaxRadius);
+				radius = Math.min(dataStream.readInt(), MekanismConfig.mekce.digitalMinerMaxRadius);
 			}
 			else if(type == 7)
 			{
@@ -1410,7 +1410,7 @@ public class TileEntityDigitalMiner extends TileEntityElectricBlock implements I
 	@Override
 	public void setConfigurationData(NBTTagCompound nbtTags)
 	{
-		radius = Math.min(nbtTags.getInteger("radius"), MekanismConfig.general.digitalMinerMaxRadius);
+		radius = Math.min(nbtTags.getInteger("radius"), MekanismConfig.mekce.digitalMinerMaxRadius);
 		minY = nbtTags.getInteger("minY");
 		maxY = nbtTags.getInteger("maxY");
 		doEject = nbtTags.getBoolean("doEject");

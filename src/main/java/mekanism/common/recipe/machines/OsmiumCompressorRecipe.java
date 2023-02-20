@@ -14,7 +14,7 @@ public class OsmiumCompressorRecipe extends AdvancedMachineRecipe<OsmiumCompress
 
 	public OsmiumCompressorRecipe(ItemStack input, ItemStack output)
 	{
-		super(input, (MekanismConfig.general.OreDictPlatinum && !MekanismConfig.general.OreDictOsmium) ? "liquidPlatinum" : "liquidOsmium", output);
+		super(input, (MekanismConfig.mekce.OreDictPlatinum && !MekanismConfig.mekce.OreDictOsmium) ? "liquidPlatinum" : "liquidOsmium", output);
 	}
 
 	@Override
