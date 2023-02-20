@@ -41,32 +41,23 @@ idea {
     }
 }
 
-// Define properties file
-ext.configFile = file "build.properties"
-
-configFile.withReader {
-    // Load config. It shall from now be referenced as simply config or project.config
-    def prop = new Properties()
-    prop.load(it)
-    project.ext.config = new ConfigSlurper().parse prop
-}
 
 dependencies {
-    compile "codechicken:CodeChickenLib:${config.minecraft_version}-${config.CCLIB_version}:dev"
-    compile "codechicken:ForgeMultipart:${config.minecraft_version}-${config.FMP_version}:dev"
-    compile "codechicken:NotEnoughItems:${config.minecraft_version}-${config.NEI_version}:dev"
-    compile "codechicken:CodeChickenCore:${config.minecraft_version}-${config.CCC_version}:dev"
+    compile "codechicken:CodeChickenLib:${minecraft_version}-${CCLIB_version}:dev"
+    compile "codechicken:ForgeMultipart:${minecraft_version}-${FMP_version}:dev"
+    compile "codechicken:NotEnoughItems:${minecraft_version}-${NEI_version}:dev"
+    compile "codechicken:CodeChickenCore:${minecraft_version}-${CCC_version}:dev"
     compile "inventorytweaks:inventory-tweaks:1.7.10-1.60.0:api"
     compile "net.industrial-craft:industrialcraft-2:2.2.828-experimental:api"
     compile "mcp.mobius.waila:Waila:1.5.10_1.7.10:dev"
 }
 
 if (System.getenv("BUILD_VER") == null){
-    config.mod_version = config.mod_version
+    mod_version = mod_version
 } else {
-    config.mod_version = config.mod_version + "-" + System.getenv("BUILD_VER")
+    mod_version = mod_version + "-" + System.getenv("BUILD_VER")
 }
-version = config.minecraft_version + "-" + config.mod_version
+version = minecraft_version + "-" + mod_version
 group = "mekanism"
 archivesBaseName = "Mekanism-Community-Edition"
 libsDirName = "../output"
@@ -75,12 +66,12 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 minecraft {
-    version = config.minecraft_version + "-" + config.forge_version
+    version = minecraft_version + "-" + forge_version
     replaceIn "mekanism/common/Mekanism.java"
     replaceIn "mekanism/generators/common/MekanismGenerators.java"
     replaceIn "mekanism/tools/common/MekanismTools.java"
-    replace "GRADLE_MODVERSION", config.mod_version
-    replace "GRADLE_VERSIONMOD", config.alt_version
+    replace "GRADLE_MODVERSION", mod_version
+    replace "GRADLE_VERSIONMOD", alt_version
 }
 
 processResources
@@ -101,7 +92,7 @@ task coreJar(type: Jar) {
 
     from('etc/core') {
         include '*.info'
-        expand 'version': config.mod_version, 'mc_version': config.minecraft_version, 'fmp_version': config.FMP_version
+        expand 'version': mod_version, 'mc_version': minecraft_version, 'fmp_version': FMP_version
     }
 
     from zipTree(jar.outputs.getFiles().getSingleFile()).matching {
@@ -117,7 +108,7 @@ task alltJar(type: Jar) {
     }
     from('etc/all') {
         include '*.info'
-        expand 'version': config.mod_version, 'mc_version': config.minecraft_version, 'fmp_version': config.FMP_version
+        expand 'version': mod_version, 'mc_version': minecraft_version, 'fmp_version': FMP_version
     }
     from zipTree(jar.outputs.getFiles().getSingleFile()).matching {
         exclude 'mcmod.info'
@@ -128,7 +119,7 @@ task toolsJar(type: Jar) {
     classifier = 'Tools'
     from('etc/tools') {
         include '*.info'
-        expand 'version': config.mod_version,'mc_version': config.minecraft_version,'fmp_version': config.FMP_version
+        expand 'version': mod_version,'mc_version': minecraft_version,'fmp_version': FMP_version
     }
 
     from zipTree(jar.outputs.getFiles().getSingleFile()).matching {
@@ -141,7 +132,7 @@ task generatorsJar(type: Jar) {
     classifier = 'Generators'
     from('etc/generators') {
         include '*.info'
-        expand 'version': config.mod_version,'mc_version': config.minecraft_version,'fmp_version': config.FMP_version
+        expand 'version': mod_version,'mc_version': minecraft_version,'fmp_version': FMP_version
     }
 
     from zipTree(jar.outputs.getFiles().getSingleFile()).matching {

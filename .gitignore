@@ -1,3 +1,5 @@
+**
+
 !.github/**
 !docs/**
 !etc/**
@@ -9,8 +11,7 @@
 !Mekanism.txt
 !README.md
 !build.gradle
-!build.properties
+!gradle.properties
 !gradlew
 !gradlew.bat
 
-**
