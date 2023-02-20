@@ -116,7 +116,7 @@ public class GeneratorsCommonProxy implements IGuiProvider
 		generators.turbineVentGasFlow = Mekanism.configurationgenerators.get("generation", "TurbineVentGasFlow", 16000D).getDouble();
 		generators.turbineDisperserGasFlow = Mekanism.configurationgenerators.get("generation", "TurbineDisperserGasFlow", 640D).getDouble();
 		generators.condenserRate = Mekanism.configurationgenerators.get("generation", "TurbineCondenserFlowRate", 32000).getInt();
-		generators.enableWindmillWhitelist = Mekanism.configurationgenerators.get("generation", "EnableWindmillWhitelist", true).getBoolean();
+		generators.enableWindmillWhitelist = Mekanism.configurationce.get("mekce_generation", "EnableWindmillWhitelist", true).getBoolean();
 
 		generatorsrecipes.enableHeatGenerator = Mekanism.configurationrecipes.get("generationrecipes","enableHeatGenerator", true).getBoolean();
 		generatorsrecipes.enableSolarGenerator = Mekanism.configurationrecipes.get("generationrecipes","enableSolarGenerator", true).getBoolean();
@@ -152,7 +152,7 @@ public class GeneratorsCommonProxy implements IGuiProvider
 	public void loadwinddimension()
 	{
 		String[] windid = {"0"};
-		generators.winddimensionids = Arrays.asList(Mekanism.configurationgenerators.getStringList("winddimensionids", "generation", windid, "List of dimension id to be whitelisted"));
+		generators.winddimensionids = Arrays.asList(Mekanism.configurationce.getStringList("winddimensionids", "mekce_generation", windid, "List of dimension id's to be whitelisted"));
 		dimid = generators.winddimensionids.stream().map(Integer::parseInt).collect(Collectors.toList());
 		System.out.println("Windmill whitelist : " + dimid);
 	}
