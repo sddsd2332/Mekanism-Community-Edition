@@ -1,10 +1,11 @@
 package mekanism.client.gui.element;
 
-import static java.lang.Math.min;
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.client.gui.IGuiWrapper;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+
+import static java.lang.Math.min;
 
 public class GuiNumberGauge extends GuiGauge
 {

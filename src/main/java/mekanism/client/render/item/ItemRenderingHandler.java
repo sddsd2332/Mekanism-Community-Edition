@@ -1,21 +1,14 @@
 package mekanism.client.render.item;
 
+import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mekanism.api.EnumColor;
 import mekanism.api.energy.IEnergizedItem;
 import mekanism.client.ClientProxy;
 import mekanism.client.MekanismClient;
-import mekanism.client.model.ModelArmoredJetpack;
-import mekanism.client.model.ModelAtomicDisassembler;
-import mekanism.client.model.ModelEnergyCube;
+import mekanism.client.model.*;
 import mekanism.client.model.ModelEnergyCube.ModelEnergyCore;
-import mekanism.client.model.ModelFlamethrower;
-import mekanism.client.model.ModelFreeRunners;
-import mekanism.client.model.ModelGasMask;
-import mekanism.client.model.ModelGasTank;
-import mekanism.client.model.ModelJetpack;
-import mekanism.client.model.ModelObsidianTNT;
-import mekanism.client.model.ModelRobit;
-import mekanism.client.model.ModelScubaTank;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.client.render.RenderGlowPanel;
 import mekanism.client.render.RenderPartTransmitter;
@@ -33,16 +26,7 @@ import mekanism.common.base.IEnergyCube;
 import mekanism.common.block.BlockBasic.BasicType;
 import mekanism.common.block.BlockMachine.MachineType;
 import mekanism.common.inventory.InventoryBin;
-import mekanism.common.item.ItemAtomicDisassembler;
-import mekanism.common.item.ItemBalloon;
-import mekanism.common.item.ItemBlockBasic;
-import mekanism.common.item.ItemBlockGasTank;
-import mekanism.common.item.ItemBlockMachine;
-import mekanism.common.item.ItemFlamethrower;
-import mekanism.common.item.ItemFreeRunners;
-import mekanism.common.item.ItemGasMask;
-import mekanism.common.item.ItemRobit;
-import mekanism.common.item.ItemScubaTank;
+import mekanism.common.item.*;
 import mekanism.common.multipart.ItemGlowPanel;
 import mekanism.common.multipart.ItemPartTransmitter;
 import mekanism.common.multipart.TransmitterType;
@@ -66,12 +50,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
-
 import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class ItemRenderingHandler implements IItemRenderer

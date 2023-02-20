@@ -1,9 +1,9 @@
 package mekanism.api.gas;
 
+import net.minecraftforge.fluids.Fluid;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import net.minecraftforge.fluids.Fluid;
 
 public class GasRegistry
 {

@@ -1,5 +1,7 @@
 package mekanism.client.gui;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mekanism.client.gui.element.GuiContainerEditMode;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.common.content.tank.TankUpdateProtocol;
@@ -10,11 +12,7 @@ import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraftforge.fluids.FluidStack;
-
 import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiDynamicTank extends GuiMekanism

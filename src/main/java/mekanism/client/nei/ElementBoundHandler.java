@@ -1,10 +1,10 @@
 package mekanism.client.nei;
 
+import codechicken.lib.vec.Rectangle4i;
+import codechicken.nei.api.INEIGuiAdapter;
 import mekanism.client.gui.GuiMekanism;
 import mekanism.client.gui.element.GuiElement;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import codechicken.lib.vec.Rectangle4i;
-import codechicken.nei.api.INEIGuiAdapter;
 
 public class ElementBoundHandler extends INEIGuiAdapter
 {

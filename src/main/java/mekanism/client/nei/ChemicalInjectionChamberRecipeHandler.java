@@ -1,12 +1,7 @@
 package mekanism.client.nei;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import mekanism.api.gas.Gas;
-import mekanism.api.gas.GasRegistry;
-import mekanism.api.util.ListUtils;
+import mekanism.api.gas.GasifyableItems;
 import mekanism.client.gui.GuiChemicalInjectionChamber;
 import mekanism.client.gui.element.GuiProgress.ProgressBar;
 import mekanism.common.Tier.GasTankTier;
@@ -16,6 +11,10 @@ import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class ChemicalInjectionChamberRecipeHandler extends AdvancedMachineRecipeHandler
 {
@@ -46,46 +45,24 @@ public class ChemicalInjectionChamberRecipeHandler extends AdvancedMachineRecipe
 	@Override
 	public List<ItemStack> getFuelStacks(Gas gasType)
 	{
-		if(gasType == GasRegistry.getGas("sulfuricAcid"))
-		{
-			List<ItemStack> fuels = new ArrayList<ItemStack>();
-			fuels.addAll(OreDictionary.getOres("dustSulfur"));
+		if(GasifyableItems.isGasValidGasifyable(gasType)) {
 
-			for(GasTankTier tier : GasTankTier.values())
-			{
-				fuels.add(MekanismUtils.getFullGasTank(tier, GasRegistry.getGas("sulfuricAcid")));
+			String oredict = GasifyableItems.getItemFromGas(gasType);
+			List<ItemStack> fuels = new ArrayList<>();
+
+			if (oredict != null && !OreDictionary.getOres(oredict).isEmpty())
+				fuels.addAll(OreDictionary.getOres(oredict));
+
+			if (gasType.isVisible()) {
+
+				for (GasTankTier tier : GasTankTier.values())
+					fuels.add(MekanismUtils.getFullGasTank(tier, gasType));
 			}
-			
-			return fuels;
-		}
-		else if(gasType == GasRegistry.getGas("water"))
-		{
-			for(GasTankTier tier : GasTankTier.values())
-			{
-				return ListUtils.asList(MekanismUtils.getFullGasTank(tier, GasRegistry.getGas("water")));
-			}
-		}
-		else if(gasType == GasRegistry.getGas("hydrogenChloride"))
-		{
-			List<ItemStack> fuels = new ArrayList<ItemStack>();
-			fuels.addAll(OreDictionary.getOres("dustSalt"));
-			
-			for(GasTankTier tier : GasTankTier.values())
-			{
-				fuels.add(MekanismUtils.getFullGasTank(tier, GasRegistry.getGas("hydrogenChloride")));
-			}
-			
-			return fuels;
-		}
-		else if(gasType == GasRegistry.getGas("molasse"))
-		{
-			List<ItemStack> fuels = new ArrayList<ItemStack>();
-			fuels.addAll(OreDictionary.getOres("dustSugar"));
 
 			return fuels;
 		}
 
-		return new ArrayList<ItemStack>();
+		return new ArrayList<>();
 	}
 	
 	@Override

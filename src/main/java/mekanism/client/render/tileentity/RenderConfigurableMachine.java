@@ -1,7 +1,9 @@
 package mekanism.client.render.tileentity;
 
-import java.util.HashMap;
-
+import codechicken.lib.math.MathHelper;
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mekanism.api.Coord4D;
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.client.render.MekanismRenderer;
@@ -21,13 +23,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-
 import org.lwjgl.opengl.GL11;
 
-import codechicken.lib.math.MathHelper;
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.HashMap;
 
 @SideOnly(Side.CLIENT)
 public class RenderConfigurableMachine extends TileEntitySpecialRenderer

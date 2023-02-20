@@ -1,8 +1,5 @@
 package mekanism.client.nei;
 
-import java.util.Collection;
-import java.util.List;
-
 import mekanism.api.gas.Gas;
 import mekanism.api.util.ListUtils;
 import mekanism.client.gui.GuiCombiner;
@@ -12,6 +9,9 @@ import mekanism.common.recipe.machines.CombinerRecipe;
 import mekanism.common.util.LangUtils;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+
+import java.util.Collection;
+import java.util.List;
 
 public class CombinerRecipeHandler extends AdvancedMachineRecipeHandler
 {

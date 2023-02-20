@@ -1,10 +1,8 @@
 package mekanism.client.render;
 
-import mekanism.client.model.ModelArmoredJetpack;
-import mekanism.client.model.ModelFreeRunners;
-import mekanism.client.model.ModelGasMask;
-import mekanism.client.model.ModelJetpack;
-import mekanism.client.model.ModelScubaTank;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import mekanism.client.model.*;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.client.Minecraft;
@@ -13,11 +11,7 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
-
 import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class ModelCustomArmor extends ModelBiped

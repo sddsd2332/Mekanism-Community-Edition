@@ -1,26 +1,10 @@
 package mekanism.client.render.block;
 
+import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mekanism.client.ClientProxy;
-import mekanism.client.model.ModelChargepad;
-import mekanism.client.model.ModelChemicalCrystallizer;
-import mekanism.client.model.ModelChemicalDissolutionChamber;
-import mekanism.client.model.ModelChemicalInfuser;
-import mekanism.client.model.ModelChemicalOxidizer;
-import mekanism.client.model.ModelChemicalWasher;
-import mekanism.client.model.ModelDigitalMiner;
-import mekanism.client.model.ModelElectricPump;
-import mekanism.client.model.ModelElectrolyticSeparator;
-import mekanism.client.model.ModelFluidicPlenisher;
-import mekanism.client.model.ModelLaser;
-import mekanism.client.model.ModelLaserAmplifier;
-import mekanism.client.model.ModelLogisticalSorter;
-import mekanism.client.model.ModelMetallurgicInfuser;
-import mekanism.client.model.ModelPressurizedReactionChamber;
-import mekanism.client.model.ModelQuantumEntangloporter;
-import mekanism.client.model.ModelResistiveHeater;
-import mekanism.client.model.ModelRotaryCondensentrator;
-import mekanism.client.model.ModelSeismicVibrator;
-import mekanism.client.model.ModelSolarNeutronActivator;
+import mekanism.client.model.*;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.common.block.BlockMachine.MachineType;
 import mekanism.common.util.MekanismUtils;
@@ -29,12 +13,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.world.IBlockAccess;
-
 import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class MachineRenderingHandler implements ISimpleBlockRenderingHandler

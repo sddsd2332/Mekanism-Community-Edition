@@ -1,10 +1,5 @@
 package mekanism.client.gui;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.client.gui.element.GuiElement;
 import mekanism.common.SideData;
@@ -18,9 +13,13 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public abstract class GuiMekanism extends GuiContainer implements IGuiWrapper
 {

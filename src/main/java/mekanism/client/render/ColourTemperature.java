@@ -1,9 +1,9 @@
 package mekanism.client.render;
 
-import java.util.HashMap;
-
-import mekanism.api.IHeatTransfer;
 import codechicken.lib.colour.ColourRGBA;
+import mekanism.api.IHeatTransfer;
+
+import java.util.HashMap;
 
 public class ColourTemperature extends ColourRGBA
 {

@@ -1,29 +1,21 @@
 package mekanism.client.gui;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mekanism.api.gas.GasTank;
-import mekanism.client.gui.element.GuiGasGauge;
+import mekanism.client.gui.element.*;
 import mekanism.client.gui.element.GuiGasGauge.IGasInfoHandler;
-import mekanism.client.gui.element.GuiGauge;
-import mekanism.client.gui.element.GuiProgress;
 import mekanism.client.gui.element.GuiProgress.IProgressInfoHandler;
 import mekanism.client.gui.element.GuiProgress.ProgressBar;
-import mekanism.client.gui.element.GuiRedstoneControl;
-import mekanism.client.gui.element.GuiSecurityTab;
-import mekanism.client.gui.element.GuiSlot;
 import mekanism.client.gui.element.GuiSlot.SlotOverlay;
 import mekanism.client.gui.element.GuiSlot.SlotType;
-import mekanism.client.gui.element.GuiUpgradeTab;
 import mekanism.common.inventory.container.ContainerSolarNeutronActivator;
 import mekanism.common.tile.TileEntitySolarNeutronActivator;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.entity.player.InventoryPlayer;
-
 import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiSolarNeutronActivator extends GuiMekanism

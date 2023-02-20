@@ -1,29 +1,12 @@
 package mekanism.client.nei;
 
-import mekanism.client.gui.GuiChemicalCrystallizer;
-import mekanism.client.gui.GuiChemicalDissolutionChamber;
-import mekanism.client.gui.GuiChemicalInfuser;
-import mekanism.client.gui.GuiChemicalInjectionChamber;
-import mekanism.client.gui.GuiChemicalOxidizer;
-import mekanism.client.gui.GuiChemicalWasher;
-import mekanism.client.gui.GuiCombiner;
-import mekanism.client.gui.GuiCrusher;
-import mekanism.client.gui.GuiElectrolyticSeparator;
-import mekanism.client.gui.GuiEnrichmentChamber;
-import mekanism.client.gui.GuiMetallurgicInfuser;
-import mekanism.client.gui.GuiOsmiumCompressor;
-import mekanism.client.gui.GuiPRC;
-import mekanism.client.gui.GuiPrecisionSawmill;
-import mekanism.client.gui.GuiPurificationChamber;
-import mekanism.client.gui.GuiRotaryCondensentrator;
-import mekanism.client.gui.GuiSolarNeutronActivator;
-import mekanism.client.gui.GuiThermalEvaporationController;
-import mekanism.common.MekanismBlocks;
-import mekanism.common.MekanismItems;
-import net.minecraft.item.ItemStack;
 import codechicken.nei.api.API;
 import codechicken.nei.api.IConfigureNEI;
 import codechicken.nei.guihook.GuiContainerManager;
+import mekanism.client.gui.*;
+import mekanism.common.MekanismBlocks;
+import mekanism.common.MekanismItems;
+import net.minecraft.item.ItemStack;
 
 public class NEIMekanismConfig implements IConfigureNEI
 {

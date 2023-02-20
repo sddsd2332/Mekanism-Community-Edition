@@ -1,9 +1,5 @@
 package mekanism.tools.item;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-
 import mekanism.api.util.StackUtils;
 import mekanism.common.Mekanism;
 import mekanism.common.MekanismItems;
@@ -15,6 +11,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 public class ItemMekanismTool extends ItemTool
 {

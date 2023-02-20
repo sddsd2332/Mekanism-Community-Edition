@@ -1,11 +1,11 @@
 package mekanism.api;
 
+import mekanism.api.util.UnitDisplayUtils.EnergyType;
+import mekanism.api.util.UnitDisplayUtils.TempType;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import mekanism.api.util.UnitDisplayUtils.EnergyType;
-import mekanism.api.util.UnitDisplayUtils.TempType;
 
 public class MekanismConfig
 {
