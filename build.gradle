@@ -61,7 +61,11 @@ dependencies {
     compile "mcp.mobius.waila:Waila:1.5.10_1.7.10:dev"
 }
 
-version = "${config.minecraft_version}-${config.mod_version}"
+if (System.getenv("BUILD_VER") == null){
+    version = "${config.minecraft_version}-${config.mod_version}"
+} else {
+    version = "${config.minecraft_version}-${config.mod_version}" + System.getenv("BUILD_VER")
+}
 group= "mekanism"
 archivesBaseName = "Mekanism-Community-Edition"
 libsDirName = "../output"
@@ -74,7 +78,11 @@ minecraft {
     replaceIn "mekanism/common/Mekanism.java"
     replaceIn "mekanism/generators/common/MekanismGenerators.java"
     replaceIn "mekanism/tools/common/MekanismTools.java"
-    replace "GRADLE_MODVERSION", config.mod_version
+    if (System.getenv("BUILD_VER") == null){
+        replace "GRADLE_MODVERSION", config.mod_version
+    } else {
+        replace "GRADLE_MODVERSION", config.mod_version + System.getenv("BUILD_VER")
+    }
     replace "GRADLE_VERSIONMOD", config.alt_version
 }
 
@@ -203,11 +211,7 @@ publishing {
         mavenJava(MavenPublication) {
             artifactId = project.archivesBaseName
             groupId = project.group
-            if (System.getenv("BUILD_VER") == null){
-                version = project.version
-            } else {
-                version = project.version + System.getenv("BUILD_VER")
-            }
+            version = project.version
             artifacts = [toolsJar, coreJar, generatorsJar, MDKZip, alltJar, apiJar]
             components.java.withVariantsFromConfiguration(configurations.runtimeElements) {
                 skip()
