@@ -309,18 +309,18 @@ public class CommonProxy implements IGuiProvider
 		general.blacklistIC2 = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "BlacklistIC2Power", false).getBoolean();
 		general.blacklistRF = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "BlacklistRFPower", false).getBoolean();
 
-		mekce.EnableQuartzCompat = Mekanism.configuration.get("mekce", "EnableQuartzCompat", true, "Allows quartz dust to be enriched into quartz Also allows quartz ore to be enriched into quartz dust").getBoolean();
-		mekce.EnableDiamondCompat = Mekanism.configuration.get("mekce", "EnableDiamondCompat", true, "Allows oredict'ed diamonds to be used in the enrichment chamber, like synthetic diamonds.").getBoolean();
-		mekce.EnablePoorOresCompat = Mekanism.configuration.get("mekce", "EnablePoorOresCompat", true, "Allows poor ores from railcraft to be used in the purification chamber and gives one clump ie one ingot.").getBoolean();
-		mekce.OreDictOsmium = Mekanism.configuration.get("mekce", "OreDictOsmium", true, "Adds the oredict (osmium) to osmium").getBoolean();
-		mekce.OreDictPlatinum = Mekanism.configuration.get("mekce", "OreDictPlatinum", false, "Adds the oredict (platinum) to osmium").getBoolean();
-		mekce.enableSiliconCompat = Mekanism.configuration.get("mekce", "EnableSiliconCompat", true, "When a mod that adds silicon (galacticraft, enderio and projectred) is detected, recipe for control circuit is changed from using iron to silicon in the metalurgic infuser").getBoolean();
-		mekce.digitalMinerMaxRadius = Mekanism.configuration.get("mekce", "DigitalMinerMaxRadius", 32, "Select range from 1 to 64, we do not recommend going over 32", 1, 64).getInt();
-		mekce.enableSingleUseCardboxes = Mekanism.configuration.get("mekce", "EnableSingleUseCardboxes", true, "This allows to force single use on cardboxes or not").getBoolean();
+		mekce.EnableQuartzCompat = Mekanism.configurationce.get("mekce", "EnableQuartzCompat", true, "Allows quartz dust to be enriched into quartz Also allows quartz ore to be enriched into quartz dust").getBoolean();
+		mekce.EnableDiamondCompat = Mekanism.configurationce.get("mekce", "EnableDiamondCompat", true, "Allows oredict'ed diamonds to be used in the enrichment chamber, like synthetic diamonds.").getBoolean();
+		mekce.EnablePoorOresCompat = Mekanism.configurationce.get("mekce", "EnablePoorOresCompat", true, "Allows poor ores from railcraft to be used in the purification chamber and gives one clump ie one ingot.").getBoolean();
+		mekce.OreDictOsmium = Mekanism.configurationce.get("mekce", "OreDictOsmium", true, "Adds the oredict (osmium) to osmium").getBoolean();
+		mekce.OreDictPlatinum = Mekanism.configurationce.get("mekce", "OreDictPlatinum", false, "Adds the oredict (platinum) to osmium").getBoolean();
+		mekce.enableSiliconCompat = Mekanism.configurationce.get("mekce", "EnableSiliconCompat", true, "When a mod that adds silicon (galacticraft, enderio and projectred) is detected, recipe for control circuit is changed from using iron to silicon in the metalurgic infuser").getBoolean();
+		mekce.digitalMinerMaxRadius = Mekanism.configurationce.get("mekce", "DigitalMinerMaxRadius", 32, "Select range from 1 to 64, we do not recommend going over 32", 1, 64).getInt();
+		mekce.enableSingleUseCardboxes = Mekanism.configurationce.get("mekce", "EnableSingleUseCardboxes", true, "This allows to force single use on cardboxes or not").getBoolean();
 
 
-		mekce.IC2SinkTier = Mekanism.configuration.get("mekce", "IC2SinkTier", 4, "Tier level for machines, we recommend setting it to tier 2 for ic2 classic", 1, 4).getInt();
-		mekce.IC2SourceTier = Mekanism.configuration.get("mekce", "IC2SourceTier", 4, "Tier level for generators, we recommend setting it to tier 2 for ic2 classic", 1, 4).getInt();
+		mekce.IC2SinkTier = Mekanism.configurationce.get("mekce", "IC2SinkTier", 4, "Tier level for machines, we recommend setting it to tier 2 for ic2 classic", 1, 4).getInt();
+		mekce.IC2SourceTier = Mekanism.configurationce.get("mekce", "IC2SourceTier", 4, "Tier level for generators, we recommend setting it to tier 2 for ic2 classic", 1, 4).getInt();
 
 		String s = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "EnergyType", "RF", null, new String[]{"J", "RF", "MJ", "EU"}).getString();
 
