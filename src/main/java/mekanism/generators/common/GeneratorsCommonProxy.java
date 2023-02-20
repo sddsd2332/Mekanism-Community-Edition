@@ -1,6 +1,7 @@
 package mekanism.generators.common;
 
 import mekanism.api.MekanismConfig.generators;
+import mekanism.api.MekanismConfig.mekce_generators;
 import mekanism.api.MekanismConfig.generatorsrecipes;
 import mekanism.common.Mekanism;
 import mekanism.common.base.IGuiProvider;
@@ -101,9 +102,9 @@ public class GeneratorsCommonProxy implements IGuiProvider
 	{
 		generators.advancedSolarGeneration = Mekanism.configurationgenerators.get("generation", "AdvancedSolarGeneration", 300D).getDouble();
 		generators.bioGeneration = Mekanism.configurationgenerators.get("generation", "BioGeneration", 100D).getDouble();
-		generators.biogasDuration = Mekanism.configurationgenerators.get("generation", "BiogasDuration", 1).getInt();
-		generators.ethanolDuration = Mekanism.configurationgenerators.get("generation", "EthanolDuration", 2).getInt();
-		generators.ethanolMultiplier = Mekanism.configurationgenerators.get("generation", "EthanolMultiplier", 3D).getDouble();
+		mekce_generators.biogasDuration = Mekanism.configurationce.get("mekce_generation", "BiogasDuration", 1).getInt();
+		mekce_generators.ethanolDuration = Mekanism.configurationce.get("mekce_generation", "EthanolDuration", 2).getInt();
+		mekce_generators.ethanolMultiplier = Mekanism.configurationce.get("mekce_generation", "EthanolMultiplier", 3D).getDouble();
 		generators.heatGeneration = Mekanism.configurationgenerators.get("generation", "HeatGeneration", 150D).getDouble();
 		generators.heatGenerationLava = Mekanism.configurationgenerators.get("generation", "HeatGenerationLava", 5D).getDouble();
 		generators.heatGenerationNether = Mekanism.configurationgenerators.get("generation", "HeatGenerationNether", 100D).getDouble();
@@ -116,7 +117,7 @@ public class GeneratorsCommonProxy implements IGuiProvider
 		generators.turbineVentGasFlow = Mekanism.configurationgenerators.get("generation", "TurbineVentGasFlow", 16000D).getDouble();
 		generators.turbineDisperserGasFlow = Mekanism.configurationgenerators.get("generation", "TurbineDisperserGasFlow", 640D).getDouble();
 		generators.condenserRate = Mekanism.configurationgenerators.get("generation", "TurbineCondenserFlowRate", 32000).getInt();
-		generators.enableWindmillWhitelist = Mekanism.configurationce.get("mekce_generation", "EnableWindmillWhitelist", true).getBoolean();
+		mekce_generators.enableWindmillWhitelist = Mekanism.configurationce.get("mekce_generation", "EnableWindmillWhitelist", true).getBoolean();
 
 		generatorsrecipes.enableHeatGenerator = Mekanism.configurationrecipes.get("generationrecipes","enableHeatGenerator", true).getBoolean();
 		generatorsrecipes.enableSolarGenerator = Mekanism.configurationrecipes.get("generationrecipes","enableSolarGenerator", true).getBoolean();
@@ -152,8 +153,8 @@ public class GeneratorsCommonProxy implements IGuiProvider
 	public void loadwinddimension()
 	{
 		String[] windid = {"0"};
-		generators.winddimensionids = Arrays.asList(Mekanism.configurationce.getStringList("winddimensionids", "mekce_generation", windid, "List of dimension id's to be whitelisted"));
-		dimid = generators.winddimensionids.stream().map(Integer::parseInt).collect(Collectors.toList());
+		mekce_generators.winddimensionids = Arrays.asList(Mekanism.configurationce.getStringList("winddimensionids", "mekce_generation", windid, "List of dimension id's to be whitelisted"));
+		dimid = mekce_generators.winddimensionids.stream().map(Integer::parseInt).collect(Collectors.toList());
 		System.out.println("Windmill whitelist : " + dimid);
 	}
 

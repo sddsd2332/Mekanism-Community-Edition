@@ -152,9 +152,6 @@ public class MekanismConfig
 	{
 		public static double advancedSolarGeneration;
 		public static double bioGeneration;
-		public static int ethanolDuration;
-		public static int biogasDuration;
-		public static double ethanolMultiplier;
 		public static double heatGeneration;
 		public static double heatGenerationLava;
 		public static double heatGenerationNether;
@@ -169,6 +166,13 @@ public class MekanismConfig
 		public static double turbineVentGasFlow;
 		public static double turbineDisperserGasFlow;
 		public static int condenserRate;
+	}
+
+	public static class mekce_generators
+	{
+		public static int ethanolDuration;
+		public static int biogasDuration;
+		public static double ethanolMultiplier;
 		public static boolean enableWindmillWhitelist;
 		public static List<String> winddimensionids;
 	}

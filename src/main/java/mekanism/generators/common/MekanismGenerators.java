@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import mekanism.api.MekanismConfig.general;
 import mekanism.api.MekanismConfig.generators;
+import mekanism.api.MekanismConfig.mekce_generators;
 import mekanism.api.MekanismConfig.generatorsrecipes;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasRegistry;
@@ -264,9 +265,9 @@ public class MekanismGenerators implements IModule
 	{
 		dataStream.writeDouble(generators.advancedSolarGeneration);
 		dataStream.writeDouble(generators.bioGeneration);
-		dataStream.writeInt(generators.biogasDuration);
-		dataStream.writeInt(generators.ethanolDuration);
-		dataStream.writeDouble(generators.ethanolMultiplier);
+		dataStream.writeInt(mekce_generators.biogasDuration);
+		dataStream.writeInt(mekce_generators.ethanolDuration);
+		dataStream.writeDouble(mekce_generators.ethanolMultiplier);
 		dataStream.writeDouble(generators.heatGeneration);
 		dataStream.writeDouble(generators.heatGenerationLava);
 		dataStream.writeDouble(generators.heatGenerationNether);
@@ -284,7 +285,7 @@ public class MekanismGenerators implements IModule
 		dataStream.writeDouble(generators.turbineVentGasFlow);
 		dataStream.writeDouble(generators.turbineDisperserGasFlow);
 		dataStream.writeInt(generators.condenserRate);
-		dataStream.writeBoolean(generators.enableWindmillWhitelist);
+		dataStream.writeBoolean(mekce_generators.enableWindmillWhitelist);
 
 		dataStream.writeBoolean(generatorsrecipes.enableHeatGenerator);
 		dataStream.writeBoolean(generatorsrecipes.enableSolarGenerator);
@@ -314,9 +315,9 @@ public class MekanismGenerators implements IModule
 	{
 		generators.advancedSolarGeneration = dataStream.readDouble();
 		generators.bioGeneration = dataStream.readDouble();
-		generators.biogasDuration = dataStream.readInt();
-		generators.ethanolDuration = dataStream.readInt();
-		generators.ethanolMultiplier = dataStream.readDouble();
+		mekce_generators.biogasDuration = dataStream.readInt();
+		mekce_generators.ethanolDuration = dataStream.readInt();
+		mekce_generators.ethanolMultiplier = dataStream.readDouble();
 		generators.heatGeneration = dataStream.readDouble();
 		generators.heatGenerationLava = dataStream.readDouble();
 		generators.heatGenerationNether = dataStream.readDouble();
@@ -334,7 +335,7 @@ public class MekanismGenerators implements IModule
 		generators.turbineVentGasFlow = dataStream.readDouble();
 		generators.turbineDisperserGasFlow = dataStream.readDouble();
 		generators.condenserRate = dataStream.readInt();
-		generators.enableWindmillWhitelist = dataStream.readBoolean();
+		mekce_generators.enableWindmillWhitelist = dataStream.readBoolean();
 
 		generatorsrecipes.enableHeatGenerator = dataStream.readBoolean();
 		generatorsrecipes.enableSolarGenerator = dataStream.readBoolean();

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import mekanism.api.Coord4D;
 import mekanism.api.MekanismConfig.generators;
+import mekanism.api.MekanismConfig.mekce_generators;
 import mekanism.common.base.IBoundingBlock;
 import mekanism.common.util.ChargeUtils;
 import mekanism.common.util.MekanismUtils;
@@ -98,7 +99,7 @@ public class TileEntityWindGenerator extends TileEntityGenerator implements IBou
 	}
 	public boolean isInWhitelistedDimension()
 	{
-		if (!generators.enableWindmillWhitelist)
+		if (!mekce_generators.enableWindmillWhitelist)
 		{
 			return true;
 		}

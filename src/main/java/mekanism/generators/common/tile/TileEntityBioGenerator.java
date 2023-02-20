@@ -4,7 +4,9 @@ import io.netty.buffer.ByteBuf;
 
 import java.util.ArrayList;
 
+import mekanism.api.MekanismConfig;
 import mekanism.api.MekanismConfig.generators;
+import mekanism.api.MekanismConfig.mekce_generators;
 import mekanism.api.gas.*;
 import mekanism.api.gas.GasTank;
 import mekanism.common.base.ISustainedData;
@@ -26,7 +28,7 @@ public class TileEntityBioGenerator extends TileEntityGenerator implements IGasH
 
 	public TileEntityBioGenerator()
 	{
-		super("bio", "BioGenerator", 180000, generators.bioGeneration * generators.ethanolMultiplier * 2);
+		super("bio", "BioGenerator", 180000, generators.bioGeneration * mekce_generators.ethanolMultiplier * 2);
 		inventory = new ItemStack[2];
 		fuelTank = new GasTank(MAX_GAS);
 	}
@@ -82,7 +84,7 @@ public class TileEntityBioGenerator extends TileEntityGenerator implements IGasH
 
 					if (gasDuration <= 0) {
 						fuelTank.setGas(new GasStack(fuelTank.getGasType(), fuelTank.getStored() - 1));
-						gasDuration = (fuelTank.getGas().getGas() == GasRegistry.getGas("bioethanol")) ? generators.ethanolDuration : generators.biogasDuration;
+						gasDuration = (fuelTank.getGas().getGas() == GasRegistry.getGas("bioethanol")) ? MekanismConfig.mekce_generators.ethanolDuration : MekanismConfig.mekce_generators.biogasDuration;
 					} else gasDuration--;
 			} else {
 				//reset
@@ -165,7 +167,7 @@ public class TileEntityBioGenerator extends TileEntityGenerator implements IGasH
 	{
 		if (gas == GasRegistry.getGas("bioethanol")) {
 
-			return generators.ethanolMultiplier;
+			return mekce_generators.ethanolMultiplier;
 		}
 		return 1;
 	}
