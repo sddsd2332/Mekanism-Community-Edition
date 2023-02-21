@@ -31,7 +31,7 @@ public class GuiMekanismConfig extends GuiConfig
 		list.add(new DummyCategoryElement(LangUtils.localize("mekanism.configgui.ctgy.client"), "mekanism.configgui.ctgy.client", ClientEntry.class));
 		list.add(new DummyCategoryElement(LangUtils.localize("mekanism.configgui.ctgy.mekce"), "mekanism.configgui.ctgy.mekce", MEKCEEntry.class));
 		list.add(new DummyCategoryElement(LangUtils.localize("mekanism.configgui.ctgy.recipe"), "mekanism.configgui.ctgy.recipe", RecipeEntry.class));
-		list.add(new DummyCategoryElement(LangUtils.localize("mekanism.configgui.ctgy.mekce_client"), "mekanism.configgui.ctgy.mekce_client", RecipeEntry.class));
+		list.add(new DummyCategoryElement(LangUtils.localize("mekanism.configgui.ctgy.mekce_client"), "mekanism.configgui.ctgy.mekce_client", MEKCEClientEntry.class));
 		return list;
 	}
 
