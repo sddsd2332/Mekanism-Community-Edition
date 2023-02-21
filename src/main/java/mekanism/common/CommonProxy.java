@@ -257,7 +257,7 @@ public class CommonProxy implements IGuiProvider
 		general.dynamicTankEasterEgg = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "DynamicTankEasterEgg", false).getBoolean();
 		general.cardboardSpawners = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "AllowSpawnerBoxPickup", true).getBoolean();
 		general.enableWorldRegeneration = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "EnableWorldRegeneration", false).getBoolean();
-		mekce.enableBoPProgression = Mekanism.configurationce.get("mekce", "enableBoPProgression", true, "when true and biome's o plenty is installed atomic alloy is made by using ender instead of obsidian").getBoolean();
+		mekce.enableBoPProgression = Mekanism.configurationce.get("mekce", "EnableBoPProgression", true, "when true and biome's o plenty is installed atomic alloy is made by using ender instead of obsidian").getBoolean();
 		general.spawnBabySkeletons = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "SpawnBabySkeletons", true).getBoolean();
 		general.obsidianTNTDelay = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "ObsidianTNTDelay", 100).getInt();
 		general.obsidianTNTBlastRadius = Mekanism.configuration.get(Configuration.CATEGORY_GENERAL, "ObsidianTNTBlastRadius", 12).getInt();

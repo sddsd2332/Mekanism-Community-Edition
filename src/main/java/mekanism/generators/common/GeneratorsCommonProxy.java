@@ -157,7 +157,7 @@ public class GeneratorsCommonProxy implements IGuiProvider
 	public void loadwinddimension()
 	{
 		String[] windid = {"0"};
-		mekce_generators.winddimensionids = Arrays.asList(Mekanism.configurationce.getStringList("winddimensionids", "mekce_generation", windid, "List of dimension id's to be whitelisted"));
+		mekce_generators.winddimensionids = Arrays.asList(Mekanism.configurationce.getStringList("Winddimensionids", "mekce_generation", windid, "List of dimension id's to be whitelisted"));
 		dimid = mekce_generators.winddimensionids.stream().map(Integer::parseInt).collect(Collectors.toList());
 		System.out.println("Windmill whitelist : " + dimid);
 	}
