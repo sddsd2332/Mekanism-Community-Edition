@@ -76,9 +76,9 @@ public class GuiGeneratorsConfig extends GuiConfig
 		protected GuiScreen buildChildScreen()
 		{
 			return new GuiConfig(owningScreen,
-					new ConfigElement(Mekanism.configurationce.getCategory("generationrecipes")).getChildElements(),
+					new ConfigElement(Mekanism.configurationgenerators.getCategory("generationrecipes")).getChildElements(),
 					owningScreen.modID, Configuration.CATEGORY_GENERAL, false, false,
-					GuiConfig.getAbridgedConfigPath(Mekanism.configurationce.toString()));
+					GuiConfig.getAbridgedConfigPath(Mekanism.configurationgenerators.toString()));
 		}
 	}
 }
