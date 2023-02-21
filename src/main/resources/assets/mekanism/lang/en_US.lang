@@ -417,9 +417,10 @@ mekanism.configgui.ctgy.machines=Machine Settings
 mekanism.configgui.ctgy.tier=Tier Settings
 mekanism.configgui.ctgy.usage=Usage Settings
 mekanism.configgui.ctgy.client=Client Settings
-mekanism.configgui.ctgy.mekce=MEK:CE Settings
+mekanism.configgui.ctgy.mekce=MEK:CE General Settings
 mekanism.configgui.ctgy.gengeneral=Mekanism Generators Settings
 mekanism.configgui.ctgy.mekcegen=MEK:CE Settings
+mekanism.configgui.ctgy.recipe=MEK:CE Recipe Settings
 
 //Config Tooltips
 mekanism.configgui.ctgy.general.tooltip=General settings regarding Mekanism and all its modules
@@ -427,9 +428,10 @@ mekanism.configgui.ctgy.machines.tooltip=Settings regarding enabling and disabli
 mekanism.configgui.ctgy.tier.tooltip=Settings regarding Mekanism tiers and their corresponding values
 mekanism.configgui.ctgy.usage.tooltip=Settings regarding machinery and their energy usage
 mekanism.configgui.ctgy.client.tooltip=Client-specific settings regarding Mekanism and all its modules
-mekanism.configgui.ctgy.mekce.tooltip=Settings added by MEK:CE
+mekanism.configgui.ctgy.mekce.tooltip=General settings added by MEK:CE
 mekanism.configgui.ctgy.gengeneral.tooltip=General settings regarding Mekanism Generators
-mekanism.configgui.ctgy.mekcegen.tooltip=Settings added by MEK:CE
+mekanism.configgui.ctgy.mekcegen.tooltip=Generators settings added by MEK:CE
+mekanism.configgui.ctgy.recipe.tooltip=Recipe settings added by MEK:CE
 
 //Gui text
 gui.condensentrating=Condensentrating

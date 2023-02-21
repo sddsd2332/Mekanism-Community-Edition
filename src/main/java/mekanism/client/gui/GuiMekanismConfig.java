@@ -30,6 +30,7 @@ public class GuiMekanismConfig extends GuiConfig
 		list.add(new DummyCategoryElement(LangUtils.localize("mekanism.configgui.ctgy.usage"), "mekanism.configgui.ctgy.usage", UsageEntry.class));
 		list.add(new DummyCategoryElement(LangUtils.localize("mekanism.configgui.ctgy.client"), "mekanism.configgui.ctgy.client", ClientEntry.class));
 		list.add(new DummyCategoryElement(LangUtils.localize("mekanism.configgui.ctgy.mekce"), "mekanism.configgui.ctgy.mekce", MEKCEEntry.class));
+		list.add(new DummyCategoryElement(LangUtils.localize("mekanism.configgui.ctgy.recipe"), "mekanism.configgui.ctgy.recipe", RecipeEntry.class));
 		return list;
 	}
 
@@ -132,6 +133,22 @@ public class GuiMekanismConfig extends GuiConfig
 					new ConfigElement(Mekanism.configuration.getCategory("client")).getChildElements(),
 					owningScreen.modID, "client", false, false,
 					GuiConfig.getAbridgedConfigPath(Mekanism.configuration.toString()));
+		}
+	}
+	public static class RecipeEntry extends CategoryEntry
+	{
+		public RecipeEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement prop)
+		{
+			super(owningScreen, owningEntryList, prop);
+		}
+
+		@Override
+		protected GuiScreen buildChildScreen()
+		{
+			return new GuiConfig(owningScreen,
+					new ConfigElement(Mekanism.configurationrecipes.getCategory("Recipes")).getChildElements(),
+					owningScreen.modID, "Recipes", false, false,
+					GuiConfig.getAbridgedConfigPath(Mekanism.configurationrecipes.toString()));
 		}
 	}
 }
