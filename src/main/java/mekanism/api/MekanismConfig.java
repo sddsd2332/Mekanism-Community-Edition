@@ -100,6 +100,10 @@ public class MekanismConfig
 		public static boolean enableAmbientLighting;
 		public static int ambientLightingLevel;
 		public static boolean opaqueTransmitters = false;
+	}
+
+	public static class mekce_client
+	{
 		public static boolean doMultiblockSparkle = true;
 		public static int multiblockSparkleIntensity = 6;
 	}

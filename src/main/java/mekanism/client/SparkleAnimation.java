@@ -3,7 +3,7 @@ package mekanism.client;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mekanism.api.Coord4D;
-import mekanism.api.MekanismConfig.client;
+import mekanism.api.MekanismConfig.mekce_client;
 import mekanism.api.MekanismConfig.general;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -47,7 +47,7 @@ public class SparkleAnimation
 				public void run()
 				{
 					World world = pointer.getWorldObj();
-					int count = client.multiblockSparkleIntensity;
+					int count = mekce_client.multiblockSparkleIntensity;
 					
 					for(Coord4D coord : iteratedNodes)
 					{
