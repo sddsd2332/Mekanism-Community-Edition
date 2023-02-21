@@ -164,7 +164,7 @@ public class GuiMekanismConfig extends GuiConfig
 		protected GuiScreen buildChildScreen()
 		{
 			return new GuiConfig(owningScreen,
-					new ConfigElement(Mekanism.configurationrecipes.getCategory("Recipes")).getChildElements(),
+					new ConfigElement(Mekanism.configurationrecipes.getCategory("recipes")).getChildElements(),
 					owningScreen.modID, Configuration.CATEGORY_GENERAL, false, false,
 					GuiConfig.getAbridgedConfigPath(Mekanism.configurationrecipes.toString()));
 		}
