@@ -149,7 +149,7 @@ public class GuiMekanismConfig extends GuiConfig
 		{
 			return new GuiConfig(owningScreen,
 					new ConfigElement(Mekanism.configurationce.getCategory("mekce_client")).getChildElements(),
-					owningScreen.modID, "mekce_client", false, false,
+					owningScreen.modID, Configuration.CATEGORY_GENERAL, false, false,
 					GuiConfig.getAbridgedConfigPath(Mekanism.configurationce.toString()));
 		}
 	}
@@ -165,7 +165,7 @@ public class GuiMekanismConfig extends GuiConfig
 		{
 			return new GuiConfig(owningScreen,
 					new ConfigElement(Mekanism.configurationrecipes.getCategory("Recipes")).getChildElements(),
-					owningScreen.modID, "Recipes", false, false,
+					owningScreen.modID, Configuration.CATEGORY_GENERAL, false, false,
 					GuiConfig.getAbridgedConfigPath(Mekanism.configurationrecipes.toString()));
 		}
 	}
