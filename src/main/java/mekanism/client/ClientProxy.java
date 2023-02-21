@@ -93,6 +93,10 @@ public class ClientProxy extends CommonProxy
 		{
 			Mekanism.configuration.save();
 		}
+		if(Mekanism.configurationce.hasChanged())
+		{
+			Mekanism.configurationce.save();
+		}
 	}
 
 	@Override

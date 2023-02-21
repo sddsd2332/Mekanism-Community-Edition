@@ -148,6 +148,10 @@ public class GeneratorsCommonProxy implements IGuiProvider
 		{
 			Mekanism.configurationrecipes.save();
 		}
+		if(Mekanism.configurationce.hasChanged())
+		{
+			Mekanism.configurationce.save();
+		}
 	}
 
 	public void loadwinddimension()
