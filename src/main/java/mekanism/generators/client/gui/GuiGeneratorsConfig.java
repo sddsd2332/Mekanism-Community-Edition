@@ -29,6 +29,7 @@ public class GuiGeneratorsConfig extends GuiConfig
 		List<IConfigElement> list = new ArrayList<IConfigElement>();
 		list.add(new DummyConfigElement.DummyCategoryElement(LangUtils.localize("mekanism.configgui.ctgy.gengeneral"), "mekanism.configgui.ctgy.gengeneral", GuiGeneratorsConfig.GENGeneralEntry.class));
 		list.add(new DummyConfigElement.DummyCategoryElement(LangUtils.localize("mekanism.configgui.ctgy.mekcegen"), "mekanism.configgui.ctgy.mekcegen", GuiGeneratorsConfig.MEKCEGENEntry.class));
+		list.add(new DummyConfigElement.DummyCategoryElement(LangUtils.localize("mekanism.configgui.ctgy.recipegen"), "mekanism.configgui.ctgy.recipegen", GuiGeneratorsConfig.RecipeGENEntry.class));
 		return list;
 	}
 	public static class GENGeneralEntry extends GuiConfigEntries.CategoryEntry
@@ -60,6 +61,22 @@ public class GuiGeneratorsConfig extends GuiConfig
 		{
 			return new GuiConfig(owningScreen,
 					new ConfigElement(Mekanism.configurationce.getCategory("mekce_generation")).getChildElements(),
+					owningScreen.modID, Configuration.CATEGORY_GENERAL, false, false,
+					GuiConfig.getAbridgedConfigPath(Mekanism.configurationce.toString()));
+		}
+	}
+	public static class RecipeGENEntry extends GuiConfigEntries.CategoryEntry
+	{
+		public RecipeGENEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement prop)
+		{
+			super(owningScreen, owningEntryList, prop);
+		}
+
+		@Override
+		protected GuiScreen buildChildScreen()
+		{
+			return new GuiConfig(owningScreen,
+					new ConfigElement(Mekanism.configurationce.getCategory("generationrecipes")).getChildElements(),
 					owningScreen.modID, Configuration.CATEGORY_GENERAL, false, false,
 					GuiConfig.getAbridgedConfigPath(Mekanism.configurationce.toString()));
 		}

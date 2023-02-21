@@ -422,6 +422,8 @@ mekanism.configgui.ctgy.gengeneral=Mekanism Generators Settings
 mekanism.configgui.ctgy.mekcegen=MEK:CE Settings
 mekanism.configgui.ctgy.recipe=MEK:CE Recipe Settings
 mekanism.configgui.ctgy.mekce_client=MEK:CE Client Settings
+mekanism.configgui.ctgy.recipegen=MEK:CE Generators Recipe Settings
+
 
 //Config Tooltips
 mekanism.configgui.ctgy.general.tooltip=General settings regarding Mekanism and all its modules
@@ -434,6 +436,7 @@ mekanism.configgui.ctgy.gengeneral.tooltip=General settings regarding Mekanism G
 mekanism.configgui.ctgy.mekcegen.tooltip=Generators settings added by MEK:CE
 mekanism.configgui.ctgy.recipe.tooltip=Recipe settings added by MEK:CE
 mekanism.configgui.ctgy.mekce_client.tooltip=Client settings added by MEK:CE
+mekanism.configgui.ctgy.recipe.recipegen=Recipe settings added by MEK:CE
 
 //Gui text
 gui.condensentrating=Condensentrating
