@@ -7,7 +7,7 @@ Originally made for Terralization Modpack with fixes from several different fork
 + [MEK:CE TOOLS at curseforge](https://www.curseforge.com/minecraft/mc-mods/mekanism-ce-tools)
 + [MEK:CE GENERATORS at curseforge](https://www.curseforge.com/minecraft/mc-mods/mekanism-ce-generators)
 
-#### Builds at our [maven](https://maven.thorfusion.com/ui/repos/tree/General/thorfusion/mekanism/Mekanism-1.7.10-Community-Edition)
+#### Builds at our [maven](https://maven.thorfusion.com/ui/repos/tree/General/thorfusion/mekanism/Mekanism-Community-Edition)
 
 ### Building Mekanism 1.7.10 Community Edition
 
@@ -27,7 +27,7 @@ Also visit our [wiki](https://github.com/Thorfusion/Mekanism-Community-Edition/w
 ### [The Lost Era](https://modrinth.com/modpack/the-lost-era)
 
 ## For modpacks
-You need to include the [LICENSE](https://raw.githubusercontent.com/Thorfusion/Mekanism-1.7.10-Community-Edition/1.7.10/LICENSE.md) for Mekanism 1.7.10 Community Edition and Aidanbrady as author, if your system supports it indicate that this is an custom version and give appreciable credits
+You need to include the [LICENSE](https://raw.githubusercontent.com/Thorfusion/Mekanism-Community-Edition/1.7.10/LICENSE.md) for Mekanism 1.7.10 Community Edition and Aidanbrady as author, if your system supports it indicate that this is an custom version and give appreciable credits
 
 Mekanism CE has continued the use of the update notifier but changed the config name to v2. This is to notify people making the switch to CE of this feature. It is recommended for modpacks to disable this.
 
@@ -44,22 +44,23 @@ Mekanism CE also has two dependencies that it requires, as a modpack creator DO 
 
 ### Featured changes
 
-| Some Differences                                                                                                       | MK                | MK:[CE](https://www.curseforge.com/minecraft/mc-mods/mekanism-ce) |
-|------------------------------------------------------------------------------------------------------------------------|-------------------|-------------------------------------------------------------------|
-| Open Source                                                                                                            | :heavy_check_mark:| :heavy_check_mark:                                                |
-| Dupe: Chemical Washer                                                                                                  | :x:               | :heavy_check_mark:                                                |
-| Dupe: Fluidtank                                                                                                        | :x:               | :heavy_check_mark:                                                |
-| Dupe: [Fluidstack](https://github.com/Thorfusion/Mekanism-1.7.10-Community-Edition/issues/49)                          | :x:               | :heavy_check_mark:                                                |
-| Dupe: Factories                                                                                                        | :x:               | :heavy_check_mark:                                                |
-| Dupe: Bins                                                                                                             | :x:               | :heavy_check_mark:                                                |
-| Dupe: [Moving Players](https://github.com/Thorfusion/Mekanism-1.7.10-Community-Edition/issues/62)                      | :x:               | :heavy_check_mark:                                                |
-| BUG: [Osmium Compressor](https://github.com/Thorfusion/Mekanism-1.7.10-Community-Edition/issues/32)                    | :x:               | :heavy_check_mark:                                                |
-| BUG: [Storage Meter](https://github.com/Thorfusion/Mekanism-1.7.10-Community-Edition/issues/40)                        | :x:               | :heavy_check_mark:                                                |
-| BUG: [Looping crash MK+RR+BC](https://github.com/Thorfusion/Mekanism-1.7.10-Community-Edition/issues/33)               | :x:               | :heavy_check_mark:                                                |
-| FEATURE: [TerralizationCompat](https://github.com/Thorfusion/Mekanism-1.7.10-Community-Edition/issues/30)              | :x:               | :heavy_check_mark:                                                |
-| FEATURE: [Biofuel cycle rework](https://github.com/Thorfusion/Mekanism-1.7.10-Community-Edition/pull/48)               | :x:               | :heavy_check_mark:                                                |
-| FEATURE: [Configurable radius digitalminer](https://github.com/Thorfusion/Mekanism-1.7.10-Community-Edition/issues/55) | :x:               | :heavy_check_mark:                                                |
-| NEW FEATURES, BUGFIXES & MORE!                                                                                         | :x:               | :heavy_check_mark:                                                |
+| Some Differences                                                                                                  | MK                 | MK:[CE](https://www.curseforge.com/minecraft/mc-mods/mekanism-ce) |
+|-------------------------------------------------------------------------------------------------------------------|--------------------|-------------------------------------------------------------------|
+| Open Source                                                                                                       | :heavy_check_mark: | :heavy_check_mark:                                                |
+| Dupe: Chemical Washer                                                                                             | :x:                | :heavy_check_mark:                                                |
+| Dupe: Fluidtank                                                                                                   | :x:                | :heavy_check_mark:                                                |
+| Dupe: [Fluidstack](https://github.com/Thorfusion/Mekanism-Community-Edition/issues/49)                            | :x:                | :heavy_check_mark:                                                |
+| Dupe: Factories                                                                                                   | :x:                | :heavy_check_mark:                                                |
+| Dupe: Bins                                                                                                        | :x:                | :heavy_check_mark:                                                |
+| Dupe: [Moving Players](https://github.com/Thorfusion/Mekanism-Community-Edition/issues/62)                        | :x:                | :heavy_check_mark:                                                |
+| BUG: [Osmium Compressor](https://github.com/Thorfusion/Mekanism-Community-Edition/issues/32)                      | :x:                | :heavy_check_mark:                                                |
+| BUG: [Storage Meter](https://github.com/Thorfusion/Mekanism-Community-Edition/issues/40)                          | :x:                | :heavy_check_mark:                                                |
+| BUG: [Looping crash MK+RR+BC](https://github.com/Thorfusion/Mekanism-Community-Edition/issues/33)                 | :x:                | :heavy_check_mark:                                                |
+| FEATURE: [TerralizationCompat](https://github.com/Thorfusion/Mekanism-Community-Edition/issues/30)                | :x:                | :heavy_check_mark:                                                |
+| FEATURE: [Biofuel cycle rework](https://github.com/Thorfusion/Mekanism-Community-Edition/pull/48)                 | :x:                | :heavy_check_mark:                                                |
+| FEATURE: [Configurable radius digitalminer](https://github.com/Thorfusion/Mekanism-Community-Edition/issues/55)   | :x:                | :heavy_check_mark:                                                |
+| FEATURE: [Whitelist dimension's for windmill](https://github.com/Thorfusion/Mekanism-Community-Edition/issues/16) | :x:                | :heavy_check_mark:                                                |
+| NEW FEATURES, BUGFIXES & MORE!                                                                                    | :x:                | :heavy_check_mark:                                                |
 
 ### Full changelog
 
@@ -144,6 +145,6 @@ Note that changes not by the mekanism ce team has been added by us from their re
 
 # License
 
-[LICENSE](https://raw.githubusercontent.com/Thorfusion/Mekanism-1.7.10-Community-Edition/1.7.10/LICENSE.md)
+[LICENSE](https://raw.githubusercontent.com/Thorfusion/Mekanism-Community-Edition/1.7.10/LICENSE.md)
 
 [ORIGINAL MOD](https://github.com/mekanism/Mekanism)
