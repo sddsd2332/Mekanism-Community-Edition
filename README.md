@@ -9,6 +9,8 @@ Originally made for Terralization Modpack with fixes from several different fork
 
 #### Builds at our [maven](https://maven.thorfusion.com/ui/repos/tree/General/thorfusion/mekanism/Mekanism-Community-Edition)
 
+#### Contact Thorfusion team on our [discord](https://discord.gg/ykaB7EnYQj) server
+
 ### Building Mekanism 1.7.10 Community Edition
 
 ```bash
