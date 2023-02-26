@@ -43,7 +43,6 @@ public class RenderBioGenerator extends TileEntitySpecialRenderer
 			push();
 
 			boolean isEthanol = tileEntity.getFuelType() == 1;
-			System.out.println("IsEthanol= " + isEthanol);
 
 			MekanismRenderer.glowOn();
 			GL11.glTranslatef((float)x, (float)y, (float)z);

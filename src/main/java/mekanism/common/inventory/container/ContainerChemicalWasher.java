@@ -80,7 +80,7 @@ public class ContainerChemicalWasher extends Container
 			ItemStack slotStack = currentSlot.getStack();
 			stack = slotStack.copy();
 
-			System.out.println(inventorySlots.size());
+			//System.out.println(inventorySlots.size());
 
 			if(slotID == outputSlot)
 			{
