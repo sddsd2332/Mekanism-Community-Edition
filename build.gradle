@@ -153,6 +153,23 @@ task MDKZip(type: Zip) {
     include 'mekanism/api/**'
 }
 
+task devJar(type: Jar) {
+    classifier = 'DEV'
+    dependsOn processResources
+    from sourceSets.main.java.srcDirs
+    manifest {
+        attributes 'FMLCorePlugin': 'mekanism.common.asm.LoadingHook'
+        attributes 'FMLCorePluginContainsFMLMod': 'true'
+    }
+    from('etc/all') {
+        include '*.info'
+        expand 'version': mod_version, 'mc_version': minecraft_version, 'fmp_version': FMP_version
+    }
+    from zipTree(jar.outputs.getFiles().getSingleFile()).matching {
+        exclude 'mcmod.info'
+    }
+}
+
 task apiJar(type: Jar) {
     classifier = 'API'
     dependsOn processResources
@@ -165,7 +182,7 @@ task fullBuild(type: Delete) {
     delete jar
 }
 
-fullBuild.dependsOn('toolsJar', 'coreJar', 'generatorsJar', 'MDKZip', 'alltJar', 'apiJar')
+fullBuild.dependsOn('toolsJar', 'coreJar', 'generatorsJar', 'MDKZip', 'alltJar', 'apiJar', 'devJar')
 
 artifactory {
     contextUrl = System.getenv("MAVEN_URL")
@@ -200,7 +217,7 @@ publishing {
             artifactId = project.archivesBaseName
             groupId = project.group
             version = project.version
-            artifacts = [toolsJar, coreJar, generatorsJar, MDKZip, alltJar, apiJar]
+            artifacts = [toolsJar, coreJar, generatorsJar, MDKZip, alltJar, apiJar, devJar]
             components.java.withVariantsFromConfiguration(configurations.runtimeElements) {
                 skip()
             }
