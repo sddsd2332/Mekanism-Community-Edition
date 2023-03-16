@@ -12,6 +12,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mekanism.api.Coord4D;
 import mekanism.api.MekanismConfig.client;
+import mekanism.api.MekanismConfig.mekce_client;
 import mekanism.api.Pos3D;
 import mekanism.client.SparkleAnimation.INodeChecker;
 import mekanism.client.entity.EntityLaser;
@@ -85,12 +86,16 @@ public class ClientProxy extends CommonProxy
 		client.enableAmbientLighting = Mekanism.configuration.get("client", "EnableAmbientLighting", true).getBoolean();
 		client.ambientLightingLevel = Mekanism.configuration.get("client", "AmbientLightingLevel", 15).getInt();
 		client.opaqueTransmitters = Mekanism.configuration.get("client", "OpaqueTransmitterRender", false).getBoolean();
-		client.doMultiblockSparkle = Mekanism.configuration.get("client", "DoMultiblockSparkle", true).getBoolean();
-		client.multiblockSparkleIntensity = Mekanism.configuration.get("client", "MultiblockSparkleIntesity", 6).getInt();
+		mekce_client.doMultiblockSparkle = Mekanism.configurationce.get("mekce_client", "DoMultiblockSparkle", true).getBoolean();
+		mekce_client.multiblockSparkleIntensity = Mekanism.configurationce.get("mekce_client", "MultiblockSparkleIntesity", 6).getInt();
 
 		if(Mekanism.configuration.hasChanged())
 		{
 			Mekanism.configuration.save();
+		}
+		if(Mekanism.configurationce.hasChanged())
+		{
+			Mekanism.configurationce.save();
 		}
 	}
 
@@ -422,7 +427,7 @@ public class ClientProxy extends CommonProxy
 	@Override
 	public void doMultiblockSparkle(final TileEntityMultiblock<?> tileEntity)
 	{
-		if(client.doMultiblockSparkle == true){
+		if(mekce_client.doMultiblockSparkle == true){
 			new SparkleAnimation(tileEntity, new INodeChecker() {
 				@Override
 				public boolean isNode(TileEntity tile)

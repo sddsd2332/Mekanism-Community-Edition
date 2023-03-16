@@ -13,6 +13,7 @@ import java.util.Set;
 import mekanism.api.Coord4D;
 import mekanism.api.EnumColor;
 import mekanism.api.IConfigurable;
+import mekanism.api.MekanismConfig;
 import mekanism.api.MekanismConfig.general;
 import mekanism.api.MekanismConfig.usage;
 import mekanism.common.Upgrade;
@@ -84,7 +85,7 @@ public class TileEntityElectricPump extends TileEntityElectricBlock implements I
 		super("ElectricPump", 10000);
 		inventory = new ItemStack[4];
 
-		if (!general.accurateHeavyWaterCapture)
+		if (!MekanismConfig.mekce.accurateHeavyWaterCapture)
 			upgradeComponent.setSupported(Upgrade.FILTER);
 	}
 
@@ -161,7 +162,7 @@ public class TileEntityElectricPump extends TileEntityElectricBlock implements I
 	
 	public boolean hasFilter()
 	{
-		if (!general.accurateHeavyWaterCapture)
+		if (!MekanismConfig.mekce.accurateHeavyWaterCapture)
 			return upgradeComponent.getInstalledTypes().contains(Upgrade.FILTER);
 		return false;
 	}

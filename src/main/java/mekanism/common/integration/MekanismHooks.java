@@ -95,19 +95,19 @@ public final class MekanismHooks
 		}
 
 		try {
-			if(MekanismConfig.general.OreDictOsmium) {
+			if(MekanismConfig.mekce.OreDictOsmium) {
 				Recipes.macerator.addRecipe(new RecipeInputOreDict("oreOsmium"), null, new ItemStack(MekanismItems.Dust, 2, Resource.OSMIUM.ordinal()));
 			}
-			if(MekanismConfig.general.OreDictPlatinum) {
+			if(MekanismConfig.mekce.OreDictPlatinum) {
 				Recipes.macerator.addRecipe(new RecipeInputOreDict("orePlatinum"), null, new ItemStack(MekanismItems.Dust, 2, Resource.OSMIUM.ordinal()));
 			}
 		} catch(Exception e) {}
 
 		try {
-			if(MekanismConfig.general.OreDictOsmium) {
+			if(MekanismConfig.mekce.OreDictOsmium) {
 				Recipes.macerator.addRecipe(new RecipeInputOreDict("ingotOsmium"), null, new ItemStack(MekanismItems.Dust, 1, Resource.OSMIUM.ordinal()));
 			}
-			if(MekanismConfig.general.OreDictPlatinum) {
+			if(MekanismConfig.mekce.OreDictPlatinum) {
 				Recipes.macerator.addRecipe(new RecipeInputOreDict("ingotPlatinum"), null, new ItemStack(MekanismItems.Dust, 1, Resource.OSMIUM.ordinal()));
 			}
 			Recipes.macerator.addRecipe(new RecipeInputOreDict("ingotRefinedObsidian"), null, new ItemStack(MekanismItems.OtherDust, 1, 5));

@@ -673,7 +673,7 @@ public class GuiDigitalMinerConfig extends GuiMekanism
 	{
 		if(!radiusField.getText().isEmpty())
 		{
-			int toUse = Math.max(0, Math.min(Integer.parseInt(radiusField.getText()), MekanismConfig.general.digitalMinerMaxRadius));
+			int toUse = Math.max(0, Math.min(Integer.parseInt(radiusField.getText()), MekanismConfig.mekce.digitalMinerMaxRadius));
 
 			ArrayList data = new ArrayList();
 			data.add(6);

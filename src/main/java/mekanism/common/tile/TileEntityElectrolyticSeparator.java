@@ -97,13 +97,13 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
     /** This machine's current RedstoneControl type. */
     public RedstoneControl controlType = RedstoneControl.DISABLED;
 	public static final Random rnd = new Random();
-	public static int captureHeavyWaterChance = MekanismConfig.general.heavyWaterChance;
+	public static int captureHeavyWaterChance = MekanismConfig.mekce.heavyWaterChance;
 
 	public TileEntityElectrolyticSeparator()
 	{
 		super("ElectrolyticSeparator", MachineType.ELECTROLYTIC_SEPARATOR.baseEnergy);
 		inventory = new ItemStack[5];
-		if (MekanismConfig.general.accurateHeavyWaterCapture)
+		if (MekanismConfig.mekce.accurateHeavyWaterCapture)
 			upgradeComponent.setSupported(Upgrade.FILTER);
 	}
 
@@ -292,7 +292,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityElectricBlock imp
 	}
 	public boolean hasFilter()
 	{
-		if (MekanismConfig.general.accurateHeavyWaterCapture)
+		if (MekanismConfig.mekce.accurateHeavyWaterCapture)
 			return upgradeComponent.getInstalledTypes().contains(Upgrade.FILTER);
 		return false;
 	}

@@ -18,7 +18,6 @@ public class MekanismConfig
 		public static boolean cardboardSpawners = true;
 		public static boolean enableWorldRegeneration = true;
 		public static boolean spawnBabySkeletons = true;
-		public static boolean enableBoPProgression = true;
 		public static int obsidianTNTBlastRadius = 12;
 		public static int osmiumPerChunk = 12;
 		public static int copperPerChunk = 16;
@@ -68,20 +67,26 @@ public class MekanismConfig
 		public static double heatPerFuelTick = 4;
 		public static boolean allowTransmitterAlloyUpgrade;
 		public static boolean allowProtection = true;
-		public static boolean accurateHeavyWaterCapture = true;
-		public static int heavyWaterChance = 4;
 
+
+
+	}
+	public static class mekce {
+		public static boolean enableBoPProgression = true;
 		public static boolean EnableQuartzCompat;
 		public static boolean EnableDiamondCompat;
 		public static boolean EnablePoorOresCompat;
 		public static boolean OreDictOsmium;
 		public static boolean OreDictPlatinum;
 		public static boolean enableSiliconCompat;
-    	public static int IC2SinkTier;
+		public static int IC2SinkTier;
 		public static int IC2SourceTier;
-    	public static int digitalMinerMaxRadius;
+		public static int digitalMinerMaxRadius;
 		public static boolean enableSingleUseCardboxes;
+		public static boolean accurateHeavyWaterCapture = true;
+		public static int heavyWaterChance = 4;
 	}
+
 
 	public static class client
 	{
@@ -96,6 +101,10 @@ public class MekanismConfig
 		public static boolean enableAmbientLighting;
 		public static int ambientLightingLevel;
 		public static boolean opaqueTransmitters = false;
+	}
+
+	public static class mekce_client
+	{
 		public static boolean doMultiblockSparkle = true;
 		public static int multiblockSparkleIntensity = 6;
 	}
@@ -148,9 +157,6 @@ public class MekanismConfig
 	{
 		public static double advancedSolarGeneration;
 		public static double bioGeneration;
-		public static int ethanolDuration;
-		public static int biogasDuration;
-		public static double ethanolMultiplier;
 		public static double heatGeneration;
 		public static double heatGenerationLava;
 		public static double heatGenerationNether;
@@ -165,6 +171,13 @@ public class MekanismConfig
 		public static double turbineVentGasFlow;
 		public static double turbineDisperserGasFlow;
 		public static int condenserRate;
+	}
+
+	public static class mekce_generators
+	{
+		public static int ethanolDuration;
+		public static int biogasDuration;
+		public static double ethanolMultiplier;
 		public static boolean enableWindmillWhitelist;
 		public static List<String> winddimensionids;
 	}

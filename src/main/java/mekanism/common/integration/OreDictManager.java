@@ -40,10 +40,10 @@ public final class OreDictManager
 
 	
 	public static void init() {
-		if (MekanismConfig.general.OreDictOsmium) {
+		if (MekanismConfig.mekce.OreDictOsmium) {
 			osmiumcompat.add("Osmium");
 		}
-		if (MekanismConfig.general.OreDictPlatinum) {
+		if (MekanismConfig.mekce.OreDictPlatinum) {
 			osmiumcompat.add("Platinum");
 		}
 		addLogRecipes();
@@ -127,12 +127,12 @@ public final class OreDictManager
 			} catch (Exception e) {
 			}
 		}
-		if (MekanismConfig.general.OreDictPlatinum) {
+		if (MekanismConfig.mekce.OreDictPlatinum) {
 			for (ItemStack ore : OreDictionary.getOres("orePlatinum")) {
 				RecipeHandler.addChemicalDissolutionChamberRecipe(StackUtils.size(ore, 1), new GasStack(GasRegistry.getGas("platinum"), 1000));
 			}
 		}
-		if (MekanismConfig.general.OreDictOsmium || MekanismConfig.general.OreDictPlatinum) {
+		if (MekanismConfig.mekce.OreDictOsmium || MekanismConfig.mekce.OreDictPlatinum) {
 			for (String s : osmiumcompat) {
 				if (MekanismConfig.recipes.enableOsmiumBlock) {
 					CraftingManager.getInstance().getRecipeList().add(new ShapedMekanismRecipe(new ItemStack(MekanismBlocks.BasicBlock, 1, 0), new Object[]{
@@ -477,7 +477,7 @@ public final class OreDictManager
 		}
 	}
 	public static void terralizationcompat() {
-		if (MekanismConfig.general.EnableQuartzCompat) {
+		if (MekanismConfig.mekce.EnableQuartzCompat) {
 			// Enrich quartz dust into quartz
 			for (ItemStack ore : OreDictionary.getOres("dustQuartz")) {
 				RecipeHelper.addEnrichmentChamberRecipe(StackUtils.size(ore, 1), new ItemStack(Items.quartz));
@@ -494,13 +494,13 @@ public final class OreDictManager
 			}
 		}
 		// Add gemdiamond oredict for compressed diamond
-		if (MekanismConfig.general.EnableDiamondCompat) {
+		if (MekanismConfig.mekce.EnableDiamondCompat) {
 			for (ItemStack ore : OreDictionary.getOres("gemDiamond")) {
 				InfuseRegistry.registerInfuseObject(ore, new InfuseObject(InfuseRegistry.get("DIAMOND"), 10));
 				RecipeHelper.addEnrichmentChamberRecipe(StackUtils.size(ore, 1), new ItemStack(MekanismItems.CompressedDiamond));
 			}
 		}
-		if (MekanismConfig.general.EnablePoorOresCompat) {
+		if (MekanismConfig.mekce.EnablePoorOresCompat) {
 			for (ItemStack ore : OreDictionary.getOres("orePoorIron")) {
 				for (ItemStack ore2 : OreDictionary.getOres("clumpIron")) {
 					RecipeHelper.addPurificationChamberRecipe(ore, ore2);
