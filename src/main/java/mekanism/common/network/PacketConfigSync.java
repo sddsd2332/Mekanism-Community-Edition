@@ -75,8 +75,8 @@ public class PacketConfigSync implements IMessageHandler<ConfigSyncMessage, IMes
 			dataStream.writeDouble(general.heatPerFuelTick);
 			dataStream.writeBoolean(general.allowTransmitterAlloyUpgrade);
 			dataStream.writeBoolean(general.allowProtection);
-			dataStream.writeBoolean(general.accurateHeavyWaterCapture);
-			dataStream.writeInt(general.heavyWaterChance);
+			dataStream.writeBoolean(mekce.accurateHeavyWaterCapture);
+			dataStream.writeInt(mekce.heavyWaterChance);
 			dataStream.writeBoolean(mekce.EnableQuartzCompat);
 			dataStream.writeBoolean(mekce.EnableDiamondCompat);
 			dataStream.writeBoolean(mekce.EnablePoorOresCompat);
@@ -271,8 +271,8 @@ public class PacketConfigSync implements IMessageHandler<ConfigSyncMessage, IMes
 			general.heatPerFuelTick = dataStream.readDouble();
 			general.allowTransmitterAlloyUpgrade = dataStream.readBoolean();
 			general.allowProtection = dataStream.readBoolean();
-			general.accurateHeavyWaterCapture = dataStream.readBoolean();
-			general.heavyWaterChance = dataStream.readInt();
+			mekce.accurateHeavyWaterCapture = dataStream.readBoolean();
+			mekce.heavyWaterChance = dataStream.readInt();
 			mekce.EnableQuartzCompat = dataStream.readBoolean();
 			mekce.EnableDiamondCompat = dataStream.readBoolean();
 			mekce.EnablePoorOresCompat = dataStream.readBoolean();

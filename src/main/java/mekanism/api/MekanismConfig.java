@@ -67,8 +67,7 @@ public class MekanismConfig
 		public static double heatPerFuelTick = 4;
 		public static boolean allowTransmitterAlloyUpgrade;
 		public static boolean allowProtection = true;
-		public static boolean accurateHeavyWaterCapture = true;
-		public static int heavyWaterChance = 4;
+
 
 
 	}
@@ -84,6 +83,8 @@ public class MekanismConfig
 		public static int IC2SourceTier;
 		public static int digitalMinerMaxRadius;
 		public static boolean enableSingleUseCardboxes;
+		public static boolean accurateHeavyWaterCapture = true;
+		public static int heavyWaterChance = 4;
 	}
 
 
