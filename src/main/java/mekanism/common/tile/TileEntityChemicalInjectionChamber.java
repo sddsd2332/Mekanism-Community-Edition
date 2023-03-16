@@ -40,7 +40,7 @@ public class TileEntityChemicalInjectionChamber extends TileEntityAdvancedElectr
 	public GasStack getItemGas(ItemStack itemstack)
 	{
 		if (GasifyableItems.getGasFromItem(itemstack) != null) {
-			System.out.println(GasifyableItems.getGasFromItem(itemstack).getGas().getUnlocalizedName());
+			//System.out.println(GasifyableItems.getGasFromItem(itemstack).getGas().getUnlocalizedName());
 			return GasifyableItems.getGasFromItem(itemstack);
 		}
 		else
