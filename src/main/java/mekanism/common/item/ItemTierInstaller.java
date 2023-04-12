@@ -2,6 +2,7 @@ package mekanism.common.item;
 
 import java.util.List;
 
+import mekanism.api.MekanismConfig;
 import mekanism.common.Tier.BaseTier;
 import mekanism.common.base.ITierUpgradeable;
 import mekanism.common.tile.TileEntityBasicBlock;
@@ -35,7 +36,7 @@ public class ItemTierInstaller extends ItemMekanism
 		TileEntity tile = world.getTileEntity(x, y, z);
 		BaseTier tier = BaseTier.values()[stack.getItemDamage()];
 		
-		if(tile instanceof ITierUpgradeable)
+		if(tile instanceof ITierUpgradeable && MekanismConfig.machines.isEnabled("Factory"))
 		{
 			if(tile instanceof TileEntityBasicBlock && ((TileEntityBasicBlock)tile).playersUsing.size() > 0)
 			{
