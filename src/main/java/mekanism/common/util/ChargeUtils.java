@@ -143,7 +143,7 @@ public final class ChargeUtils
 				return energized.getEnergy(itemstack) == 0;
 			}
 		}
-		else if(itemstack.getItem() instanceof IEnergyContainerItem)
+		else if(MekanismUtils.useRF() && itemstack.getItem() instanceof IEnergyContainerItem)
 		{
 			IEnergyContainerItem energyContainer = (IEnergyContainerItem)itemstack.getItem();
 			
@@ -155,7 +155,7 @@ public final class ChargeUtils
 				return energyContainer.extractEnergy(itemstack, 1, true) > 0;
 			}
 		}
-		else if(itemstack.getItem() instanceof ISpecialElectricItem)
+		else if(MekanismUtils.useIC2() && itemstack.getItem() instanceof ISpecialElectricItem)
 		{
 			IElectricItemManager manager = ((ISpecialElectricItem)itemstack.getItem()).getManager(itemstack);
 			
