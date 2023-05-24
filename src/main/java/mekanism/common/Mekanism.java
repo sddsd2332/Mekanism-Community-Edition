@@ -161,6 +161,7 @@ public class Mekanism
 	public static Configuration configurationrecipes;
 
 	public static Configuration configurationce;
+	public static String OSMIUMSELECT = "Osmium";
 
 	/** Mekanism version number */
 	public static Version versionNumber = new Version(GRADLE_VERSIONMOD);
@@ -1510,6 +1511,10 @@ public class Mekanism
 		//Load configuration
 		proxy.loadConfiguration();
 		proxy.onConfigSync(false);
+
+		if (MekanismConfig.mekce.OreDictPlatinum && !MekanismConfig.mekce.OreDictOsmium) {
+			OSMIUMSELECT = "Platinum";
+		}
 
 		//Add baby skeleton spawner
 		if(general.spawnBabySkeletons)
