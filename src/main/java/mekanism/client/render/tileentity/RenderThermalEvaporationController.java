@@ -52,7 +52,13 @@ public class RenderThermalEvaporationController extends TileEntitySpecialRendere
 				MekanismRenderer.glowOn(tileEntity.inputTank.getFluid().getFluid().getLuminosity());
 
 				DisplayInteger[] displayList = getListAndRender(data, tileEntity.inputTank.getFluid().getFluid());
-				displayList[(int)(((float)tileEntity.inputTank.getFluidAmount()/tileEntity.inputTank.getCapacity())*((float)getStages(data.height)-1))].render();
+
+				try {
+					displayList[(int) (((float) tileEntity.inputTank.getFluidAmount() / tileEntity.inputTank.getCapacity()) * ((float) getStages(data.height) - 1))].render();
+				} catch (Exception e) {
+					System.out.print("\nThermal Evaporation Controller Render Error\n" + e + tileEntity.inputTank.getFluidAmount() + " v "+ tileEntity.inputTank.getCapacity());
+				}
+
 
 				MekanismRenderer.glowOff();
 
