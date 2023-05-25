@@ -161,7 +161,6 @@ public class Mekanism
 	public static Configuration configurationrecipes;
 
 	public static Configuration configurationce;
-	public static String OSMIUMSELECT = "Osmium";
 
 	/** Mekanism version number */
 	public static Version versionNumber = new Version(GRADLE_VERSIONMOD);
@@ -193,9 +192,6 @@ public class Mekanism
 
 	/** The recent news which is received from the Mekanism server */
 	public static String recentNews;
-
-	/** A list of the usernames of players who have donated to Mekanism. */
-	public static List<String> donators = new ArrayList<String>();
 
 	/** The server's world tick handler. */
 	public static CommonWorldTickHandler worldTickHandler = new CommonWorldTickHandler();
@@ -1293,11 +1289,13 @@ public class Mekanism
 
 		for(Resource resource : Resource.values())
 		{
-			OreDictionary.registerOre("dust" + resource.getName(), new ItemStack(MekanismItems.Dust, 1, resource.ordinal()));
-			OreDictionary.registerOre("dustDirty" + resource.getName(), new ItemStack(MekanismItems.DirtyDust, 1, resource.ordinal()));
-			OreDictionary.registerOre("clump" + resource.getName(), new ItemStack(MekanismItems.Clump, 1, resource.ordinal()));
-			OreDictionary.registerOre("shard" + resource.getName(), new ItemStack(MekanismItems.Shard, 1, resource.ordinal()));
-			OreDictionary.registerOre("crystal" + resource.getName(), new ItemStack(MekanismItems.Crystal, 1, resource.ordinal()));
+			if (!(!mekce.OreDictOsmium && resource.getName() == "Osmium")) {
+				OreDictionary.registerOre("dust" + resource.getName(), new ItemStack(MekanismItems.Dust, 1, resource.ordinal()));
+				OreDictionary.registerOre("dustDirty" + resource.getName(), new ItemStack(MekanismItems.DirtyDust, 1, resource.ordinal()));
+				OreDictionary.registerOre("clump" + resource.getName(), new ItemStack(MekanismItems.Clump, 1, resource.ordinal()));
+				OreDictionary.registerOre("shard" + resource.getName(), new ItemStack(MekanismItems.Shard, 1, resource.ordinal()));
+				OreDictionary.registerOre("crystal" + resource.getName(), new ItemStack(MekanismItems.Crystal, 1, resource.ordinal()));
+			}
 		}
 		if(mekce.OreDictOsmium)
 		{
@@ -1310,6 +1308,11 @@ public class Mekanism
 			OreDictionary.registerOre("orePlatinum", new ItemStack(MekanismBlocks.OreBlock, 1, 0));
 			OreDictionary.registerOre("ingotPlatinum", new ItemStack(MekanismItems.Ingot, 1, 1));
 			OreDictionary.registerOre("blockPlatinum", new ItemStack(MekanismBlocks.BasicBlock, 1, 0));
+			OreDictionary.registerOre("dustPlatinum", new ItemStack(MekanismItems.Dust, 1, 2));
+			OreDictionary.registerOre("dustDirtyPlatinum", new ItemStack(MekanismItems.DirtyDust, 1, 2));
+			OreDictionary.registerOre("clumpPlatinum", new ItemStack(MekanismItems.Clump, 1, 2));
+			OreDictionary.registerOre("shardPlatinum", new ItemStack(MekanismItems.Shard, 1, 2));
+			OreDictionary.registerOre("crystalPlatinum", new ItemStack(MekanismItems.Crystal, 1, 2));
 		}
 		OreDictionary.registerOre("oreCopper", new ItemStack(MekanismBlocks.OreBlock, 1, 1));
 		OreDictionary.registerOre("oreTin", new ItemStack(MekanismBlocks.OreBlock, 1, 2));
@@ -1511,10 +1514,6 @@ public class Mekanism
 		//Load configuration
 		proxy.loadConfiguration();
 		proxy.onConfigSync(false);
-
-		if (MekanismConfig.mekce.OreDictPlatinum && !MekanismConfig.mekce.OreDictOsmium) {
-			OSMIUMSELECT = "Platinum";
-		}
 
 		//Add baby skeleton spawner
 		if(general.spawnBabySkeletons)

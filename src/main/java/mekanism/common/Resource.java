@@ -1,12 +1,10 @@
 package mekanism.common;
 
-import static mekanism.common.Mekanism.OSMIUMSELECT;
-
 public enum Resource
 {
 	IRON("Iron"),
 	GOLD("Gold"),
-	OSMIUM(OSMIUMSELECT),
+	OSMIUM("Osmium"),
 	COPPER("Copper"),
 	TIN("Tin"),
 	SILVER("Silver"),
