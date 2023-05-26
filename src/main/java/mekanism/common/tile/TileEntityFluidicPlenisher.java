@@ -84,7 +84,7 @@ public class TileEntityFluidicPlenisher extends TileEntityElectricBlock implemen
 		{
 			ChargeUtils.discharge(2, this);
 			
-			if(inventory[0] != null)
+			if(inventory[0] != null && fluidTank.getFluidAmount() <= (fluidTank.getCapacity() - 1000))
 			{
 				if(inventory[0].getItem() instanceof IFluidContainerItem)
 				{
