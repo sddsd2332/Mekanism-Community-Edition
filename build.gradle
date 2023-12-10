@@ -59,7 +59,7 @@ defaultTasks 'fullBuild'
 // Set the toolchain version to decouple the Java we run Gradle with from the Java used to compile and run the mod
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(project.property('use_modern_java_syntax').toBoolean() ? 16 : 8))
+        languageVersion.set(JavaLanguageVersion.of(project.property('use_modern_java_syntax').toBoolean() ? 17 : 8))
         // Azul covers the most platforms for Java 8 toolchains, crucially including MacOS arm64
         vendor.set(JvmVendorSpec.AZUL)
     }
@@ -346,7 +346,7 @@ tasks.withType(JavaCompile).configureEach {
         sourceCompatibility = 17
         options.release.set(8)
         javaCompiler.set(javaToolchains.compilerFor {
-            languageVersion.set(JavaLanguageVersion.of(16))
+            languageVersion.set(JavaLanguageVersion.of(17))
             vendor.set(JvmVendorSpec.AZUL)
         })
     }

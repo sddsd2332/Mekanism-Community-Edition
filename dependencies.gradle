@@ -60,25 +60,28 @@ dependencies {
 
     compileOnly "org.jetbrains:annotations:17.0.0"
 // Example of deobfuscating a dependency
-    implementation rfg.deobf('curse.maven:mcmultipart-239431:2615930')
-    implementation rfg.deobf('curse.maven:had-enough-items-557549:4543375')
-    implementation rfg.deobf('curse.maven:tesla-244651:2487959')
-    implementation rfg.deobf('curse.maven:inventory-tweaks-API-223094:2923461')
-    implementation rfg.deobf('curse.maven:opencomputers-223008:4526246')
-    implementation rfg.deobf('curse.maven:hwyla-253449:2568751')
-    implementation rfg.deobf('curse.maven:redstone-flux-270789:2920436')
-    implementation rfg.deobf('curse.maven:CTM-267602:2915363')
-    implementation rfg.deobf('curse.maven:industrial-craft-242638:3838713')
-    implementation rfg.deobf('curse.maven:computercraft-67504:2478952')
-    implementation rfg.deobf('curse.maven:the-one-probe-245211:2667280')
-    implementation rfg.deobf('curse.maven:ae2-extended-life-570458:4553942')
-    implementation rfg.deobf('curse.maven:mystical-agradditions-256247:2704832')
-    implementation rfg.deobf('curse.maven:mystical-agriculture-246640:2704562')
-    implementation rfg.deobf('curse.maven:cucumber-272335:2645867')
-    implementation rfg.deobf('curse.maven:ender-io-64578:3328811')
-    implementation rfg.deobf('curse.maven:endercore-231868:2972849')
+    implementation 'curse.maven:mcmultipart-239431:2615930'
+    implementation 'curse.maven:had-enough-items-557549:4543375'
+    implementation 'curse.maven:tesla-244651:2487959'
+    implementation 'curse.maven:inventory-tweaks-API-223094:2923461'
+    implementation 'curse.maven:opencomputers-223008:4526246'
+    implementation 'curse.maven:hwyla-253449:2568751'
+    implementation 'curse.maven:redstone-flux-270789:2920436'
+    implementation 'curse.maven:CTM-267602:2915363'
+    implementation 'curse.maven:industrial-craft-242638:3838713'
+    implementation 'curse.maven:computercraft-67504:2478952'
+    implementation 'curse.maven:the-one-probe-245211:2667280'
+    implementation 'curse.maven:ae2-extended-life-570458:4553942'
+    implementation 'curse.maven:mystical-agradditions-256247:2704832'
+    implementation 'curse.maven:mystical-agriculture-246640:2704562'
+    implementation 'curse.maven:cucumber-272335:2645867'
 
-    implementation 'curse.maven:groovyscript-687577:4487379'
+   // implementation rfg.deobf('curse.maven:ender-io-64578:4674244')
+   // implementation rfg.deobf('curse.maven:endercore-231868:4671384')
+
+    implementation 'curse.maven:flux-networks-248020:3178199'
+
+    implementation 'curse.maven:groovyscript-687577:4691853'
     implementation 'curse.maven:buildcraft-61811:3204475'
     implementation 'curse.maven:crafttweaker-239197:4534504'
     implementation 'zone.rong:mixinbooter:7.1'
