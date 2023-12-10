@@ -1,6 +1,8 @@
 package mekanism.common.config;
 
 import java.util.EnumMap;
+
+import mekanism.api.tier.BaseTier;
 import mekanism.common.config.options.DoubleOption;
 import mekanism.common.config.options.IntOption;
 import mekanism.common.tier.*;

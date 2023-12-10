@@ -1,54 +1,39 @@
 package mekanism.api;
 
+
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import org.jetbrains.annotations.NotNull;
 
-/**
- * Chunk3D - an integer-based way to keep track of and perform operations on chunks in a Minecraft-based environment. This also takes in account the dimension the chunk
- * is in.
- *
- * @author aidancbrady
- */
-public class Chunk3D {
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+public class Chunk3D extends ChunkPosExpand {
 
     public int dimensionId;
-    public int x;
-    public int z;
 
     /**
-     * Creates a Chunk3D object from the given x and z coordinates, as well as a dimension.
+     * Creates a Chunk3D from the defined chunk x, chunk z, and dimension values.
      *
-     * @param x         - chunk x location
-     * @param z         - chunk z location
-     * @param dimension - the dimension this Chunk3D is in
+     * @param dimension Dimension ID
+     * @param x         Chunk X coordinate
+     * @param z         Chunk Z coordinate
      */
     public Chunk3D(int x, int z, int dimension) {
-        this.x = x;
-        this.z = z;
-        dimensionId = dimension;
+        super(x, z);
+        this.dimensionId = dimension;
     }
 
-    /**
-     * Creates a Chunk3D from an entity based on it's location and dimension.
-     *
-     * @param entity - the entity to get the Chunk3D object from
-     */
     public Chunk3D(Entity entity) {
-        x = (int) entity.posX >> 4;
-        z = (int) entity.posZ >> 4;
+        super((int) entity.posX >> 4, (int) entity.posZ >> 4);
         dimensionId = entity.dimension;
     }
 
-    /**
-     * Creates a Chunk3D from a Coord4D based on it's coordinates and dimension.
-     *
-     * @param coord - the Coord4D object to get this Chunk3D from
-     */
     public Chunk3D(Coord4D coord) {
-        x = coord.x >> 4;
-        z = coord.z >> 4;
+        super(coord.x>> 4, coord.z >> 4);
         dimensionId = coord.dimensionId;
     }
 
@@ -73,12 +58,25 @@ public class Chunk3D {
     }
 
     /**
+     * Creates a Chunk3D from the defined chunk position, and dimension values.
+     *
+     * @param dimension Dimension ID
+     * @param chunkPos  Long representation of the chunk position
+     * @since 10.3.2
+     */
+
+
+    public Chunk3D(long chunkPos, int dimension) {
+        this(ChunkPosExpand.getX(chunkPos), ChunkPosExpand.getZ(chunkPos), dimension);
+    }
+
+    /**
      * Returns this Chunk3D in the Minecraft-based ChunkCoordIntPair format.
      *
      * @return this Chunk3D as a ChunkCoordIntPair
      */
-    public ChunkPos getPos() {
-        return new ChunkPos(x, z);
+    public ChunkPosExpand getPos() {
+        return new ChunkPosExpand(x, z);
     }
 
     @Override
@@ -86,6 +84,34 @@ public class Chunk3D {
         return new Chunk3D(x, z, dimensionId);
     }
 
+
+    /**
+     * Creates a Chunk3D from the defined chunk position, and dimension values.
+     *
+     * @param dimension Dimension ID
+     * @param chunkPos  Chunk position
+     */
+    public Chunk3D(ChunkPosExpand chunkPos, int dimension) {
+        this(chunkPos.x, chunkPos.z, dimension);
+    }
+
+
+    public Set<Chunk3D> expand(int chunkRadius) {
+        if (chunkRadius < 0) {
+            throw new IllegalArgumentException("Chunk radius cannot be negative.");
+        } else if (chunkRadius == 1) {
+            return Collections.singleton(this);
+        }
+        Set<Chunk3D> ret = new HashSet<>();
+        for (int i = x - chunkRadius; i <= x + chunkRadius; i++) {
+            for (int j = z - chunkRadius; j <= z + chunkRadius; j++) {
+                ret.add(new Chunk3D(dimensionId, i, j));
+            }
+        }
+        return ret;
+    }
+
+    @NotNull
     @Override
     public String toString() {
         return "[Chunk3D: " + x + ", " + z + ", dim=" + dimensionId + "]";
@@ -93,8 +119,9 @@ public class Chunk3D {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof Chunk3D && ((Chunk3D) obj).x == x && ((Chunk3D) obj).z == z && ((Chunk3D) obj).dimensionId == dimensionId;
+        return obj instanceof Chunk3D other && other.x == x && other.z == z && other.dimensionId == dimensionId;
     }
+
 
     @Override
     public int hashCode() {
@@ -104,4 +131,5 @@ public class Chunk3D {
         code = 31 * code + dimensionId;
         return code;
     }
+
 }

@@ -20,7 +20,7 @@ import mekanism.client.render.transmitter.RenderMechanicalPipe;
 import mekanism.common.Mekanism;
 import mekanism.common.base.IMetaItem;
 import mekanism.common.base.ISideConfiguration;
-import mekanism.common.tier.BaseTier;
+import mekanism.api.tier.BaseTier;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;

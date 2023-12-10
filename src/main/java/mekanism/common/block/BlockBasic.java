@@ -24,7 +24,7 @@ import mekanism.common.inventory.InventoryBin;
 import mekanism.common.item.ItemBlockBasic;
 import mekanism.common.multiblock.IMultiblock;
 import mekanism.common.multiblock.IStructuralMultiblock;
-import mekanism.common.tier.BaseTier;
+import mekanism.api.tier.BaseTier;
 import mekanism.common.tile.*;
 import mekanism.common.tile.prefab.TileEntityBasicBlock;
 import mekanism.common.util.FluidContainerUtils;

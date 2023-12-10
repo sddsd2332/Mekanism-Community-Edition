@@ -1,11 +1,12 @@
 package mekanism.api;
 
-import java.util.Locale;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
+
+import java.util.Locale;
 
 /**
  * Simple color enum for adding colors to in-game GUI strings of text.
@@ -33,8 +34,8 @@ public enum EnumColor implements IStringSerializable {
     BROWN("\u00a76", "brown", "Brown", new int[]{150, 75, 0}, 3, TextFormatting.GOLD),
     BRIGHT_PINK("\u00a7d", "brightPink", "Pink", new int[]{255, 192, 203}, 9, TextFormatting.LIGHT_PURPLE);
 
-    public static EnumColor[] DYES = new EnumColor[]{BLACK, RED, DARK_GREEN, BROWN, DARK_BLUE, PURPLE, DARK_AQUA, GREY, DARK_GREY, BRIGHT_PINK, BRIGHT_GREEN, YELLOW,
-            INDIGO, PINK, ORANGE, WHITE};
+
+    public static final EnumColor[] DYES = values();
 
     /**
      * The color code that will be displayed
@@ -51,10 +52,10 @@ public enum EnumColor implements IStringSerializable {
     public String unlocalizedName;
     public String dyeName;
 
-    EnumColor(String s, String n, String dye, int[] rgb, int meta, TextFormatting tf) {
+    EnumColor(String s, String registryPrefix, String englishName, int[] rgb, int meta, TextFormatting tf) {
         code = s;
-        unlocalizedName = n;
-        dyeName = dye;
+        unlocalizedName = registryPrefix;
+        dyeName = englishName;
         rgbCode = rgb;
         mcMeta = meta;
         textFormatting = tf;

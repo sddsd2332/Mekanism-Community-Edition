@@ -4,7 +4,7 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 import mekanism.common.base.IMetaItem;
 import mekanism.common.base.ITierUpgradeable;
-import mekanism.common.tier.BaseTier;
+import mekanism.api.tier.BaseTier;
 import mekanism.common.tile.prefab.TileEntityBasicBlock;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;

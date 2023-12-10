@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import mekanism.api.Coord4D;
 import mekanism.api.IAlloyInteraction;
+import mekanism.api.tier.AlloyTier;
 import mekanism.api.transmitters.DynamicNetwork;
 import mekanism.api.transmitters.DynamicNetwork.NetworkClientRequest;
 import mekanism.api.transmitters.IGridTransmitter;
@@ -220,7 +221,7 @@ public abstract class TileEntityTransmitter<A, N extends DynamicNetwork<A, N, BU
     }
 
     @Override
-    public void onAlloyInteraction(EntityPlayer player, EnumHand hand, ItemStack stack, int tierOrdinal) {
+    public void onAlloyInteraction(EntityPlayer player, EnumHand hand, ItemStack stack, AlloyTier tierOrdinal) {
         if (getTransmitter().hasTransmitterNetwork()) {
             int upgraded = 0;
             List<IGridTransmitter<A, N, BUFFER>> list = new ArrayList<>(getTransmitter().getTransmitterNetwork().getTransmitters());
@@ -231,7 +232,7 @@ public abstract class TileEntityTransmitter<A, N extends DynamicNetwork<A, N, BU
                     Coord4D o1Coord = o1.coord();
                     Coord4D o2Coord = o2.coord();
 
-                    return Integer.compare(o1Coord.distanceTo(thisCoord), o2Coord.distanceTo(thisCoord));
+                    return Double.compare(o1Coord.distanceTo(thisCoord), o2Coord.distanceTo(thisCoord));
                 }
 
                 return 0;
@@ -258,7 +259,7 @@ public abstract class TileEntityTransmitter<A, N extends DynamicNetwork<A, N, BU
         }
     }
 
-    public boolean upgrade(int tierOrdinal) {
+    public boolean upgrade(AlloyTier alloyTier) {
         return false;
     }
 

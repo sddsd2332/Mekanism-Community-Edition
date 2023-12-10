@@ -1,5 +1,6 @@
 package mekanism.common;
 
+import mekanism.api.tier.AlloyTier;
 import mekanism.common.item.*;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -9,9 +10,9 @@ import net.minecraftforge.registries.IForgeRegistry;
 @ObjectHolder(Mekanism.MODID)
 public class MekanismItems {
 
-    public static final Item EnrichedAlloy = new ItemAlloy();
-    public static final Item ReinforcedAlloy = new ItemAlloy();
-    public static final Item AtomicAlloy = new ItemAlloy();
+    public static final Item EnrichedAlloy = new ItemAlloy(AlloyTier.INFUSED);
+    public static final Item ReinforcedAlloy = new ItemAlloy(AlloyTier.REINFORCED);
+    public static final Item AtomicAlloy = new ItemAlloy(AlloyTier.ATOMIC);
     public static final Item TeleportationCore = new ItemMekanism();
     public static final Item ElectrolyticCore = new ItemMekanism();
     public static final Item Substrate = new ItemMekanism();
@@ -69,7 +70,7 @@ public class MekanismItems {
      * ADD START
      */
     public static final ItemCanteen Canteen = new ItemCanteen();
-    public static final Item CosmicAlloy = new ItemAlloy();
+    public static final Item CosmicAlloy = new ItemAlloy(AlloyTier.Cosmic);
     public static final Item PlutoniumPellet = new ItemMekanism();
     public static final Item AntimatterPellet = new ItemMekanism();
     public static final Item ReprocessedFissileFragment = new ItemMekanism();

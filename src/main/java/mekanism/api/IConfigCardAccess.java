@@ -9,6 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
  */
 public interface IConfigCardAccess {
 
+
     interface ISpecialConfigData extends IConfigCardAccess {
 
         /**

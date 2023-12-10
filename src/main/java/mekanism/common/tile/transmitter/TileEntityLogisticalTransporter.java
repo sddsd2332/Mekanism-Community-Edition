@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import mekanism.api.Coord4D;
 import mekanism.api.EnumColor;
 import mekanism.api.TileNetworkList;
+import mekanism.api.tier.AlloyTier;
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.common.Mekanism;
 import mekanism.common.base.ILogisticalTransporter;
@@ -20,7 +21,7 @@ import mekanism.common.content.transporter.TransitRequest;
 import mekanism.common.content.transporter.TransitRequest.TransitResponse;
 import mekanism.common.content.transporter.TransporterStack;
 import mekanism.common.integration.multipart.MultipartTileNetworkJoiner;
-import mekanism.common.tier.BaseTier;
+import mekanism.api.tier.BaseTier;
 import mekanism.common.tier.TransporterTier;
 import mekanism.common.transmitters.TransporterImpl;
 import mekanism.common.transmitters.grid.InventoryNetwork;
@@ -32,6 +33,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -54,10 +56,6 @@ public class TileEntityLogisticalTransporter extends TileEntityTransmitter<TileE
         transmitterDelegate = new TransporterImpl(this);
     }
 
-    @Override
-    public BaseTier getBaseTier() {
-        return tier.getBaseTier();
-    }
 
     @Override
     public void setBaseTier(BaseTier baseTier) {
@@ -355,9 +353,10 @@ public class TileEntityLogisticalTransporter extends TileEntityTransmitter<TileE
         return (double) TransporterTier.ULTIMATE.getSpeed() / (double) tier.getSpeed();
     }
 
+
     @Override
-    public boolean upgrade(int tierOrdinal) {
-        if (tier.ordinal() < BaseTier.ULTIMATE.ordinal() && tierOrdinal == tier.ordinal() + 1) {
+    public boolean upgrade(AlloyTier tierOrdinal) {
+        if (tier.ordinal() < BaseTier.ULTIMATE.ordinal() && tierOrdinal.ordinal() == tier.ordinal()) {
             tier = TransporterTier.values()[tier.ordinal() + 1];
             markDirtyTransmitters();
             sendDesc = true;

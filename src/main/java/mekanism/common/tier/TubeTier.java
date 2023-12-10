@@ -1,5 +1,7 @@
 package mekanism.common.tier;
 
+import mekanism.api.tier.BaseTier;
+import mekanism.api.tier.ITier;
 import mekanism.common.config.MekanismConfig;
 
 public enum TubeTier implements ITier {

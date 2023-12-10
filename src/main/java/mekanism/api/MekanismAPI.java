@@ -20,6 +20,14 @@ public class MekanismAPI {
      */
     public static final String API_VERSION = "9.8.1";
 
+
+    /**
+     * Mekanism's Mod ID
+     */
+    public static final String MEKANISM_MODID = "mekanism";
+
+
+
     /**
      * Mekanism debug mode
      */

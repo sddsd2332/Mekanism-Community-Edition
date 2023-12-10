@@ -2,7 +2,7 @@ package mekanism.common;
 
 import mekanism.common.block.states.BlockStateTransmitter;
 import mekanism.common.config.MekanismConfig;
-import mekanism.common.tier.BaseTier;
+import mekanism.api.tier.BaseTier;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;

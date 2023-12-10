@@ -7,7 +7,7 @@ import mekanism.common.Mekanism;
 import mekanism.common.block.BlockTransmitter;
 import mekanism.common.block.property.PropertyColor;
 import mekanism.common.block.property.PropertyConnection;
-import mekanism.common.tier.BaseTier;
+import mekanism.api.tier.BaseTier;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
