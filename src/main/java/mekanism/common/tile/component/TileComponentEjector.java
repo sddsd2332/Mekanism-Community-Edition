@@ -30,11 +30,14 @@ public class TileComponentEjector implements ITileComponent {
 
     private static final int GAS_OUTPUT = MekanismConfig.current().mekce.GasEjectionSpeed.val();
     private static final int FLUID_OUTPUT = MekanismConfig.current().mekce.FluidEjectionSpeed.val();
+    private static final int FAILURE_DELAY = MekanismConfig.current().mekce.EjectionFailureDelay.val();
+
     private TileEntityContainerBlock tileEntity;
     private boolean strictInput;
     private EnumColor outputColor;
     private EnumColor[] inputColors = new EnumColor[]{null, null, null, null, null, null};
     private int tickDelay = 0;
+    private int ejectTickDelay = 0;
     private Map<TransmissionType, SideData> sideData = new EnumMap<>(TransmissionType.class);
 
     public TileComponentEjector(TileEntityContainerBlock tile) {
@@ -52,51 +55,90 @@ public class TileComponentEjector implements ITileComponent {
         outputColor = ejector.outputColor;
         inputColors = ejector.inputColors;
         tickDelay = ejector.tickDelay;
+        ejectTickDelay = ejector.ejectTickDelay;
         sideData = ejector.sideData;
     }
 
     @Override
     public void tick() {
-        if (!tileEntity.getWorld().isRemote) {
-            if (tickDelay == 0 || MekanismConfig.current().mekce.ItemsEjectWithoutDelay.val()) {
-                outputItems();
-            } else {
-                tickDelay--;
+        if (tileEntity.getWorld().isRemote) {
+            return;
+        }
+
+        if (tickDelay == 0 || MekanismConfig.current().mekce.ItemsEjectWithoutDelay.val()) {
+            outputItems();
+        } else {
+            tickDelay--;
+        }
+
+        if (ejectTickDelay == 0) {
+            boolean success = false;
+
+            success |= eject(TransmissionType.GAS);
+            success |= eject(TransmissionType.FLUID);
+
+            if (!success) {
+                ejectTickDelay = FAILURE_DELAY;
             }
-            eject(TransmissionType.GAS);
-            eject(TransmissionType.FLUID);
+        } else {
+            ejectTickDelay--;
         }
     }
 
-    private void eject(TransmissionType type) {
+    /**
+     * Eject something.
+     * @param type Type
+     * @return return false if ejection is failed.
+     */
+    private boolean eject(TransmissionType type) {
         SideData data = sideData.get(type);
-        if (data != null && getEjecting(type)) {
-            ITankManager tankManager = (ITankManager) this.tileEntity;
-            if (tankManager.getTanks() != null) {
-                Set<EnumFacing> outputSides = getOutputSides(type, data);
-                if (type == TransmissionType.GAS) {
-                    ejectGas(outputSides, (GasTank) tankManager.getTanks()[data.availableSlots[0]]);
-                } else if (type == TransmissionType.FLUID) {
-                    ejectFluid(outputSides, (FluidTank) tankManager.getTanks()[data.availableSlots[0]]);
-                }
+        if (data == null || !getEjecting(type)) {
+            return true;
+        }
+        ITankManager tankManager = (ITankManager) this.tileEntity;
+        if (tankManager.getTanks() != null) {
+            Set<EnumFacing> outputSides = getOutputSides(type, data);
+            if (type == TransmissionType.GAS) {
+                return ejectGas(outputSides, (GasTank) tankManager.getTanks()[data.availableSlots[0]]);
+            } else if (type == TransmissionType.FLUID) {
+                return ejectFluid(outputSides, (FluidTank) tankManager.getTanks()[data.availableSlots[0]]);
             }
         }
+        return true;
     }
 
-    private void ejectGas(Set<EnumFacing> outputSides, GasTank tank) {
+    /**
+     * Eject gas.
+     * @return return false if ejection is failed.
+     */
+    private boolean ejectGas(Set<EnumFacing> outputSides, GasTank tank) {
         if (tank.getGas() != null && tank.getStored() > 0) {
             GasStack toEmit = tank.getGas().copy().withAmount(Math.min(MekanismConfig.current().mekce.GasEjectionSettings.val() ? tank.getMaxGas() : GAS_OUTPUT, tank.getStored()));
             int emit = GasUtils.emit(toEmit, tileEntity, outputSides);
-            tank.draw(emit, true);
+            if (emit > 0) {
+                tank.draw(emit, true);
+            } else {
+                return false;
+            }
         }
+        return true;
     }
 
-    private void ejectFluid(Set<EnumFacing> outputSides, FluidTank tank) {
+    /**
+     * Eject fluid.
+     * @return return false if ejection is failed.
+     */
+    private boolean ejectFluid(Set<EnumFacing> outputSides, FluidTank tank) {
         if (tank.getFluid() != null && tank.getFluidAmount() > 0) {
             FluidStack toEmit = PipeUtils.copy(tank.getFluid(), Math.min(MekanismConfig.current().mekce.FluidEjectionSettings.val() ? tank.getCapacity() : FLUID_OUTPUT, tank.getFluidAmount()));
             int emit = PipeUtils.emit(outputSides, toEmit, tileEntity);
-            tank.drain(emit, true);
+            if (emit > 0) {
+                tank.drain(emit, true);
+            } else {
+                return false;
+            }
         }
+        return true;
     }
 
     public Set<EnumFacing> getOutputSides(TransmissionType type, SideData data) {
