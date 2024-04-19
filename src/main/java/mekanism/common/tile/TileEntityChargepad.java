@@ -43,6 +43,7 @@ public class TileEntityChargepad extends TileEntityEffectsBlock {
     public void onUpdate() {
         super.onUpdate();
         if (!world.isRemote) {
+
             isActive = false;
             List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class,
                     new AxisAlignedBB(getPos().getX(), getPos().getY(), getPos().getZ(), getPos().getX() + 1, getPos().getY() + 0.2, getPos().getZ() + 1));

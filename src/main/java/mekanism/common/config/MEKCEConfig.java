@@ -95,4 +95,8 @@ public class MEKCEConfig extends BaseConfig {
 
     public final IntOption MAXTierSize = new IntOption(this,"mekce","MAXTierSize",1,
             "The maximum number of stacks that can be stacked in Tier Instale",1,64).setRequiresGameRestart(true);
+
+    public final BooleanOption EnableUpgradeConfigure  = new BooleanOption(this,"mekce","EnableUpgradeConfigure",false,"Enable an upgrade similar to IC2");
+
+    public final IntOption EjectionFailureDelay = new IntOption(this, "mekce", "EjectionFailureDelay", 20, "How long to wait and retry if the machine is unable to export its own gas or fluid. Helps optimize performance.", 0, 100);
 }

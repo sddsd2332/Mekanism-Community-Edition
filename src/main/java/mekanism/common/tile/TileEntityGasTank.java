@@ -161,11 +161,10 @@ public class TileEntityGasTank extends TileEntityContainerBlock implements IGasH
         if (slotID == 0) {
             return itemstack.getItem() instanceof IGasItem && (gasTank.getGas() == null || ((IGasItem) itemstack.getItem()).canReceiveGas(itemstack, gasTank.getGas().getGas()));
         } else if (slotID == 1) {
-            if (tier != GasTankTier.CREATIVE &&
-                    (((IGasItem) itemstack.getItem()).getGas(itemstack).getGas() == MekanismFluids.NuclearWaste ||
+            if (tier != GasTankTier.CREATIVE && (itemstack.getItem() instanceof IGasItem && (((IGasItem) itemstack.getItem()).getGas(itemstack).getGas() == MekanismFluids.NuclearWaste ||
                             ((IGasItem) itemstack.getItem()).getGas(itemstack).getGas() == MekanismFluids.Plutonium ||
                             ((IGasItem) itemstack.getItem()).getGas(itemstack).getGas() == MekanismFluids.Polonium ||
-                            ((IGasItem) itemstack.getItem()).getGas(itemstack).getGas() == MekanismFluids.SpentNuclearWaste)) {
+                            ((IGasItem) itemstack.getItem()).getGas(itemstack).getGas() == MekanismFluids.SpentNuclearWaste))) {
                 return false;
             } else {
                 return itemstack.getItem() instanceof IGasItem && (gasTank.getGas() == null || ((IGasItem) itemstack.getItem()).canProvideGas(itemstack, gasTank.getGas().getGas()));

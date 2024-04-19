@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mekanism.api.EnumColor;
 import mekanism.api.TileNetworkList;
 import mekanism.api.gas.*;
+import mekanism.api.tier.BaseTier;
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.common.MekanismBlocks;
 import mekanism.common.MekanismFluids;
@@ -12,10 +13,10 @@ import mekanism.common.Upgrade;
 import mekanism.common.base.*;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.capabilities.Capabilities;
+import mekanism.common.config.MekanismConfig;
 import mekanism.common.recipe.RecipeHandler;
 import mekanism.common.recipe.inputs.ItemStackInput;
 import mekanism.common.recipe.machines.DissolutionRecipe;
-import mekanism.api.tier.BaseTier;
 import mekanism.common.tile.component.TileComponentConfig;
 import mekanism.common.tile.component.TileComponentEjector;
 import mekanism.common.tile.prefab.TileEntityMachine;
@@ -77,6 +78,9 @@ public class TileEntityChemicalDissolutionChamber extends TileEntityMachine impl
     @Override
     public void onUpdate() {
         if (!world.isRemote) {
+            if (MekanismConfig.current().mekce.EnableUpgradeConfigure.val()) {
+                MekanismUtils.inject.accept(ticksRequired, this::onUpdate);
+            }
             ChargeUtils.discharge(3, this);
             ItemStack itemStack = inventory.get(0);
             if (!itemStack.isEmpty() && injectTank.getNeeded() > 0 && itemStack.getItem() instanceof IGasItem item) {

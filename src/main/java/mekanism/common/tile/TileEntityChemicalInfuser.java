@@ -75,6 +75,7 @@ public class TileEntityChemicalInfuser extends TileEntityMachine implements IGas
     public void onUpdate() {
         super.onUpdate();
         if (!world.isRemote) {
+            
             ChargeUtils.discharge(3, this);
             TileUtils.receiveGas(inventory.get(0), leftTank);
             TileUtils.receiveGas(inventory.get(1), rightTank);

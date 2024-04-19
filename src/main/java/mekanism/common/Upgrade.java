@@ -4,6 +4,7 @@ import mekanism.api.EnumColor;
 import mekanism.common.base.IUpgradeTile;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.util.LangUtils;
+import mekanism.common.util.MekanismUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -118,9 +119,15 @@ public enum Upgrade {
 
     public List<String> getMultScaledInfo(IUpgradeTile tile) {
         List<String> ret = new ArrayList<>();
+        Upgrade upgrade = this;
         if (canMultiply()) {
-            double effect = Math.pow(MekanismConfig.current().general.maxUpgradeMultiplier.val(), (float) tile.getComponent().getUpgrades(this) / (float) getMax());
-            ret.add(LangUtils.localize("gui.upgrades.effect") + ": " + (Math.round(effect * 100) / 100F) + "x");
+            if (MekanismConfig.current().mekce.EnableUpgradeConfigure.val()) {
+                double effect = upgrade == Upgrade.ENERGY ? MekanismUtils.capacity(tile) : upgrade == Upgrade.SPEED ? MekanismUtils.time(tile) : Math.pow(MekanismConfig.current().general.maxUpgradeMultiplier.val(), (float) tile.getComponent().getUpgrades(upgrade) / (float) getMax());
+                ret.add(LangUtils.localize("gui.upgrades.effect") + ": " + MekanismUtils.exponential(effect) + "x");
+            } else {
+                double effect = Math.pow(MekanismConfig.current().general.maxUpgradeMultiplier.val(), (float) tile.getComponent().getUpgrades(this) / (float) getMax());
+                ret.add(LangUtils.localize("gui.upgrades.effect") + ": " + (Math.round(effect * 100) / 100F) + "x");
+            }
         }
         return ret;
     }
@@ -128,10 +135,15 @@ public enum Upgrade {
     public List<String> getExpScaledInfo(IUpgradeTile tile) {
         List<String> ret = new ArrayList<>();
         if (canMultiply()) {
-            double effect = Math.min(Math.pow(2, (float) tile.getComponent().getUpgrades(this)), MekanismConfig.current().mekce.MAXspeedmachines.val());
-            ret.add(LangUtils.localize("gui.upgrades.effect") + ": " + effect + "x");
+            if (MekanismConfig.current().mekce.EnableUpgradeConfigure.val()) {
+                ret.add(LangUtils.localize("gui.upgrades.effect") + ": " + MekanismUtils.time(tile) + "x");
+            } else {
+                double effect = Math.min(Math.pow(2, (float) tile.getComponent().getUpgrades(this)), MekanismConfig.current().mekce.MAXspeedmachines.val());
+                ret.add(LangUtils.localize("gui.upgrades.effect") + ": " + effect + "x");
+            }
         }
         return ret;
+
     }
 
     public interface IUpgradeInfoHandler {

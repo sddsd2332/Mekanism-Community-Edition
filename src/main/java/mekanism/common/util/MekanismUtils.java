@@ -64,6 +64,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.BiConsumer;
 
 /**
  * Utilities used by Mekanism. All miscellaneous methods are located here.
@@ -240,7 +241,7 @@ public final class MekanismUtils {
         ArrayList<SideData> outputs = config.getConfig().getOutputs(type);
         SideConfig sideConfig = config.getConfig().getConfig(type);
         int max = outputs.size() - 1;
-        if (sideConfig.get(direction) != -1){
+        if (sideConfig.get(direction) != -1) {
             int current = outputs.indexOf(outputs.get(sideConfig.get(direction)));
             if (current < max) {
                 sideConfig.set(direction, (byte) (current + 1));
@@ -264,7 +265,7 @@ public final class MekanismUtils {
         ArrayList<SideData> outputs = config.getConfig().getOutputs(type);
         SideConfig sideConfig = config.getConfig().getConfig(type);
         int max = outputs.size() - 1;
-        if (sideConfig.get(direction) != -1){
+        if (sideConfig.get(direction) != -1) {
             int current = outputs.indexOf(outputs.get(sideConfig.get(direction)));
             if (current > 0) {
                 sideConfig.set(direction, (byte) (current - 1));
@@ -289,7 +290,12 @@ public final class MekanismUtils {
      * @return required operating ticks
      */
     public static int getTicks(IUpgradeTile mgmt, int def) {
-        return (int) (def * Math.pow(MekanismConfig.current().general.maxUpgradeMultiplier.val(), -fractionUpgrades(mgmt, Upgrade.SPEED)));
+        if (MekanismConfig.current().mekce.EnableUpgradeConfigure.val()) {
+            double d = def * time(mgmt);
+            return d >= 1 ? clampToInt(d) : clampToInt(1 / d) * -1;
+        } else {
+            return (int) (def * Math.pow(MekanismConfig.current().general.maxUpgradeMultiplier.val(), -fractionUpgrades(mgmt, Upgrade.SPEED)));
+        }
     }
 
     /**
@@ -300,7 +306,11 @@ public final class MekanismUtils {
      * @return required energy per tick
      */
     public static double getEnergyPerTick(IUpgradeTile mgmt, double def) {
-        return def * Math.pow(MekanismConfig.current().general.maxUpgradeMultiplier.val(), 2 * fractionUpgrades(mgmt, Upgrade.SPEED) - fractionUpgrades(mgmt, Upgrade.ENERGY));
+        if (MekanismConfig.current().mekce.EnableUpgradeConfigure.val()) {
+            return def * electricity(mgmt);
+        } else {
+            return def * Math.pow(MekanismConfig.current().general.maxUpgradeMultiplier.val(), 2 * fractionUpgrades(mgmt, Upgrade.SPEED) - fractionUpgrades(mgmt, Upgrade.ENERGY));
+        }
     }
 
     /**
@@ -336,7 +346,11 @@ public final class MekanismUtils {
      * @return max energy
      */
     public static double getMaxEnergy(IUpgradeTile mgmt, double def) {
-        return def * Math.pow(MekanismConfig.current().general.maxUpgradeMultiplier.val(), fractionUpgrades(mgmt, Upgrade.ENERGY));
+        if (MekanismConfig.current().mekce.EnableUpgradeConfigure.val()) {
+            return def * capacity(mgmt);
+        } else {
+            return def * Math.pow(MekanismConfig.current().general.maxUpgradeMultiplier.val(), fractionUpgrades(mgmt, Upgrade.ENERGY));
+        }
     }
 
     /**
@@ -763,9 +777,10 @@ public final class MekanismUtils {
         return Mekanism.hooks.RFLoaded && !MekanismConfig.current().general.blacklistRF.val();
     }
 
-    public static boolean useFlux(){
+    public static boolean useFlux() {
         return Mekanism.hooks.FluxNetWorksLoaded && !MekanismConfig.current().general.blacklistFlux.val();
     }
+
     /**
      * Whether or not Tesla power should be used.
      *
@@ -1056,6 +1071,42 @@ public final class MekanismUtils {
         }
         return Integer.MAX_VALUE;
     }
+
+
+    public static double time(IUpgradeTile tile) {
+        return Math.pow(MekanismConfig.current().general.maxUpgradeMultiplier.val(), tile.getComponent().getUpgrades(Upgrade.SPEED) / -8D);
+    }
+
+    public static double electricity(IUpgradeTile tile) {
+        int speed = tile.getComponent().getUpgrades(Upgrade.SPEED);
+        int energy = tile.getComponent().getUpgrades(Upgrade.ENERGY);
+        return Math.pow(MekanismConfig.current().general.maxUpgradeMultiplier.val(), (2 * speed - Math.min(energy, Math.max(8, speed))) / 8D);
+    }
+
+    public static double capacity(IUpgradeTile tile) {
+        return Math.pow(MekanismConfig.current().general.maxUpgradeMultiplier.val(), tile.getComponent().getUpgrades(Upgrade.ENERGY) / 8D);
+    }
+
+    public static String exponential(double d) {
+        int significant = 4;
+        int exp = (int) Math.floor(Math.log10(d));
+        d = d * Math.pow(10, -exp);
+        d = (double) ((int) Math.round(d * Math.pow(10, significant - 1))) / Math.pow(10, significant - 1);
+        double dt = (double) ((int) Math.round(d * Math.pow(10, significant - 1))) / Math.pow(10, significant - 1 - exp);
+        return Math.abs(exp) <= significant - 1 ? String.valueOf(dt) : d + "E" + exp;
+    }
+
+
+    public static final ThreadLocal<Boolean> isInjecting = ThreadLocal.withInitial(() -> false);
+
+    public static final BiConsumer<Integer, Runnable> inject = (reqTime, process) -> {
+        if (!isInjecting.get()) {
+            isInjecting.set(true);
+            for (int i = reqTime; i < 0; i++)
+                process.run();
+            isInjecting.set(false);
+        }
+    };
 
     public enum ResourceType {
         GUI("gui"),

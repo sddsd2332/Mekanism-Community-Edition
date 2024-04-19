@@ -7,6 +7,7 @@ import mekanism.api.TileNetworkList;
 import mekanism.api.gas.*;
 import mekanism.api.infuse.InfuseObject;
 import mekanism.api.infuse.InfuseRegistry;
+import mekanism.api.tier.BaseTier;
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.common.*;
 import mekanism.common.base.*;
@@ -25,7 +26,6 @@ import mekanism.common.recipe.outputs.ChanceOutput;
 import mekanism.common.recipe.outputs.ChanceOutput2;
 import mekanism.common.recipe.outputs.ItemStackOutput;
 import mekanism.common.recipe.outputs.PressurizedOutput;
-import mekanism.api.tier.BaseTier;
 import mekanism.common.tier.FactoryTier;
 import mekanism.common.tile.component.TileComponentConfig;
 import mekanism.common.tile.component.TileComponentEjector;
@@ -285,6 +285,9 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
             if (ticker == 1) {
                 world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
             }
+            if (MekanismConfig.current().mekce.EnableUpgradeConfigure.val()) {
+                MekanismUtils.inject.accept(ticksRequired, this::onUpdate);
+            }
             ChargeUtils.discharge(1, this);
             handleSecondaryFuel();
             if (!NoItemInputMachine()) {
@@ -482,8 +485,9 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
     }
 
     public boolean GasMachine() {
-        return recipeType == RecipeType.OXIDIZER || recipeType == RecipeType.Dissolution || recipeType == RecipeType.Crystallizer || recipeType == RecipeType.PRC || recipeType == RecipeType.WASHER ||  recipeType.getFuelType() == MachineFuelType.FARM || recipeType.getFuelType() == MachineFuelType.ADVANCED || recipeType == RecipeType.NUCLEOSYNTHESIZER;
+        return recipeType == RecipeType.OXIDIZER || recipeType == RecipeType.Dissolution || recipeType == RecipeType.Crystallizer || recipeType == RecipeType.PRC || recipeType == RecipeType.WASHER || recipeType.getFuelType() == MachineFuelType.FARM || recipeType.getFuelType() == MachineFuelType.ADVANCED || recipeType == RecipeType.NUCLEOSYNTHESIZER;
     }
+
     public boolean inputFluidMachine() {
         return recipeType == RecipeType.PRC || recipeType == RecipeType.WASHER;
     }
@@ -564,11 +568,11 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         if (tier == FactoryTier.CREATIVE) {
             return 0;
         } else {
-            if (recipeType.getFuelType() == MachineFuelType.FARM || recipeType.getFuelType() == MachineFuelType.ADVANCED){
+            if (recipeType.getFuelType() == MachineFuelType.FARM || recipeType.getFuelType() == MachineFuelType.ADVANCED) {
                 return MekanismUtils.getSecondaryEnergyPerTickMean(this, type.getSecondaryEnergyPerTick());
-            }else if (recipeType == RecipeType.Dissolution){
+            } else if (recipeType == RecipeType.Dissolution) {
                 return MekanismUtils.getSecondaryEnergyPerTickMean(this, 1);
-            }else {
+            } else {
                 return 0;
             }
         }
@@ -576,7 +580,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
 
     @Nullable
     public GasStack getItemGas(ItemStack itemStack) {
-            return GasConversionHandler.getItemGas(itemStack, gasTank, recipeType::isValidGas);
+        return GasConversionHandler.getItemGas(itemStack, gasTank, recipeType::isValidGas);
     }
 
     public void handleSecondaryFuel() {
@@ -1230,7 +1234,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
 
     @Override
     public GasStack drawGas(EnumFacing side, int amount, boolean doTransfer) {
-       if (canDrawGas(side, null)) {
+        if (canDrawGas(side, null)) {
             return gasOutTank.draw(amount, doTransfer);
         }
         return null;
@@ -1239,21 +1243,20 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
     @Override
     public boolean canReceiveGas(EnumFacing side, Gas type) {
         if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1)) {
-            if (recipeType.getFuelType() == MachineFuelType.ADVANCED || recipeType.getFuelType() == MachineFuelType.FARM){
+            if (recipeType.getFuelType() == MachineFuelType.ADVANCED || recipeType.getFuelType() == MachineFuelType.FARM) {
                 return recipeType.canReceiveGas(side, type);
-            }else if (recipeType == RecipeType.Crystallizer){
-                return  RecipeHandler.Recipe.CHEMICAL_CRYSTALLIZER.containsRecipe(type);
-            }else if (recipeType == RecipeType.Dissolution){
+            } else if (recipeType == RecipeType.Crystallizer) {
+                return RecipeHandler.Recipe.CHEMICAL_CRYSTALLIZER.containsRecipe(type);
+            } else if (recipeType == RecipeType.Dissolution) {
                 return type == MekanismFluids.SulfuricAcid;
-            }else if (recipeType == RecipeType.PRC || recipeType == RecipeType.NUCLEOSYNTHESIZER){
+            } else if (recipeType == RecipeType.PRC || recipeType == RecipeType.NUCLEOSYNTHESIZER) {
                 return true;
-            }else if (recipeType == RecipeType.WASHER){
-               return RecipeHandler.Recipe.CHEMICAL_WASHER.containsRecipe(type);
+            } else if (recipeType == RecipeType.WASHER) {
+                return RecipeHandler.Recipe.CHEMICAL_WASHER.containsRecipe(type);
             }
         }
         return false;
     }
-
 
 
     @Override
@@ -1268,9 +1271,9 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
             return new GasTankInfo[]{gasTank, gasOutTank};
         } else if (recipeType == RecipeType.OXIDIZER) {
             return new GasTankInfo[]{gasOutTank};
-       } else {
+        } else {
             return new GasTankInfo[]{gasTank};
-      }
+        }
     }
 
     @Override
@@ -1286,7 +1289,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         if (isCapabilityDisabled(capability, side)) {
             return null;
         }
-        if (capability == Capabilities.GAS_HANDLER_CAPABILITY ||capability == Capabilities.CONFIG_CARD_CAPABILITY || capability == Capabilities.SPECIAL_CONFIG_DATA_CAPABILITY) {
+        if (capability == Capabilities.GAS_HANDLER_CAPABILITY || capability == Capabilities.CONFIG_CARD_CAPABILITY || capability == Capabilities.SPECIAL_CONFIG_DATA_CAPABILITY) {
             return (T) this;
         }
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
@@ -1299,12 +1302,12 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
     public boolean isCapabilityDisabled(@Nonnull Capability<?> capability, EnumFacing side) {
         if (configComponent.isCapabilityDisabled(capability, side, facing)) {
             return true;
-        }else if (capability == Capabilities.GAS_HANDLER_CAPABILITY) {
+        } else if (capability == Capabilities.GAS_HANDLER_CAPABILITY) {
             // Originally, it was only possible to disable it if the type was specified
             //Now modifying to these can also be disabled
             if (GasInputMachine() || GasAdvancedInputMachine() || recipeType == RecipeType.OXIDIZER) {
                 return false;
-            }else {
+            } else {
                 return true;
             }
         }
@@ -1336,7 +1339,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
 
     @Override
     public Object[] getTanks() {
-        return new Object[]{fluidTank,gasTank, gasOutTank};
+        return new Object[]{fluidTank, gasTank, gasOutTank};
     }
 
     @Override

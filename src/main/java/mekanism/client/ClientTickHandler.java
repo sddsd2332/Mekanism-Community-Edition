@@ -34,6 +34,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Mouse;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -269,11 +270,11 @@ public class ClientTickHandler {
     public void onMouseEvent(MouseEvent event) {
         if (mc.player != null && mc.player.isSneaking()) {
             ItemStack stack = mc.player.getHeldItemMainhand();
-            int delta = event.getDwheel();
+            int delta = Mouse.getEventDWheel();
             if (MekanismConfig.current().client.allowConfiguratorModeScroll.val()) {
                 if (stack.getItem() instanceof ItemConfigurator configurator && delta != 0) {
                     RenderTickHandler.modeSwitchTimer = 100;
-                    wheelStatus += event.getDwheel();
+                    wheelStatus += Mouse.getEventDWheel();
                     int scaledDelta = wheelStatus / 120;
                     wheelStatus = wheelStatus % 120;
                     int newVal = configurator.getState(stack).ordinal() + (scaledDelta % ConfiguratorMode.values().length);
@@ -291,7 +292,7 @@ public class ClientTickHandler {
             if (MekanismConfig.current().client.allowFlamethrowerModeScroll.val()) {
                 if (stack.getItem() instanceof ItemFlamethrower Flamethrower && delta != 0) {
                     RenderTickHandler.modeSwitchTimer = 100;
-                    wheelStatus += event.getDwheel();
+                    wheelStatus += Mouse.getEventDWheel();
                     int scaledDelta = wheelStatus / 120;
                     wheelStatus = wheelStatus % 120;
                     int newVal = Flamethrower.getMode(stack).ordinal() + (scaledDelta % FlamethrowerMode.values().length);
@@ -309,7 +310,7 @@ public class ClientTickHandler {
             if (MekanismConfig.current().client.allowAtomicDisassemblerModeScroll.val()) {
                 if (stack.getItem() instanceof ItemAtomicDisassembler AtomicDisassembler && delta != 0) {
                     RenderTickHandler.modeSwitchTimer = 100;
-                    wheelStatus += event.getDwheel();
+                    wheelStatus += Mouse.getEventDWheel();
                     int scaledDelta = wheelStatus / 120;
                     wheelStatus = wheelStatus % 120;
                     int newVal = AtomicDisassembler.getMode(stack).ordinal() + (scaledDelta % Mode.values().length);
@@ -327,7 +328,7 @@ public class ClientTickHandler {
             if (MekanismConfig.current().client.allowMekToolModeScroll.val()){
                 if (stack.getItem() instanceof ItemMekTool MekTool && delta != 0) {
                     RenderTickHandler.modeSwitchTimer = 100;
-                    wheelStatus += event.getDwheel();
+                    wheelStatus += Mouse.getEventDWheel();
                     int scaledDelta = wheelStatus / 120;
                     wheelStatus = wheelStatus % 120;
                     int newVal = MekTool.getMode(stack).ordinal() + (scaledDelta % MekToolMode.values().length);
@@ -343,7 +344,7 @@ public class ClientTickHandler {
             }
             if (stack.getItem() instanceof ItemElectricBow Bow && delta !=0){
                 RenderTickHandler.modeSwitchTimer = 100;
-                wheelStatus += event.getDwheel();
+                wheelStatus += Mouse.getEventDWheel();
                 int scaledDelta = wheelStatus / 120;
                 wheelStatus = wheelStatus % 120;
                 if (Math.abs(scaledDelta) % 2 == 1) {

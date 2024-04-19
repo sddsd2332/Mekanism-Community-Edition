@@ -27,6 +27,11 @@ public class GrSMekanismAdd implements GroovyPlugin {
     }
 
     @Override
+    public @NotNull String getContainerName() {
+        return Mekanism.MOD_NAME;
+    }
+
+    @Override
     public void onCompatLoaded(GroovyContainer<?> groovyContainer) {
     }
 

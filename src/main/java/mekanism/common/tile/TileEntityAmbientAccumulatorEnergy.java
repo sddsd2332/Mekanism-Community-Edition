@@ -70,6 +70,7 @@ public class TileEntityAmbientAccumulatorEnergy extends TileEntityMachine implem
     public void onUpdate() {
         super.onUpdate();
         if (!world.isRemote) {
+
             ChargeUtils.discharge(1, this);
             TileUtils.drawGas(inventory.get(0), outputTank);
             AmbientGasRecipe recipe = getRecipe();

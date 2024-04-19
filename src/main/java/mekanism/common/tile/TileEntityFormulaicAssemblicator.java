@@ -13,6 +13,7 @@ import mekanism.common.base.ISideConfiguration;
 import mekanism.common.base.IUpgradeTile;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.capabilities.Capabilities;
+import mekanism.common.config.MekanismConfig;
 import mekanism.common.content.assemblicator.RecipeFormula;
 import mekanism.common.item.ItemCraftingFormula;
 import mekanism.common.security.ISecurityTile;
@@ -123,6 +124,9 @@ public class TileEntityFormulaicAssemblicator extends TileEntityElectricBlock im
     public void onUpdate() {
         super.onUpdate();
         if (!world.isRemote) {
+            if (MekanismConfig.current().mekce.EnableUpgradeConfigure.val()) {
+                MekanismUtils.inject.accept(ticksRequired, this::onUpdate);
+            }
             if (formula != null && stockControl && needsOrganize) {
                 needsOrganize = false;
                 organizeStock();
@@ -495,7 +499,7 @@ public class TileEntityFormulaicAssemblicator extends TileEntityElectricBlock im
     }
 
     @Override
-   public void writeCustomNBT(NBTTagCompound nbtTags) {
+    public void writeCustomNBT(NBTTagCompound nbtTags) {
         super.writeCustomNBT(nbtTags);
         nbtTags.setBoolean("autoMode", autoMode);
         nbtTags.setInteger("operatingTicks", operatingTicks);

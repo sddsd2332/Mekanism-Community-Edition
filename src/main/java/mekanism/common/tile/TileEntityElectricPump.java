@@ -95,6 +95,9 @@ public class TileEntityElectricPump extends TileEntityElectricBlock implements I
     @Override
     public void onUpdate() {
         if (!world.isRemote) {
+            if (MekanismConfig.current().mekce.EnableUpgradeConfigure.val()) {
+                MekanismUtils.inject.accept(ticksRequired, this::onUpdate);
+            }
             ChargeUtils.discharge(2, this);
             if (fluidTank.getFluid() != null) {
                 if (FluidContainerUtils.isFluidContainer(inventory.get(0))) {
