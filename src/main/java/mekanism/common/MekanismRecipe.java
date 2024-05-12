@@ -264,7 +264,9 @@ public class MekanismRecipe {
         }
         //Chemical Dissolution Chamber Recipes
         if (MekanismConfig.current().general.machinesManager.isEnabled(BlockStateMachine.MachineType.CHEMICAL_DISSOLUTION_CHAMBER)) {
-            RecipeHandler.addChemicalDissolutionChamberRecipe(new ItemStack(MekanismItems.OtherDust, 1, 7), new GasStack(MekanismFluids.HydrofluoricAcid, 100));
+            for (ItemStack ore : OreDictionary.getOres("dustFluorite")){
+                RecipeHandler.addChemicalDissolutionChamberRecipe(ore, new GasStack(MekanismFluids.HydrofluoricAcid, 100));
+            }
         }
 
         //T4 Processing Recipes
