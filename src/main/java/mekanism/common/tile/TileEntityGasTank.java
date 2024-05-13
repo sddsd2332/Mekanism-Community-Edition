@@ -25,6 +25,7 @@ import mekanism.common.tile.prefab.TileEntityContainerBlock;
 import mekanism.common.util.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -158,17 +159,29 @@ public class TileEntityGasTank extends TileEntityContainerBlock implements IGasH
 
     @Override
     public boolean isItemValidForSlot(int slotID, @Nonnull ItemStack itemstack) {
+        Item item = itemstack.getItem();
         if (slotID == 0) {
-            return itemstack.getItem() instanceof IGasItem && (gasTank.getGas() == null || ((IGasItem) itemstack.getItem()).canReceiveGas(itemstack, gasTank.getGas().getGas()));
+            return item instanceof IGasItem && (gasTank.getGas() == null || ((IGasItem) item).canReceiveGas(itemstack, gasTank.getGas().getGas()));
         } else if (slotID == 1) {
-            if (tier != GasTankTier.CREATIVE && (itemstack.getItem() instanceof IGasItem && (((IGasItem) itemstack.getItem()).getGas(itemstack).getGas() == MekanismFluids.NuclearWaste ||
-                            ((IGasItem) itemstack.getItem()).getGas(itemstack).getGas() == MekanismFluids.Plutonium ||
-                            ((IGasItem) itemstack.getItem()).getGas(itemstack).getGas() == MekanismFluids.Polonium ||
-                            ((IGasItem) itemstack.getItem()).getGas(itemstack).getGas() == MekanismFluids.SpentNuclearWaste))) {
-                return false;
-            } else {
-                return itemstack.getItem() instanceof IGasItem && (gasTank.getGas() == null || ((IGasItem) itemstack.getItem()).canProvideGas(itemstack, gasTank.getGas().getGas()));
+            if (tier == GasTankTier.CREATIVE) {
+                return item instanceof IGasItem && (gasTank.getGas() == null || ((IGasItem) item).canProvideGas(itemstack, gasTank.getGas().getGas()));
             }
+            if (item instanceof IGasItem gasItem) {
+                GasStack gas = gasItem.getGas(itemstack);
+                if (gas == null) {
+                    return true;
+                }
+                Gas type = gas.getGas();
+                if (type == MekanismFluids.NuclearWaste ||
+                    type == MekanismFluids.Plutonium ||
+                    type == MekanismFluids.Polonium ||
+                    type == MekanismFluids.SpentNuclearWaste) {
+                    return false;
+                } else {
+                    return gasTank.getGas() == null || ((IGasItem) item).canProvideGas(itemstack, gasTank.getGas().getGas());
+                }
+            }
+            return false;
         }
         return false;
     }
