@@ -141,7 +141,7 @@ public class TileEntityGasTank extends TileEntityContainerBlock implements IGasH
     @Override
     public boolean canExtractItem(int slotID, @Nonnull ItemStack itemstack, @Nonnull EnumFacing side) {
         if (slotID == 1) {
-            if (tier != GasTankTier.CREATIVE && (
+            if (tier != GasTankTier.CREATIVE && ((IGasItem) itemstack.getItem()).getGas(itemstack) != null && (
                     ((IGasItem) itemstack.getItem()).getGas(itemstack).getGas() == MekanismFluids.NuclearWaste ||
                             ((IGasItem) itemstack.getItem()).getGas(itemstack).getGas() == MekanismFluids.Plutonium ||
                             ((IGasItem) itemstack.getItem()).getGas(itemstack).getGas() == MekanismFluids.Polonium ||
