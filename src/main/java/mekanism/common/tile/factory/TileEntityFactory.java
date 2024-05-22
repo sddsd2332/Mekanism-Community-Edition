@@ -139,7 +139,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(2));
-        ejectorComponent.setItemInputOutputData(configComponent.getOutputs(TransmissionType.ITEM).get(6));
+        ejectorComponent.setInputOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(6));
         ejectorComponent.setOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(2));
     }
 
@@ -247,7 +247,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         factory.ejectorComponent.readFrom(ejectorComponent);
         factory.configComponent.readFrom(configComponent);
         factory.ejectorComponent.setOutputData(TransmissionType.ITEM, factory.configComponent.getOutputs(TransmissionType.ITEM).get(2));
-        factory.ejectorComponent.setItemInputOutputData(factory.configComponent.getOutputs(TransmissionType.ITEM).get(6));
+        factory.ejectorComponent.setInputOutputData(TransmissionType.ITEM, factory.configComponent.getOutputs(TransmissionType.ITEM).get(6));
         factory.ejectorComponent.setOutputData(TransmissionType.GAS, factory.configComponent.getOutputs(TransmissionType.GAS).get(2));
         factory.setRecipeType(recipeType);
         factory.upgradeComponent.setSupported(Upgrade.GAS, recipeType.fuelEnergyUpgrades());

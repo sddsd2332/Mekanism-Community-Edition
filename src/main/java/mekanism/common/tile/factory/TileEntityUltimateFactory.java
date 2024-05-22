@@ -37,7 +37,7 @@ public class TileEntityUltimateFactory extends TileEntityFactory {
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(2));
-        ejectorComponent.setItemInputOutputData(configComponent.getOutputs(TransmissionType.ITEM).get(6));
+        ejectorComponent.setInputOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(6));
         ejectorComponent.setOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(2));
     }
 }
