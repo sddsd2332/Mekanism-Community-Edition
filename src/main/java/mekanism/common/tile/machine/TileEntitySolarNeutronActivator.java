@@ -65,12 +65,14 @@ public class TileEntitySolarNeutronActivator extends TileEntityBasicMachine<GasI
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.NONE, InventoryUtils.EMPTY));
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.INPUT, new int[]{0}));
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.OUTPUT, new int[]{1}));
+        configComponent.addOutput(TransmissionType.GAS, new SideData(new int[]{0, 1}, new boolean[]{false, true}));
         configComponent.setConfig(TransmissionType.GAS, new byte[]{1, -1, 2, 1, 1, 1});
 
         inventory = NonNullList.withSize(3, ItemStack.EMPTY);
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(2));
+        ejectorComponent.setInputOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(3));
     }
 
     @Override
@@ -226,12 +228,16 @@ public class TileEntitySolarNeutronActivator extends TileEntityBasicMachine<GasI
 
     @Override
     public boolean canReceiveGas(EnumFacing side, Gas type) {
-        return configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0) && inputTank.canReceive(type) && RecipeHandler.Recipe.SOLAR_NEUTRON_ACTIVATOR.containsRecipe(type);
+        return (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0) ||
+                configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1))
+                && inputTank.canReceive(type) && RecipeHandler.Recipe.SOLAR_NEUTRON_ACTIVATOR.containsRecipe(type);
     }
 
     @Override
     public boolean canDrawGas(EnumFacing side, Gas type) {
-        return configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1) && outputTank.canDraw(type);
+        return (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1) ||
+                configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1))
+                && outputTank.canDraw(type);
     }
 
     @Nonnull

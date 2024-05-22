@@ -57,7 +57,7 @@ public class TileEntityChemicalCrystallizer extends TileEntityUpgradeableMachine
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(2));
-        ejectorComponent.setItemInputOutputData(configComponent.getOutputs(TransmissionType.ITEM).get(4));
+        ejectorComponent.setInputOutputData(TransmissionType.ITEM,configComponent.getOutputs(TransmissionType.ITEM).get(4));
     }
 
     @Override

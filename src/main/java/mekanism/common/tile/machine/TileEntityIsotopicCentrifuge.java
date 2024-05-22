@@ -34,7 +34,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 
-public class TileEntityIsotopicCentrifuge extends TileEntityBasicMachine<GasInput, GasOutput,IsotopicRecipe> implements ISustainedData, IBoundingBlock, IGasHandler, IUpgradeInfoHandler, ITankManager {
+public class TileEntityIsotopicCentrifuge extends TileEntityBasicMachine<GasInput, GasOutput, IsotopicRecipe> implements ISustainedData, IBoundingBlock, IGasHandler, IUpgradeInfoHandler, ITankManager {
     public static final int MAX_GAS = 10000;
     public GasTank inputTank = new GasTank(MAX_GAS);
     public GasTank outputTank = new GasTank(MAX_GAS);
@@ -43,7 +43,7 @@ public class TileEntityIsotopicCentrifuge extends TileEntityBasicMachine<GasInpu
     private int currentRedstoneLevel;
 
     public TileEntityIsotopicCentrifuge() {
-        super("washer", BlockStateMachine.MachineType.ISOTOPIC_CENTRIFUGE, 3,1);
+        super("washer", BlockStateMachine.MachineType.ISOTOPIC_CENTRIFUGE, 3, 1);
         configComponent = new TileComponentConfig(this, TransmissionType.ITEM, TransmissionType.ENERGY, TransmissionType.GAS);
 
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.NONE, InventoryUtils.EMPTY));
@@ -56,6 +56,7 @@ public class TileEntityIsotopicCentrifuge extends TileEntityBasicMachine<GasInpu
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.NONE, InventoryUtils.EMPTY));
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.INPUT, new int[]{0}));
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.OUTPUT, new int[]{1}));
+        configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.OUTPUT, new int[]{0, 1}));
         configComponent.setConfig(TransmissionType.GAS, new byte[]{1, -1, 2, 1, 1, 1});
 
         configComponent.addOutput(TransmissionType.ENERGY, new SideData(DataType.NONE, SideData.IOState.OFF));
@@ -65,7 +66,7 @@ public class TileEntityIsotopicCentrifuge extends TileEntityBasicMachine<GasInpu
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(2));
-
+        ejectorComponent.setInputOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(3));
         inventory = NonNullList.withSize(4, ItemStack.EMPTY);
     }
 
@@ -165,7 +166,7 @@ public class TileEntityIsotopicCentrifuge extends TileEntityBasicMachine<GasInpu
     }
 
     @Override
-   public void writeCustomNBT(NBTTagCompound nbtTags) {
+    public void writeCustomNBT(NBTTagCompound nbtTags) {
         super.writeCustomNBT(nbtTags);
         nbtTags.setTag("inputTank", inputTank.write(new NBTTagCompound()));
         nbtTags.setTag("outputTank", outputTank.write(new NBTTagCompound()));
@@ -174,7 +175,9 @@ public class TileEntityIsotopicCentrifuge extends TileEntityBasicMachine<GasInpu
 
     @Override
     public boolean canReceiveGas(EnumFacing side, Gas type) {
-        return configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0) && inputTank.canReceive(type) && RecipeHandler.Recipe.ISOTOPIC_CENTRIFUGE.containsRecipe(type);
+        return (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0) ||
+                configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1))
+                && inputTank.canReceive(type) && RecipeHandler.Recipe.ISOTOPIC_CENTRIFUGE.containsRecipe(type);
     }
 
     @Override
@@ -200,7 +203,9 @@ public class TileEntityIsotopicCentrifuge extends TileEntityBasicMachine<GasInpu
 
     @Override
     public boolean canDrawGas(EnumFacing side, Gas type) {
-        return configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1) && outputTank.canDraw(type);
+        return (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1) ||
+                configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1))
+                && outputTank.canDraw(type);
     }
 
     @Nonnull

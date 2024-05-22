@@ -64,7 +64,7 @@ public abstract class TileEntityUpgradeableMachine<INPUT extends MachineInput<IN
         factory.upgradeComponent.setUpgradeSlot(0);
         factory.ejectorComponent.readFrom(ejectorComponent);
         factory.ejectorComponent.setOutputData(TransmissionType.ITEM, factory.configComponent.getOutputs(TransmissionType.ITEM).get(2));
-        factory.ejectorComponent.setItemInputOutputData(factory.configComponent.getOutputs(TransmissionType.ITEM).get(6));
+        factory.ejectorComponent.setInputOutputData(TransmissionType.ITEM,factory.configComponent.getOutputs(TransmissionType.ITEM).get(6));
         factory.ejectorComponent.setOutputData(TransmissionType.GAS,factory.configComponent.getOutputs(TransmissionType.GAS).get(2));
         factory.setRecipeType(type);
         factory.upgradeComponent.setSupported(Upgrade.GAS, type.fuelEnergyUpgrades());

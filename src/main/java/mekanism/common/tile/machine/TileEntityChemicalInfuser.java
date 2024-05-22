@@ -46,7 +46,7 @@ public class TileEntityChemicalInfuser extends TileEntityBasicMachine<ChemicalPa
     public double clientEnergyUsed;
 
     public TileEntityChemicalInfuser() {
-        super("cheminfuser", MachineType.CHEMICAL_INFUSER, 4,1);
+        super("cheminfuser", MachineType.CHEMICAL_INFUSER, 4, 1);
         configComponent = new TileComponentConfig(this, TransmissionType.ITEM, TransmissionType.GAS, TransmissionType.ENERGY);
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.NONE, InventoryUtils.EMPTY));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_1, new int[]{0}));
@@ -60,12 +60,15 @@ public class TileEntityChemicalInfuser extends TileEntityBasicMachine<ChemicalPa
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.INPUT_1, new int[]{0}));
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.INPUT_2, new int[]{1}));
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.OUTPUT, new int[]{2}));
+        configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.INPUT, new int[]{0, 1}));
+        configComponent.addOutput(TransmissionType.GAS, new SideData(new int[]{0, 1, 2}, new boolean[]{false, false, true}));
         configComponent.setConfig(TransmissionType.GAS, new byte[]{0, 0, 3, 0, 1, 2});
 
         configComponent.setInputConfig(TransmissionType.ENERGY);
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(3));
+        ejectorComponent.setInputOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(5));
 
         inventory = NonNullList.withSize(5, ItemStack.EMPTY);
     }
@@ -169,7 +172,7 @@ public class TileEntityChemicalInfuser extends TileEntityBasicMachine<ChemicalPa
     }
 
     @Override
-   public void writeCustomNBT(NBTTagCompound nbtTags) {
+    public void writeCustomNBT(NBTTagCompound nbtTags) {
         super.writeCustomNBT(nbtTags);
         nbtTags.setTag("leftTank", leftTank.write(new NBTTagCompound()));
         nbtTags.setTag("rightTank", rightTank.write(new NBTTagCompound()));
@@ -196,13 +199,38 @@ public class TileEntityChemicalInfuser extends TileEntityBasicMachine<ChemicalPa
 
     @Override
     public boolean canReceiveGas(EnumFacing side, Gas type) {
+        if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1)) {
+            return leftTank.canReceive(type) || rightTank.canReceive(type);
+        } else if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1, 2)) {
+            return leftTank.canReceive(type) || rightTank.canReceive(type);
+        }
         return getTank(side) != null && getTank(side) != centerTank && getTank(side).canReceive(type);
     }
 
     @Override
     public int receiveGas(EnumFacing side, GasStack stack, boolean doTransfer) {
         if (canReceiveGas(side, stack != null ? stack.getGas() : null)) {
-            return getTank(side).receive(stack, doTransfer);
+            if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1)) {
+                if (stack != null) {
+                    if (leftTank.canReceive(stack.getGas()) && rightTank.getGasType() != stack.getGas()) {
+                        return leftTank.receive(stack, doTransfer);
+                    }
+                    if (rightTank.canReceive(stack.getGas()) && leftTank.getGasType() != stack.getGas()) {
+                        return rightTank.receive(stack, doTransfer);
+                    }
+                }
+            } else if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1, 2)) {
+                if (stack != null) {
+                    if (leftTank.canReceive(stack.getGas()) && rightTank.getGasType() != stack.getGas()) {
+                        return leftTank.receive(stack, doTransfer);
+                    }
+                    if (rightTank.canReceive(stack.getGas()) && leftTank.getGasType() != stack.getGas()) {
+                        return rightTank.receive(stack, doTransfer);
+                    }
+                }
+            } else {
+                return getTank(side).receive(stack, doTransfer);
+            }
         }
         return 0;
     }
@@ -218,6 +246,11 @@ public class TileEntityChemicalInfuser extends TileEntityBasicMachine<ChemicalPa
     @Override
     public boolean canDrawGas(EnumFacing side, Gas type) {
         // return getTank(side) != null && getTank(side) == centerTank && getTank(side).canDraw(type);
+        if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1, 2)){
+            if (type != null && getTank(side) == centerTank) {
+                return centerTank.canDraw(type);
+            }
+        }
         return configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(2) && centerTank.canDraw(type);
     }
 

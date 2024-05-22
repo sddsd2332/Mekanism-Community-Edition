@@ -64,7 +64,7 @@ public class TileEntityMetallurgicInfuser extends TileEntityUpgradeableMachine<I
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(2));
-        ejectorComponent.setItemInputOutputData(configComponent.getOutputs(TransmissionType.ITEM).get(6));
+        ejectorComponent.setInputOutputData(TransmissionType.ITEM,configComponent.getOutputs(TransmissionType.ITEM).get(6));
     }
 
     @Override

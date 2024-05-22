@@ -62,6 +62,7 @@ public class TileEntityPRC extends TileEntityUpgradeableMachine<PressurizedInput
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.NONE, InventoryUtils.EMPTY));
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.INPUT, new int[]{1}));
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.OUTPUT, new int[]{2}));
+        configComponent.addOutput(TransmissionType.GAS, new SideData(new int[]{1, 2}, new boolean[]{false, true}));
         configComponent.setConfig(TransmissionType.GAS, new byte[]{1, 1, 1, 1, 1, 2});
 
         configComponent.setInputConfig(TransmissionType.ENERGY);
@@ -70,8 +71,9 @@ public class TileEntityPRC extends TileEntityUpgradeableMachine<PressurizedInput
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(3));
-        ejectorComponent.setItemInputOutputData(configComponent.getOutputs(TransmissionType.ITEM).get(4));
+        ejectorComponent.setInputOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(4));
         ejectorComponent.setOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(2));
+        ejectorComponent.setInputOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(3));
     }
 
     @Override
@@ -273,12 +275,16 @@ public class TileEntityPRC extends TileEntityUpgradeableMachine<PressurizedInput
 
     @Override
     public boolean canReceiveGas(EnumFacing side, Gas type) {
-        return configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1) && inputGasTank.canReceive(type);
+        return (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1) ||
+                configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1, 2))
+                && inputGasTank.canReceive(type) && RecipeHandler.Recipe.PRESSURIZED_REACTION_CHAMBER.containsRecipe(type);
     }
 
     @Override
     public boolean canDrawGas(EnumFacing side, Gas type) {
-        return configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(2) && outputGasTank.canDraw(type);
+        return (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(2) ||
+                configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1, 2))
+                && outputGasTank.canDraw(type);
     }
 
     @Nonnull
@@ -329,7 +335,7 @@ public class TileEntityPRC extends TileEntityUpgradeableMachine<PressurizedInput
 
     @Override
     public Object[] getTanks() {
-        return new Object[]{inputFluidTank,inputGasTank, outputGasTank};
+        return new Object[]{inputFluidTank, inputGasTank, outputGasTank};
     }
 
 }

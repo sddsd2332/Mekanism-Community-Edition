@@ -52,8 +52,8 @@ public class TileComponentEjector implements ITileComponent {
         return this;
     }
 
-    public TileComponentEjector setItemInputOutputData(SideData data) {
-        sideData2.put(TransmissionType.ITEM, data);
+    public TileComponentEjector setInputOutputData(TransmissionType type, SideData data) {
+        sideData2.put(type, data);
         return this;
     }
 
@@ -88,7 +88,9 @@ public class TileComponentEjector implements ITileComponent {
             boolean success = false;
 
             success |= eject(TransmissionType.GAS);
+            success |= eject2(TransmissionType.GAS);
             success |= eject(TransmissionType.FLUID);
+            success |= eject2(TransmissionType.FLUID);
 
             if (!success) {
                 ejectTickDelay = FAILURE_DELAY;
@@ -111,14 +113,35 @@ public class TileComponentEjector implements ITileComponent {
         }
         ITankManager tankManager = (ITankManager) this.tileEntity;
         Set<EnumFacing> outputSides = getOutputSides(type, data);
-        if (tankManager.getTanks() != null){
+        if (tankManager.getTanks() != null) {
             if (type == TransmissionType.GAS) {
-                return ejectGas(outputSides, (GasTank)tankManager.getTanks()[data.availableSlots[0]]);
-            }else if (type == TransmissionType.FLUID) {
-                return ejectFluid(outputSides, (FluidTank)tankManager.getTanks()[data.availableSlots[0]]);
+                return ejectGas(outputSides, (GasTank) tankManager.getTanks()[data.availableSlots[0]]);
+            } else if (type == TransmissionType.FLUID) {
+                return ejectFluid(outputSides, (FluidTank) tankManager.getTanks()[data.availableSlots[0]]);
             }
         }
 
+        return true;
+    }
+
+    private boolean eject2(TransmissionType type) {
+        SideData data = sideData2.get(type);
+        if (data == null || !getEjecting(type)) {
+            return true;
+        }
+        ITankManager tankManager = (ITankManager) this.tileEntity;
+        Set<EnumFacing> outputSides = getOutputSides(type, data);
+        if (tankManager.getTanks() != null) {
+            for (int index = 0; index < data.availableSlots.length; index++) {
+                if (data.allowExtractionSlot[index]) {
+                    if (type == TransmissionType.GAS) {
+                        return ejectGas(outputSides, (GasTank) tankManager.getTanks()[data.availableSlots[index]]);
+                    } else if (type == TransmissionType.FLUID) {
+                        return ejectFluid(outputSides, (FluidTank) tankManager.getTanks()[data.availableSlots[index]]);
+                    }
+                }
+            }
+        }
         return true;
     }
 
@@ -182,7 +205,7 @@ public class TileComponentEjector implements ITileComponent {
         TransitRequest ejectMap = null;
         for (EnumFacing side : outputs) {
             if (ejectMap == null) {
-                    ejectMap = getEjectItemMap(data);
+                ejectMap = getEjectItemMap(data);
                 if (ejectMap.isEmpty()) {
                     break;
                 }

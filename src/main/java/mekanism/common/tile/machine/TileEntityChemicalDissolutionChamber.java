@@ -37,7 +37,7 @@ public class TileEntityChemicalDissolutionChamber extends TileEntityUpgradeableM
     public static final int MAX_GAS = 10000;
     public static final int BASE_INJECT_USAGE = 1;
     public final double BASE_ENERGY_USAGE = MachineType.CHEMICAL_DISSOLUTION_CHAMBER.getUsage();
-    public GasTank  injectTank = new GasTank(MAX_GAS);
+    public GasTank injectTank = new GasTank(MAX_GAS);
     public GasTank outputTank = new GasTank(MAX_GAS);
     public double injectUsage = BASE_INJECT_USAGE;
     public int injectUsageThisTick;
@@ -45,7 +45,7 @@ public class TileEntityChemicalDissolutionChamber extends TileEntityUpgradeableM
     public DissolutionRecipe cachedRecipe;
 
     public TileEntityChemicalDissolutionChamber() {
-        super("dissolution", MachineType.CHEMICAL_DISSOLUTION_CHAMBER, 4,100);
+        super("dissolution", MachineType.CHEMICAL_DISSOLUTION_CHAMBER, 4, 100);
         upgradeComponent.setSupported(Upgrade.GAS);
 
         configComponent = new TileComponentConfig(this, TransmissionType.ITEM, TransmissionType.GAS, TransmissionType.ENERGY);
@@ -60,6 +60,7 @@ public class TileEntityChemicalDissolutionChamber extends TileEntityUpgradeableM
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.NONE, InventoryUtils.EMPTY));
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.INPUT, new int[]{0}));
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.OUTPUT, new int[]{1}));
+        configComponent.addOutput(TransmissionType.GAS, new SideData(new int[]{0, 1}, new boolean[]{false, true}));
         configComponent.setConfig(TransmissionType.GAS, new byte[]{1, 1, 1, 1, 1, 2});
 
         configComponent.setInputConfig(TransmissionType.ENERGY);
@@ -68,13 +69,14 @@ public class TileEntityChemicalDissolutionChamber extends TileEntityUpgradeableM
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(2));
+        ejectorComponent.setInputOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(3));
     }
 
     @Override
     public void onUpdate() {
         if (!world.isRemote) {
             ChargeUtils.discharge(3, this);
-            TileUtils.receiveGasItem(inventory.get(0),injectTank,MekanismFluids.SulfuricAcid);
+            TileUtils.receiveGasItem(inventory.get(0), injectTank, MekanismFluids.SulfuricAcid);
             TileUtils.drawGas(inventory.get(2), outputTank);
             boolean changed = false;
             DissolutionRecipe recipe = getRecipe();
@@ -220,7 +222,8 @@ public class TileEntityChemicalDissolutionChamber extends TileEntityUpgradeableM
 
     @Override
     public boolean canReceiveGas(EnumFacing side, Gas type) {
-        return configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0) && injectTank.canReceive(type) && isValidGas(type);
+        return (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0) ||
+                configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1)) && injectTank.canReceive(type) && isValidGas(type);
     }
 
     private boolean isValidGas(Gas gas) {
@@ -230,7 +233,8 @@ public class TileEntityChemicalDissolutionChamber extends TileEntityUpgradeableM
 
     @Override
     public boolean canDrawGas(EnumFacing side, Gas type) {
-        return configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1) && outputTank.canDraw(type);
+        return (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1) ||
+                configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1)) && outputTank.canDraw(type);
     }
 
     @Override

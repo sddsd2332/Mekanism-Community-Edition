@@ -36,9 +36,11 @@ public class SideData {
 
 
     public SideData(int[] slots, boolean[] extractionSlot) {
-        name = DataType.INPUT_OUTPUT.getName();
-        color = DataType.INPUT_OUTPUT.getColor();
-        availableSlots = slots;
+        this(DataType.INPUT_OUTPUT, slots,extractionSlot);
+    }
+
+    public SideData(DataType dataType, int[] slots, boolean[] extractionSlot) {
+        this(dataType, slots);
         allowExtractionSlot = extractionSlot;
     }
 
