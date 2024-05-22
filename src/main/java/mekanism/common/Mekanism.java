@@ -348,6 +348,7 @@ public class Mekanism {
         registerTileEntity(TileEntityRecycler.class, "Recycler");
         registerTileEntity(TileEntityIndustrialAlarm.class, "industrial_alarm");
         registerTileEntity(TileEntityAmbientAccumulatorEnergy.class, "ambient_accumulator_energy");
+        registerTileEntity(TileEntityHybridStorage.class, "Hybrid_storage");
         /**
          * End of adding machine
          */

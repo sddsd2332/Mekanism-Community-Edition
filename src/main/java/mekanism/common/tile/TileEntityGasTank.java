@@ -33,6 +33,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import javax.annotation.Nonnull;
+import java.util.stream.IntStream;
 
 public class TileEntityGasTank extends TileEntityContainerBlock implements IGasHandler, IRedstoneControl, ISideConfiguration, ISecurityTile, ITierUpgradeable,
         IComputerIntegration, IComparatorSupport {
