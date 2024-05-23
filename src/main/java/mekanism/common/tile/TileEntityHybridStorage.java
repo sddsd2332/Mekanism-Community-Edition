@@ -10,7 +10,6 @@ import mekanism.common.SideData;
 import mekanism.common.base.*;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.capabilities.Capabilities;
-import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.computer.IComputerIntegration;
 import mekanism.common.security.ISecurityTile;
 import mekanism.common.tile.component.TileComponentConfig;
@@ -19,6 +18,8 @@ import mekanism.common.tile.component.TileComponentSecurity;
 import mekanism.common.tile.component.config.DataType;
 import mekanism.common.tile.prefab.TileEntityElectricBlock;
 import mekanism.common.util.*;
+import mekanism.common.util.FluidContainerUtils.*;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -37,21 +38,22 @@ import java.util.Set;
 import java.util.stream.IntStream;
 
 public class TileEntityHybridStorage extends TileEntityElectricBlock implements ISideConfiguration, IComputerIntegration,
-        ISecurityTile, IConfigCardAccess, IGasHandler, ISustainedData, ITankManager, IFluidHandlerWrapper {
+        ISecurityTile, IConfigCardAccess, IGasHandler, ISustainedData, ITankManager, IFluidHandlerWrapper, IRedstoneControl ,IFluidContainerManager{
 
     private static final int[] INV_SLOTS = IntStream.range(0, 120).toArray();
     private static final boolean[] INV_SLOTS_INPUT_OUTPUT = IntStream.range(0, 120).mapToObj(it -> it >= 0).collect(BooleanArrayList::new, BooleanArrayList::add, BooleanArrayList::addAll).toBooleanArray(new boolean[0]);
-    private static final int GAS_OUTPUT = MekanismConfig.current().mekce.GasEjectionSpeed.val();
     public TileComponentEjector ejectorComponent;
     public TileComponentConfig configComponent;
     public TileComponentSecurity securityComponent;
     public GasTank gasTank1 = new GasTank(10000);
     public GasTank gasTank2 = new GasTank(10000);
     public FluidTank fluidTank = new FluidTank(10000);
+    public RedstoneControl controlType;
+    public ContainerEditMode editMode = ContainerEditMode.BOTH;
 
     public TileEntityHybridStorage() {
         super(MachineType.HYBRID_STORAGE.getBlockName(), MachineType.HYBRID_STORAGE.getStorage());
-        configComponent = new TileComponentConfig(this, TransmissionType.ITEM, TransmissionType.ENERGY,TransmissionType.FLUID, TransmissionType.GAS);
+        configComponent = new TileComponentConfig(this, TransmissionType.ITEM, TransmissionType.ENERGY, TransmissionType.FLUID, TransmissionType.GAS);
 
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.NONE, InventoryUtils.EMPTY));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT, INV_SLOTS));
@@ -71,7 +73,9 @@ public class TileEntityHybridStorage extends TileEntityElectricBlock implements 
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.OUTPUT_2, new int[]{2}));
         configComponent.setConfig(TransmissionType.GAS, new byte[]{1, 1, 1, 1, 1, 2});
 
-        inventory = NonNullList.withSize(120, ItemStack.EMPTY);
+        inventory = NonNullList.withSize(128, ItemStack.EMPTY);
+
+        controlType = RedstoneControl.DISABLED;
         securityComponent = new TileComponentSecurity(this);
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(2));
@@ -85,26 +89,85 @@ public class TileEntityHybridStorage extends TileEntityElectricBlock implements 
     public void onUpdate() {
         super.onUpdate();
         if (!world.isRemote) {
-            if (configComponent.isEjecting(TransmissionType.ENERGY)) {
-                CableUtils.emit(this);
+            TileUtils.receiveGasItem(inventory.get(120), gasTank1);
+            TileUtils.drawGas(inventory.get(121), gasTank1);
+            TileUtils.receiveGasItem(inventory.get(122), gasTank2);
+            TileUtils.drawGas(inventory.get(123), gasTank2);
+            manageInventory();
+            ChargeUtils.charge(126, this);
+            ChargeUtils.discharge(127, this);
+            energyOupt();
+            handleGasTank(gasTank1, configComponent.getSidesForData(TransmissionType.GAS, facing, 4), true);
+            handleGasTank(gasTank2, configComponent.getSidesForData(TransmissionType.GAS, facing, 5), true);
+            if (fluidTank.getFluid() != null && fluidTank.getFluidAmount() == 0) {
+                fluidTank.setFluid(null);
             }
-            handleGasTank(gasTank1, configComponent.getSidesForData(TransmissionType.GAS, facing, 4));
-            handleGasTank(gasTank2, configComponent.getSidesForData(TransmissionType.GAS, facing, 5));
         }
     }
 
-    private void handleGasTank(GasTank tank, Set<EnumFacing> side) {
+    private void energyOupt() {
+        if (configComponent.isEjecting(TransmissionType.ENERGY) && MekanismUtils.canFunction(this)) {
+            CableUtils.emit(this);
+        }
+    }
+
+    private void handleGasTank(GasTank tank, Set<EnumFacing> side, boolean isGas) {
         if (tank.getGas() != null) {
-            if (configComponent.isEjecting(TransmissionType.GAS)) {
+            if (configComponent.isEjecting(TransmissionType.GAS) && (MekanismUtils.canFunction(this) && isGas)) {
                 GasStack toSend = new GasStack(tank.getGas().getGas(), tank.getStored());
                 tank.draw(GasUtils.emit(toSend, this, side), true);
             }
         }
     }
 
+    private void manageInventory() {
+        if (!inventory.get(124).isEmpty()) {
+            if (FluidContainerUtils.isFluidContainer(inventory.get(124))) {
+                FluidContainerUtils.handleContainerItem(this,editMode,fluidTank,124,125);
+            }
+        }
+    }
+
+    @Override
+    public boolean canExtractItem(int slotID, @Nonnull ItemStack itemstack, @Nonnull EnumFacing side) {
+        Item gasitem = itemstack.getItem();
+        if (slotID <= 120) {
+            return true;
+        } else if (slotID == 121 || slotID == 123) {
+            return gasitem instanceof IGasItem item && item.getGas(itemstack) != null && item.getGas(itemstack).amount == item.getMaxGas(itemstack);
+        } else if (slotID == 122 || slotID == 124) {
+            return gasitem instanceof IGasItem item && item.getGas(itemstack) == null;
+        } else if (slotID == 126) {
+            return true;
+        } else if (slotID == 127) {
+            return ChargeUtils.canBeOutputted(itemstack, true);
+        } else if (slotID == 128) {
+            return ChargeUtils.canBeOutputted(itemstack, false);
+        }
+        return false;
+    }
+
     @Override
     public boolean isItemValidForSlot(int slotID, @Nonnull ItemStack itemstack) {
-        return true;
+        Item item = itemstack.getItem();
+        if (slotID <= 120) {
+            return true;
+        } else if (slotID == 121) {
+            return item instanceof IGasItem gasItem && (gasTank1.getGas() == null || gasItem.canReceiveGas(itemstack, gasTank1.getGas().getGas()));
+        } else if (slotID == 122) {
+            return item instanceof IGasItem gasItem && (gasTank1.getGas() == null || gasItem.canProvideGas(itemstack, gasTank1.getGas().getGas()));
+        } else if (slotID == 123) {
+            return item instanceof IGasItem gasItem && (gasTank2.getGas() == null || gasItem.canReceiveGas(itemstack, gasTank2.getGas().getGas()));
+        } else if (slotID == 124) {
+            return item instanceof IGasItem gasItem && (gasTank2.getGas() == null || gasItem.canProvideGas(itemstack, gasTank2.getGas().getGas()));
+        } else if (slotID == 125) {
+            return FluidContainerUtils.isFluidContainer(itemstack);
+        } else if (slotID == 127) {
+            return ChargeUtils.canBeCharged(itemstack);
+        } else if (slotID == 128) {
+            return ChargeUtils.canBeDischarged(itemstack);
+        }
+        return false;
     }
 
     @Override
@@ -166,17 +229,12 @@ public class TileEntityHybridStorage extends TileEntityElectricBlock implements 
     public boolean isCapabilityDisabled(@Nonnull Capability<?> capability, EnumFacing side) {
         if (configComponent.isCapabilityDisabled(capability, side, facing)) {
             return true;
-        } else if (capability == Capabilities.GAS_HANDLER_CAPABILITY  || capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        } else if (capability == Capabilities.GAS_HANDLER_CAPABILITY || capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return side != null && configComponent.isCapabilityDisabled(capability, side, facing);
         }
         return super.isCapabilityDisabled(capability, side);
     }
 
-
-    @Override
-    public boolean canExtractItem(int slotID, @Nonnull ItemStack itemstack, @Nonnull EnumFacing side) {
-        return true;
-    }
 
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing side) {
@@ -219,6 +277,8 @@ public class TileEntityHybridStorage extends TileEntityElectricBlock implements 
         TileUtils.addTankData(data, fluidTank);
         TileUtils.addTankData(data, gasTank1);
         TileUtils.addTankData(data, gasTank2);
+        data.add(controlType.ordinal());
+        data.add(editMode.ordinal());
         return data;
     }
 
@@ -229,6 +289,8 @@ public class TileEntityHybridStorage extends TileEntityElectricBlock implements 
             TileUtils.readTankData(dataStream, fluidTank);
             TileUtils.readTankData(dataStream, gasTank1);
             TileUtils.readTankData(dataStream, gasTank2);
+            controlType = RedstoneControl.values()[dataStream.readInt()];
+            editMode = ContainerEditMode.values()[dataStream.readInt()];
         }
     }
 
@@ -238,6 +300,8 @@ public class TileEntityHybridStorage extends TileEntityElectricBlock implements 
         fluidTank.readFromNBT(nbtTags.getCompoundTag("fluidTank"));
         gasTank1.read(nbtTags.getCompoundTag("gasTank1"));
         gasTank2.read(nbtTags.getCompoundTag("gasTank2"));
+        controlType = RedstoneControl.values()[nbtTags.getInteger("controlType")];
+        editMode = ContainerEditMode.values()[nbtTags.getInteger("editMode")];
     }
 
 
@@ -247,6 +311,8 @@ public class TileEntityHybridStorage extends TileEntityElectricBlock implements 
         nbtTags.setTag("fluidTank", fluidTank.writeToNBT(new NBTTagCompound()));
         nbtTags.setTag("gasTank1", gasTank1.write(new NBTTagCompound()));
         nbtTags.setTag("gasTank2", gasTank2.write(new NBTTagCompound()));
+        nbtTags.setInteger("controlType", controlType.ordinal());
+        nbtTags.setInteger("editMode", editMode.ordinal());
     }
 
     @Override
@@ -368,5 +434,30 @@ public class TileEntityHybridStorage extends TileEntityElectricBlock implements 
     @Override
     public FluidTankInfo[] getAllTanks() {
         return new FluidTankInfo[]{fluidTank.getInfo()};
+    }
+
+    @Override
+    public RedstoneControl getControlType() {
+        return controlType;
+    }
+
+    @Override
+    public void setControlType(RedstoneControl type) {
+        controlType = type;
+    }
+
+    @Override
+    public boolean canPulse() {
+        return false;
+    }
+
+    @Override
+    public ContainerEditMode getContainerEditMode() {
+        return editMode;
+    }
+
+    @Override
+    public void setContainerEditMode(ContainerEditMode mode) {
+        editMode = mode;
     }
 }

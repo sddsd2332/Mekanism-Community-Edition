@@ -1,6 +1,9 @@
 package mekanism.common.inventory.container;
 
 
+import mekanism.common.inventory.slot.SlotEnergy;
+import mekanism.common.inventory.slot.SlotOutput;
+import mekanism.common.inventory.slot.SlotStorageTank;
 import mekanism.common.tile.TileEntityHybridStorage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -17,16 +20,29 @@ public class ContainerHybridStorage extends ContainerMekanism<TileEntityHybridSt
 
     @Override
     protected void addSlots() {
-        for (int slotY = 0; slotY < 10; slotY++) {
-            for (int slotX = 0; slotX < 12; slotX++) {
-                addSlotToContainer(new Slot(tileEntity, slotX + slotY * 12, 8 + slotX * 18, 26 + slotY * 18));
+        for (int slotY = 0; slotY < 8; slotY++) {
+            for (int slotX = 0; slotX < 15; slotX++) {
+                addSlotToContainer(new Slot(tileEntity, slotX + slotY * 15, 8 + slotX * 18, 26 + slotY * 18));
             }
         }
+        addSlotToContainer(new SlotStorageTank(tileEntity, 120, 8, 179));
+        addSlotToContainer(new SlotStorageTank(tileEntity, 121, 8, 259));
+        addSlotToContainer(new SlotStorageTank(tileEntity, 122, 35, 179));
+        addSlotToContainer(new SlotStorageTank(tileEntity, 123, 35, 259));
+        addSlotToContainer(new Slot(tileEntity, 124, 233, 179));
+        addSlotToContainer(new SlotOutput(tileEntity, 125, 233, 259));
+        addSlotToContainer(new SlotEnergy.SlotCharge(tileEntity, 126, 260, 179));
+        addSlotToContainer(new SlotEnergy.SlotDischarge(tileEntity, 127, 260, 259));
     }
 
     @Override
     protected int getInventorYOffset() {
-        return 220;
+        return 201;
+    }
+
+    @Override
+    protected int getInventorXOffset() {
+        return 62;
     }
 
     @Nonnull

@@ -12,6 +12,7 @@ import mekanism.common.util.FluidContainerUtils.ContainerEditMode;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -19,8 +20,19 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class GuiContainerEditMode extends GuiTileEntityElement<TileEntityContainerBlock> {
 
+    private final int xLocation;
+    private final int yLocation;
+
+    public GuiContainerEditMode(IGuiWrapper gui, TileEntityContainerBlock tile, ResourceLocation def, int x, int y) {
+        super(gui, def, tile, 176 + x, 138 + y, 26, 26,179 + x, 142 +y, 18, 18);
+        xLocation = x;
+        yLocation = y;
+    }
+
     public GuiContainerEditMode(IGuiWrapper gui, TileEntityContainerBlock tile, ResourceLocation def) {
         super(gui, def, tile, 176, 138, 26, 26, 179, 142, 18, 18);
+        xLocation = 0;
+        yLocation = 0;
     }
 
 
@@ -32,7 +44,7 @@ public class GuiContainerEditMode extends GuiTileEntityElement<TileEntityContain
         IFluidContainerManager control = (IFluidContainerManager) tileEntity;
         int renderX = 72 + (18 * control.getContainerEditMode().ordinal());
         mc.renderEngine.bindTexture(MekanismUtils.getResource(ResourceType.BUTTON_TAB, "button_tab_icon.png"));
-        guiObj.drawTexturedRect(guiWidth + 179, guiHeight + 142, renderX, 0, 18, 18);
+        guiObj.drawTexturedRect(guiWidth + 179 + xLocation, guiHeight + 142 + yLocation, renderX, 0, 18, 18);
         mc.renderEngine.bindTexture(defaultLocation);
     }
 
