@@ -244,7 +244,7 @@ tile.MachineBlock4.CellSeparator.name=Cell separator
 tile.MachineBlock4.Recycler.name=Recycler
 tile.MachineBlock4.IndustrialAlarm.name=Industrial Alarm
 tile.MachineBlock4.Void.name=Void Excavating
-
+tile.MachineBlock4.Hybrid_Storage.name=Hybrid Storage(WIP)
 
 
 # Plastic
@@ -1107,6 +1107,7 @@ tooltip.CellExtractor=A machine that advances cells from a variety of organic ma
 tooltip.CellSeparator=A machine that separates cells by rotating at high speed
 tooltip.Recycler=A machine that specializes in recycling items
 tooltip.IndustrialAlarm=Not just your everyday alarm... this is an 'industrial' alarm!
+tooltip.Hybrid_Storage=Blocks that can store 120 items, 2 gases, 1 fluid, and energy simultaneously
 
 # Side data
 sideData.None=None

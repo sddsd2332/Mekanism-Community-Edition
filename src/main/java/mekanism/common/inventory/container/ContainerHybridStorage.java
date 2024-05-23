@@ -1,10 +1,12 @@
 package mekanism.common.inventory.container;
 
 
+import ic2.api.item.IElectricItem;
 import mekanism.common.inventory.slot.SlotEnergy;
 import mekanism.common.inventory.slot.SlotOutput;
 import mekanism.common.inventory.slot.SlotStorageTank;
 import mekanism.common.tile.TileEntityHybridStorage;
+import mekanism.common.util.MekanismUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
@@ -53,6 +55,68 @@ public class ContainerHybridStorage extends ContainerMekanism<TileEntityHybridSt
         if (currentSlot != null && currentSlot.getHasStack()) {
             ItemStack slotStack = currentSlot.getStack();
             stack = slotStack.copy();
+         //TODO:I don't know how to write this
+             /*
+             if (ChargeUtils.canBeCharged(slotStack) || ChargeUtils.canBeDischarged(slotStack)) {
+                if (slotStack.getItem() == Items.REDSTONE || slotStack.getItem() == Item.getItemFromBlock(Blocks.REDSTONE_BLOCK)) {
+                    if (slotID != 127) {
+                        if (!mergeItemStack(slotStack, 0, 128, false)) {
+                            return ItemStack.EMPTY;
+                        }
+                    } else if (!mergeItemStack(slotStack, 128, inventorySlots.size(), true)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else {
+                    if (slotID != 127 && slotID != 126) {
+                        if (ChargeUtils.canBeDischarged(slotStack)) {
+                            if (!mergeItemStack(slotStack, 0, 128, false)) {
+                                if (canTransfer(slotStack)) {
+                                    if (!mergeItemStack(slotStack, 0, 128, false)) {
+                                        return ItemStack.EMPTY;
+                                    }
+                                }
+                            }
+                        } else if (canTransfer(slotStack)) {
+                            if (!mergeItemStack(slotStack, 0, 128, false)) {
+                                return ItemStack.EMPTY;
+                            }
+                        }
+                    } else if (slotID == 127) {
+                        if (canTransfer(slotStack)) {
+                            if (!mergeItemStack(slotStack, 0, 128, false)) {
+                                if (!mergeItemStack(slotStack, 128, inventorySlots.size(), true)) {
+                                    return ItemStack.EMPTY;
+                                }
+                            }
+                        } else if (!mergeItemStack(slotStack, 128, inventorySlots.size(), true)) {
+                            return ItemStack.EMPTY;
+                        }
+                    } else if (!mergeItemStack(slotStack, 128, inventorySlots.size(), true)) {
+                        return ItemStack.EMPTY;
+                    }
+                }
+            } else if (slotStack.getItem() instanceof IGasItem) {
+                if (slotID != 120 && slotID != 121 && slotID != 122 && slotID != 123) {
+                    if (!mergeItemStack(slotStack, 0, 128, false)) {
+                        if (!mergeItemStack(slotStack, 0, 128, false)) {
+                            return ItemStack.EMPTY;
+                        }
+                    }
+                } else if (!mergeItemStack(slotStack, 128, inventorySlots.size(), true)) {
+                    return ItemStack.EMPTY;
+                }
+            }  else if (FluidContainerUtils.isFluidContainer(slotStack)) {
+                if (slotID != 124 && slotID != 125) {
+                    if (!mergeItemStack(slotStack, 0, 128, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else {
+                    if (!mergeItemStack(slotStack, 128, inventorySlots.size(), true)) {
+                        return ItemStack.EMPTY;
+                    }
+                }
+            } else
+             */
             if (slotID < 120) {
                 if (!mergeItemStack(slotStack, 120, inventorySlots.size(), true)) {
                     return ItemStack.EMPTY;
@@ -60,6 +124,8 @@ public class ContainerHybridStorage extends ContainerMekanism<TileEntityHybridSt
             } else if (!mergeItemStack(slotStack, 0, 120, false)) {
                 return ItemStack.EMPTY;
             }
+
+
             if (slotStack.getCount() == 0) {
                 currentSlot.putStack(ItemStack.EMPTY);
             } else {
@@ -73,5 +139,7 @@ public class ContainerHybridStorage extends ContainerMekanism<TileEntityHybridSt
         return stack;
     }
 
-
+    private boolean canTransfer(ItemStack slotStack) {
+        return MekanismUtils.useIC2() && slotStack.getItem() instanceof IElectricItem;
+    }
 }

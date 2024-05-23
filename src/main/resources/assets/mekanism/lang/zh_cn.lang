@@ -245,6 +245,7 @@ tile.MachineBlock4.CellSeparator.name=细胞分离机
 tile.MachineBlock4.Recycler.name=回收机
 tile.MachineBlock4.IndustrialAlarm.name=工业报警器
 tile.MachineBlock4.Void.name=虚空采掘机
+tile.MachineBlock4.Hybrid_Storage.name=混合存储器(WIP)
 
 
 
@@ -1106,6 +1107,7 @@ tooltip.CellExtractor=一种从各种有机物中获取细胞的机器
 tooltip.CellSeparator=通过高速旋转分离细胞的机器
 tooltip.Recycler=专门回收物品的机器
 tooltip.IndustrialAlarm=不仅仅是你每天的闹钟......这是工业警报！
+tooltip.Hybrid_Storage=可以同时存储120种物品，2种气体，1种流体以及能量的方块
 
 # Side data
 sideData.None=无

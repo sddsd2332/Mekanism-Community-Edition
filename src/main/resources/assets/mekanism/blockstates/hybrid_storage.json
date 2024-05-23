@@ -1,0 +1,35 @@
+{
+      "forge_marker": 1,
+      "defaults": {
+            "textures": {
+                  "east": "mekanism:blocks/hybrid_storage/side",
+                  "south": "mekanism:blocks/hybrid_storage/side",
+                  "west": "mekanism:blocks/hybrid_storage/side",
+                  "sides": "mekanism:blocks/hybrid_storage/side",
+                  "front": "mekanism:blocks/hybrid_storage/side",
+                  "up": "mekanism:blocks/hybrid_storage/top",
+                  "down": "mekanism:blocks/hybrid_storage/bottom"
+            },
+            "model": "mekanism:machine"},
+      "variants": {
+            "facing": {
+                  "east": {
+                        "x": -90,
+                        "y": -90
+                  },
+                  "south": {"x": -90},
+                  "north": {
+                        "x": -90,
+                        "y": 180
+                  },
+                  "west": {
+                        "x": -90,
+                        "y": 90
+                  },
+                  "up": {},
+                  "down": {"x": 180}
+            },
+            "normal": [{}],
+            "inventory": [{}]
+      }
+}

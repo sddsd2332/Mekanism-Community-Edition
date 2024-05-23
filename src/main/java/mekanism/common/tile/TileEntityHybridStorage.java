@@ -12,6 +12,8 @@ import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.integration.computer.IComputerIntegration;
 import mekanism.common.security.ISecurityTile;
+import mekanism.common.tier.FluidTankTier;
+import mekanism.common.tier.GasTankTier;
 import mekanism.common.tile.component.TileComponentConfig;
 import mekanism.common.tile.component.TileComponentEjector;
 import mekanism.common.tile.component.TileComponentSecurity;
@@ -45,9 +47,9 @@ public class TileEntityHybridStorage extends TileEntityElectricBlock implements 
     public TileComponentEjector ejectorComponent;
     public TileComponentConfig configComponent;
     public TileComponentSecurity securityComponent;
-    public GasTank gasTank1 = new GasTank(10000);
-    public GasTank gasTank2 = new GasTank(10000);
-    public FluidTank fluidTank = new FluidTank(10000);
+    public GasTank gasTank1 = new GasTank(GasTankTier.ULTIMATE.getStorage());
+    public GasTank gasTank2 = new GasTank(GasTankTier.ULTIMATE.getStorage());
+    public FluidTank fluidTank = new FluidTank(FluidTankTier.ULTIMATE.getStorage());
     public RedstoneControl controlType;
     public ContainerEditMode editMode = ContainerEditMode.BOTH;
 
@@ -264,11 +266,6 @@ public class TileEntityHybridStorage extends TileEntityElectricBlock implements 
     @Override
     public int[] getSlotsForFace(@NotNull EnumFacing side) {
         return configComponent.getOutput(TransmissionType.ITEM, side, facing).availableSlots;
-    }
-
-    @Override
-    public boolean canSetFacing(@Nonnull EnumFacing facing) {
-        return facing != EnumFacing.DOWN && facing != EnumFacing.UP;
     }
 
     @Override

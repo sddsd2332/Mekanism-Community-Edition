@@ -27,9 +27,9 @@ public class GuiHybridStorage extends GuiMekanismTile<TileEntityHybridStorage> {
         xSize += 108;
         ySize += 117;
         ResourceLocation resource = getGuiLocation();
-        addGuiElement(new GuiSecurityTab(this, tileEntity, resource, 108, 0));
-        addGuiElement(new GuiRedstoneControl(this, tileEntity, resource,108,89));
-        addGuiElement(new GuiContainerEditMode(this, tileEntity, resource,108,62));
+        addGuiElement(new GuiSecurityTab(this, tileEntity, resource, 108, -22));
+        addGuiElement(new GuiRedstoneControl(this, tileEntity, resource,108,26));
+        addGuiElement(new GuiContainerEditMode(this, tileEntity, resource,108,0));
         addGuiElement(new GuiPlayerSlot(this, resource, 61, 200));
         addGuiElement(new GuiSideConfigurationTab(this, tileEntity, resource));
         addGuiElement(new GuiGasGauge(() -> tileEntity.gasTank1, GuiGauge.Type.STANDARD, this, resource, 7, 197).withColor(GuiGauge.TypeColor.BLUE));
