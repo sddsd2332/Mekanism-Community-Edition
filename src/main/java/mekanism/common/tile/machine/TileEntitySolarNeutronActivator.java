@@ -189,10 +189,6 @@ public class TileEntitySolarNeutronActivator extends TileEntityBasicMachine<GasI
         nbtTags.setTag("outputTank", outputTank.write(new NBTTagCompound()));
     }
 
-    @Override
-    public boolean canSetFacing(@Nonnull EnumFacing facing) {
-        return facing != EnumFacing.DOWN && facing != EnumFacing.UP;
-    }
 
     @Override
     public void onPlace() {

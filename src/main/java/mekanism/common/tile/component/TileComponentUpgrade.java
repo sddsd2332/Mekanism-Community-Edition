@@ -35,6 +35,8 @@ public class TileComponentUpgrade implements ITileComponent {
      * The inventory slot the upgrade slot of this component occupies.
      */
     private int upgradeSlot;
+    private boolean isBack;
+
 
     public TileComponentUpgrade(TileEntityContainerBlock tile, int slot) {
         tileEntity = tile;
@@ -43,6 +45,21 @@ public class TileComponentUpgrade implements ITileComponent {
         setSupported(Upgrade.ENERGY);
         tile.components.add(this);
     }
+
+    public TileComponentUpgrade(TileEntityContainerBlock tile, int slot,boolean isBackButton) {
+        this(tile, slot);
+        tileEntity = tile;
+        upgradeSlot = slot;
+        isBack = isBackButton;
+    }
+
+    public TileComponentUpgrade(TileEntityContainerBlock tile, int slot, Upgrade upgrade) {
+        tileEntity = tile;
+        upgradeSlot = slot;
+        setSupported(upgrade);
+        tile.components.add(this);
+    }
+
 
     public void readFrom(TileComponentUpgrade upgrade) {
         upgrades = upgrade.upgrades;
@@ -193,5 +210,10 @@ public class TileComponentUpgrade implements ITileComponent {
 
     @Override
     public void invalidate() {
+    }
+
+
+    public boolean getBackButton() {
+        return isBack;
     }
 }

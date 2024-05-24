@@ -1,4 +1,4 @@
-package mekanism.multiblockmachine.client.model;
+package mekanism.multiblockmachine.client.model.machine;
 
 
 import mekanism.client.render.MekanismRenderer;
@@ -216,8 +216,6 @@ public class ModelLargeElectrolyticSeparator extends ModelBase {
             GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
             manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "ElectrolyticSeparator/ElectrolyticSeparator_Screen_ON_" + getTick(tick) + ".png"));
             doRender(size);  //渲染屏幕
-            manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "ElectrolyticSeparator/ElectrolyticSeparator_Screen1_ON_" + getScreenTick(tick) + ".png"));
-            doRender(size);  //渲染屏幕2
             if (fluidTank > 0) {
                 manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "ElectrolyticSeparator/Fluid/FluidTank_" + getNumberTanks(fluidTank) + ".png"));
                 doRender(size);//渲染屏幕上的流体数量

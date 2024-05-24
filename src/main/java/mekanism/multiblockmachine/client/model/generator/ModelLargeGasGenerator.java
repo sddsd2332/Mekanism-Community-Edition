@@ -1,4 +1,4 @@
-package mekanism.multiblockmachine.client.model;
+package mekanism.multiblockmachine.client.model.generator;
 
 import mekanism.client.render.MekanismRenderer;
 import mekanism.multiblockmachine.common.util.MekanismMultiblockMachineUtils;

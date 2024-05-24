@@ -8,9 +8,8 @@ import mekanism.api.energy.IEnergizedItem;
 import mekanism.client.MekKeyHandler;
 import mekanism.client.MekanismClient;
 import mekanism.client.MekanismKeyHandler;
-import mekanism.common.base.ISustainedData;
-import mekanism.common.base.ISustainedInventory;
-import mekanism.common.base.ISustainedTank;
+import mekanism.common.Upgrade;
+import mekanism.common.base.*;
 import mekanism.common.capabilities.ItemCapabilityWrapper;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.MekanismHooks;
@@ -26,8 +25,7 @@ import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.SecurityUtils;
-import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachineGenerator.MultiblockMachineGeneratorType;
-import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeWindGenerator;
+import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine.MultiblockMachineType;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -38,11 +36,13 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
@@ -50,29 +50,22 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Optional.InterfaceList({
         @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyContainerItem", modid = MekanismHooks.REDSTONEFLUX_MOD_ID),
         @Optional.Interface(iface = "ic2.api.item.ISpecialElectricItem", modid = MekanismHooks.IC2_MOD_ID)
 })
-public class ItemBlockMultiblockGenerator extends ItemBlock implements IEnergizedItem, ISpecialElectricItem, ISustainedInventory, ISustainedTank, IEnergyContainerItem, ISecurityItem {
-
+public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedItem, ISpecialElectricItem, ISustainedInventory, ISustainedTank, IEnergyContainerItem, ISecurityItem {
     public Block metaBlock;
 
-    public ItemBlockMultiblockGenerator(Block block) {
+    public ItemBlockMultiblockMachine(Block block) {
         super(block);
         metaBlock = block;
         setHasSubtypes(true);
-    }
-
-    @Override
-    public int getItemStackLimit(ItemStack stack) {
-        MultiblockMachineGeneratorType type = MultiblockMachineGeneratorType.get(stack);
-        if (type != null && type.maxEnergy == -1) {
-            return 64;
-        }
-        return 1;
+        setNoRepair();
+        setMaxStackSize(1);
     }
 
     @Override
@@ -83,21 +76,23 @@ public class ItemBlockMultiblockGenerator extends ItemBlock implements IEnergize
     @Nonnull
     @Override
     public String getTranslationKey(ItemStack itemstack) {
-        MultiblockMachineGeneratorType type = MultiblockMachineGeneratorType.get(itemstack);
-        if (type == null) {
-            return "KillMe!";
+        if (MultiblockMachineType.get(itemstack) != null) {
+            return getTranslationKey() + "." + MultiblockMachineType.get(itemstack).blockName;
         }
-        return getTranslationKey() + "." + type.getBlockName();
+        return "null";
+    }
+
+    @Nonnull
+    @Override
+    public String getItemStackDisplayName(@Nonnull ItemStack itemstack) {
+        return super.getItemStackDisplayName(itemstack);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(@Nonnull ItemStack itemstack, World world, @Nonnull List<String> list, @Nonnull ITooltipFlag flag) {
-        MultiblockMachineGeneratorType type = MultiblockMachineGeneratorType.get(itemstack);
-        if (type == null) {
-            return;
-        }
-        if (type.maxEnergy > -1) {
+        MultiblockMachineType type = MultiblockMachineType.get(itemstack);
+        if (type != null) { // If the block is null, no information is added
             if (!MekKeyHandler.getIsKeyPressed(MekanismKeyHandler.sneakKey)) {
                 list.add(LangUtils.localize("tooltip.hold") + " " + EnumColor.INDIGO + GameSettings.getKeyDisplayString(MekanismKeyHandler.sneakKey.getKeyCode()) +
                         EnumColor.GREY + " " + LangUtils.localize("tooltip.forDetails") + ".");
@@ -112,64 +107,39 @@ public class ItemBlockMultiblockGenerator extends ItemBlock implements IEnergize
                         list.add(EnumColor.RED + "(" + LangUtils.localize("gui.overridden") + ")");
                     }
                 }
+                if (type.isElectric) {
+                    list.add(EnumColor.BRIGHT_GREEN + LangUtils.localize("tooltip.storedEnergy") + ": " + EnumColor.GREY
+                            + MekanismUtils.getEnergyDisplay(getEnergy(itemstack), getMaxEnergy(itemstack)));
+                }
 
-                list.add(EnumColor.BRIGHT_GREEN + LangUtils.localize("tooltip.storedEnergy") + ": " + EnumColor.GREY
-                        + MekanismUtils.getEnergyDisplay(getEnergy(itemstack), getMaxEnergy(itemstack)));
+                list.add(EnumColor.AQUA + LangUtils.localize("tooltip.inventory") + ": " + EnumColor.GREY + LangUtils.transYesNo(getInventory(itemstack) != null && getInventory(itemstack).tagCount() != 0));
 
-                if (hasTank(itemstack)) {
-                    if (getFluidStack(itemstack) != null) {
-                        list.add(EnumColor.PINK + FluidRegistry.getFluidName(getFluidStack(itemstack)) + ": " + EnumColor.GREY + getFluidStack(itemstack).amount + "mB");
+                if (type.supportsUpgrades && ItemDataUtils.hasData(itemstack, "upgrades")) {
+                    Map<Upgrade, Integer> upgrades = Upgrade.buildMap(ItemDataUtils.getDataMap(itemstack));
+                    for (Map.Entry<Upgrade, Integer> entry : upgrades.entrySet()) {
+                        list.add(entry.getKey().getColor() + "- " + entry.getKey().getName() + (entry.getKey().canMultiply() ? ": " + EnumColor.GREY + "x" + entry.getValue() : ""));
                     }
                 }
 
-                list.add(EnumColor.AQUA + LangUtils.localize("tooltip.inventory") + ": " + EnumColor.GREY +
-                        LangUtils.transYesNo(getInventory(itemstack) != null && getInventory(itemstack).tagCount() != 0));
-            } else {
-                list.addAll(MekanismUtils.splitTooltip(type.getDescription(), itemstack));
-            }
-        } else {
-            if (!MekKeyHandler.getIsKeyPressed(MekanismKeyHandler.sneakKey)) {
-                list.add(LangUtils.localize("tooltip.hold") + " " + EnumColor.INDIGO + GameSettings.getKeyDisplayString(MekanismKeyHandler.sneakKey.getKeyCode()) +
-                        EnumColor.GREY + " " + LangUtils.localize("tooltip.forDetails") + ".");
             } else {
                 list.addAll(MekanismUtils.splitTooltip(type.getDescription(), itemstack));
             }
         }
     }
 
+
+    @Nonnull
+    @Override
+    public EnumActionResult onItemUse(EntityPlayer player, World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ) {
+        return super.onItemUse(player, world, pos, hand, side, hitX, hitY, hitZ);
+    }
+
     @Override
     public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, World world, @Nonnull BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull IBlockState state) {
         boolean place = true;
-        MultiblockMachineGeneratorType type = MultiblockMachineGeneratorType.get(stack);
-        BlockPos.MutableBlockPos testPos = new BlockPos.MutableBlockPos();
-        if (type == MultiblockMachineGeneratorType.LARGE_WIND_GENERATOR) {
-
-            outer:
-            for (int yPos = 0; yPos <= 50; yPos++) {
-                for (int xPos = -3; xPos <= 3; xPos++) {
-                    for (int zPos = -3; zPos <= 3; zPos++) {
-                        testPos.setPos(pos.getX() + xPos, pos.getY() + yPos, pos.getZ() + zPos);
-                        Block b = world.getBlockState(testPos).getBlock();
-                        if (!world.isValid(testPos) || !world.isBlockLoaded(testPos, false) || !b.isReplaceable(world, testPos)) {
-                            place = false;
-                            break outer;
-                        }
-                    }
-                }
-            }
-            outer0:
-            for (int yPos = 0; yPos <= 50; yPos++) {
-                for (int xPos = -50; xPos <= 50; xPos++) {
-                    for (int zPos = -50; zPos <= 50; zPos++) {
-                        testPos.setPos(pos.getX() + xPos, pos.getY() + yPos, pos.getZ() + zPos);
-                        if (world.getTileEntity(testPos) instanceof TileEntityLargeWindGenerator){
-                            place = false;
-                            break outer0;
-                        }
-                    }
-                }
-            }
-        } else if (type == MultiblockMachineGeneratorType.LARGE_HEAT_GENERATOR || type == MultiblockMachineGeneratorType.LARGE_GAS_GENERATOR) {
+        MultiblockMachineType type = MultiblockMachineType.get(stack);
+        if (type == MultiblockMachineType.LARGE_ELECTROLYTIC_SEPARATOR) {
+            BlockPos.MutableBlockPos testPos = new BlockPos.MutableBlockPos();
             for (int yPos = 0; yPos <= 2; yPos++) {
                 for (int xPos = -1; xPos <= 1; xPos++) {
                     for (int zPos = -1; zPos <= 1; zPos++) {
@@ -182,7 +152,6 @@ public class ItemBlockMultiblockGenerator extends ItemBlock implements IEnergize
                 }
             }
         }
-
         if (place && super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, state)) {
             TileEntityBasicBlock tileEntity = (TileEntityBasicBlock) world.getTileEntity(pos);
             if (tileEntity instanceof ISecurityTile security) {
@@ -195,25 +164,46 @@ public class ItemBlockMultiblockGenerator extends ItemBlock implements IEnergize
                 }
             }
 
-            if (tileEntity instanceof TileEntityElectricBlock) {
-                ((TileEntityElectricBlock) tileEntity).electricityStored = getEnergy(stack);
+            if (tileEntity instanceof IUpgradeTile) {
+                if (ItemDataUtils.hasData(stack, "upgrades")) {
+                    ((IUpgradeTile) tileEntity).getComponent().read(ItemDataUtils.getDataMap(stack));
+                }
             }
-            if (tileEntity instanceof ISustainedInventory) {
-                ((ISustainedInventory) tileEntity).setInventory(getInventory(stack));
-            }
+
             if (tileEntity instanceof ISustainedData) {
                 if (stack.getTagCompound() != null) {
                     ((ISustainedData) tileEntity).readSustainedData(stack);
                 }
             }
+
+            if (tileEntity instanceof IRedstoneControl) {
+                if (ItemDataUtils.hasData(stack, "controlType")) {
+                    ((IRedstoneControl) tileEntity).setControlType(IRedstoneControl.RedstoneControl.values()[ItemDataUtils.getInt(stack, "controlType")]);
+                }
+            }
+
             if (tileEntity instanceof ISustainedTank) {
                 if (hasTank(stack) && getFluidStack(stack) != null) {
-                    ((ISustainedTank) tileEntity).setFluidStack(getFluidStack(stack), stack);
+                    ((ISustainedTank) tileEntity).setFluidStack(getFluidStack(stack));
                 }
+            }
+            if (tileEntity instanceof ISustainedInventory) {
+                ((ISustainedInventory) tileEntity).setInventory(getInventory(stack));
+            }
+            if (tileEntity instanceof TileEntityElectricBlock) {
+                ((TileEntityElectricBlock) tileEntity).electricityStored = getEnergy(stack);
             }
             return true;
         }
         return false;
+    }
+
+    @Nonnull
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer entityplayer, @Nonnull EnumHand hand) {
+        ItemStack itemstack = entityplayer.getHeldItem(hand);
+        MultiblockMachineType type = MultiblockMachineType.get(itemstack);
+        return new ActionResult<>(EnumActionResult.PASS, itemstack);
     }
 
     @Override
@@ -255,23 +245,29 @@ public class ItemBlockMultiblockGenerator extends ItemBlock implements IEnergize
 
     @Override
     public boolean hasTank(Object... data) {
-        return data[0] instanceof ItemStack && ((ItemStack) data[0]).getItem() instanceof ISustainedTank && (((ItemStack) data[0]).getItemDamage() == 2);
+        return data[0] instanceof ItemStack stack && stack.getItem() instanceof ISustainedTank && (stack.getItemDamage() == 2);
     }
 
     @Override
     public double getEnergy(ItemStack itemStack) {
+        if (!MultiblockMachineType.get(itemStack).isElectric) {
+            return 0;
+        }
         return ItemDataUtils.getDouble(itemStack, "energyStored");
     }
 
     @Override
     public void setEnergy(ItemStack itemStack, double amount) {
+        if (!MultiblockMachineType.get(itemStack).isElectric) {
+            return;
+        }
         ItemDataUtils.setDouble(itemStack, "energyStored", Math.max(Math.min(amount, getMaxEnergy(itemStack)), 0));
     }
 
     @Override
     public double getMaxEnergy(ItemStack itemStack) {
-        MultiblockMachineGeneratorType type = MultiblockMachineGeneratorType.get(itemStack);
-        return type != null ? type.maxEnergy : 0;
+        MultiblockMachineType type = MultiblockMachineType.get(Block.getBlockFromItem(itemStack.getItem()), itemStack.getItemDamage());
+        return MekanismUtils.getMaxEnergy(itemStack, type.getStorage());
     }
 
     @Override
@@ -281,13 +277,12 @@ public class ItemBlockMultiblockGenerator extends ItemBlock implements IEnergize
 
     @Override
     public boolean canReceive(ItemStack itemStack) {
-        return false;
+        return MultiblockMachineType.get(itemStack).isElectric;
     }
 
     @Override
     public boolean canSend(ItemStack itemStack) {
-        MultiblockMachineGeneratorType type = MultiblockMachineGeneratorType.get(itemStack);
-        return type != null && type.maxEnergy != -1;
+        return false;
     }
 
     @Override
@@ -336,6 +331,7 @@ public class ItemBlockMultiblockGenerator extends ItemBlock implements IEnergize
         return IC2ItemManager.getManager(this);
     }
 
+
     @Override
     public UUID getOwnerUUID(ItemStack stack) {
         if (ItemDataUtils.hasData(stack, "ownerUUID")) {
@@ -368,8 +364,8 @@ public class ItemBlockMultiblockGenerator extends ItemBlock implements IEnergize
 
     @Override
     public boolean hasSecurity(ItemStack stack) {
-        MultiblockMachineGeneratorType type = MultiblockMachineGeneratorType.get(stack);
-        return type != null && type.hasModel;
+        MultiblockMachineType type = MultiblockMachineType.get(stack);
+        return true;
     }
 
     @Override
@@ -381,4 +377,6 @@ public class ItemBlockMultiblockGenerator extends ItemBlock implements IEnergize
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
         return new ItemCapabilityWrapper(stack, new TeslaItemWrapper(), new ForgeEnergyItemWrapper());
     }
+
+
 }

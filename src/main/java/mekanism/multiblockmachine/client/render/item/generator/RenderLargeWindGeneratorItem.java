@@ -1,8 +1,8 @@
-package mekanism.multiblockmachine.client.render.item;
+package mekanism.multiblockmachine.client.render.item.generator;
 
 import mekanism.client.render.MekanismRenderer;
 import mekanism.common.config.MekanismConfig;
-import mekanism.multiblockmachine.client.model.ModelLargeWindGenerator;
+import mekanism.multiblockmachine.client.model.generator.ModelLargeWindGenerator;
 import mekanism.multiblockmachine.common.util.MekanismMultiblockMachineUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;

@@ -150,7 +150,6 @@ public class ItemBlockGenerator extends ItemBlock implements IEnergizedItem, ISp
                                 float hitZ, @Nonnull IBlockState state) {
         boolean place = true;
         Block block = world.getBlockState(pos).getBlock();
-
         if (stack.getItemDamage() == GeneratorType.ADVANCED_SOLAR_GENERATOR.meta) {
             if (!(block.isReplaceable(world, pos) && world.isAirBlock(pos.add(0, 1, 0)))) {
                 return false;

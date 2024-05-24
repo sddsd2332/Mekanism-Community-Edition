@@ -33,6 +33,7 @@ import java.util.List;
 public class GuiLargeWindGenerator extends GuiMekanismTile<TileEntityLargeWindGenerator> {
 
     private GuiButton ForcedRun;
+    private GuiButton updateRun;
 
     public GuiLargeWindGenerator(InventoryPlayer inventory, TileEntityLargeWindGenerator tile) {
         super(tile, new ContainerLargeWindGenerator(inventory, tile));
@@ -67,6 +68,20 @@ public class GuiLargeWindGenerator extends GuiMekanismTile<TileEntityLargeWindGe
                 return tileEntity.getBladeDamage() && super.mousePressed(mc, mouseX, mouseY);
             }
         }.with(GuiDisableableButton.ImageOverlay.FORCE_RUN));
+
+        buttonList.add(updateRun = new GuiDisableableButton(2, guiLeft - 21, guiTop + 64, 18, 18) {
+            @Override
+            public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+                if (tileEntity.getMachineStop2()) {
+                    super.drawButton(mc, mouseX, mouseY, partialTicks);
+                }
+            }
+
+            @Override
+            public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
+                return tileEntity.getMachineStop2() && super.mousePressed(mc, mouseX, mouseY);
+            }
+        }.with(GuiDisableableButton.ImageOverlay.FORCE_RUN));
     }
 
     @Override
@@ -88,6 +103,10 @@ public class GuiLargeWindGenerator extends GuiMekanismTile<TileEntityLargeWindGe
             if (tileEntity.getMachineStop() && !isblacklist) {
                 info = "gui.protection";
             }
+            if (tileEntity.getMachineStop2() && !isblacklist) {
+                info = "gui.protection2";
+            }
+
             if (!tileEntity.getMachineStop() && !isblacklist && tileEntity.getBladeDamage() && tileEntity.getActive()) {
                 info = "gui.protection.off";
             }
@@ -120,6 +139,8 @@ public class GuiLargeWindGenerator extends GuiMekanismTile<TileEntityLargeWindGe
             }
         } else if (ForcedRun.isMouseOver()) {
             displayTooltip(tileEntity.getMachineStop() ? LangUtils.localize("gui.forced_run") : LangUtils.localize("gui.forced_run_off"), xAxis, yAxis);
+        } else if (updateRun.isMouseOver() && tileEntity.getMachineStop2()) {
+            displayTooltip(LangUtils.localize("gui.updateRun"), xAxis, yAxis);
         }
 
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
@@ -136,6 +157,15 @@ public class GuiLargeWindGenerator extends GuiMekanismTile<TileEntityLargeWindGe
             addGuiElement(new GuiWarningInfo(this, getGuiLocation(), false));
             addGuiElement(new GuiSideHolder(this, getGuiLocation(), -26, 86, 26, 26, true));
         }
+        if (tileEntity.getMachineStop2()) {
+            mc.getTextureManager().bindTexture(MekanismUtils.getResource(MekanismUtils.ResourceType.BUTTON_TAB, "holder_left.png"));
+            int halfWidthLeft = 26 / 2;
+            int halfHeightTop = 26 / 2;
+            drawTexturedModalRect(guiLeft - 26,guiTop + 60, 0, 0, halfWidthLeft, halfHeightTop);
+            drawTexturedRect(guiLeft - 26, guiTop + 60 + halfHeightTop, 0, 256 - halfHeightTop, halfWidthLeft, halfHeightTop);
+            drawTexturedRect(guiLeft - 26 + halfWidthLeft, guiTop + 60, 256 - halfWidthLeft, 0, halfWidthLeft, halfHeightTop);
+            drawTexturedRect(guiLeft - 26 + halfWidthLeft, guiTop + 60 + halfHeightTop, 256 - halfWidthLeft, 256 - halfHeightTop, halfWidthLeft, halfHeightTop);
+        }
 
     }
 
@@ -144,6 +174,10 @@ public class GuiLargeWindGenerator extends GuiMekanismTile<TileEntityLargeWindGe
         super.actionPerformed(button);
         if (button == ForcedRun) {
             TileNetworkList data = TileNetworkList.withContents(1);
+            Mekanism.packetHandler.sendToServer(new PacketTileEntity.TileEntityMessage(tileEntity, data));
+            SoundHandler.playSound(SoundEvents.UI_BUTTON_CLICK);
+        } else if (button == updateRun) {
+            TileNetworkList data = TileNetworkList.withContents(2);
             Mekanism.packetHandler.sendToServer(new PacketTileEntity.TileEntityMessage(tileEntity, data));
             SoundHandler.playSound(SoundEvents.UI_BUTTON_CLICK);
         }

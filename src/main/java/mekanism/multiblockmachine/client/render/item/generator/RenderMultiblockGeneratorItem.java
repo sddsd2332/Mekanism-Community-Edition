@@ -1,4 +1,4 @@
-package mekanism.multiblockmachine.client.render.item;
+package mekanism.multiblockmachine.client.render.item.generator;
 
 import mekanism.client.render.item.ItemLayerWrapper;
 import mekanism.client.render.item.SubTypeItemRenderer;

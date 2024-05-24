@@ -3,7 +3,8 @@ package mekanism.common.config;
 import mekanism.common.config.options.BooleanOption;
 import mekanism.common.config.options.DoubleOption;
 import mekanism.common.config.options.IntOption;
-import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachineGenerator.MultiblockMachineGeneratorType;
+import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine.*;
+import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachineGenerator.*;
 
 public class MultiblockMachineConfig extends BaseConfig {
 
@@ -47,4 +48,13 @@ public class MultiblockMachineConfig extends BaseConfig {
 
     public TypeConfigManager<MultiblockMachineGeneratorType> multiblockmachinegeneratorsManager = new TypeConfigManager<>(this, "multiblockmachinegenerators", MultiblockMachineGeneratorType.class,
             MultiblockMachineGeneratorType::getGeneratorsForConfig, MultiblockMachineGeneratorType::getBlockName);
+
+
+    public final DoubleOption largeelectrolyticSeparator = new DoubleOption(this, "multiblock", "largeeElectrolyticSeparatorStorage", 160000D * 27,
+            "Base energy storage (Joules).");
+
+
+    public final TypeConfigManager<MultiblockMachineType> multiblockmachinesManager = new TypeConfigManager<>(this, "multiblockmachines", MultiblockMachineType.class,MultiblockMachineType::getValidMachines,MultiblockMachineType::getBlockName);
+
+
 }

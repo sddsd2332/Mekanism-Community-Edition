@@ -1,8 +1,8 @@
-package mekanism.multiblockmachine.client.render;
+package mekanism.multiblockmachine.client.render.generator;
 
 import mekanism.api.util.time.Timeticks;
 import mekanism.client.render.MekanismRenderer;
-import mekanism.multiblockmachine.client.model.ModelLargeGasGenerator;
+import mekanism.multiblockmachine.client.model.generator.ModelLargeGasGenerator;
 import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeGasGenerator;
 import mekanism.multiblockmachine.common.util.MekanismMultiblockMachineUtils;
 import net.minecraft.client.renderer.GlStateManager;

@@ -42,6 +42,7 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
     private boolean isBlacklistDimension = false;
     private int explode;
     private boolean machineStop;
+    private boolean machineStop2;
     private boolean bladeDamage;
 
     public TileEntityLargeWindGenerator() {
@@ -70,10 +71,10 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
             if (isBlacklistDimension) {
                 return;
             }
-
+            RangeStops();
             if (ticker % 20 == 0) {
                 currentMultiplier = getMultiplier();
-                setActive(MekanismUtils.canFunction(this) && currentMultiplier > 0 && !machineStop);
+                setActive(MekanismUtils.canFunction(this) && currentMultiplier > 0 && !machineStop && !machineStop2);
             }
             if (getActive()) {
                 setEnergy(electricityStored + (MekanismConfig.current().multiblock.largewindGenerationMin.val() * currentMultiplier));
@@ -95,12 +96,34 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
         }
     }
 
+    private void RangeStops() {
+        //If there is a large wind turbine within a radius of 50 tiles, the machine will stop working
+        //It shouldn't happen
+        BlockPos.MutableBlockPos testPos = new BlockPos.MutableBlockPos();
+        for (int yPos = 0; yPos <= 50; yPos++) {
+            for (int xPos = -50; xPos <= 50; xPos++) {
+                for (int zPos = -50; zPos <= 50; zPos++) {
+                    if (yPos == 0 && xPos == 0 && zPos == 0) {
+                        break;
+                    }
+                    testPos.setPos(getPos().getX() + xPos, getPos().getY() + yPos, getPos().getZ() + zPos);
+                    if (getWorld().getTileEntity(testPos) instanceof TileEntityLargeWindGenerator) {
+                        machineStop2 = true;
+                    }
+                }
+            }
+        }
+    }
+
+
     @Override
     public void handlePacketData(ByteBuf dataStream) {
         if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
             int type = dataStream.readInt();
             if (type == 1) {
                 machineStop = !machineStop;
+            }else if (type == 2){
+                machineStop2 = !machineStop2;
             }
         }
         super.handlePacketData(dataStream);
@@ -109,6 +132,7 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
             isBlacklistDimension = dataStream.readBoolean();
             numPowering = dataStream.readInt();
             machineStop = dataStream.readBoolean();
+            machineStop2 = dataStream.readBoolean();
             explode = dataStream.readInt();
             bladeDamage = dataStream.readBoolean();
         }
@@ -121,6 +145,7 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
         data.add(isBlacklistDimension);
         data.add(numPowering);
         data.add(machineStop);
+        data.add(machineStop2);
         data.add(explode);
         data.add(bladeDamage);
         return data;
@@ -385,6 +410,7 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
         numPowering = nbtTags.getInteger("numPowering");
         explode = nbtTags.getInteger("explode");
         machineStop = nbtTags.getBoolean("machineStop");
+        machineStop2 = nbtTags.getBoolean("machineStop2");
         bladeDamage = nbtTags.getBoolean("bladeDamage");
     }
 
@@ -394,6 +420,7 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
         nbtTags.setInteger("numPowering", numPowering);
         nbtTags.setInteger("explode", explode);
         nbtTags.setBoolean("machineStop", machineStop);
+        nbtTags.setBoolean("machineStop2", machineStop2);
         nbtTags.setBoolean("bladeDamage", bladeDamage);
     }
 
@@ -414,6 +441,10 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
 
     public double getAngle() {
         return angle;
+    }
+
+    public boolean getMachineStop2() {
+        return machineStop2;
     }
 
     public boolean getMachineStop() {
