@@ -15,6 +15,7 @@ public class MekanismMultiblockMachineUtils {
         GUI("gui"),
         SOUND("sound"),
         RENDER("render"),
+        RENDER_MACHINE("render/machine"),
         TEXTURE_BLOCKS("textures/blocks"),
         TEXTURE_ITEMS("textures/items"),
         MODEL("models");
