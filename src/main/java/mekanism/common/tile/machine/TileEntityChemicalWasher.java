@@ -199,9 +199,7 @@ public class TileEntityChemicalWasher extends TileEntityUpgradeableMachine<GasIn
 
     @Override
     public boolean canReceiveGas(EnumFacing side, Gas type) {
-        return (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1) ||
-                configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1, 2))
-                && inputTank.canReceive(type) && Recipe.CHEMICAL_WASHER.containsRecipe(type);
+        return configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1)  && inputTank.canReceive(type) && Recipe.CHEMICAL_WASHER.containsRecipe(type);
     }
 
 
@@ -223,8 +221,7 @@ public class TileEntityChemicalWasher extends TileEntityUpgradeableMachine<GasIn
 
     @Override
     public boolean canDrawGas(EnumFacing side, Gas type) {
-        return (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(2) ||
-                configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1, 2)) && outputTank.canDraw(type);
+        return configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(2)  && outputTank.canDraw(type);
     }
 
     @Nonnull

@@ -56,7 +56,7 @@ public class TileEntityIsotopicCentrifuge extends TileEntityBasicMachine<GasInpu
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.NONE, InventoryUtils.EMPTY));
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.INPUT, new int[]{0}));
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.OUTPUT, new int[]{1}));
-        configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.OUTPUT, new int[]{0, 1}));
+        configComponent.addOutput(TransmissionType.GAS, new SideData(new int[]{0, 1},new boolean[]{false,true}));
         configComponent.setConfig(TransmissionType.GAS, new byte[]{1, -1, 2, 1, 1, 1});
 
         configComponent.addOutput(TransmissionType.ENERGY, new SideData(DataType.NONE, SideData.IOState.OFF));
@@ -175,8 +175,7 @@ public class TileEntityIsotopicCentrifuge extends TileEntityBasicMachine<GasInpu
 
     @Override
     public boolean canReceiveGas(EnumFacing side, Gas type) {
-        return (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0) ||
-                configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1))
+        return configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0)
                 && inputTank.canReceive(type) && RecipeHandler.Recipe.ISOTOPIC_CENTRIFUGE.containsRecipe(type);
     }
 
@@ -203,9 +202,7 @@ public class TileEntityIsotopicCentrifuge extends TileEntityBasicMachine<GasInpu
 
     @Override
     public boolean canDrawGas(EnumFacing side, Gas type) {
-        return (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1) ||
-                configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1))
-                && outputTank.canDraw(type);
+        return configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1) && outputTank.canDraw(type);
     }
 
     @Nonnull

@@ -222,8 +222,7 @@ public class TileEntityChemicalDissolutionChamber extends TileEntityUpgradeableM
 
     @Override
     public boolean canReceiveGas(EnumFacing side, Gas type) {
-        return (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0) ||
-                configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1)) && injectTank.canReceive(type) && isValidGas(type);
+        return configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0) && injectTank.canReceive(type) && isValidGas(type);
     }
 
     private boolean isValidGas(Gas gas) {
@@ -233,8 +232,7 @@ public class TileEntityChemicalDissolutionChamber extends TileEntityUpgradeableM
 
     @Override
     public boolean canDrawGas(EnumFacing side, Gas type) {
-        return (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1) ||
-                configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1)) && outputTank.canDraw(type);
+        return configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1) && outputTank.canDraw(type);
     }
 
     @Override

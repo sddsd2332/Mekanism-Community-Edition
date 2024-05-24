@@ -228,16 +228,12 @@ public class TileEntitySolarNeutronActivator extends TileEntityBasicMachine<GasI
 
     @Override
     public boolean canReceiveGas(EnumFacing side, Gas type) {
-        return (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0) ||
-                configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1))
-                && inputTank.canReceive(type) && RecipeHandler.Recipe.SOLAR_NEUTRON_ACTIVATOR.containsRecipe(type);
+        return configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0) && inputTank.canReceive(type) && RecipeHandler.Recipe.SOLAR_NEUTRON_ACTIVATOR.containsRecipe(type);
     }
 
     @Override
     public boolean canDrawGas(EnumFacing side, Gas type) {
-        return (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1) ||
-                configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1))
-                && outputTank.canDraw(type);
+        return configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1) && outputTank.canDraw(type);
     }
 
     @Nonnull
