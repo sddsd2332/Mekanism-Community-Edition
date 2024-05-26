@@ -183,12 +183,12 @@ public interface IFactory {
             return getRecipe(new InfusionInput(storage, input));
         }
 
-        public CrystallizerRecipe getCrystallizerRecipe(GasInput input) {
+        public CrystallizerRecipe getRecipe(GasInput input) {
             return RecipeHandler.getChemicalCrystallizerRecipe(input);
         }
 
         public CrystallizerRecipe getCrystallizerRecipe(GasStack gas) {
-            return getCrystallizerRecipe(new GasInput(gas));
+            return getRecipe(new GasInput(gas));
         }
 
         public DissolutionRecipe getDissolutionRecipe(ItemStackInput input) {
@@ -409,5 +409,10 @@ public interface IFactory {
         public MachineType getType() {
             return type;
         }
+
+        public Recipe  getrecipe(){
+            return recipe;
+        }
+
     }
 }

@@ -1,6 +1,7 @@
 package mekanism.client.gui;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import mekanism.api.Coord4D;
 import mekanism.api.EnumColor;
 import mekanism.api.RelativeSide;
@@ -37,12 +38,11 @@ import org.lwjgl.input.Keyboard;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 @SideOnly(Side.CLIENT)
 public class GuiTransporterConfig extends GuiMekanismTile<TileEntityContainerBlock> {
-    private Map<Integer, GuiPos> slotPosMap = new Object2ObjectOpenHashMap<>();
+    private Int2ObjectMap<GuiPos> slotPosMap = new Int2ObjectOpenHashMap<>();
     private ISideConfiguration configurable;
     private List<GuiSideDataButton> sideDataButtons = new ArrayList<>();
     private GuiButton backButton;
@@ -130,7 +130,7 @@ public class GuiTransporterConfig extends GuiMekanismTile<TileEntityContainerBlo
                     }
                     info.add(color != null ? color.getColoredName() : LangUtils.localize("gui.none"));
                     if (button.getItem() != ItemStack.EMPTY) {
-                        if (button.getItem().getItem() != Items.AIR){
+                        if (button.getItem().getItem() != Items.AIR) {
                             info.add(button.getItem().getItem().getItemStackDisplayName(button.getItem()));
                         }
                     }

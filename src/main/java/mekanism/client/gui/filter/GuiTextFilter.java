@@ -6,7 +6,7 @@ import mekanism.client.render.MekanismRenderer;
 import mekanism.common.content.filter.IFilter;
 import mekanism.common.content.miner.MinerFilter;
 import mekanism.common.content.transporter.TransporterFilter;
-import mekanism.common.tile.TileEntityDigitalMiner;
+import mekanism.common.tile.machine.TileEntityDigitalMiner;
 import mekanism.common.tile.TileEntityLogisticalSorter;
 import mekanism.common.tile.prefab.TileEntityContainerBlock;
 import mekanism.common.util.LangUtils;

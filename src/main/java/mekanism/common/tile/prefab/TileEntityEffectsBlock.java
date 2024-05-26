@@ -8,7 +8,7 @@ import mekanism.common.Upgrade;
 import mekanism.common.base.IActiveState;
 import mekanism.common.base.IUpgradeTile;
 import mekanism.common.config.MekanismConfig;
-import mekanism.common.tile.TileEntityFactory;
+import mekanism.common.tile.factory.TileEntityFactory;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
@@ -18,6 +18,10 @@ import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+/**
+ * 效果机器，可以产生播放声音，并提供光照
+ */
 
 public abstract class TileEntityEffectsBlock extends TileEntityElectricBlock implements IActiveState {
 

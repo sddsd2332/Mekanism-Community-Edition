@@ -1,0 +1,13 @@
+{
+	"parent": "mekanismtools:item/shield",
+	"textures": {
+		"all": "mekanismtools:entity/shield/osmium"
+	},
+
+	"overrides": [{
+		"predicate": {
+			"blocking": 1
+		},
+		"model": "mekanismtools:item/shield_osmium_blocking"
+	}]
+}

@@ -13,7 +13,7 @@ import mekanism.client.gui.element.tab.GuiSideConfigurationTab;
 import mekanism.client.gui.element.tab.GuiTransporterConfigTab;
 import mekanism.client.gui.element.tab.GuiUpgradeTab;
 import mekanism.common.inventory.container.ContainerIsotopicCentrifuge;
-import mekanism.common.tile.TileEntityIsotopicCentrifuge;
+import mekanism.common.tile.machine.TileEntityIsotopicCentrifuge;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.entity.player.InventoryPlayer;

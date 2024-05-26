@@ -10,7 +10,6 @@ import mekanism.common.content.matrix.MatrixUpdateProtocol;
 import mekanism.common.content.matrix.SynchronizedMatrixData;
 import mekanism.common.integration.computer.IComputerIntegration;
 import mekanism.common.multiblock.MultiblockManager;
-import mekanism.common.tile.TileEntityMultiblock;
 import mekanism.common.util.ChargeUtils;
 import mekanism.common.util.InventoryUtils;
 import mekanism.common.util.LangUtils;

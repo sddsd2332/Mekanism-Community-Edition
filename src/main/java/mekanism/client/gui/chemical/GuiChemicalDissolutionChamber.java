@@ -13,7 +13,7 @@ import mekanism.client.gui.element.tab.GuiSideConfigurationTab;
 import mekanism.client.gui.element.tab.GuiTransporterConfigTab;
 import mekanism.client.gui.element.tab.GuiUpgradeTab;
 import mekanism.common.inventory.container.ContainerChemicalDissolutionChamber;
-import mekanism.common.tile.TileEntityChemicalDissolutionChamber;
+import mekanism.common.tile.machine.TileEntityChemicalDissolutionChamber;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;

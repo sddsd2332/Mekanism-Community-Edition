@@ -36,7 +36,7 @@ public class GuiBioGenerator extends GuiMekanismTile<TileEntityBioGenerator> {
         addGuiElement(new GuiSlot(SlotType.POWER, this, resource, 142, 34).with(SlotOverlay.POWER));
         addGuiElement(new GuiInnerScreen(this, resource, 48, 23, 80, 40));
         addGuiElement(new GuiPlayerSlot(this, getGuiLocation()));
-        addGuiElement(new GuiBar(() -> (tileEntity.bioFuelSlot.fluidStored > 0 ? LangUtils.localize("gui.bioGenerator.bioFuel") + ":" + tileEntity.bioFuelSlot.fluidStored : LangUtils.localize("gui.empty")), this, getGuiLocation(), 6, 16, 6, 54));
+        addGuiElement(new GuiBar(this, getGuiLocation(), 6, 16, 6, 54));
     }
 
     @Override
@@ -46,6 +46,11 @@ public class GuiBioGenerator extends GuiMekanismTile<TileEntityBioGenerator> {
         fontRenderer.drawString(MekanismUtils.getEnergyDisplay(tileEntity.getEnergy()), 51, 26, 0xFF3CFE9A);
         fontRenderer.drawString(LangUtils.localize("gui.bioGenerator.bioFuel") + ": " + tileEntity.bioFuelSlot.fluidStored, 51, 35, 0xFF3CFE9A);
         fontRenderer.drawString(LangUtils.localize("gui.out") + ": " + MekanismUtils.getEnergyDisplay(tileEntity.getMaxOutput()) + "/t", 51, 44, 0xFF3CFE9A);
+        int xAxis = mouseX - guiLeft;
+        int yAxis = mouseY - guiTop;
+        if (xAxis >= 6 && xAxis <= 6 + 6 && yAxis >= 16 && yAxis <= 16 + 54) {
+            displayTooltip(tileEntity.bioFuelSlot.fluidStored > 0 ? LangUtils.localize("gui.bioGenerator.bioFuel") + ":" + tileEntity.bioFuelSlot.fluidStored : LangUtils.localize("gui.empty"), xAxis, yAxis);
+        }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 
     }
@@ -54,7 +59,7 @@ public class GuiBioGenerator extends GuiMekanismTile<TileEntityBioGenerator> {
     protected void drawGuiContainerBackgroundLayer(int xAxis, int yAxis) {
         super.drawGuiContainerBackgroundLayer(xAxis, yAxis);
         MekanismRenderer.color(MekanismFluids.Biofuel);
-        GuiUtils.drawBarSprite(guiLeft + 6, guiTop + 16, 6, 54,tileEntity.getScaledFuelLevel(52),MekanismFluids.Biofuel.getSprite(),true);
+        GuiUtils.drawBarSprite(guiLeft + 6, guiTop + 16, 6, 54, tileEntity.getScaledFuelLevel(52), MekanismFluids.Biofuel.getSprite(), true);
     }
 
 }

@@ -3,12 +3,14 @@ package mekanism.common.inventory.container;
 import mekanism.common.inventory.slot.SlotEnergy.SlotDischarge;
 import mekanism.common.inventory.slot.SlotOutput;
 import mekanism.common.recipe.RecipeHandler;
-import mekanism.common.tile.TileEntityAntiprotonicNucleosynthesizer;
+import mekanism.common.recipe.inputs.NucleosynthesizerInput;
+import mekanism.common.tile.machine.TileEntityAntiprotonicNucleosynthesizer;
 import mekanism.common.util.ChargeUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 
@@ -70,9 +72,24 @@ public class ContainerAntiprotonicNucleosynthesizer extends ContainerMekanism<Ti
         return stack;
     }
 
+    private boolean isInputItem(ItemStack itemstack) {
+        for (NucleosynthesizerInput input : tileEntity.getRecipes().keySet()) {
+            if (ItemHandlerHelper.canItemStacksStack(input.getSolid(), itemstack)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     @Override
     protected void addSlots() {
-        addSlotToContainer(new Slot(tileEntity, 0, 54, 35));
+        addSlotToContainer(new Slot(tileEntity, 0, 54, 35) {
+            @Override
+            public boolean isItemValid(ItemStack itemstack) {
+                return isInputItem(itemstack);
+            }
+        });
         addSlotToContainer(new SlotDischarge(tileEntity, 1, 141, 35));
         addSlotToContainer(new SlotOutput(tileEntity, 2, 116, 35));
     }

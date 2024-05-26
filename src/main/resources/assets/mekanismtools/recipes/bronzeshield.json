@@ -1,0 +1,13 @@
+{
+      "result": {"item": "mekanismtools:bronzeshield"},
+      "pattern": [
+            "*W*",
+            "***",
+            " * "
+      ],
+      "type": "forge:ore_shaped",
+      "key": {
+            "W":{"item": "minecraft:shield"},
+            "*": {"item": "#INGOT_BRONZE"}
+      }
+}

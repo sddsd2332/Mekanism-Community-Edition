@@ -17,7 +17,7 @@ import mekanism.common.tier.InductionProviderTier;
 import mekanism.common.tile.TileEntityBin;
 import mekanism.common.tile.multiblock.TileEntityInductionCell;
 import mekanism.common.tile.multiblock.TileEntityInductionProvider;
-import mekanism.common.tile.TileEntityMultiblock;
+import mekanism.common.tile.multiblock.TileEntityMultiblock;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;

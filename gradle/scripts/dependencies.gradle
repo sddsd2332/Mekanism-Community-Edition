@@ -1,0 +1,91 @@
+apply from: 'gradle/scripts/helpers.gradle'
+
+repositories {
+    // Other repositories described by default:
+    // CleanroomMC: https://maven.cleanroommc.com
+    exclusiveContent {
+        forRepository {
+            maven {
+                name 'CurseMaven'
+                url 'https://cursemaven.com'
+            }
+        }
+        filter {
+            includeGroup 'curse.maven'
+        }
+    }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name 'Modrinth'
+                url 'https://api.modrinth.com/maven'
+            }
+        }
+        filter {
+            includeGroup 'maven.modrinth'
+        }
+    }
+    mavenLocal() // Must be last for caching to work
+}
+
+dependencies {
+    // Example - Dependency descriptor:
+    // 'com.google.code.gson:gson:2.8.6' << group: com.google.code.gson, name:gson, version:2.8.6
+    // 'group:name:version:classifier' where classifier is optional
+
+    // Example - Deobfuscating dependencies:
+    // rfg.deobf('curse.maven:had-enough-items-557549:4543375')
+    // By wrapping a dependency descriptor in rfg.deobf() method call, the dependency is queued for deobfuscation
+    // When deobfuscating, RFG respects the mapping_channel + mapping_version stated in gradle.properties
+
+    // Example - CurseMaven dependencies:
+    // 'curse.maven:had-enough-items-557549:4543375' << had-enough-items = project slug, 557549 = project id, 4543375 = file id
+    // Full documentation: https://cursemaven.com/
+
+    // Example - Modrinth dependencies:
+    // 'maven.modrinth:jei:4.16.1.1000' << jei = project name, 4.16.1.1000 = file version
+    // Full documentation: https://docs.modrinth.com/docs/tutorials/maven/
+
+    // Common dependency types (configuration):
+    // implementation = dependency available at both compile time and runtime
+    // runtimeOnly = runtime dependency
+    // compileOnly = compile time dependency
+    // annotationProcessor = annotation processing dependencies
+
+    // Transitive dependencies:
+    // (Dependencies that your dependency depends on)
+    // If you wish to exclude transitive dependencies in the described dependencies
+    // Use a closure as such:
+    // implementation ('com.google.code.gson:gson:2.8.6') {
+    //     transitive = false
+    // }
+    compileOnly "org.jetbrains:annotations:17.0.0"
+
+    implementation 'curse.maven:mcmultipart-239431:2615930'
+    implementation 'curse.maven:had-enough-items-557549:4543375'
+    implementation 'curse.maven:tesla-244651:2487959'
+    implementation 'curse.maven:inventory-tweaks-API-223094:2923461'
+    implementation 'curse.maven:opencomputers-223008:4526246'
+    implementation 'curse.maven:hwyla-253449:2568751'
+    implementation 'curse.maven:redstone-flux-270789:2920436'
+    implementation rfg.deobf('curse.maven:CTM-267602:2915363')
+    implementation 'curse.maven:industrial-craft-242638:3838713'
+    implementation 'curse.maven:computercraft-67504:2478952'
+    implementation 'curse.maven:the-one-probe-245211:2667280'
+    implementation 'curse.maven:ae2-extended-life-570458:4553942'
+    implementation 'curse.maven:mystical-agradditions-256247:2704832'
+    implementation 'curse.maven:mystical-agriculture-246640:2704562'
+    implementation 'curse.maven:cucumber-272335:2645867'
+
+    implementation 'curse.maven:groovyscript-687577:5219945'
+    implementation 'curse.maven:buildcraft-61811:3204475'
+    implementation 'curse.maven:crafttweaker-239197:4534504'
+    implementation 'curse.maven:mixin-booter-419286:5079135'
+    implementation 'curse.maven:flux-networks-248020:3178199'
+
+    runtimeOnly 'curse.maven:ftb-library-237167:2985811'
+    runtimeOnly 'curse.maven:ftb-utilities-237102:3157548'
+    runtimeOnly 'curse.maven:torch-optimizer-289420:2876934'
+    runtimeOnly 'curse.maven:had-enough-characters-640802:4035773'
+    runtimeOnly 'curse.maven:better-advancements-272515:2685984'
+}

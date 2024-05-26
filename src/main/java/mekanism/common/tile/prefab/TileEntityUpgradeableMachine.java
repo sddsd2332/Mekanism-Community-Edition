@@ -1,6 +1,7 @@
 package mekanism.common.tile.prefab;
 
 import mekanism.api.transmitters.TransmissionType;
+import mekanism.common.Mekanism;
 import mekanism.common.MekanismBlocks;
 import mekanism.common.Upgrade;
 import mekanism.common.base.IFactory.RecipeType;
@@ -10,9 +11,13 @@ import mekanism.common.recipe.inputs.MachineInput;
 import mekanism.common.recipe.machines.MachineRecipe;
 import mekanism.common.recipe.outputs.MachineOutput;
 import mekanism.api.tier.BaseTier;
-import mekanism.common.tile.TileEntityFactory;
+import mekanism.common.tile.factory.TileEntityFactory;
 
 import java.util.Objects;
+
+/**
+ * 可用升级的机器类型 ，一般用于工厂
+ */
 
 public abstract class TileEntityUpgradeableMachine<INPUT extends MachineInput<INPUT>, OUTPUT extends MachineOutput<OUTPUT>, RECIPE extends MachineRecipe<INPUT, OUTPUT, RECIPE>> extends
         TileEntityBasicMachine<INPUT, OUTPUT, RECIPE> implements ITierUpgradeable {
@@ -59,6 +64,8 @@ public abstract class TileEntityUpgradeableMachine<INPUT extends MachineInput<IN
         factory.upgradeComponent.setUpgradeSlot(0);
         factory.ejectorComponent.readFrom(ejectorComponent);
         factory.ejectorComponent.setOutputData(TransmissionType.ITEM, factory.configComponent.getOutputs(TransmissionType.ITEM).get(2));
+        factory.ejectorComponent.setInputOutputData(TransmissionType.ITEM,factory.configComponent.getOutputs(TransmissionType.ITEM).get(6));
+        factory.ejectorComponent.setOutputData(TransmissionType.GAS,factory.configComponent.getOutputs(TransmissionType.GAS).get(2));
         factory.setRecipeType(type);
         factory.upgradeComponent.setSupported(Upgrade.GAS, type.fuelEnergyUpgrades());
         factory.securityComponent.readFrom(securityComponent);
@@ -76,9 +83,10 @@ public abstract class TileEntityUpgradeableMachine<INPUT extends MachineInput<IN
 
         factory.upgraded = true;
         factory.markDirty();
-
+        Mekanism.packetHandler.sendUpdatePacket(factory);
         return true;
     }
 
     protected abstract void upgradeInventory(TileEntityFactory factory);
+
 }

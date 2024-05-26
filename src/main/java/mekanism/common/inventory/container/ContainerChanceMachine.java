@@ -5,12 +5,13 @@ import mekanism.common.inventory.slot.SlotOutput;
 import mekanism.common.recipe.RecipeHandler;
 import mekanism.common.recipe.inputs.ItemStackInput;
 import mekanism.common.recipe.machines.ChanceMachineRecipe;
-import mekanism.common.tile.TileEntityChanceMachine;
+import mekanism.common.tile.prefab.TileEntityChanceMachine;
 import mekanism.common.util.ChargeUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 
@@ -73,9 +74,23 @@ public class ContainerChanceMachine<RECIPE extends ChanceMachineRecipe<RECIPE>> 
         return stack;
     }
 
+    private boolean isInputItem(ItemStack itemstack) {
+        for (ItemStackInput input : tileEntity.getRecipes().keySet()) {
+            if (ItemHandlerHelper.canItemStacksStack(input.ingredient, itemstack)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     protected void addSlots() {
-        addSlotToContainer(new Slot(tileEntity, 0, 56, 17));
+        addSlotToContainer(new Slot(tileEntity, 0, 56, 17) {
+            @Override
+            public boolean isItemValid(ItemStack itemstack) {
+                return isInputItem(itemstack);
+            }
+        });
         addSlotToContainer(new SlotDischarge(tileEntity, 1, 56, 53));
         addSlotToContainer(new SlotOutput(tileEntity, 2, 116, 35));
         addSlotToContainer(new SlotOutput(tileEntity, 4, 132, 35));

@@ -4,7 +4,7 @@ import mekanism.common.inventory.slot.SlotEnergy.SlotDischarge;
 import mekanism.common.inventory.slot.SlotOutput;
 import mekanism.common.inventory.slot.SlotSpecific;
 import mekanism.common.item.ItemCraftingFormula;
-import mekanism.common.tile.TileEntityFormulaicAssemblicator;
+import mekanism.common.tile.machine.TileEntityFormulaicAssemblicator;
 import mekanism.common.util.ChargeUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -15,7 +15,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
-import static mekanism.common.tile.TileEntityFormulaicAssemblicator.*;
+import static mekanism.common.tile.machine.TileEntityFormulaicAssemblicator.*;
 
 public class ContainerFormulaicAssemblicator extends ContainerMekanism<TileEntityFormulaicAssemblicator> {
 

@@ -1,6 +1,7 @@
 package mekanism.common.config;
 
 import mekanism.generators.common.MekanismGenerators;
+import mekanism.multiblockmachine.common.MekanismMultiblockMachine;
 import mekanism.tools.common.MekanismTools;
 import net.minecraftforge.fml.common.Loader;
 
@@ -45,4 +46,6 @@ public class MekanismConfig {
     public GeneratorsConfig generators = Loader.isModLoaded(MekanismGenerators.MODID) ? new GeneratorsConfig() : null;
 
     public ToolsConfig tools = Loader.isModLoaded(MekanismTools.MODID) ? new ToolsConfig() : null;
+
+    public MultiblockMachineConfig multiblock = Loader.isModLoaded(MekanismMultiblockMachine.MODID) ? new MultiblockMachineConfig() : null;
 }

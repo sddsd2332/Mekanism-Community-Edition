@@ -19,7 +19,7 @@ import mekanism.client.sound.SoundHandler;
 import mekanism.common.Mekanism;
 import mekanism.common.inventory.container.ContainerRotaryCondensentrator;
 import mekanism.common.network.PacketTileEntity.TileEntityMessage;
-import mekanism.common.tile.TileEntityRotaryCondensentrator;
+import mekanism.common.tile.machine.TileEntityRotaryCondensentrator;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.gui.GuiButton;

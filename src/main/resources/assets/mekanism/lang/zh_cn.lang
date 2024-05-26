@@ -15,6 +15,7 @@ item.MufflingUpgrade.name=降噪升级
 item.GasUpgrade.name=气体升级
 item.AnchorUpgrade.name=锚升级
 item.StoneGeneratorUpgrade.name=造石机升级
+item.ThreadUpgrade.name=线程升级
 item.Robit.name=机器人
 item.AtomicDisassembler.name=原子分解机
 item.ElectricBow.name=电动弓
@@ -244,6 +245,7 @@ tile.MachineBlock4.CellSeparator.name=细胞分离机
 tile.MachineBlock4.Recycler.name=回收机
 tile.MachineBlock4.IndustrialAlarm.name=工业报警器
 tile.MachineBlock4.Void.name=虚空采掘机
+tile.MachineBlock4.Hybrid_Storage.name=混合存储器(WIP)
 
 
 
@@ -517,6 +519,8 @@ upgrade.anchor=锚
 upgrade.anchor.desc=保存机器的载入.
 upgrade.stonegenerator=造石机
 upgrade.stonegenerator.desc=按需生成石头或原石
+upgrade.thread=额外线程
+upgrade.thread.desc=并列加工机器现有的工作配方
 
 # Key description text
 mekanism.key.mode=模式切换
@@ -1103,15 +1107,16 @@ tooltip.CellExtractor=一种从各种有机物中获取细胞的机器
 tooltip.CellSeparator=通过高速旋转分离细胞的机器
 tooltip.Recycler=专门回收物品的机器
 tooltip.IndustrialAlarm=不仅仅是你每天的闹钟......这是工业警报！
+tooltip.Hybrid_Storage=可以同时存储120种物品，2种气体，1种流体以及能量的方块
 
 # Side data
 sideData.None=无
 sideData.Input=输入
-sideData.Input1=输入（1）
-sideData.Input2=输入（2）
+sideData.Input_1=输入（1）
+sideData.Input_2=输入（2）
 sideData.Output=输出
-sideData.Output1=输出（1）
-sideData.Output2=输出（2）
+sideData.Output_1=输出（1）
+sideData.Output_2=输出（2）
 sideData.Input_Output=输入/输出
 sideData.Input_Extra=额外-输入
 sideData.Energy=能量
@@ -1300,6 +1305,7 @@ item.ObsidianAxe.name=黑曜石斧头
 item.ObsidianShovel.name=黑曜石铲子
 item.ObsidianHoe.name=黑曜石锄头
 item.ObsidianSword.name=黑曜石剑
+item.ObsidianShield.name=黑曜石盾
 
 # Osmium
 item.OsmiumHelmet.name=锇头盔
@@ -1312,7 +1318,7 @@ item.OsmiumAxe.name=锇斧头
 item.OsmiumShovel.name=锇铲子
 item.OsmiumHoe.name=锇锄头
 item.OsmiumSword.name=锇剑
-
+item.OsmiumShield.name=锇盾
 # Bronze
 item.BronzeHelmet.name=青铜头盔
 item.BronzeChestplate.name=青铜胸甲
@@ -1324,7 +1330,7 @@ item.BronzeAxe.name=青铜斧头
 item.BronzeShovel.name=青铜铲子
 item.BronzeHoe.name=青铜锄头
 item.BronzeSword.name=青铜剑
-
+item.BronzeShield.name=青铜盾
 # Glow
 item.GlowstoneHelmet.name=荧石头盔
 item.GlowstoneChestplate.name=荧石胸甲
@@ -1336,6 +1342,7 @@ item.GlowstoneAxe.name=荧石斧头
 item.GlowstoneShovel.name=荧石铲子
 item.GlowstoneHoe.name=荧石锄头
 item.GlowstoneSword.name=荧石剑
+item.GlowstoneShield.name=荧石盾
 
 # Steel
 item.SteelHelmet.name=钢头盔
@@ -1348,7 +1355,7 @@ item.SteelAxe.name=钢斧头
 item.SteelShovel.name=钢铲子
 item.SteelHoe.name=钢锄头
 item.SteelSword.name=钢剑
-
+item.SteelShield.name=钢盾
 # Lapis Lazuli
 item.LapisLazuliHelmet.name=青金石头盔
 item.LapisLazuliChestplate.name=青金石胸甲
@@ -1360,6 +1367,7 @@ item.LapisLazuliAxe.name=青金石斧头
 item.LapisLazuliShovel.name=青金石铲子
 item.LapisLazuliHoe.name=青金石锄头
 item.LapisLazuliSword.name=青金石剑
+item.LapisShield.name=青金石盾
 
 # Config Gui
 mekanism.configgui.ctgy.tools.general=常规

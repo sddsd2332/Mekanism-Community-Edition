@@ -1,5 +1,7 @@
 package mekanism.common;
 
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.entity.player.EntityPlayer;
@@ -49,8 +51,7 @@ public class KeySync {
     }
 
     public static class KeySet {
-
-        public Set<Integer> keysActive = new ObjectOpenHashSet<>();
+        public IntSet keysActive = new IntOpenHashSet();
 
         public KeySet(int key) {
             keysActive.add(key);

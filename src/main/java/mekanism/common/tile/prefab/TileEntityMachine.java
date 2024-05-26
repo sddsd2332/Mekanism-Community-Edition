@@ -17,6 +17,10 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
+/**
+ * 基本机器类型
+ */
+
 public abstract class TileEntityMachine extends TileEntityEffectsBlock implements IUpgradeTile, IRedstoneControl, ISecurityTile {
 
     public double prevEnergy;

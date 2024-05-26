@@ -1,0 +1,13 @@
+{
+      "result": {"item": "mekanismtools:glowstoneshield"},
+      "pattern": [
+            "*W*",
+            "***",
+            " * "
+      ],
+      "type": "forge:ore_shaped",
+      "key": {
+            "W":{"item": "minecraft:shield"},
+            "*": {"item": "#INGOT_REFINED_GLOWSTONE"}
+      }
+}

@@ -101,7 +101,10 @@ public class GuiUpgradeManagement extends GuiMekanism {
 
     private void updateEnabledButtons() {
         removeButton.enabled = selectedType != null;
+        backButton.enabled = tileEntity.getComponent().getBackButton();
+        backButton.visible = tileEntity.getComponent().getBackButton();
     }
+
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {

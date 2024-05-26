@@ -3,7 +3,7 @@ package mekanism.client.render.tileentity;
 import mekanism.api.gas.GasStack;
 import mekanism.client.model.ModelChemicalDissolutionChamber;
 import mekanism.client.render.MekanismRenderer;
-import mekanism.common.tile.TileEntityChemicalDissolutionChamber;
+import mekanism.common.tile.machine.TileEntityChemicalDissolutionChamber;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.client.renderer.GlStateManager;

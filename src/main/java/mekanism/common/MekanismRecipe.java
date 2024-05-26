@@ -264,7 +264,9 @@ public class MekanismRecipe {
         }
         //Chemical Dissolution Chamber Recipes
         if (MekanismConfig.current().general.machinesManager.isEnabled(BlockStateMachine.MachineType.CHEMICAL_DISSOLUTION_CHAMBER)) {
-            RecipeHandler.addChemicalDissolutionChamberRecipe(new ItemStack(MekanismItems.OtherDust, 1, 7), new GasStack(MekanismFluids.HydrofluoricAcid, 100));
+            for (ItemStack ore : OreDictionary.getOres("dustFluorite")){
+                RecipeHandler.addChemicalDissolutionChamberRecipe(StackUtils.size(ore,1), new GasStack(MekanismFluids.HydrofluoricAcid, 100));
+            }
         }
 
         //T4 Processing Recipes
@@ -292,9 +294,9 @@ public class MekanismRecipe {
                     new ItemStack(MekanismItems.Substrate, 8), new GasStack(MekanismFluids.Oxygen, 10), 200, 400);
             RecipeHandler.addPRCRecipe(new ItemStack(Items.COAL, 1, OreDictionary.WILDCARD_VALUE), new FluidStack(FluidRegistry.WATER, 100), new GasStack(MekanismFluids.Oxygen, 100),
                     new ItemStack(MekanismItems.OtherDust, 1, 3), new GasStack(MekanismFluids.Hydrogen, 100), 0, 100);
-            RecipeHandler.addPRCRecipe(new ItemStack(MekanismItems.OtherDust, 1, 8), new FluidStack(FluidRegistry.WATER, 10000), new GasStack(MekanismFluids.Plutonium, 1000),
+            RecipeHandler.addPRCRecipe(new ItemStack(MekanismItems.OtherDust, 1, 7), new FluidStack(FluidRegistry.WATER, 10000), new GasStack(MekanismFluids.Plutonium, 1000),
                     new ItemStack(MekanismItems.PlutoniumPellet, 1), new GasStack(MekanismFluids.SpentNuclearWaste, 1000), 100000, 2000);
-            RecipeHandler.addPRCRecipe(new ItemStack(MekanismItems.OtherDust, 1, 8), new FluidStack(FluidRegistry.WATER, 10000), new GasStack(MekanismFluids.Polonium, 1000),
+            RecipeHandler.addPRCRecipe(new ItemStack(MekanismItems.OtherDust, 1, 7), new FluidStack(FluidRegistry.WATER, 10000), new GasStack(MekanismFluids.Polonium, 1000),
                     new ItemStack(MekanismItems.PoloniumPellet, 1), new GasStack(MekanismFluids.SpentNuclearWaste, 1000), 100000, 2000);
             RecipeHandler.addPRCRecipe(new ItemStack(MekanismItems.CosmicMatter, 64), FluidRegistry.getFluidStack("liquidsuperheatedsodium", 10000), new GasStack(MekanismFluids.UnstableDimensional, 10000),
                     null, new GasStack(MekanismFluids.Antimatter, 100), 100000, 24000);

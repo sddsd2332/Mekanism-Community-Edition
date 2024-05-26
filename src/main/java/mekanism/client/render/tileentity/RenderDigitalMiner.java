@@ -1,9 +1,10 @@
 package mekanism.client.render.tileentity;
 
+import mekanism.api.util.time.Timeticks;
 import mekanism.client.model.ModelDigitalMiner;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.client.render.MinerVisualRenderer;
-import mekanism.common.tile.TileEntityDigitalMiner;
+import mekanism.common.tile.machine.TileEntityDigitalMiner;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.client.renderer.GlStateManager;
@@ -15,7 +16,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class RenderDigitalMiner extends TileEntitySpecialRenderer<TileEntityDigitalMiner> {
 
     private ModelDigitalMiner model = new ModelDigitalMiner();
-
+    private Timeticks time = new Timeticks(20, 20, false);
     @Override
     public void render(TileEntityDigitalMiner tileEntity, double x, double y, double z, float partialTick, int destroyStage, float alpha) {
         GlStateManager.pushMatrix();
@@ -26,7 +27,8 @@ public class RenderDigitalMiner extends TileEntitySpecialRenderer<TileEntityDigi
         GlStateManager.translate(0, 0, -1.0F);
 
         GlStateManager.rotate(180, 0, 0, 1);
-        model.render(0.0625F, tileEntity.isActive, rendererDispatcher.renderEngine, true);
+        double tick = time.getValue() / 20F;
+        model.render(tick,0.0625F, tileEntity.isActive, rendererDispatcher.renderEngine);
         GlStateManager.popMatrix();
 
         if (tileEntity.clientRendering) {

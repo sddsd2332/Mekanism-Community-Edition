@@ -94,7 +94,12 @@ public class ContainerFarmMachine<RECIPE extends FarmMachineRecipe<RECIPE>> exte
 
     @Override
     protected void addSlots() {
-        addSlotToContainer(new Slot(tileEntity, 0, 56, 17));
+        addSlotToContainer(new Slot(tileEntity, 0, 56, 17){
+            @Override
+            public boolean isItemValid(ItemStack itemstack) {
+                return isInputItem(itemstack);
+            }
+        });
         addSlotToContainer(new Slot(tileEntity, 1, 56, 53));
         addSlotToContainer(new SlotDischarge(tileEntity, 2, 31, 35));
         addSlotToContainer(new SlotOutput(tileEntity, 3, 116, 35));

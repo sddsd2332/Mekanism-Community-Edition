@@ -3,7 +3,7 @@ package mekanism.common.base;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.GasTankInfo;
 import mekanism.api.gas.IGasTank;
-import mekanism.common.tile.TileEntityMultiblock;
+import mekanism.common.tile.multiblock.TileEntityMultiblock;
 import mekanism.common.util.MekanismUtils;
 
 import javax.annotation.Nullable;

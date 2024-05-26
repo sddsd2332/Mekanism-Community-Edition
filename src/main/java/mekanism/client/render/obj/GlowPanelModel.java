@@ -2,6 +2,8 @@ package mekanism.client.render.obj;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import mekanism.api.EnumColor;
 import mekanism.common.block.property.PropertyColor;
@@ -51,8 +53,8 @@ public class GlowPanelModel extends OBJBakedModelBase {
             .put(TransformType.FIXED, get(0, 0, 0, 0, 0, 0, 1))
             .put(TransformType.NONE, get(0, 0, 0, 0, 0, 0, 0))
             .build();
-    private static Map<Integer, List<BakedQuad>> glowPanelCache = new Object2ObjectOpenHashMap<>();
-    private static Map<Integer, GlowPanelModel> glowPanelItemCache = new Object2ObjectOpenHashMap<>();
+    private static Int2ObjectMap< List<BakedQuad>> glowPanelCache = new Int2ObjectOpenHashMap<>();
+    private static Int2ObjectMap<GlowPanelModel> glowPanelItemCache = new Int2ObjectOpenHashMap<>();
     private IBlockState tempState;
     private ItemStack tempStack;
     private GlowPanelOverride override = new GlowPanelOverride();

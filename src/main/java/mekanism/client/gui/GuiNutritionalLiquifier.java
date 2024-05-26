@@ -8,7 +8,7 @@ import mekanism.client.gui.element.tab.GuiSideConfigurationTab;
 import mekanism.client.gui.element.tab.GuiTransporterConfigTab;
 import mekanism.client.gui.element.tab.GuiUpgradeTab;
 import mekanism.common.inventory.container.ContainerNutritionalLiquifier;
-import mekanism.common.tile.TileEntityNutritionalLiquifier;
+import mekanism.common.tile.machine.TileEntityNutritionalLiquifier;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.entity.player.InventoryPlayer;

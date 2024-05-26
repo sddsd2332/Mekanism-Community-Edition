@@ -9,6 +9,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 
+/**
+ * 复合储罐管理程序，
+ * 含有多个可存储的储罐的机器可用
+ * 建议是流体类型排前面气体排后面
+ */
+
 public interface ITankManager {
 
     Object[] getTanks();

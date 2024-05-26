@@ -31,6 +31,7 @@ public class MekanismItems {
     public static final Item GasUpgrade = new ItemUpgrade(Upgrade.GAS);
     public static final Item StoneGeneratorUpgrade = new ItemUpgrade(Upgrade.STONE_GENERATOR);
     public static final Item AnchorUpgrade = new ItemUpgrade(Upgrade.ANCHOR);
+    public static final Item ThreadUpgrade = new ItemUpgrade(Upgrade.THREAD);
     public static final Item TierInstaller = new ItemTierInstaller();
     public static final ItemEnergized EnergyTablet = new ItemEnergized(1000000);
     public static final ItemRobit Robit = new ItemRobit();
@@ -96,9 +97,7 @@ public class MekanismItems {
      */
     public static void registerItems(IForgeRegistry<Item> registry) {
         registry.register(init(ElectricBow, "ElectricBow"));
-
         registry.register(init(Canteen, "Canteen"));
-
         registry.register(init(Dust, "Dust"));
         registry.register(init(Ingot, "Ingot"));
         registry.register(init(Nugget, "Nugget"));
@@ -110,14 +109,13 @@ public class MekanismItems {
         registry.register(init(GasUpgrade, "GasUpgrade"));
         registry.register(init(AnchorUpgrade, "AnchorUpgrade"));
         registry.register(init(StoneGeneratorUpgrade, "StoneGeneratorUpgrade"));
+        registry.register(init(ThreadUpgrade, "ThreadUpgrade"));
         registry.register(init(Robit, "Robit"));
         registry.register(init(AtomicDisassembler, "AtomicDisassembler"));
         registry.register(init(EnrichedAlloy, "EnrichedAlloy"));
         registry.register(init(ReinforcedAlloy, "ReinforcedAlloy"));
         registry.register(init(AtomicAlloy, "AtomicAlloy"));
-
         registry.register(init(CosmicAlloy, "CosmicAlloy"));
-
         registry.register(init(ItemProxy, "ItemProxy"));
         registry.register(init(ControlCircuit, "ControlCircuit"));
         registry.register(init(EnrichedIron, "EnrichedIron"));

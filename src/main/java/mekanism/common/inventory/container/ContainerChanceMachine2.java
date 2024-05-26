@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 
@@ -74,9 +75,23 @@ public class ContainerChanceMachine2<RECIPE extends Chance2MachineRecipe<RECIPE>
         return stack;
     }
 
+    private boolean isInputItem(ItemStack itemstack) {
+        for (ItemStackInput input : tileEntity.getRecipes().keySet()) {
+            if (ItemHandlerHelper.canItemStacksStack(input.ingredient, itemstack)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     protected void addSlots() {
-        addSlotToContainer(new Slot(tileEntity, 0, 56, 17));
+        addSlotToContainer(new Slot(tileEntity, 0, 56, 17){
+            @Override
+            public boolean isItemValid(ItemStack itemstack) {
+                return isInputItem(itemstack);
+            }
+        });
         addSlotToContainer(new SlotDischarge(tileEntity, 1, 56, 53));
         addSlotToContainer(new SlotOutput(tileEntity, 2, 116, 35));
     }

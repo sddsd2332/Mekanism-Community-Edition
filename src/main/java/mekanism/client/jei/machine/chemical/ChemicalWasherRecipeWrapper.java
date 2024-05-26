@@ -3,7 +3,7 @@ package mekanism.client.jei.machine.chemical;
 import mekanism.client.jei.MekanismJEI;
 import mekanism.client.jei.machine.MekanismRecipeWrapper;
 import mekanism.common.recipe.machines.WasherRecipe;
-import mekanism.common.tile.TileEntityChemicalWasher;
+import mekanism.common.tile.machine.TileEntityChemicalWasher;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import net.minecraftforge.fluids.FluidRegistry;

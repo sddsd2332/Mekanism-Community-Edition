@@ -18,7 +18,7 @@ import mekanism.client.sound.SoundHandler;
 import mekanism.common.Mekanism;
 import mekanism.common.inventory.container.ContainerElectrolyticSeparator;
 import mekanism.common.network.PacketTileEntity.TileEntityMessage;
-import mekanism.common.tile.TileEntityElectrolyticSeparator;
+import mekanism.common.tile.machine.TileEntityElectrolyticSeparator;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.gui.GuiButton;

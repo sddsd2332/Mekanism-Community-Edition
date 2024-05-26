@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBuf;
 import mekanism.api.Coord4D;
 import mekanism.api.EnumColor;
 import mekanism.api.energy.IEnergizedItem;
+import mekanism.api.tier.BaseTier;
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.client.MekKeyHandler;
 import mekanism.client.MekanismClient;
@@ -27,12 +28,11 @@ import mekanism.common.integration.tesla.TeslaItemWrapper;
 import mekanism.common.security.ISecurityItem;
 import mekanism.common.security.ISecurityTile;
 import mekanism.common.security.ISecurityTile.SecurityMode;
-import mekanism.api.tier.BaseTier;
 import mekanism.common.tier.FactoryTier;
 import mekanism.common.tier.FluidTankTier;
-import mekanism.common.tile.TileEntityFactory;
 import mekanism.common.tile.TileEntityFluidTank;
 import mekanism.common.tile.TileEntityQuantumEntangloporter;
+import mekanism.common.tile.factory.TileEntityFactory;
 import mekanism.common.tile.prefab.TileEntityBasicBlock;
 import mekanism.common.tile.prefab.TileEntityElectricBlock;
 import mekanism.common.util.*;
@@ -173,78 +173,80 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
     @SideOnly(Side.CLIENT)
     public void addInformation(@Nonnull ItemStack itemstack, World world, @Nonnull List<String> list, @Nonnull ITooltipFlag flag) {
         MachineType type = MachineType.get(itemstack);
-        if (!MekKeyHandler.getIsKeyPressed(MekanismKeyHandler.sneakKey)) {
-            if (type == MachineType.FLUID_TANK) {
-                FluidStack fluidStack = getFluidStack(itemstack);
-                if (fluidStack != null) {
-                    int amount = getFluidStack(itemstack).amount;
-                    String amountStr = amount == Integer.MAX_VALUE ? LangUtils.localize("gui.infinite") : amount + "mB";
-                    list.add(EnumColor.AQUA + LangUtils.localizeFluidStack(fluidStack) + ": " + EnumColor.GREY + amountStr);
-                } else {
-                    list.add(EnumColor.DARK_RED + LangUtils.localize("gui.empty") + ".");
+        if (type != null) { // If the block is null, no information is added
+            if (!MekKeyHandler.getIsKeyPressed(MekanismKeyHandler.sneakKey)) {
+                if (type == MachineType.FLUID_TANK) {
+                    FluidStack fluidStack = getFluidStack(itemstack);
+                    if (fluidStack != null) {
+                        int amount = getFluidStack(itemstack).amount;
+                        String amountStr = amount == Integer.MAX_VALUE ? LangUtils.localize("gui.infinite") : amount + "mB";
+                        list.add(EnumColor.AQUA + LangUtils.localizeFluidStack(fluidStack) + ": " + EnumColor.GREY + amountStr);
+                    } else {
+                        list.add(EnumColor.DARK_RED + LangUtils.localize("gui.empty") + ".");
+                    }
+                    int cap = FluidTankTier.values()[getBaseTier(itemstack).ordinal()].getStorage();
+                    list.add(EnumColor.INDIGO + LangUtils.localize("tooltip.capacity") + ": " + EnumColor.GREY +
+                            (cap == Integer.MAX_VALUE ? LangUtils.localize("gui.infinite") : cap + " mB"));
                 }
-                int cap = FluidTankTier.values()[getBaseTier(itemstack).ordinal()].getStorage();
-                list.add(EnumColor.INDIGO + LangUtils.localize("tooltip.capacity") + ": " + EnumColor.GREY +
-                        (cap == Integer.MAX_VALUE ? LangUtils.localize("gui.infinite") : cap + " mB"));
-            }
 
-            if (type == MachineType.QUANTUM_ENTANGLOPORTER) {
-                Frequency.Identity freq = Frequency.Identity.load(ItemDataUtils.getCompound(itemstack, "entangleporter_frequency"));
-                if (freq != null) {
-                    list.add(EnumColor.INDIGO + LangUtils.localize("gui.frequency") + ": " + EnumColor.GREY + freq.name);
+                if (type == MachineType.QUANTUM_ENTANGLOPORTER) {
+                    Frequency.Identity freq = Frequency.Identity.load(ItemDataUtils.getCompound(itemstack, "entangleporter_frequency"));
+                    if (freq != null) {
+                        list.add(EnumColor.INDIGO + LangUtils.localize("gui.frequency") + ": " + EnumColor.GREY + freq.name);
 
-                    list.add(EnumColor.INDIGO + LangUtils.localize("gui.mode") + ": " + EnumColor.GREY + LangUtils.localize("gui." + (!freq.publicFreq ? "private" : "public")));
+                        list.add(EnumColor.INDIGO + LangUtils.localize("gui.mode") + ": " + EnumColor.GREY + LangUtils.localize("gui." + (!freq.publicFreq ? "private" : "public")));
+                    }
                 }
-            }
 
-            list.add(LangUtils.localize("tooltip.hold") + " " + EnumColor.INDIGO + GameSettings.getKeyDisplayString(MekanismKeyHandler.sneakKey.getKeyCode()) +
-                    EnumColor.GREY + " " + LangUtils.localize("tooltip.forDetails") + ".");
-            list.add(LangUtils.localize("tooltip.hold") + " " + EnumColor.AQUA + GameSettings.getKeyDisplayString(MekanismKeyHandler.sneakKey.getKeyCode()) +
-                    EnumColor.GREY + " " + LangUtils.localize("tooltip.and") + " " + EnumColor.AQUA +
-                    GameSettings.getKeyDisplayString(MekanismKeyHandler.modeSwitchKey.getKeyCode()) + EnumColor.GREY + " " + LangUtils.localize("tooltip.forDesc") + ".");
-        } else if (!MekKeyHandler.getIsKeyPressed(MekanismKeyHandler.modeSwitchKey)) {
-            if (hasSecurity(itemstack)) {
-                list.add(SecurityUtils.getOwnerDisplay(Minecraft.getMinecraft().player, MekanismClient.clientUUIDMap.get(getOwnerUUID(itemstack))));
-                list.add(EnumColor.GREY + LangUtils.localize("gui.security") + ": " + SecurityUtils.getSecurityDisplay(itemstack, Side.CLIENT));
-                if (SecurityUtils.isOverridden(itemstack, Side.CLIENT)) {
-                    list.add(EnumColor.RED + "(" + LangUtils.localize("gui.overridden") + ")");
+                list.add(LangUtils.localize("tooltip.hold") + " " + EnumColor.INDIGO + GameSettings.getKeyDisplayString(MekanismKeyHandler.sneakKey.getKeyCode()) +
+                        EnumColor.GREY + " " + LangUtils.localize("tooltip.forDetails") + ".");
+                list.add(LangUtils.localize("tooltip.hold") + " " + EnumColor.AQUA + GameSettings.getKeyDisplayString(MekanismKeyHandler.sneakKey.getKeyCode()) +
+                        EnumColor.GREY + " " + LangUtils.localize("tooltip.and") + " " + EnumColor.AQUA +
+                        GameSettings.getKeyDisplayString(MekanismKeyHandler.modeSwitchKey.getKeyCode()) + EnumColor.GREY + " " + LangUtils.localize("tooltip.forDesc") + ".");
+            } else if (!MekKeyHandler.getIsKeyPressed(MekanismKeyHandler.modeSwitchKey)) {
+                if (hasSecurity(itemstack)) {
+                    list.add(SecurityUtils.getOwnerDisplay(Minecraft.getMinecraft().player, MekanismClient.clientUUIDMap.get(getOwnerUUID(itemstack))));
+                    list.add(EnumColor.GREY + LangUtils.localize("gui.security") + ": " + SecurityUtils.getSecurityDisplay(itemstack, Side.CLIENT));
+                    if (SecurityUtils.isOverridden(itemstack, Side.CLIENT)) {
+                        list.add(EnumColor.RED + "(" + LangUtils.localize("gui.overridden") + ")");
+                    }
                 }
-            }
-            if (type == MachineType.BASIC_FACTORY || type == MachineType.ADVANCED_FACTORY || type == MachineType.ELITE_FACTORY || type == MachineType.ULTIMATE_FACTORY || type == MachineType.CREATIVE_FACTORY) {
-                RecipeType recipeType = getRecipeTypeOrNull(itemstack);
-                if (recipeType != null) {
-                    list.add(EnumColor.INDIGO + LangUtils.localize("tooltip.recipeType") + ": " + EnumColor.GREY + recipeType.getLocalizedName());
+                if (type == MachineType.BASIC_FACTORY || type == MachineType.ADVANCED_FACTORY || type == MachineType.ELITE_FACTORY || type == MachineType.ULTIMATE_FACTORY || type == MachineType.CREATIVE_FACTORY) {
+                    RecipeType recipeType = getRecipeTypeOrNull(itemstack);
+                    if (recipeType != null) {
+                        list.add(EnumColor.INDIGO + LangUtils.localize("tooltip.recipeType") + ": " + EnumColor.GREY + recipeType.getLocalizedName());
+                    }
                 }
-            }
-            if (type == MachineType.FLUID_TANK) {
-                list.add(EnumColor.INDIGO + LangUtils.localizeWithFormat("mekanism.tooltip.portableTank.bucketMode", LangUtils.transYesNo(getBucketMode(itemstack))));
-            }
-
-            if (type.isElectric) {
-                list.add(EnumColor.BRIGHT_GREEN + LangUtils.localize("tooltip.storedEnergy") + ": " + EnumColor.GREY
-                        + MekanismUtils.getEnergyDisplay(getEnergy(itemstack), getMaxEnergy(itemstack)));
-            }
-
-            if (hasTank(itemstack) && type != MachineType.FLUID_TANK) {
-                FluidStack fluidStack = getFluidStack(itemstack);
-
-                if (fluidStack != null) {
-                    list.add(EnumColor.PINK + LangUtils.localizeFluidStack(fluidStack) + ": " + EnumColor.GREY + getFluidStack(itemstack).amount + "mB");
+                if (type == MachineType.FLUID_TANK) {
+                    list.add(EnumColor.INDIGO + LangUtils.localizeWithFormat("mekanism.tooltip.portableTank.bucketMode", LangUtils.transYesNo(getBucketMode(itemstack))));
                 }
-            }
 
-            if (type != MachineType.CHARGEPAD && type != MachineType.LOGISTICAL_SORTER) {
-                list.add(EnumColor.AQUA + LangUtils.localize("tooltip.inventory") + ": " + EnumColor.GREY +
-                        LangUtils.transYesNo(getInventory(itemstack) != null && getInventory(itemstack).tagCount() != 0));
-            }
-            if (type.supportsUpgrades && ItemDataUtils.hasData(itemstack, "upgrades")) {
-                Map<Upgrade, Integer> upgrades = Upgrade.buildMap(ItemDataUtils.getDataMap(itemstack));
-                for (Entry<Upgrade, Integer> entry : upgrades.entrySet()) {
-                    list.add(entry.getKey().getColor() + "- " + entry.getKey().getName() + (entry.getKey().canMultiply() ? ": " + EnumColor.GREY + "x" + entry.getValue() : ""));
+                if (type.isElectric) {
+                    list.add(EnumColor.BRIGHT_GREEN + LangUtils.localize("tooltip.storedEnergy") + ": " + EnumColor.GREY
+                            + MekanismUtils.getEnergyDisplay(getEnergy(itemstack), getMaxEnergy(itemstack)));
                 }
+
+                if (hasTank(itemstack) && type != MachineType.FLUID_TANK) {
+                    FluidStack fluidStack = getFluidStack(itemstack);
+
+                    if (fluidStack != null) {
+                        list.add(EnumColor.PINK + LangUtils.localizeFluidStack(fluidStack) + ": " + EnumColor.GREY + getFluidStack(itemstack).amount + "mB");
+                    }
+                }
+
+                if (type != MachineType.CHARGEPAD && type != MachineType.LOGISTICAL_SORTER) {
+                    list.add(EnumColor.AQUA + LangUtils.localize("tooltip.inventory") + ": " + EnumColor.GREY +
+                            LangUtils.transYesNo(getInventory(itemstack) != null && getInventory(itemstack).tagCount() != 0));
+                }
+                if (type.supportsUpgrades && ItemDataUtils.hasData(itemstack, "upgrades")) {
+                    Map<Upgrade, Integer> upgrades = Upgrade.buildMap(ItemDataUtils.getDataMap(itemstack));
+                    for (Entry<Upgrade, Integer> entry : upgrades.entrySet()) {
+                        list.add(entry.getKey().getColor() + "- " + entry.getKey().getName() + (entry.getKey().canMultiply() ? ": " + EnumColor.GREY + "x" + entry.getValue() : ""));
+                    }
+                }
+            } else {
+                list.addAll(MekanismUtils.splitTooltip(type.getDescription(), itemstack));
             }
-        } else {
-            list.addAll(MekanismUtils.splitTooltip(type.getDescription(), itemstack));
         }
     }
 
@@ -331,14 +333,14 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
                     factory.setRecipeType(recipeType);
                 }
 
-                if (!factory.GasMachine()){
-                    factory.configComponent.fillConfig(TransmissionType.GAS,-1);
+                if (!factory.GasMachine()) {
+                    factory.configComponent.fillConfig(TransmissionType.GAS, -1);
                 }
-                if (!factory.GasOutputMachines()){
-                    factory.configComponent.setCanEject(TransmissionType.GAS,false);
+                if (!factory.GasOutputMachines()) {
+                    factory.configComponent.setCanEject(TransmissionType.GAS, false);
                 }
-                if (!factory.inputFluidMachine()){
-                    factory.configComponent.fillConfig(TransmissionType.FLUID,-1);
+                if (!factory.inputFluidMachine()) {
+                    factory.configComponent.fillConfig(TransmissionType.FLUID, -1);
                 }
                 world.notifyNeighborsOfStateChange(pos, tileEntity.getBlockType(), true);
                 Mekanism.packetHandler.sendUpdatePacket(tileEntity);

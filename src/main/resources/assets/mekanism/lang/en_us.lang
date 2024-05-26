@@ -15,6 +15,7 @@ item.MufflingUpgrade.name=Muffling Upgrade
 item.GasUpgrade.name=Gas Upgrade
 item.AnchorUpgrade.name=Anchor Upgrade
 item.StoneGeneratorUpgrade.name=Stone Generator Upgrade
+item.ThreadUpgrade.name=Thread Upgrade
 item.Robit.name=Robit
 item.AtomicDisassembler.name=Atomic Disassembler
 item.ElectricBow.name=Electric Bow
@@ -243,7 +244,7 @@ tile.MachineBlock4.CellSeparator.name=Cell separator
 tile.MachineBlock4.Recycler.name=Recycler
 tile.MachineBlock4.IndustrialAlarm.name=Industrial Alarm
 tile.MachineBlock4.Void.name=Void Excavating
-
+tile.MachineBlock4.Hybrid_Storage.name=Hybrid Storage(WIP)
 
 
 # Plastic
@@ -515,6 +516,8 @@ upgrade.anchor=Anchor
 upgrade.anchor.desc=Keeps a machine's chunk loaded.
 upgrade.stonegenerator=Stone Generator
 upgrade.stonegenerator.desc=Generate stone or cobblestone when its needed
+upgrade.thread=Extra threads
+upgrade.thread.desc=Side-by-side processing of existing working recipes for machines
 
 # Key description text
 mekanism.key.mode=Item Mode Switch
@@ -1104,15 +1107,16 @@ tooltip.CellExtractor=A machine that advances cells from a variety of organic ma
 tooltip.CellSeparator=A machine that separates cells by rotating at high speed
 tooltip.Recycler=A machine that specializes in recycling items
 tooltip.IndustrialAlarm=Not just your everyday alarm... this is an 'industrial' alarm!
+tooltip.Hybrid_Storage=Blocks that can store 120 items, 2 gases, 1 fluid, and energy simultaneously
 
 # Side data
 sideData.None=None
 sideData.Input=Input
-sideData.Input1=Input(1)
-sideData.Input2=Input(2)
+sideData.Input_1=Input(1)
+sideData.Input_2=Input(2)
 sideData.Output=Output
-sideData.Output1=Output(1)
-sideData.Output2=Output(2)
+sideData.Output_1=Output(1)
+sideData.Output_2=Output(2)
 sideData.Input_Output=Input/Output
 sideData.Input_Extra=Extra-Input
 sideData.Energy=Energy
@@ -1300,6 +1304,7 @@ item.ObsidianAxe.name=Obsidian Axe
 item.ObsidianShovel.name=Obsidian Shovel
 item.ObsidianHoe.name=Obsidian Hoe
 item.ObsidianSword.name=Obsidian Sword
+item.ObsidianShield.name=Obsidian Shield
 
 # Osmium
 item.OsmiumHelmet.name=Osmium Helmet
@@ -1312,6 +1317,7 @@ item.OsmiumAxe.name=Osmium Axe
 item.OsmiumShovel.name=Osmium Shovel
 item.OsmiumHoe.name=Osmium Hoe
 item.OsmiumSword.name=Osmium Sword
+item.OsmiumShield.name=Osmium Shield
 
 # Bronze
 item.BronzeHelmet.name=Bronze Helmet
@@ -1324,7 +1330,7 @@ item.BronzeAxe.name=Bronze Axe
 item.BronzeShovel.name=Bronze Shovel
 item.BronzeHoe.name=Bronze Hoe
 item.BronzeSword.name=Bronze Sword
-
+item.BronzeShield.name=Bronze Shield
 # Glow
 item.GlowstoneHelmet.name=Glowstone Helmet
 item.GlowstoneChestplate.name=Glowstone Chestplate
@@ -1336,6 +1342,7 @@ item.GlowstoneAxe.name=Glowstone Axe
 item.GlowstoneShovel.name=Glowstone Shovel
 item.GlowstoneHoe.name=Glowstone Hoe
 item.GlowstoneSword.name=Glowstone Sword
+item.GlowstoneShield.name=Glowstone Shield
 
 # Steel
 item.SteelHelmet.name=Steel Helmet
@@ -1348,6 +1355,7 @@ item.SteelAxe.name=Steel Axe
 item.SteelShovel.name=Steel Shovel
 item.SteelHoe.name=Steel Hoe
 item.SteelSword.name=Steel Sword
+item.SteelShield.name=Steel Shield
 
 # Lapis Lazuli
 item.LapisLazuliHelmet.name=Lapis Lazuli Helmet
@@ -1360,6 +1368,7 @@ item.LapisLazuliAxe.name=Lapis Lazuli Axe
 item.LapisLazuliShovel.name=Lapis Lazuli Shovel
 item.LapisLazuliHoe.name=Lapis Lazuli Hoe
 item.LapisLazuliSword.name=Lapis Lazuli Sword
+item.LapisShield.name=Lapis Lazuli Shield
 
 # Config Gui
 mekanism.configgui.ctgy.tools.general=General Settings

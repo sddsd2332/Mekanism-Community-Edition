@@ -30,6 +30,7 @@ public interface IElectricMachine<INPUT extends MachineInput<INPUT>, OUTPUT exte
      */
     void operate(RECIPE recipe);
 
+
     /**
      * Gets this machine's recipes.
      */

@@ -1,5 +1,7 @@
 package mekanism.client.render.tileentity;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import mekanism.api.Coord4D;
 import mekanism.client.render.MekanismRenderer;
@@ -23,7 +25,7 @@ import java.util.Map;
 
 public class RenderTeleporter extends TileEntitySpecialRenderer<TileEntityTeleporter> {
 
-    private Map<Integer, DisplayInteger> cachedOverlays = new Object2ObjectOpenHashMap<>();
+    private Int2ObjectMap<DisplayInteger> cachedOverlays = new Int2ObjectOpenHashMap<>();
 
     @Override
     public void render(TileEntityTeleporter tileEntity, double x, double y, double z, float partialTick, int destroyStage, float alpha) {

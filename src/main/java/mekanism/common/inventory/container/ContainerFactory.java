@@ -7,9 +7,11 @@ import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.inventory.slot.SlotEnergy.SlotDischarge;
 import mekanism.common.inventory.slot.SlotOutput;
 import mekanism.common.item.ItemBlockMachine;
+import mekanism.common.recipe.inputs.*;
 import mekanism.common.tier.FactoryTier;
-import mekanism.common.tile.TileEntityFactory;
+import mekanism.common.tile.factory.TileEntityFactory;
 import mekanism.common.util.ChargeUtils;
+import mekanism.common.util.StackUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
@@ -20,6 +22,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
+import java.util.Map;
 
 public class ContainerFactory extends ContainerMekanism<TileEntityFactory> {
 
@@ -211,16 +214,12 @@ public class ContainerFactory extends ContainerMekanism<TileEntityFactory> {
     }
 
     private class FactoryInputSlot extends Slot {
-
         /**
          * The index of the processes slot. 0 <= processNumber < tileEntity.tier.processes For matching the input to output slot
          */
         private final int processNumber;
-
         public boolean itemValid;
-
         public boolean enabled;
-
         private FactoryInputSlot(IInventory inventoryIn, int index, int xPosition, int yPosition, int processNumber, boolean itemValid, boolean enabled) {
             super(inventoryIn, index, xPosition, yPosition);
             this.processNumber = processNumber;
@@ -230,8 +229,8 @@ public class ContainerFactory extends ContainerMekanism<TileEntityFactory> {
 
         @Override
         public boolean isItemValid(ItemStack stack) {
-            ItemStack outputSlotStack = tileEntity.inventory.get(getOutputSlotIndex(this.processNumber));
-            return tileEntity.inputProducesOutput(getInputSlotIndex(this.processNumber), stack, outputSlotStack, false) && super.isItemValid(stack) && itemValid;
+            ItemStack inputSlotStack = tileEntity.inventory.get(getOutputSlotIndex(this.processNumber));
+            return /* tileEntity.inputProducesOutput(getInputSlotIndex(this.processNumber), stack, inputSlotStack, false) && itemValid ||*/ isInputItem(stack);
         }
 
         @Override
@@ -240,24 +239,78 @@ public class ContainerFactory extends ContainerMekanism<TileEntityFactory> {
             return enabled;
         }
 
+        private boolean isInputItem(ItemStack itemstack){
+            if (!tileEntity.NoItemInputMachine()){
+                for(Object obj : tileEntity.getRecipeType().getrecipe().get().entrySet()){
+                    if (((Map.Entry<?, ?>) obj).getKey() instanceof AdvancedMachineInput) {
+                        Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
+                        ItemStack stack = ((AdvancedMachineInput) entry.getKey()).itemStack;
+                        if (ItemHandlerHelper.canItemStacksStack(stack, itemstack)) {
+                            return true;
+                        }
+                    }
+                    if (((Map.Entry<?, ?>) obj).getKey() instanceof ItemStackInput){
+                        Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
+                        ItemStack stack = ((ItemStackInput) entry.getKey()).ingredient;
+                        if (StackUtils.equalsWildcardWithNBT(stack, itemstack)) {
+                            return true;
+                        }
+                    }
+                    if (((Map.Entry<?, ?>) obj).getKey() instanceof DoubleMachineInput){
+                        Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
+                        ItemStack stack = ((DoubleMachineInput) entry.getKey()).itemStack;
+                        if (ItemHandlerHelper.canItemStacksStack(stack, itemstack)) {
+                            return true;
+                        }
+                    }
+                    if (((Map.Entry<?, ?>) obj).getKey() instanceof InfusionInput){
+                        Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
+                        ItemStack stack = ((InfusionInput) entry.getKey()).inputStack;
+                        if (ItemHandlerHelper.canItemStacksStack(stack, itemstack)) {
+                            return true;
+                        }
+                    }
+                    if (((Map.Entry<?, ?>) obj).getKey() instanceof NucleosynthesizerInput){
+                        Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
+                        ItemStack stack = ((NucleosynthesizerInput) entry.getKey()).getSolid();
+                        if (ItemHandlerHelper.canItemStacksStack(stack, itemstack)) {
+                            return true;
+                        }
+                    }
+                    if (((Map.Entry<?, ?>) obj).getKey() instanceof PressurizedInput){
+                        Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
+                        ItemStack stack = ((PressurizedInput) entry.getKey()).getSolid();
+                        if (ItemHandlerHelper.canItemStacksStack(stack, itemstack)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+           return false;
+        }
     }
 
 
+
+
+
+
     private class FactoryOutputSlot extends SlotOutput {
-
         public boolean Enabled;
-
         public FactoryOutputSlot(IInventory inventory, int index, int x, int y, boolean enabled) {
             super(inventory, index, x, y);
             Enabled = enabled;
         }
-
         @Override
         @SideOnly(Side.CLIENT)
         public boolean isEnabled() {
             return Enabled;
         }
     }
+
+
+
 
     private class FactoryExtraSlot extends Slot {
 

@@ -1,11 +1,13 @@
 package mekanism.common.content.miner;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import mekanism.api.Chunk3D;
 import mekanism.api.Coord4D;
 import mekanism.api.util.BlockInfo;
 import mekanism.common.tile.TileEntityBoundingBlock;
-import mekanism.common.tile.TileEntityDigitalMiner;
+import mekanism.common.tile.machine.TileEntityDigitalMiner;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.block.BlockLiquid;
@@ -25,7 +27,7 @@ public class ThreadMinerSearch extends Thread {
     public State state = State.IDLE;
 
     private Map<Chunk3D, BitSet> oresToMine = new Object2ObjectOpenHashMap<>();
-    private Map<Integer, MinerFilter> replaceMap = new Object2ObjectOpenHashMap<>();
+    private Int2ObjectMap<MinerFilter> replaceMap = new Int2ObjectOpenHashMap<>();
     private Map<BlockInfo, MinerFilter> acceptedItems = new Object2ObjectOpenHashMap<>();
     private ChunkCache chunkCache;
 

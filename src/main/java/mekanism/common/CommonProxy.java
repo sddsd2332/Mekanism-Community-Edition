@@ -17,8 +17,12 @@ import mekanism.common.item.ItemPortableTeleporter;
 import mekanism.common.item.ItemSeismicReader;
 import mekanism.common.network.PacketPortableTeleporter.PortableTeleporterMessage;
 import mekanism.common.tile.*;
+import mekanism.common.tile.factory.TileEntityFactory;
+import mekanism.common.tile.laser.*;
+import mekanism.common.tile.machine.*;
 import mekanism.common.tile.multiblock.TileEntityDynamicTank;
 import mekanism.common.tile.multiblock.TileEntityInductionCasing;
+import mekanism.common.tile.multiblock.TileEntityThermalEvaporationController;
 import mekanism.common.tile.prefab.*;
 import mekanism.common.voice.VoiceServerManager;
 import net.minecraft.block.Block;
@@ -278,6 +282,7 @@ public class CommonProxy implements IGuiProvider {
             case 70 -> new ContainerChanceMachine<>(player.inventory, (TileEntityChanceMachine) tileEntity);
             case 72 -> new ContainerChanceMachine2(player.inventory, (TileEntityChanceMachine2) tileEntity);
             case 73 -> new ContainerAmbientAccumulatorEnergy(player.inventory, (TileEntityAmbientAccumulatorEnergy) tileEntity);
+            case 74 -> new ContainerHybridStorage(player.inventory,(TileEntityHybridStorage) tileEntity);
             default -> null;
         };
     }
@@ -304,7 +309,9 @@ public class CommonProxy implements IGuiProvider {
 
     public void onConfigSync(boolean fromPacket) {
         if (MekanismConfig.current().general.cardboardSpawners.val()) {
-            MekanismAPI.removeBoxBlacklist(Blocks.MOB_SPAWNER, OreDictionary.WILDCARD_VALUE);
+            if (Blocks.MOB_SPAWNER != null) { //There may be mods that will remove this and cause a crash
+                MekanismAPI.removeBoxBlacklist(Blocks.MOB_SPAWNER, OreDictionary.WILDCARD_VALUE);
+            }
         } else {
             MekanismAPI.addBoxBlacklist(Blocks.MOB_SPAWNER, OreDictionary.WILDCARD_VALUE);
         }

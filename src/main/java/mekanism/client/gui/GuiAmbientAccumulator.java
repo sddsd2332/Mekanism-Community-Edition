@@ -12,7 +12,7 @@ import mekanism.client.gui.element.gauge.GuiGauge.Type;
 import mekanism.client.gui.element.tab.GuiSecurityTab;
 import mekanism.client.gui.element.tab.GuiSideConfigurationTab;
 import mekanism.common.inventory.container.ContainerAmbientAccumulator;
-import mekanism.common.tile.TileEntityAmbientAccumulator;
+import mekanism.common.tile.machine.TileEntityAmbientAccumulator;
 import mekanism.common.util.LangUtils;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;

@@ -36,8 +36,7 @@ public class GuiFarmMachine<RECIPE extends FarmMachineRecipe<RECIPE>> extends Gu
         addGuiElement(new GuiSideConfigurationTab(this, tileEntity, resource));
         addGuiElement(new GuiTransporterConfigTab(this, 34, tileEntity, resource));
         addGuiElement(new GuiPowerBar(this, tileEntity, resource, 164, 15));
-        addGuiElement(new GuiBar(() -> ((tileEntity.gasTank.getGas() != null ? tileEntity.gasTank.getGas().getGas().getLocalizedName() + ": " + (tileEntity.gasTank.getStored() == Integer.MAX_VALUE ? LangUtils.localize("gui.infinite") : tileEntity.gasTank.getStored()) : LangUtils.localize("gui.none"))),
-                this, getGuiLocation(), 60, 36, 8, 14));
+        addGuiElement(new GuiBar(this, getGuiLocation(), 60, 36, 8, 14));
         addGuiElement(new GuiEnergyInfo(() -> {
             String multiplier = MekanismUtils.getEnergyDisplay(tileEntity.energyPerTick);
             return Arrays.asList(LangUtils.localize("gui.using") + ": " + multiplier + "/t",
@@ -82,6 +81,8 @@ public class GuiFarmMachine<RECIPE extends FarmMachineRecipe<RECIPE>> extends Gu
             if (inputgas || energy || outslot) {
                 displayTooltips(info, xAxis, yAxis);
             }
+        }else if (xAxis >= 60 && xAxis <= 60 + 8 && yAxis >= 36 && yAxis <= 36 + 14){
+            displayTooltip(tileEntity.gasTank.getGas() != null ? tileEntity.gasTank.getGas().getGas().getLocalizedName() + ": " + (tileEntity.gasTank.getStored() == Integer.MAX_VALUE ? LangUtils.localize("gui.infinite") : tileEntity.gasTank.getStored()) : LangUtils.localize("gui.none"),xAxis,yAxis);
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }

@@ -16,7 +16,7 @@ import mekanism.client.gui.element.tab.GuiTransporterConfigTab;
 import mekanism.client.gui.element.tab.GuiUpgradeTab;
 import mekanism.common.inventory.container.ContainerChemicalCrystallizer;
 import mekanism.common.recipe.machines.CrystallizerRecipe;
-import mekanism.common.tile.TileEntityChemicalCrystallizer;
+import mekanism.common.tile.machine.TileEntityChemicalCrystallizer;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;

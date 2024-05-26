@@ -32,6 +32,8 @@ public class Gas {
 
     private int tint = 0xFFFFFF;
 
+    private boolean radiation = false;
+
     /**
      * Creates a new Gas object with a defined name or key value.
      *
@@ -100,6 +102,10 @@ public class Gas {
         return visible;
     }
 
+    public boolean isRadiation() {
+        return radiation;
+    }
+
     /**
      * Sets this gas's "visible" state to a new value. Setting it to 'false' will treat this gas as an internal gas, and it will not be displayed or accessed by other
      * mods.
@@ -110,6 +116,11 @@ public class Gas {
     public Gas setVisible(boolean v) {
         visible = v;
 
+        return this;
+    }
+
+    public Gas setRadiation(boolean v) {
+        radiation = v;
         return this;
     }
 

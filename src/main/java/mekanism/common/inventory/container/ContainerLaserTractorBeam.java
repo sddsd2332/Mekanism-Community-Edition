@@ -1,6 +1,6 @@
 package mekanism.common.inventory.container;
 
-import mekanism.common.tile.TileEntityLaserTractorBeam;
+import mekanism.common.tile.laser.TileEntityLaserTractorBeam;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;

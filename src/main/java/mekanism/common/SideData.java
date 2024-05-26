@@ -3,6 +3,7 @@ package mekanism.common;
 import mekanism.api.EnumColor;
 import mekanism.api.gas.GasTank;
 import mekanism.common.base.ITankManager;
+import mekanism.common.tile.component.config.DataType;
 import mekanism.common.util.LangUtils;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
@@ -26,21 +27,32 @@ public class SideData {
      * int[] of available side slots, can be used for items, gases, or items
      */
     public int[] availableSlots;
+    public boolean[] allowExtractionSlot;
 
     /**
      * IOState representing this SideData
      */
     public IOState ioState;
 
-    public SideData(String n, EnumColor colour, int[] slots) {
-        name = n;
-        color = colour;
+
+    public SideData(int[] slots, boolean[] extractionSlot) {
+        this(DataType.INPUT_OUTPUT, slots,extractionSlot);
+    }
+
+    public SideData(DataType dataType, int[] slots, boolean[] extractionSlot) {
+        this(dataType, slots);
+        allowExtractionSlot = extractionSlot;
+    }
+
+    public SideData(DataType dataType, int[] slots) {
+        name = dataType.getName();
+        color = dataType.getColor();
         availableSlots = slots;
     }
 
-    public SideData(String n, EnumColor colour, IOState state) {
-        name = n;
-        color = colour;
+    public SideData(DataType dataType, IOState state) {
+        name = dataType.getName();
+        color = dataType.getColor();
         ioState = state;
     }
 
@@ -58,6 +70,7 @@ public class SideData {
         }
         return false;
     }
+
 
     public FluidTankInfo[] getFluidTankInfo(ITankManager manager) {
         Object[] tanks = manager.getTanks();

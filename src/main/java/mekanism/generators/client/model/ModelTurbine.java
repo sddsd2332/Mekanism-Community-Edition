@@ -3,7 +3,10 @@ package mekanism.generators.client.model;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class ModelTurbine extends ModelBase {
 
     private static float BLADE_ROTATE = 0.418879F;

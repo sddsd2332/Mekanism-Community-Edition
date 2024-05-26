@@ -3,7 +3,7 @@ package mekanism.client.render.tileentity;
 import mekanism.api.gas.GasStack;
 import mekanism.client.model.ModelIsotopicCentrifuge;
 import mekanism.client.render.MekanismRenderer;
-import mekanism.common.tile.TileEntityIsotopicCentrifuge;
+import mekanism.common.tile.machine.TileEntityIsotopicCentrifuge;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.client.renderer.GlStateManager;

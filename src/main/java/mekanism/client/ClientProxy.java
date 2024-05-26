@@ -52,8 +52,15 @@ import mekanism.common.network.PacketPortableTeleporter.PortableTeleporterMessag
 import mekanism.common.recipe.machines.*;
 import mekanism.common.tier.GasTankTier;
 import mekanism.common.tile.*;
+import mekanism.common.tile.factory.TileEntityAdvancedFactory;
+import mekanism.common.tile.factory.TileEntityEliteFactory;
+import mekanism.common.tile.factory.TileEntityFactory;
+import mekanism.common.tile.laser.TileEntityLaserAmplifier;
+import mekanism.common.tile.laser.TileEntityLaserTractorBeam;
+import mekanism.common.tile.machine.*;
 import mekanism.common.tile.multiblock.*;
 import mekanism.common.tile.prefab.TileEntityAdvancedElectricMachine;
+import mekanism.common.tile.prefab.TileEntityChanceMachine;
 import mekanism.common.tile.prefab.TileEntityDoubleElectricMachine;
 import mekanism.common.tile.prefab.TileEntityElectricMachine;
 import mekanism.common.tile.transmitter.*;
@@ -198,6 +205,7 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRecycler.class, new RenderConfigurableMachine<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAmbientAccumulator.class, new RenderConfigurableMachine<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAmbientAccumulatorEnergy.class, new RenderConfigurableMachine<>());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHybridStorage.class,new RenderConfigurableMachine<>());
     }
 
     @Override
@@ -214,6 +222,7 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.GasUpgrade);
         registerItemRender(MekanismItems.AnchorUpgrade);
         registerItemRender(MekanismItems.StoneGeneratorUpgrade);
+        registerItemRender(MekanismItems.ThreadUpgrade);
         registerItemRender(MekanismItems.Robit);
         registerItemRender(MekanismItems.AtomicDisassembler);
         registerItemRender(MekanismItems.EnrichedAlloy);
@@ -749,6 +758,7 @@ public class ClientProxy extends CommonProxy {
             case 71 -> new GuiCellSeparator(player.inventory, (TileEntityCellSeparator) tileEntity);
             case 72 -> new GuiRecycler(player.inventory, (TileEntityRecycler) tileEntity);
             case 73 -> new GuiAmbientAccumulatorEnergy(player.inventory, (TileEntityAmbientAccumulatorEnergy) tileEntity);
+            case 74 -> new GuiHybridStorage(player.inventory,(TileEntityHybridStorage) tileEntity);
             default -> null;
         };
     }

@@ -5,7 +5,7 @@ import mekanism.client.gui.element.gauge.GuiFluidGauge;
 import mekanism.client.gui.element.gauge.GuiGauge;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.inventory.container.ContainerThermalEvaporationController;
-import mekanism.common.tile.TileEntityThermalEvaporationController;
+import mekanism.common.tile.multiblock.TileEntityThermalEvaporationController;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.UnitDisplayUtils;

@@ -1,0 +1,6 @@
+{
+	"parent": "mekanismtools:item/shield_blocking",
+	"textures": {
+		"all": "mekanismtools:entity/shield/refined_glowstone"
+	}
+}

@@ -2,6 +2,8 @@ package mekanism.client.render.obj;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mekanism.common.Mekanism;
@@ -61,7 +63,7 @@ public class TransmitterModel extends OBJBakedModelBase {
     private static TextureAtlasSprite[] transporter_center_color = new TextureAtlasSprite[2];
     private static TextureAtlasSprite[] transporter_side = new TextureAtlasSprite[2];
     private static TextureAtlasSprite[] transporter_side_color = new TextureAtlasSprite[2];
-    private Map<Integer, List<BakedQuad>> modelCache = new Object2ObjectOpenHashMap<>();
+    private Int2ObjectMap<List<BakedQuad>> modelCache = new Int2ObjectOpenHashMap<>();
     private TransmitterModel itemCache;
     private IBlockState tempState;
     private ItemStack tempStack;

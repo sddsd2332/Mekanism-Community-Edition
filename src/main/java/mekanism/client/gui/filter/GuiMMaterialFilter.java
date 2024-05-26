@@ -9,7 +9,7 @@ import mekanism.common.Mekanism;
 import mekanism.common.content.miner.MMaterialFilter;
 import mekanism.common.network.PacketDigitalMinerGui.DigitalMinerGuiMessage;
 import mekanism.common.network.PacketDigitalMinerGui.MinerGuiPacket;
-import mekanism.common.tile.TileEntityDigitalMiner;
+import mekanism.common.tile.machine.TileEntityDigitalMiner;
 import mekanism.common.util.LangUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;

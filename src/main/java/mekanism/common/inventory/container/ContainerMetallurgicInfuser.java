@@ -6,7 +6,7 @@ import mekanism.common.inventory.slot.SlotOutput;
 import mekanism.common.recipe.RecipeHandler;
 import mekanism.common.recipe.RecipeHandler.Recipe;
 import mekanism.common.recipe.inputs.InfusionInput;
-import mekanism.common.tile.TileEntityMetallurgicInfuser;
+import mekanism.common.tile.machine.TileEntityMetallurgicInfuser;
 import mekanism.common.util.ChargeUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;

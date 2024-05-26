@@ -89,9 +89,16 @@ public class ContainerAdvancedElectricMachine<RECIPE extends AdvancedMachineReci
         return false;
     }
 
+
+
     @Override
     protected void addSlots() {
-        addSlotToContainer(new Slot(tileEntity, 0, 56, 17));
+        addSlotToContainer(new Slot(tileEntity, 0, 56, 17){
+            @Override
+            public boolean isItemValid(ItemStack itemstack) {
+                return isInputItem(itemstack);
+            }
+        });
         addSlotToContainer(new Slot(tileEntity, 1, 56, 53));
         addSlotToContainer(new SlotOutput(tileEntity, 2, 116, 35));
         addSlotToContainer(new SlotDischarge(tileEntity, 3, 31, 35));

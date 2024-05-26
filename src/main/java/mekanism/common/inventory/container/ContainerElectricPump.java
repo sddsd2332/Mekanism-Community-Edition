@@ -2,7 +2,7 @@ package mekanism.common.inventory.container;
 
 import mekanism.common.inventory.slot.SlotEnergy.SlotDischarge;
 import mekanism.common.inventory.slot.SlotOutput;
-import mekanism.common.tile.TileEntityElectricPump;
+import mekanism.common.tile.machine.TileEntityElectricPump;
 import mekanism.common.util.ChargeUtils;
 import mekanism.common.util.FluidContainerUtils;
 import net.minecraft.entity.player.EntityPlayer;

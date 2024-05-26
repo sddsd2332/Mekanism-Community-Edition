@@ -17,6 +17,13 @@ import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
 
+/**
+ * 基本类型机器方块
+ * @param <INPUT> 用于机器的输入
+ * @param <OUTPUT> 用于机器的输出
+ * @param <RECIPE> 用于机器的配方
+ */
+
 public abstract class TileEntityBasicMachine<INPUT extends MachineInput<INPUT>, OUTPUT extends MachineOutput<OUTPUT>, RECIPE extends MachineRecipe<INPUT, OUTPUT, RECIPE>> extends
         TileEntityOperationalMachine implements IElectricMachine<INPUT, OUTPUT, RECIPE>, IComputerIntegration, ISideConfiguration, IConfigCardAccess {
 

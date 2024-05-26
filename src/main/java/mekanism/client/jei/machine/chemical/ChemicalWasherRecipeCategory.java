@@ -10,7 +10,7 @@ import mekanism.client.jei.BaseRecipeCategory;
 import mekanism.client.jei.MekanismJEI;
 import mekanism.common.recipe.RecipeHandler.Recipe;
 import mekanism.common.recipe.machines.WasherRecipe;
-import mekanism.common.tile.TileEntityChemicalWasher;
+import mekanism.common.tile.machine.TileEntityChemicalWasher;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IGuiFluidStackGroup;
 import mezz.jei.api.gui.IGuiIngredientGroup;

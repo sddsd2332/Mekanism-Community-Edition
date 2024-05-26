@@ -2,7 +2,10 @@ package mekanism.generators.client.model;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class ModelSolarGenerator extends ModelBase {
 
     ModelRenderer solarPanel;

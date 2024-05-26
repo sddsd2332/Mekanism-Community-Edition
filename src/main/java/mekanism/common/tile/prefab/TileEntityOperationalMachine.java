@@ -11,6 +11,10 @@ import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
+/**
+ * 可以操作的机器类型
+ */
+
 public abstract class TileEntityOperationalMachine extends TileEntityMachine implements IComparatorSupport {
 
     public int operatingTicks;

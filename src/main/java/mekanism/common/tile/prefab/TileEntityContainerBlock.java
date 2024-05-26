@@ -25,6 +25,10 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 
 import javax.annotation.Nonnull;
 
+/**
+ * 带有可已存储类型的方块
+ */
+
 public abstract class TileEntityContainerBlock extends TileEntityBasicBlock implements ISidedInventory, ISustainedInventory, ITickable, IToggleableCapability {
 
     /**

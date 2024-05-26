@@ -50,7 +50,7 @@ public class GuiRobitMain extends GuiMekanism {
         addGuiElement(new GuiPlayerSlot(this, getGuiLocation()));
         addGuiElement(new GuiInnerScreen(this, getGuiLocation(), 27, 16, 122, 56));
         addGuiElement(new GuiSideHolder(this, getGuiLocation(), 176, 6, 25, 106));
-        addGuiElement(new GuiBar(() -> (MekanismUtils.getEnergyDisplay(robit.getEnergy(), robit.MAX_ELECTRICITY)), this, getGuiLocation(), 27, 74, 122, 6));
+        addGuiElement(new GuiBar(this, getGuiLocation(), 27, 74, 122, 6));
     }
 
     private void toggleNameChange() {
@@ -162,6 +162,8 @@ public class GuiRobitMain extends GuiMekanism {
             displayTooltip(LangUtils.localize("gui.robit.smelting"), xAxis, yAxis);
         } else if (repairButton.isMouseOver()) {
             displayTooltip(LangUtils.localize("gui.robit.repair"), xAxis, yAxis);
+        } else if (xAxis >= 27 && xAxis <= 27 + 112 && yAxis >= 74 && yAxis <= 74 + 6) {
+            displayTooltip(MekanismUtils.getEnergyDisplay(robit.getEnergy(), robit.MAX_ELECTRICITY), xAxis, yAxis);
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }

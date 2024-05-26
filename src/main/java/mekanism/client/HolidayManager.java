@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -21,11 +22,20 @@ public final class HolidayManager {
     private static List<Holiday> holidays = new ArrayList<>();
     private static List<Holiday> holidaysNotified = new ArrayList<>();
 
+    public static final Holiday MAY_4 = new May4();
+    public static final Holiday APRIL_FOOLS = new AprilFools();
+
     public static void init() {
         if (MekanismConfig.current().client.holidays.val()) {
-            holidays.add(new May4());
             holidays.add(new Christmas());
             holidays.add(new NewYear());
+            holidays.add(MAY_4);
+            holidays.add(APRIL_FOOLS);
+        }
+        LocalDate time = LocalDate.now();
+        YearlyDate date = new YearlyDate(time.getMonthValue(), time.getDayOfMonth());
+        for (Holiday holiday : holidays) {
+            holiday.updateIsToday(date);
         }
         Mekanism.logger.info("Initialized HolidayManager.");
     }
@@ -36,7 +46,7 @@ public final class HolidayManager {
 
             for (Holiday holiday : holidays) {
                 if (!holidaysNotified.contains(holiday)) {
-                    if (holiday.getDate().equals(date)) {
+                    if (holiday.checkIsToday(date)) {
                         holiday.onEvent(mc.player);
                         holidaysNotified.add(holiday);
                     }
@@ -53,7 +63,7 @@ public final class HolidayManager {
         try {
             YearlyDate date = getDate();
             for (Holiday holiday : holidays) {
-                if (holiday.getDate().equals(date)) {
+                if (holiday.checkIsToday(date)) {
                     return holiday.filterSound(sound);
                 }
             }
@@ -112,6 +122,20 @@ public final class HolidayManager {
         public ResourceLocation filterSound(ResourceLocation sound) {
             return sound;
         }
+
+        private boolean isToday;
+
+        private void updateIsToday(YearlyDate date) {
+            isToday = checkIsToday(date);
+        }
+        protected boolean checkIsToday(YearlyDate date) {
+            return getDate().equals(date);
+        }
+
+        public boolean isToday() {
+            return isToday;
+        }
+
     }
 
     private static class Christmas extends Holiday {
@@ -150,6 +174,19 @@ public final class HolidayManager {
                 return new ResourceLocation(soundLocation.replace("machine.dissolution", nutcracker[4]));
             }
             return sound;
+        }
+    }
+
+    private static class AprilFools extends  Holiday{
+
+        @Override
+        public YearlyDate getDate() {
+            return new YearlyDate(4,1);
+        }
+
+        @Override
+        public void onEvent(EntityPlayer player) {
+
         }
     }
 

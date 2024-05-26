@@ -5,7 +5,7 @@ import mekanism.client.gui.element.GuiSlot.SlotType;
 import mekanism.client.gui.element.tab.GuiSecurityTab;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.inventory.container.ContainerFuelwoodHeater;
-import mekanism.common.tile.TileEntityFuelwoodHeater;
+import mekanism.common.tile.machine.TileEntityFuelwoodHeater;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;

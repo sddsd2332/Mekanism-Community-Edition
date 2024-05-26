@@ -6,7 +6,7 @@ import mekanism.client.gui.element.GuiSlot.SlotType;
 import mekanism.client.gui.element.tab.GuiSecurityTab;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.inventory.container.ContainerSeismicVibrator;
-import mekanism.common.tile.TileEntitySeismicVibrator;
+import mekanism.common.tile.machine.TileEntitySeismicVibrator;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.entity.player.InventoryPlayer;

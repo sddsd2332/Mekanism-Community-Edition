@@ -192,9 +192,9 @@ public class GuiDisableableButton extends GuiButton {
         UP(18, 18, 216, 36),
         INVERSE(18, 18, 234, 36),
         SMALL_BACK(18, 18, 0, 54),
-
         TOGGLE(18, 18, 0, 72),
         GAS_MOD(18, 18, 0, 90),
+        FORCE_RUN(18,18,18,54)
         ;
 
         public final int width;

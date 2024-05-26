@@ -1,6 +1,6 @@
 package mekanism.common.base;
 
-import mekanism.common.tile.TileEntityMultiblock;
+import mekanism.common.tile.multiblock.TileEntityMultiblock;
 import mekanism.common.util.MekanismUtils;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;

@@ -2,7 +2,7 @@ package mekanism.client.render.tileentity;
 
 import mekanism.client.model.ModelAntiprotonicNucleosynthesizer;
 import mekanism.client.render.MekanismRenderer;
-import mekanism.common.tile.TileEntityAntiprotonicNucleosynthesizer;
+import mekanism.common.tile.machine.TileEntityAntiprotonicNucleosynthesizer;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.client.renderer.GlStateManager;

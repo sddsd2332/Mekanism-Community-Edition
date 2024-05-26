@@ -2,17 +2,16 @@ package mekanism.common.concurrent;
 
 
 import io.netty.util.internal.ThrowableUtil;
-import io.netty.util.internal.shaded.org.jctools.queues.atomic.MpscLinkedAtomicQueue;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectIterator;
+import it.unimi.dsi.fastutil.longs.*;
 import mekanism.common.Mekanism;
-import mekanism.common.tile.prefab.TileEntitySynchronized;
+import mekanism.common.tile.base.TileEntitySynchronized;
 import mekanism.common.util.concurrent.*;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.LockSupport;
 
@@ -42,21 +41,33 @@ public class TaskExecutor {
     public static long tickExisted = 0;
 
 
-    private final MpscLinkedAtomicQueue<ActionExecutor> submitted = new MpscLinkedAtomicQueue<>();
+    private final Queue<ActionExecutor> submitted = Queues.createConcurrentQueue();
 
-    private final MpscLinkedAtomicQueue<ActionExecutor> executors = new MpscLinkedAtomicQueue<>();
-    private final Long2ObjectOpenHashMap<ExecuteGroup> executeGroups = new Long2ObjectOpenHashMap<>();
+    private final Queue<ActionExecutor> executors = Queues.createConcurrentQueue();
+    private final Long2ObjectMap<ExecuteGroup> executeGroups = new Long2ObjectOpenHashMap<>();
 
-    private final MpscLinkedAtomicQueue<ForkJoinTask<?>> forkJoinTasks = new MpscLinkedAtomicQueue<>();
+    private final Queue<ForkJoinTask<?>> forkJoinTasks = Queues.createConcurrentQueue();
 
-    private final MpscLinkedAtomicQueue<Action> mainThreadActions = new MpscLinkedAtomicQueue<>();
-    private final MpscLinkedAtomicQueue<TileEntitySynchronized> requireUpdateTEQueue = new MpscLinkedAtomicQueue<>();
-    private final MpscLinkedAtomicQueue<TileEntitySynchronized> requireMarkNoUpdateTEQueue = new MpscLinkedAtomicQueue<>();
+    private final Queue<Action> mainThreadActions = Queues.createConcurrentQueue();
+    private final Queue<TileEntitySynchronized> requireUpdateTEQueue = Queues.createConcurrentQueue();
+    private final Queue<TileEntitySynchronized> requireMarkNoUpdateTEQueue = Queues.createConcurrentQueue();
 
     private final TaskSubmitter submitter = new TaskSubmitter();
 
     private volatile boolean inTick = false;
     private volatile boolean shouldUseForkJoinPool = false;
+
+    @SuppressWarnings({"BusyWait", "SameParameterValue"})
+    private static void loopWait(final long nanos) {
+        long startTime = System.nanoTime();
+        while (System.nanoTime() - startTime < nanos) {
+            try {
+                Thread.sleep(0);
+            } catch (InterruptedException e) {
+                break;
+            }
+        }
+    }
 
     public void init() {
         THREAD_POOL.prestartAllCoreThreads();
@@ -181,17 +192,6 @@ public class TaskExecutor {
         return executed;
     }
 
-    private void loopWait(final long nanos) {
-        long startTime = System.nanoTime();
-        while (System.nanoTime() - startTime < nanos) {
-            try {
-                Thread.sleep(0);
-            } catch (InterruptedException e) {
-                break;
-            }
-        }
-    }
-
     private void updateTileEntity() {
         if (requireUpdateTEQueue.isEmpty() && requireMarkNoUpdateTEQueue.isEmpty()) {
             return;
@@ -288,13 +288,13 @@ public class TaskExecutor {
         }
 
         synchronized (executeGroups) {
-            for (ObjectIterator<ExecuteGroup> it = executeGroups.values().iterator(); it.hasNext(); ) {
-                final ExecuteGroup group = it.next();
+            LongList toRemove = new LongArrayList();
+            for (final ExecuteGroup group : executeGroups.values()) {
                 if (group.isSubmitted()) {
                     continue;
                 }
                 if (group.isEmpty()) {
-                    it.remove();
+                    toRemove.add(group.getGroupId());
                     continue;
                 }
                 ActionExecutor groupExecutor = new ActionExecutor(() -> {
@@ -308,8 +308,13 @@ public class TaskExecutor {
                 execute(groupExecutor);
                 submitted.offer(groupExecutor);
             }
+            LongListIterator it = toRemove.iterator();
+            while (it.hasNext()) {
+                executeGroups.remove(it.nextLong());
+            }
         }
     }
+
     public class TaskSubmitter implements Runnable {
         public Thread thread = null;
 

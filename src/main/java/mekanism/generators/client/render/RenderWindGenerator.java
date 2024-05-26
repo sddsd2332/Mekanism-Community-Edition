@@ -7,7 +7,10 @@ import mekanism.generators.common.util.MekanismGeneratorUtils;
 import mekanism.generators.common.util.MekanismGeneratorUtils.ResourceType;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class RenderWindGenerator extends TileEntitySpecialRenderer<TileEntityWindGenerator> {
 
     private ModelWindGenerator model = new ModelWindGenerator();

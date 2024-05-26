@@ -4,7 +4,7 @@ import mekanism.client.gui.element.GuiPlayerSlot;
 import mekanism.client.gui.element.GuiSlot;
 import mekanism.client.gui.element.tab.GuiSecurityTab;
 import mekanism.common.inventory.container.ContainerLaserTractorBeam;
-import mekanism.common.tile.TileEntityLaserTractorBeam;
+import mekanism.common.tile.laser.TileEntityLaserTractorBeam;
 import mekanism.common.util.LangUtils;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraftforge.fml.relauncher.Side;

@@ -45,6 +45,9 @@ import mekanism.common.recipe.machines.SmeltingRecipe;
 import mekanism.common.recipe.outputs.ItemStackOutput;
 import mekanism.common.security.SecurityFrequency;
 import mekanism.common.tile.*;
+import mekanism.common.tile.factory.*;
+import mekanism.common.tile.laser.*;
+import mekanism.common.tile.machine.*;
 import mekanism.common.tile.multiblock.*;
 import mekanism.common.tile.transmitter.*;
 import mekanism.common.transmitters.grid.EnergyNetwork.EnergyTransferEvent;
@@ -133,6 +136,8 @@ public class Mekanism {
     public static Configuration configurationce;
     public static Configuration configurationgenerators;
     public static Configuration configurationtools;
+
+    public static Configuration configurationMultiblockMachine;
     /**
      * Mekanism version number
      */
@@ -343,6 +348,7 @@ public class Mekanism {
         registerTileEntity(TileEntityRecycler.class, "Recycler");
         registerTileEntity(TileEntityIndustrialAlarm.class, "industrial_alarm");
         registerTileEntity(TileEntityAmbientAccumulatorEnergy.class, "ambient_accumulator_energy");
+        registerTileEntity(TileEntityHybridStorage.class, "Hybrid_storage");
         /**
          * End of adding machine
          */
@@ -403,6 +409,7 @@ public class Mekanism {
         configurationce = new Configuration(new File("config/mekanism/MekanismCE.cfg"));
         configurationgenerators = new Configuration(new File("config/mekanism/MekanismGenerators.cfg"));
         configurationtools = new Configuration(new File("config/mekanism/MekanismTools.cfg"));
+        configurationMultiblockMachine = new Configuration(new File("config/mekanism/MekanismMultiblockMachine"));
 
         //Load configuration
         proxy.loadConfiguration();

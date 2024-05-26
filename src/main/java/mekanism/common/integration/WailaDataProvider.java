@@ -7,6 +7,7 @@ import mcp.mobius.waila.api.IWailaRegistrar;
 import mekanism.api.Coord4D;
 import mekanism.api.EnumColor;
 import mekanism.common.tile.*;
+import mekanism.common.tile.factory.TileEntityFactory;
 import mekanism.common.tile.multiblock.TileEntityInductionCell;
 import mekanism.common.tile.multiblock.TileEntityInductionProvider;
 import net.minecraft.entity.player.EntityPlayerMP;

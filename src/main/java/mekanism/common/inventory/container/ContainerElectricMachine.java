@@ -3,14 +3,17 @@ package mekanism.common.inventory.container;
 import mekanism.common.inventory.slot.SlotEnergy.SlotDischarge;
 import mekanism.common.inventory.slot.SlotOutput;
 import mekanism.common.recipe.RecipeHandler;
+import mekanism.common.recipe.inputs.DoubleMachineInput;
 import mekanism.common.recipe.inputs.ItemStackInput;
 import mekanism.common.recipe.machines.BasicMachineRecipe;
 import mekanism.common.tile.prefab.TileEntityElectricMachine;
 import mekanism.common.util.ChargeUtils;
+import mekanism.common.util.StackUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 
@@ -72,9 +75,23 @@ public class ContainerElectricMachine<RECIPE extends BasicMachineRecipe<RECIPE>>
         return stack;
     }
 
+    private boolean isInputItem(ItemStack itemstack) {
+        for (ItemStackInput input : tileEntity.getRecipes().keySet()) {
+            if (StackUtils.equalsWildcardWithNBT(input.ingredient, itemstack)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     protected void addSlots() {
-        addSlotToContainer(new Slot(tileEntity, 0, 56, 17));
+        addSlotToContainer(new Slot(tileEntity, 0, 56, 17){
+            @Override
+            public boolean isItemValid(ItemStack itemstack) {
+                return isInputItem(itemstack);
+            }
+        });
         addSlotToContainer(new SlotDischarge(tileEntity, 1, 56, 53));
         addSlotToContainer(new SlotOutput(tileEntity, 2, 116, 35));
     }

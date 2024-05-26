@@ -196,7 +196,7 @@ public final class MekanismUtils {
                 case UP -> EnumFacing.SOUTH;
                 case NORTH -> EnumFacing.UP;
                 case SOUTH -> EnumFacing.DOWN;
-                default -> side;
+                default -> side.getOpposite();
             };
         } else if (blockFacing == EnumFacing.UP) {
             return switch (side) {
@@ -204,7 +204,7 @@ public final class MekanismUtils {
                 case UP -> EnumFacing.NORTH;
                 case NORTH -> EnumFacing.DOWN;
                 case SOUTH -> EnumFacing.UP;
-                default -> side;
+                default -> side.getOpposite();
             };
         } else if (blockFacing == EnumFacing.SOUTH || side.getAxis() == Axis.Y) {
             if (side.getAxis() == Axis.Z) {

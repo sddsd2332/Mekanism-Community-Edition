@@ -1,7 +1,10 @@
 package mekanism.common.transmitters;
 
 import io.netty.buffer.ByteBuf;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mekanism.api.Coord4D;
 import mekanism.api.EnumColor;
@@ -33,19 +36,18 @@ import net.minecraftforge.common.util.Constants.NBT;
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 public class TransporterImpl extends TransmitterImpl<TileEntity, InventoryNetwork, Void> implements ILogisticalTransporter {
 
-    private Map<Integer, TransporterStack> transit = new Object2ObjectOpenHashMap<>();
+    private Int2ObjectMap<TransporterStack> transit = new Int2ObjectOpenHashMap<>();
 
     private int nextId = 0;
 
     private EnumColor color;
 
-    private Map<Integer, TransporterStack> needsSync = new Object2ObjectOpenHashMap<>();
+    private Int2ObjectMap<TransporterStack> needsSync = new Int2ObjectOpenHashMap<>();
 
     public TransporterImpl(TileEntityLogisticalTransporter multiPart) {
         super(multiPart);
@@ -100,7 +102,7 @@ public class TransporterImpl extends TransmitterImpl<TileEntity, InventoryNetwor
                 stack.progress = Math.min(100, stack.progress + getTileEntity().tier.getSpeed());
             }
         } else if (getTransmitterNetwork() != null) {
-            Set<Integer> deletes = new ObjectOpenHashSet<>();
+            IntSet deletes = new IntOpenHashSet();
             getTileEntity().pullItems();
             Coord4D coord = coord();
             for (Entry<Integer, TransporterStack> entry : transit.entrySet()) {
@@ -138,7 +140,7 @@ public class TransporterImpl extends TransmitterImpl<TileEntity, InventoryNetwor
                         } else if (stack.getPathType() != Path.NONE) {
                             TileEntity tile = next.getTileEntity(world());
                             if (tile != null) {
-                                        TransitResponse response = InventoryUtils.putStackInInventory(tile, TransitRequest.getFromTransport(stack), stack.getSide(this),
+                                TransitResponse response = InventoryUtils.putStackInInventory(tile, TransitRequest.getFromTransport(stack), stack.getSide(this),
                                         stack.getPathType() == Path.HOME);
                                 // Nothing was rejected; remove the stack from the prediction tracker and
                                 // schedule this stack for deletion. Continue the loop thereafter

@@ -5,7 +5,7 @@ import mekanism.client.jei.MekanismJEI;
 import mekanism.client.jei.machine.MekanismRecipeWrapper;
 import mekanism.common.MekanismFluids;
 import mekanism.common.recipe.machines.DissolutionRecipe;
-import mekanism.common.tile.TileEntityChemicalDissolutionChamber;
+import mekanism.common.tile.machine.TileEntityChemicalDissolutionChamber;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 
@@ -17,7 +17,7 @@ public class ChemicalDissolutionChamberRecipeWrapper<RECIPE extends DissolutionR
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-        ingredients.setInput(MekanismJEI.TYPE_GAS, new GasStack(MekanismFluids.SulfuricAcid, TileEntityChemicalDissolutionChamber.BASE_INJECT_USAGE * TileEntityChemicalDissolutionChamber.BASE_TICKS_REQUIRED));
+        ingredients.setInput(MekanismJEI.TYPE_GAS, new GasStack(MekanismFluids.SulfuricAcid, TileEntityChemicalDissolutionChamber.BASE_INJECT_USAGE * 100));
         ingredients.setInput(VanillaTypes.ITEM, recipe.recipeInput.ingredient);
         ingredients.setOutput(MekanismJEI.TYPE_GAS, recipe.recipeOutput.output);
     }

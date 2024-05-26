@@ -5,7 +5,7 @@ import mekanism.common.MekanismFluids;
 import mekanism.common.inventory.slot.SlotEnergy.SlotDischarge;
 import mekanism.common.inventory.slot.SlotStorageTank;
 import mekanism.common.recipe.RecipeHandler.Recipe;
-import mekanism.common.tile.TileEntityElectrolyticSeparator;
+import mekanism.common.tile.machine.TileEntityElectrolyticSeparator;
 import mekanism.common.util.ChargeUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -84,7 +84,12 @@ public class ContainerElectrolyticSeparator extends ContainerMekanism<TileEntity
 
     @Override
     protected void addSlots() {
-        addSlotToContainer(new Slot(tileEntity, 0, 26, 35));
+        addSlotToContainer(new Slot(tileEntity, 0, 26, 35){
+            @Override
+            public boolean isItemValid(ItemStack itemstack) {
+                return isCorrectFluid(itemstack);
+            }
+        });
         addSlotToContainer(new SlotStorageTank(tileEntity, 1, 59, 52));
         addSlotToContainer(new SlotStorageTank(tileEntity, 2, 101, 52));
         addSlotToContainer(new SlotDischarge(tileEntity, 3, 143, 35));

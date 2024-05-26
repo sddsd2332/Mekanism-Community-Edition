@@ -1,7 +1,7 @@
 package mekanism.client.gui;
 
 import mekanism.common.recipe.machines.CellExtractorRecipe;
-import mekanism.common.tile.TileEntityChanceMachine;
+import mekanism.common.tile.prefab.TileEntityChanceMachine;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

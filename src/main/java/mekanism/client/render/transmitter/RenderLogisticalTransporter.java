@@ -1,5 +1,7 @@
 package mekanism.client.render.transmitter;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mekanism.api.EnumColor;
@@ -37,7 +39,7 @@ import java.util.*;
 
 public class RenderLogisticalTransporter extends RenderTransmitterBase<TileEntityLogisticalTransporter> {
 
-    private static Map<EnumFacing, Map<Integer, DisplayInteger>> cachedOverlays = new EnumMap<>(EnumFacing.class);
+    private static Map<EnumFacing, Int2ObjectMap<DisplayInteger>> cachedOverlays = new EnumMap<>(EnumFacing.class);
     private static final ResourceLocation transporterBox = MekanismUtils.getResource(ResourceType.RENDER, "TransporterBox.png");
     private static TextureAtlasSprite gunpowderIcon;
     private static TextureAtlasSprite torchOffIcon;
@@ -188,7 +190,7 @@ public class RenderLogisticalTransporter extends RenderTransmitterBase<TileEntit
         if (cachedOverlays.containsKey(side)) {
             cachedOverlays.get(side).put(mode, display);
         } else {
-            Map<Integer, DisplayInteger> map = new Object2ObjectOpenHashMap<>();
+            Int2ObjectMap<DisplayInteger> map = new Int2ObjectOpenHashMap<>();
             map.put(mode, display);
             cachedOverlays.put(side, map);
         }

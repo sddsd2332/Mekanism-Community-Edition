@@ -37,7 +37,7 @@ public abstract class GuiTankGauge<T, TANK> extends GuiGauge<T> {
         if (inBounds(xAxis, yAxis)) {
             ItemStack stack = GuiElement.mc.player.inventory.getItemStack();
             if (guiObj instanceof GuiMekanismTile && !stack.isEmpty() && stack.getItem() instanceof ItemGaugeDropper) {
-                TileEntity tile = ((GuiMekanismTile) guiObj).getTileEntity();
+                TileEntity tile = ((GuiMekanismTile<?>) guiObj).getTileEntity();
                 if (tile instanceof ITankManager && ((ITankManager) tile).getTanks() != null) {
                     int index = Arrays.asList(((ITankManager) tile).getTanks()).indexOf(infoHandler.getTank());
                     if (index != -1) {

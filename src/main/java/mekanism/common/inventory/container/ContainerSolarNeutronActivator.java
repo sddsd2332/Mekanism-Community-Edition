@@ -2,7 +2,7 @@ package mekanism.common.inventory.container;
 
 import mekanism.api.gas.IGasItem;
 import mekanism.common.inventory.slot.SlotStorageTank;
-import mekanism.common.tile.TileEntitySolarNeutronActivator;
+import mekanism.common.tile.machine.TileEntitySolarNeutronActivator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;

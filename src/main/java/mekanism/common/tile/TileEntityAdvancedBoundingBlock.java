@@ -6,9 +6,11 @@ import ic2.api.energy.tile.IEnergyEmitter;
 import ic2.api.energy.tile.IEnergySink;
 import mekanism.api.IConfigCardAccess.ISpecialConfigData;
 import mekanism.api.energy.IStrictEnergyAcceptor;
+import mekanism.api.energy.IStrictEnergyOutputter;
 import mekanism.common.Mekanism;
 import mekanism.common.base.IAdvancedBoundingBlock;
 import mekanism.common.capabilities.Capabilities;
+import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.MekanismHooks;
 import mekanism.common.integration.computer.IComputerIntegration;
 import mekanism.common.util.InventoryUtils;
@@ -32,8 +34,21 @@ import javax.annotation.Nonnull;
         @Interface(iface = "cofh.redstoneflux.api.IEnergyReceiver", modid = MekanismHooks.REDSTONEFLUX_MOD_ID),
         @Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = MekanismHooks.IC2_MOD_ID)
 })
-public class TileEntityAdvancedBoundingBlock extends TileEntityBoundingBlock implements ISidedInventory, IEnergySink, IStrictEnergyAcceptor, IEnergyReceiver,
+public class TileEntityAdvancedBoundingBlock extends TileEntityBoundingBlock implements ISidedInventory, IEnergySink, IStrictEnergyAcceptor, IStrictEnergyOutputter, IEnergyReceiver,
         IEnergyProvider, IComputerIntegration, ISpecialConfigData {
+
+    @Override
+    public void update() {
+        if (!world.isRemote) {
+            final TileEntity tile = getMainTile();
+            if (!(tile instanceof IAdvancedBoundingBlock)) {
+                if (MekanismConfig.current().mekce.VirtualErrors.val()) {
+                    Mekanism.logger.error("Found tile {} instead of an IAdvancedBoundingBlock, at {}. Multiblock cannot function, Blocks to be removed {}", tile, getMainPos(), getPos());
+                }
+                world.setBlockToAir(getPos());
+            }
+        }
+    }
 
     @Override
     public boolean isEmpty() {
@@ -312,15 +327,8 @@ public class TileEntityAdvancedBoundingBlock extends TileEntityBoundingBlock imp
     public IAdvancedBoundingBlock getInv() {
         // Return the inventory/main tile; note that it's possible, esp. when chunks are
         // loading that the inventory/main tile has not yet loaded and thus is null.
-        final TileEntity tile = getMainTile();
+        TileEntity tile = getMainTile();
         if (tile == null) {
-            return null;
-        }
-        if (!(tile instanceof IAdvancedBoundingBlock)) {
-            // On the off chance that another block got placed there (which seems only likely with corruption,
-            // go ahead and log what we found.
-            Mekanism.logger.error("Found tile {} instead of an IAdvancedBoundingBlock, at {}. Multiblock cannot function", tile, getMainPos());
-            //world.setBlockToAir(mainPos);
             return null;
         }
         return (IAdvancedBoundingBlock) tile;
@@ -411,5 +419,23 @@ public class TileEntityAdvancedBoundingBlock extends TileEntityBoundingBlock imp
             return super.getCapability(capability, facing);
         }
         return inv.getOffsetCapability(capability, facing, pos.subtract(getMainPos()));
+    }
+
+    @Override
+    public double pullEnergy(EnumFacing side, double amount, boolean simulate) {
+        IAdvancedBoundingBlock inv = getInv();
+        if (inv == null || !canReceiveEnergy(side)) {
+            return 0;
+        }
+        return inv.pullEnergy(side, amount, simulate);
+    }
+
+    @Override
+    public boolean canOutputEnergy(EnumFacing side) {
+        IAdvancedBoundingBlock inv = getInv();
+        if (inv == null) {
+            return false;
+        }
+        return inv.canBoundOutPutEnergy(getPos(), side);
     }
 }

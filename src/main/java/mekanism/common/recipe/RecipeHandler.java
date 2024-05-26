@@ -784,6 +784,8 @@ public final class RecipeHandler {
                     toCheck = ((GasInput) entry.getKey()).ingredient.getGas();
                 } else if (entry.getKey() instanceof AdvancedMachineInput) {
                     toCheck = ((AdvancedMachineInput) entry.getKey()).gasType;
+                }else if (entry.getKey() instanceof  PressurizedInput){
+                    toCheck = ((PressurizedInput)entry.getKey()).getGas().getGas();
                 }
                 if (toCheck == input) {
                     return true;

@@ -3,7 +3,7 @@ package mekanism.common.multiblock;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mekanism.api.Coord4D;
-import mekanism.common.tile.TileEntityMultiblock;
+import mekanism.common.tile.multiblock.TileEntityMultiblock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 

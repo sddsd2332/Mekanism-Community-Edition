@@ -1,7 +1,7 @@
 package mekanism.common.inventory.container;
 
 import mekanism.common.inventory.slot.SlotEnergy.SlotDischarge;
-import mekanism.common.tile.TileEntitySeismicVibrator;
+import mekanism.common.tile.machine.TileEntitySeismicVibrator;
 import mekanism.common.util.ChargeUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;

@@ -24,6 +24,7 @@ import mekanism.common.frequency.IFrequencyHandler;
 import mekanism.common.integration.computer.IComputerIntegration;
 import mekanism.common.security.ISecurityTile;
 import mekanism.common.tile.component.*;
+import mekanism.common.tile.component.config.DataType;
 import mekanism.common.tile.prefab.TileEntityElectricBlock;
 import mekanism.common.util.*;
 import net.minecraft.item.ItemStack;
@@ -71,8 +72,8 @@ public class TileEntityQuantumEntangloporter extends TileEntityElectricBlock imp
             if (type != TransmissionType.HEAT) {
                 configComponent.setIOConfig(type);
             } else {
-                configComponent.addOutput(TransmissionType.HEAT, new SideData("None", EnumColor.GREY, IOState.OFF));
-                configComponent.addOutput(TransmissionType.HEAT, new SideData("Input_Output", EnumColor.PURPLE, IOState.INPUT));
+                configComponent.addOutput(TransmissionType.HEAT, new SideData(DataType.NONE, IOState.OFF));
+                configComponent.addOutput(TransmissionType.HEAT, new SideData(DataType.INPUT_OUTPUT, IOState.INPUT));
                 configComponent.fillConfig(TransmissionType.HEAT, 1);
                 configComponent.setCanEject(TransmissionType.HEAT, false);
             }
@@ -508,7 +509,7 @@ public class TileEntityQuantumEntangloporter extends TileEntityElectricBlock imp
         if (!hasFrequency()) {
             return null;
         }
-        return new Object[]{frequency.storedFluid, frequency.storedGas};
+        return new Object[]{frequency.storedFluid,frequency.storedGas};
     }
 
     @Override

@@ -1,7 +1,9 @@
 package mekanism.client.model;
 
+import mekanism.client.HolidayManager;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.client.render.MekanismRenderer.GlowInfo;
+import mekanism.common.config.MekanismConfig;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.client.model.ModelBase;
@@ -423,18 +425,25 @@ public class ModelDigitalMiner extends ModelBase {
         setRotation(monitor3, 0.0872665F, 0.2094395F, 0F);
     }
 
-    public void render(float size, boolean on, TextureManager manager, boolean renderMain) {
+    public ResourceLocation isON(double tick) {
+        if (MekanismConfig.current().client.holidays.val()) {
+            if (HolidayManager.MAY_4.isToday()) {
+                return MekanismUtils.getResource(ResourceType.RENDER, "DigitalMiner_OverlayOn_MAY_4TH.png");
+            } else if (HolidayManager.APRIL_FOOLS.isToday()) {
+                return MekanismUtils.getResource(ResourceType.RENDER, "DigitalMiner_OverlayOn_APRIL_FOOLS.png");
+            }
+        }
+        return MekanismUtils.getResource(ResourceType.RENDER, "DigitalMiner_OverlayOn_" + getTick(tick) + ".png");
+    }
+
+    public void render(double tick, float size, boolean on, TextureManager manager) {
         GlStateManager.pushMatrix();
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
         GlStateManager.disableAlpha();
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-
-        if (renderMain) {
-            doRender(size);
-        }
-
-        manager.bindTexture(on ? OVERLAY_ON : OVERLAY_OFF);
+        doRender(size);
+        manager.bindTexture(on ? isON(tick) : OVERLAY_OFF);
         GlStateManager.scale(1.001F, 1.001F, 1.001F);
         GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
         GlowInfo glowInfo = MekanismRenderer.enableGlow();
@@ -512,5 +521,10 @@ public class ModelDigitalMiner extends ModelBase {
         model.rotateAngleZ = z;
     }
 
-
+    public int getTick(double tick) {
+        if (tick >= 0.2F && tick < 0.3F || tick >= 0.4F && tick < 0.5F || tick >= 0.6F && tick < 0.7F || tick >= 0.8F && tick < 0.9F) {
+            return 1;
+        }
+        return 0;
+    }
 }

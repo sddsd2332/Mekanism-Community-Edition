@@ -3,7 +3,7 @@ package mekanism.client.render.tileentity;
 import mekanism.api.gas.GasStack;
 import mekanism.client.model.ModelNutritionalLiquifier;
 import mekanism.client.render.MekanismRenderer;
-import mekanism.common.tile.TileEntityNutritionalLiquifier;
+import mekanism.common.tile.machine.TileEntityNutritionalLiquifier;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.client.Minecraft;

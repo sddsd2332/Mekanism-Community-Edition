@@ -5,12 +5,13 @@ import mekanism.common.inventory.slot.SlotEnergy.SlotDischarge;
 import mekanism.common.inventory.slot.SlotStorageTank;
 import mekanism.common.recipe.RecipeHandler;
 import mekanism.common.recipe.inputs.ItemStackInput;
-import mekanism.common.tile.TileEntityChemicalOxidizer;
+import mekanism.common.tile.machine.TileEntityChemicalOxidizer;
 import mekanism.common.util.ChargeUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 
@@ -75,10 +76,22 @@ public class ContainerChemicalOxidizer extends ContainerMekanism<TileEntityChemi
         }
         return stack;
     }
-
+    private boolean isInputItem(ItemStack itemstack) {
+        for (ItemStackInput input : tileEntity.getRecipes().keySet()) {
+            if (ItemHandlerHelper.canItemStacksStack(input.ingredient, itemstack)) {
+                return true;
+            }
+        }
+        return false;
+    }
     @Override
     protected void addSlots() {
-        addSlotToContainer(new Slot(tileEntity, 0, 26, 36));
+        addSlotToContainer(new Slot(tileEntity, 0, 26, 36) {
+            @Override
+            public boolean isItemValid(ItemStack itemstack) {
+                return isInputItem(itemstack);
+            }
+        });
         addSlotToContainer(new SlotDischarge(tileEntity, 1, 154, 14));
         addSlotToContainer(new SlotStorageTank(tileEntity, 2, 154, 55));
     }

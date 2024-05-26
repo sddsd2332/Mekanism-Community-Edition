@@ -1,13 +1,13 @@
 package mekanism.common.tile.component;
 
 import io.netty.buffer.ByteBuf;
-import mekanism.api.EnumColor;
 import mekanism.api.TileNetworkList;
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.common.SideData;
 import mekanism.common.SideData.IOState;
 import mekanism.common.base.ITileComponent;
 import mekanism.common.capabilities.Capabilities;
+import mekanism.common.tile.component.config.DataType;
 import mekanism.common.tile.prefab.TileEntityContainerBlock;
 import mekanism.common.util.InventoryUtils;
 import mekanism.common.util.MekanismUtils;
@@ -22,7 +22,7 @@ import java.util.*;
 
 public class TileComponentConfig implements ITileComponent {
 
-    public static SideData EMPTY = new SideData("Empty", EnumColor.BLACK, InventoryUtils.EMPTY);
+    public static SideData EMPTY = new SideData(DataType.EMPTY, InventoryUtils.EMPTY);
 
     public TileEntityContainerBlock tileEntity;
     private List<TransmissionType> transmissions = new ArrayList<>();
@@ -112,16 +112,16 @@ public class TileComponentConfig implements ITileComponent {
     }
 
     public void setIOConfig(TransmissionType type) {
-        addOutput(type, new SideData("None", EnumColor.GREY, IOState.OFF));
-        addOutput(type, new SideData("Input", EnumColor.RED, IOState.INPUT));
-        addOutput(type, new SideData("Output", EnumColor.INDIGO, IOState.OUTPUT));
+        addOutput(type, new SideData(DataType.NONE, IOState.OFF));
+        addOutput(type, new SideData(DataType.INPUT, IOState.INPUT));
+        addOutput(type, new SideData(DataType.OUTPUT, IOState.OUTPUT));
         setConfig(type, new byte[]{1, 1, 2, 1, 1, 1});
     }
 
 
     public void setInputConfig(TransmissionType type) {
-        addOutput(type, new SideData("None", EnumColor.GREY, IOState.OFF));
-        addOutput(type, new SideData("Input", EnumColor.RED, IOState.INPUT));
+        addOutput(type, new SideData(DataType.NONE, IOState.OFF));
+        addOutput(type, new SideData(DataType.INPUT, IOState.INPUT));
         fillConfig(type, 1);
         setCanEject(type, false);
     }

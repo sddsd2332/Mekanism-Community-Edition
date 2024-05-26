@@ -16,7 +16,7 @@ import mekanism.client.sound.SoundHandler;
 import mekanism.common.Mekanism;
 import mekanism.common.inventory.container.ContainerMetallurgicInfuser;
 import mekanism.common.network.PacketTileEntity.TileEntityMessage;
-import mekanism.common.tile.TileEntityMetallurgicInfuser;
+import mekanism.common.tile.machine.TileEntityMetallurgicInfuser;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
@@ -63,8 +63,7 @@ public class GuiMetallurgicInfuser extends GuiMekanismTile<TileEntityMetallurgic
             }
         }, ProgressBar.MEDIUM, this, resource, 70, 46));
         addGuiElement(new GuiPlayerSlot(this, resource));
-        addGuiElement(new GuiBar(() -> (tileEntity.infuseStored.getType() != null ? tileEntity.infuseStored.getType().getLocalizedName() + ": " + tileEntity.infuseStored.getAmount()
-                : LangUtils.localize("gui.empty")), this, getGuiLocation(), 6, 16, 6, 54));
+        addGuiElement(new GuiBar(this, getGuiLocation(), 6, 16, 6, 54));
     }
 
     @Override
@@ -109,6 +108,8 @@ public class GuiMetallurgicInfuser extends GuiMekanismTile<TileEntityMetallurgic
             if (input || energy || outslot) {
                 displayTooltips(info, xAxis, yAxis);
             }
+        } else if (xAxis >= 6 && xAxis <= 6 + 6 && yAxis >= 16 && yAxis <= 16 + 54) {
+            displayTooltip(tileEntity.infuseStored.getType() != null ? tileEntity.infuseStored.getType().getLocalizedName() + ": " + tileEntity.infuseStored.getAmount() : LangUtils.localize("gui.empty"), xAxis, yAxis);
         }
 
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);

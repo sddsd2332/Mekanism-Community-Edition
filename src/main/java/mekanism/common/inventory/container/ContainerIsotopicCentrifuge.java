@@ -3,7 +3,7 @@ package mekanism.common.inventory.container;
 import mekanism.api.gas.IGasItem;
 import mekanism.common.inventory.slot.SlotEnergy.SlotDischarge;
 import mekanism.common.inventory.slot.SlotStorageTank;
-import mekanism.common.tile.TileEntityIsotopicCentrifuge;
+import mekanism.common.tile.machine.TileEntityIsotopicCentrifuge;
 import mekanism.common.util.ChargeUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;

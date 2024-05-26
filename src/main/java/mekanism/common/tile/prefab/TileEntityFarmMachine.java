@@ -1,7 +1,6 @@
 package mekanism.common.tile.prefab;
 
 import io.netty.buffer.ByteBuf;
-import mekanism.api.EnumColor;
 import mekanism.api.TileNetworkList;
 import mekanism.api.gas.*;
 import mekanism.api.transmitters.TransmissionType;
@@ -16,9 +15,10 @@ import mekanism.common.recipe.RecipeHandler;
 import mekanism.common.recipe.inputs.AdvancedMachineInput;
 import mekanism.common.recipe.machines.FarmMachineRecipe;
 import mekanism.common.recipe.outputs.ChanceOutput;
-import mekanism.common.tile.TileEntityFactory;
 import mekanism.common.tile.component.TileComponentConfig;
 import mekanism.common.tile.component.TileComponentEjector;
+import mekanism.common.tile.component.config.DataType;
+import mekanism.common.tile.factory.TileEntityFactory;
 import mekanism.common.util.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,6 +31,12 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
+
+/**
+ * 农场方块
+ * 气体输入，物品输入
+ * 物品输出 概率物品输出
+ */
 
 public abstract class TileEntityFarmMachine<RECIPE extends FarmMachineRecipe<RECIPE>> extends TileEntityUpgradeableMachine<AdvancedMachineInput, ChanceOutput, RECIPE> implements IGasHandler, ISustainedData {
 
@@ -56,11 +62,12 @@ public abstract class TileEntityFarmMachine<RECIPE extends FarmMachineRecipe<REC
         super(soundPath, type, 5, ticksRequired);
         configComponent = new TileComponentConfig(this, TransmissionType.ITEM, TransmissionType.ENERGY);
 
-        configComponent.addOutput(TransmissionType.ITEM, new SideData("None", EnumColor.GREY, InventoryUtils.EMPTY));
-        configComponent.addOutput(TransmissionType.ITEM, new SideData("Input", EnumColor.RED, new int[]{0}));
-        configComponent.addOutput(TransmissionType.ITEM, new SideData("Output", EnumColor.INDIGO, new int[]{3, 4}));
-        configComponent.addOutput(TransmissionType.ITEM, new SideData("Energy", EnumColor.BRIGHT_GREEN, new int[]{2}));
-        configComponent.addOutput(TransmissionType.ITEM, new SideData("Extra", EnumColor.YELLOW, new int[]{1}));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.NONE, InventoryUtils.EMPTY));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT, new int[]{0}));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.OUTPUT, new int[]{3, 4}));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.ENERGY, new int[]{2}));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.EXTRA, new int[]{1}));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(new int[]{0, 3, 4}, new boolean[]{false, true, true}));
 
         configComponent.setConfig(TransmissionType.ITEM, new byte[]{2, 1, 0, 0, 0, 3});
         configComponent.setInputConfig(TransmissionType.ENERGY);
@@ -77,16 +84,16 @@ public abstract class TileEntityFarmMachine<RECIPE extends FarmMachineRecipe<REC
         }
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(2));
+        ejectorComponent.setInputOutputData(TransmissionType.ITEM,configComponent.getOutputs(TransmissionType.ITEM).get(5));
     }
 
     @Override
     protected void upgradeInventory(TileEntityFactory factory) {
-
-        factory.configComponent.getOutputs(TransmissionType.ITEM).get(2).availableSlots = new int[]{4, 8, 9, 10};
         factory.gasTank.setGas(gasTank.getGas());
         factory.inventory.set(5, inventory.get(0));
         factory.inventory.set(4, inventory.get(1));
         factory.inventory.set(5 + 3, inventory.get(3));
+        factory.inventory.set(11, inventory.get(4));
         factory.inventory.set(1, inventory.get(2));
         factory.inventory.set(0, inventory.get(5));
     }

@@ -12,7 +12,6 @@ import mekanism.common.content.tank.TankCache;
 import mekanism.common.content.tank.TankUpdateProtocol;
 import mekanism.common.integration.computer.IComputerIntegration;
 import mekanism.common.multiblock.MultiblockManager;
-import mekanism.common.tile.TileEntityMultiblock;
 import mekanism.common.util.FluidContainerUtils;
 import mekanism.common.util.FluidContainerUtils.ContainerEditMode;
 import mekanism.common.util.InventoryUtils;

@@ -10,13 +10,10 @@ import mekanism.common.base.ITileNetwork;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.config.MekanismConfig;
-import mekanism.common.frequency.Frequency;
-import mekanism.common.frequency.FrequencyManager;
-import mekanism.common.frequency.IFrequencyHandler;
 import mekanism.common.integration.MekanismHooks;
 import mekanism.common.network.PacketDataRequest.DataRequestMessage;
 import mekanism.common.network.PacketTileEntity.TileEntityMessage;
-import mekanism.common.security.ISecurityTile;
+import mekanism.common.tile.base.TileEntityRestrictedTick;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,8 +29,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * 基本方块类型
+ */
 @Interface(iface = "ic2.api.tile.IWrenchable", modid = MekanismHooks.IC2_MOD_ID)
-    public abstract class TileEntityBasicBlock extends TileEntityRestrictedTick implements ITileNetwork, IFrequencyHandler {
+    public abstract class TileEntityBasicBlock extends TileEntityRestrictedTick implements ITileNetwork {
 
     /**
      * The direction this block is facing.
@@ -245,14 +245,5 @@ import java.util.Set;
     public void onAdded() {
         updatePower();
     }
-
-    @Override
-    public Frequency getFrequency(FrequencyManager manager) {
-        if (manager == Mekanism.securityFrequencies && this instanceof ISecurityTile) {
-            return ((ISecurityTile) this).getSecurity().getFrequency();
-        }
-        return null;
-    }
-
 
 }

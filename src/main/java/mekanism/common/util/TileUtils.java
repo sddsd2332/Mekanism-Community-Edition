@@ -2,8 +2,10 @@ package mekanism.common.util;
 
 import io.netty.buffer.ByteBuf;
 import mekanism.api.TileNetworkList;
+import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.GasTank;
+import mekanism.api.gas.IGasItem;
 import mekanism.common.PacketHandler;
 import mekanism.common.tile.prefab.TileEntityBasicBlock;
 import net.minecraft.item.ItemStack;
@@ -42,10 +44,10 @@ public class TileUtils {
         }
     }
 
-    public static void addGasStack(TileNetworkList data, GasStack stack){
+    public static void addGasStack(TileNetworkList data, GasStack stack) {
         if (stack != null) {
             data.add(stack.write(new NBTTagCompound()));
-        }else {
+        } else {
             data.add(EMPTY_TAG_COMPOUND);
         }
     }
@@ -73,6 +75,30 @@ public class TileUtils {
             return true;
         }
         return false;
+    }
+
+    public static void receiveGasItem(ItemStack stack, GasTank tank) {
+        if (!stack.isEmpty() && tank.getNeeded() > 0 && stack.getItem() instanceof IGasItem item) {
+            GasStack gasStack = item.getGas(stack);
+            if (gasStack != null && item.canProvideGas(stack, gasStack.getGas())) {
+                Gas gas = gasStack.getGas();
+                if (gas != null && tank.canReceive(gas)) {
+                    tank.receive(GasUtils.removeGas(stack, gas, tank.getNeeded()), true);
+                }
+            }
+        }
+    }
+
+    public static void receiveGasItem(ItemStack stack, GasTank tank, Gas isValidGas) {
+        if (!stack.isEmpty() && tank.getNeeded() > 0 && stack.getItem() instanceof IGasItem item) {
+            GasStack gasStack = item.getGas(stack);
+            if (gasStack != null && item.canProvideGas(stack, gasStack.getGas())) {
+                Gas gas = gasStack.getGas();
+                if (gas != null && tank.canReceive(gas) && gas == isValidGas) {
+                    tank.receive(GasUtils.removeGas(stack, gas, tank.getNeeded()), true);
+                }
+            }
+        }
     }
 
     public static void drawGas(ItemStack stack, GasTank tank) {

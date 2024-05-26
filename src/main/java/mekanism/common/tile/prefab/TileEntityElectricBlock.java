@@ -29,6 +29,10 @@ import net.minecraftforge.fml.common.Optional.Method;
 
 import javax.annotation.Nonnull;
 
+/**
+ * 可以存储电力的方块类型
+ */
+
 public abstract class TileEntityElectricBlock extends TileEntityContainerBlock implements IEnergyWrapper {
 
     /**

@@ -8,7 +8,7 @@ import mekanism.client.gui.element.gauge.GuiGauge;
 import mekanism.client.gui.element.tab.GuiSecurityTab;
 import mekanism.client.gui.element.tab.GuiUpgradeTab;
 import mekanism.common.inventory.container.ContainerFluidicPlenisher;
-import mekanism.common.tile.TileEntityFluidicPlenisher;
+import mekanism.common.tile.machine.TileEntityFluidicPlenisher;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.entity.player.InventoryPlayer;
