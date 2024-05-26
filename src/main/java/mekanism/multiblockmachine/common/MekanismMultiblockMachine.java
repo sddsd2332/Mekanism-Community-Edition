@@ -9,6 +9,8 @@ import mekanism.common.base.IModule;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.fixers.MekanismDataFixers.MekFixers;
 import mekanism.common.network.PacketSimpleGui;
+import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine.*;
+import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachineGenerator.*;
 import mekanism.multiblockmachine.common.fixers.MultiblockMachineTEFixer;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -115,6 +117,11 @@ public class MekanismMultiblockMachine implements IModule {
 
     @SubscribeEvent
     public void onBlacklistUpdate(MekanismAPI.BoxBlacklistEvent event) {
-        MekanismAPI.addBoxBlacklist(MultiblockMachineBlocks.MultiblockGenerator,0); //Large Wind Generator
+        for (MultiblockMachineGeneratorType type : MultiblockMachineGeneratorType.values()){
+            MekanismAPI.addBoxBlacklist(MultiblockMachineBlocks.MultiblockGenerator,type.meta);
+        }
+        for (MultiblockMachineType type : MultiblockMachineType.values()){
+            MekanismAPI.addBoxBlacklist(MultiblockMachineBlocks.MultiblockMachine,type.meta);
+        }
     }
 }

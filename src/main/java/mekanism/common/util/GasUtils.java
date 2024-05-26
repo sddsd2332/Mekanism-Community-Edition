@@ -103,20 +103,19 @@ public final class GasUtils {
         //Fake that we have one target given we know that no sides will overlap
         // This allows us to have slightly better performance
         final GasHandlerTarget target = new GasHandlerTarget(stack);
-        EmitUtils.forEachSide(from.getWorld(), from.getPos(), sides, (acceptor, side) -> {
-
-            //Invert to get access side
-            final EnumFacing accessSide = side.getOpposite();
-
-            //Collect cap
-            CapabilityUtils.runIfCap(acceptor, Capabilities.GAS_HANDLER_CAPABILITY, accessSide,
-                    (handler) -> {
-                        if (handler.canReceiveGas(accessSide, stack.getGas())) {
-                            target.addHandler(accessSide, handler);
-                        }
-                    });
-        });
-
+        if (from != null) {
+            EmitUtils.forEachSide(from.getWorld(), from.getPos(), sides, (acceptor, side) -> {
+                //Invert to get access side
+                final EnumFacing accessSide = side.getOpposite();
+                //Collect cap
+                CapabilityUtils.runIfCap(acceptor, Capabilities.GAS_HANDLER_CAPABILITY, accessSide,
+                        (handler) -> {
+                            if (handler.canReceiveGas(accessSide, stack.getGas())) {
+                                target.addHandler(accessSide, handler);
+                            }
+                        });
+            });
+        }
         int curHandlers = target.getHandlers().size();
         if (curHandlers > 0) {
             return EmitUtils.sendToAcceptors(java.util.Collections.singleton(target), curHandlers, stack.amount, stack);

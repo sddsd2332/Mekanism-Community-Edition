@@ -5,11 +5,9 @@ import mekanism.api.IMekWrench;
 import mekanism.api.energy.IEnergizedItem;
 import mekanism.api.energy.IStrictEnergyStorage;
 import mekanism.client.render.particle.MekanismParticleHelper;
-import mekanism.common.Mekanism;
 import mekanism.common.base.*;
 import mekanism.common.block.BlockMekanismContainer;
 import mekanism.common.block.states.BlockStateFacing;
-import mekanism.common.block.states.BlockStateMachine;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.wrenches.Wrenches;
 import mekanism.common.security.ISecurityItem;
@@ -23,7 +21,8 @@ import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.SecurityUtils;
 import mekanism.multiblockmachine.common.MekanismMultiblockMachine;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine;
-import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine.*;
+import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine.MultiblockMachineBlock;
+import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine.MultiblockMachineType;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -94,6 +93,9 @@ public abstract class BlockMultiblockMachine extends BlockMekanismContainer {
         TileEntity tile = MekanismUtils.getTileEntitySafe(worldIn, pos);
         if (tile instanceof TileEntityBasicBlock && ((TileEntityBasicBlock) tile).facing != null) {
             state = state.withProperty(BlockStateFacing.facingProperty, ((TileEntityBasicBlock) tile).facing);
+        }
+        if (tile instanceof IActiveState) {
+            state = state.withProperty(BlockStateMultiblockMachine.activeProperty, ((IActiveState) tile).getActive());
         }
         return state;
     }

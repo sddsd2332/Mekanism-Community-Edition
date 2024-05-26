@@ -140,7 +140,7 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
         MultiblockMachineType type = MultiblockMachineType.get(stack);
         if (type == MultiblockMachineType.LARGE_ELECTROLYTIC_SEPARATOR) {
             BlockPos.MutableBlockPos testPos = new BlockPos.MutableBlockPos();
-            for (int yPos = 0; yPos <= 2; yPos++) {
+            for (int yPos = 0; yPos <= 1; yPos++) {
                 for (int xPos = -1; xPos <= 1; xPos++) {
                     for (int zPos = -1; zPos <= 1; zPos++) {
                         testPos.setPos(pos.getX() + xPos, pos.getY() + yPos, pos.getZ() + zPos);

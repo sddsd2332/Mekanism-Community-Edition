@@ -1,11 +1,11 @@
 package mekanism.multiblockmachine.client;
 
-import mekanism.multiblockmachine.client.gui.machine.GuiLargeElectrolyticSeparator;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.client.render.item.ItemLayerWrapper;
 import mekanism.multiblockmachine.client.gui.generator.GuiLargeGasGenerator;
 import mekanism.multiblockmachine.client.gui.generator.GuiLargeHeatGenerator;
 import mekanism.multiblockmachine.client.gui.generator.GuiLargeWindGenerator;
+import mekanism.multiblockmachine.client.gui.machine.GuiLargeElectrolyticSeparator;
 import mekanism.multiblockmachine.client.render.generator.RenderLargeGasGenerator;
 import mekanism.multiblockmachine.client.render.generator.RenderLargeHeatGenerator;
 import mekanism.multiblockmachine.client.render.generator.RenderLargeWindGenerator;
@@ -35,7 +35,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -54,7 +53,6 @@ public class MultiblockMachineClientProxy extends MultiblockMachineCommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLargeWindGenerator.class, new RenderLargeWindGenerator());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLargeHeatGenerator.class, new RenderLargeHeatGenerator());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLargeGasGenerator.class, new RenderLargeGasGenerator());
-
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLargeElectrolyticSeparator.class, new RenderLargeElectrolyticSeparator());
     }
 
@@ -68,14 +66,21 @@ public class MultiblockMachineClientProxy extends MultiblockMachineCommonProxy {
     @Override
     public void registerBlockRenders() {
         ModelLoader.setCustomStateMapper(MultiblockMachineBlocks.MultiblockGenerator, generatorMapper);
-        for (MultiblockMachineGeneratorType type : MultiblockMachineGeneratorType.values()) {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(type.blockType.getBlock()), type.meta, new ModelResourceLocation(new ResourceLocation(MekanismMultiblockMachine.MODID, type.getName()), "inventory"));
-        }
         ModelLoader.setCustomStateMapper(MultiblockMachineBlocks.MultiblockMachine, machineMapper);
+
+        for (MultiblockMachineGeneratorType type : MultiblockMachineGeneratorType.values()) {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(type.blockType.getBlock()), type.meta, getInventoryMRL(type.getName()));
+        }
+
         for (MultiblockMachineType type : MultiblockMachineType.values()) {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(type.typeBlock.getBlock()), type.meta, new ModelResourceLocation(new ResourceLocation(MekanismMultiblockMachine.MODID, type.getName()), "inventory"));
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(type.typeBlock.getBlock()), type.meta, getInventoryMRL(type.getName()));
         }
     }
+
+    private ModelResourceLocation getInventoryMRL(String type) {
+        return new ModelResourceLocation(new ResourceLocation(MekanismMultiblockMachine.MODID, type), "inventory");
+    }
+
 
     public void registerItemRender(Item item) {
         MekanismRenderer.registerItemRender(MekanismMultiblockMachine.MODID, item);
@@ -84,24 +89,24 @@ public class MultiblockMachineClientProxy extends MultiblockMachineCommonProxy {
     @SubscribeEvent
     public void onModelBake(ModelBakeEvent event) {
         IRegistry<ModelResourceLocation, IBakedModel> modelRegistry = event.getModelRegistry();
-        generatorModelBake(modelRegistry, MultiblockMachineGeneratorType.LARGE_WIND_GENERATOR);
-        generatorModelBake(modelRegistry, MultiblockMachineGeneratorType.LARGE_HEAT_GENERATOR);
-        generatorModelBake(modelRegistry, MultiblockMachineGeneratorType.LARGE_GAS_GENERATOR);
-
-        machineModelBake(modelRegistry,MultiblockMachineType.LARGE_ELECTROLYTIC_SEPARATOR);
+        generatorModelBake(modelRegistry, "large_wind_generator", MultiblockMachineGeneratorType.LARGE_WIND_GENERATOR);
+        generatorModelBake(modelRegistry, "large_heat_generator", MultiblockMachineGeneratorType.LARGE_HEAT_GENERATOR);
+        generatorModelBake(modelRegistry, "large_gas_generator", MultiblockMachineGeneratorType.LARGE_GAS_GENERATOR);
+        machineModelBake(modelRegistry, "large_electrolytic_separator", MultiblockMachineType.LARGE_ELECTROLYTIC_SEPARATOR);
     }
 
-    private void machineModelBake(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, MultiblockMachineType type) {
-        ModelResourceLocation modelResourceLocation = new ModelResourceLocation(new ResourceLocation(MekanismMultiblockMachine.MODID, type.getName()), "inventory");
+
+    private void generatorModelBake(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, String type, MultiblockMachineGeneratorType generatorType) {
+        ModelResourceLocation modelResourceLocation = getInventoryMRL(type);
         ItemLayerWrapper itemLayerWrapper = new ItemLayerWrapper(modelRegistry.getObject(modelResourceLocation));
-        RenderMultiblockMachineItem.modelMap.put(type, itemLayerWrapper);
+        RenderMultiblockGeneratorItem.modelMap.put(generatorType, itemLayerWrapper);
         modelRegistry.putObject(modelResourceLocation, itemLayerWrapper);
     }
 
-    private void generatorModelBake(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, MultiblockMachineGeneratorType type) {
-        ModelResourceLocation modelResourceLocation = new ModelResourceLocation(new ResourceLocation(MekanismMultiblockMachine.MODID, type.getName()), "inventory");
+    private void machineModelBake(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, String type, MultiblockMachineType machineType) {
+        ModelResourceLocation modelResourceLocation = getInventoryMRL(type);
         ItemLayerWrapper itemLayerWrapper = new ItemLayerWrapper(modelRegistry.getObject(modelResourceLocation));
-        RenderMultiblockGeneratorItem.modelMap.put(type, itemLayerWrapper);
+        RenderMultiblockMachineItem.modelMap.put(machineType, itemLayerWrapper);
         modelRegistry.putObject(modelResourceLocation, itemLayerWrapper);
     }
 
@@ -123,7 +128,4 @@ public class MultiblockMachineClientProxy extends MultiblockMachineCommonProxy {
         };
     }
 
-    @SubscribeEvent
-    public void onStitch(TextureStitchEvent.Pre event) {
-    }
 }
