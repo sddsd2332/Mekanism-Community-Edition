@@ -1,5 +1,7 @@
 package mekanism.client.sound;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mekanism.client.sound.PlayerSound.SoundType;
@@ -54,7 +56,7 @@ public class SoundHandler {
     private static Set<UUID> gasmaskSounds = new ObjectOpenHashSet<>();
     private static Set<UUID> flamethrowerSounds = new ObjectOpenHashSet<>();
 
-    private static Map<Long, ISound> soundMap = new Object2ObjectOpenHashMap<>();
+    private static Long2ObjectMap<ISound> soundMap = new Long2ObjectOpenHashMap<>();
     private static boolean IN_MUFFLED_CHECK = false;
 
     public static void clearPlayerSounds() {

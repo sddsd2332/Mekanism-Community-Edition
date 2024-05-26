@@ -1,5 +1,6 @@
 package mekanism.client.jei;
 
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import mekanism.api.gas.GasStack;
 import mekanism.client.gui.IGuiWrapper;
 import mekanism.client.gui.element.GuiElement;
@@ -39,7 +40,7 @@ public abstract class BaseRecipeCategory<WRAPPER extends IRecipeWrapper> impleme
     protected int yOffset;
     protected IDrawable fluidOverlayLarge;
     protected IDrawable fluidOverlaySmall;
-    protected Set<GuiElement> guiElements = new ObjectOpenHashSet<>();
+    protected Set<GuiElement> guiElements = new ReferenceOpenHashSet<>();
     private String recipeName;
     private String unlocalizedName;
 

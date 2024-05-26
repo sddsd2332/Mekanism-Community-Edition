@@ -67,6 +67,11 @@ public abstract class TileEntityMultiblockGenerator extends TileEntityEffectsBlo
     }
 
     @Override
+    public boolean supportsAsync() {
+        return false;
+    }
+
+    @Override
     public double getMaxOutput() {
         return output;
     }

@@ -1,6 +1,7 @@
 package mekanism.tools.item;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import mekanism.common.util.LangUtils;
 import mekanism.tools.common.IHasRepairType;
 import mekanism.tools.common.Materials;
@@ -25,7 +26,7 @@ public class ItemMekanismPaxel extends ItemTool implements IHasRepairType {
     }
 
     public ItemMekanismPaxel(ToolMaterial material) {
-        super(4, -2.4F, material, new ObjectOpenHashSet<>());
+        super(4, -2.4F, material, new ReferenceOpenHashSet<>());
         setHarvestLevel("pickaxe", material.getHarvestLevel());
         setHarvestLevel("shovel", material.getHarvestLevel());
         setHarvestLevel("axe", material.getHarvestLevel());

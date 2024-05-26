@@ -93,6 +93,11 @@ public class TileEntityEnergyCube extends TileEntityElectricBlock implements ICo
     }
 
     @Override
+    public boolean supportsAsync() {
+        return false;
+    }
+
+    @Override
     public boolean upgrade(BaseTier upgradeTier) {
         if (upgradeTier.ordinal() != tier.ordinal() + 1) {
             return false;

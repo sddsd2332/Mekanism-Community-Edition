@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import mekanism.api.Coord4D;
 import mekanism.api.TileNetworkList;
 import mekanism.common.Mekanism;
@@ -25,7 +26,7 @@ public class FrequencyManager {
 
     public static boolean loaded;
 
-    private static Set<FrequencyManager> managers = new ObjectOpenHashSet<>();
+    private static Set<FrequencyManager> managers = new ReferenceOpenHashSet<>();
 
     private Int2ObjectMap<Frequency> frequencies = new Int2ObjectOpenHashMap<>();
 

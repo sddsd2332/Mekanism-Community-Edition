@@ -131,6 +131,11 @@ public abstract class TileEntityMultiblock<T extends SynchronizedData<T>> extend
     }
 
     @Override
+    public boolean supportsAsync() {
+        return false;
+    }
+
+    @Override
     public void doUpdate() {
         if (!world.isRemote && (structure == null || !structure.didTick)) {
             getProtocol().doUpdate();
