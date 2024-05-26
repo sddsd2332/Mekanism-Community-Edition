@@ -5,12 +5,14 @@ import mekanism.client.render.item.ItemLayerWrapper;
 import mekanism.multiblockmachine.client.gui.generator.GuiLargeGasGenerator;
 import mekanism.multiblockmachine.client.gui.generator.GuiLargeHeatGenerator;
 import mekanism.multiblockmachine.client.gui.generator.GuiLargeWindGenerator;
+import mekanism.multiblockmachine.client.gui.machine.GuiLargeChemicalInfuser;
 import mekanism.multiblockmachine.client.gui.machine.GuiLargeElectrolyticSeparator;
 import mekanism.multiblockmachine.client.render.generator.RenderLargeGasGenerator;
 import mekanism.multiblockmachine.client.render.generator.RenderLargeHeatGenerator;
 import mekanism.multiblockmachine.client.render.generator.RenderLargeWindGenerator;
 import mekanism.multiblockmachine.client.render.item.generator.RenderMultiblockGeneratorItem;
 import mekanism.multiblockmachine.client.render.item.machine.RenderMultiblockMachineItem;
+import mekanism.multiblockmachine.client.render.machine.RenderLargeChemicalInfuser;
 import mekanism.multiblockmachine.client.render.machine.RenderLargeElectrolyticSeparator;
 import mekanism.multiblockmachine.common.MekanismMultiblockMachine;
 import mekanism.multiblockmachine.common.MultiblockMachineBlocks;
@@ -22,6 +24,7 @@ import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachin
 import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeGasGenerator;
 import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeHeatGenerator;
 import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeWindGenerator;
+import mekanism.multiblockmachine.common.tile.machine.TileEntityLargeChemicalInfuser;
 import mekanism.multiblockmachine.common.tile.machine.TileEntityLargeElectrolyticSeparator;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -54,6 +57,7 @@ public class MultiblockMachineClientProxy extends MultiblockMachineCommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLargeHeatGenerator.class, new RenderLargeHeatGenerator());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLargeGasGenerator.class, new RenderLargeGasGenerator());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLargeElectrolyticSeparator.class, new RenderLargeElectrolyticSeparator());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLargeChemicalInfuser.class, new RenderLargeChemicalInfuser());
     }
 
     @Override
@@ -93,6 +97,7 @@ public class MultiblockMachineClientProxy extends MultiblockMachineCommonProxy {
         generatorModelBake(modelRegistry, "large_heat_generator", MultiblockMachineGeneratorType.LARGE_HEAT_GENERATOR);
         generatorModelBake(modelRegistry, "large_gas_generator", MultiblockMachineGeneratorType.LARGE_GAS_GENERATOR);
         machineModelBake(modelRegistry, "large_electrolytic_separator", MultiblockMachineType.LARGE_ELECTROLYTIC_SEPARATOR);
+        machineModelBake(modelRegistry, "large_chemical_infuser", MultiblockMachineType.LARGE_CHEMICAL_INFUSER);
     }
 
 
@@ -122,8 +127,8 @@ public class MultiblockMachineClientProxy extends MultiblockMachineCommonProxy {
             case 0 -> new GuiLargeWindGenerator(player.inventory, (TileEntityLargeWindGenerator) tileEntity);
             case 1 -> new GuiLargeHeatGenerator(player.inventory, (TileEntityLargeHeatGenerator) tileEntity);
             case 2 -> new GuiLargeGasGenerator(player.inventory, (TileEntityLargeGasGenerator) tileEntity);
-            case 3 ->
-                    new GuiLargeElectrolyticSeparator(player.inventory, (TileEntityLargeElectrolyticSeparator) tileEntity);
+            case 3 -> new GuiLargeElectrolyticSeparator(player.inventory, (TileEntityLargeElectrolyticSeparator) tileEntity);
+            case 4 -> new GuiLargeChemicalInfuser(player.inventory, (TileEntityLargeChemicalInfuser) tileEntity);
             default -> null;
         };
     }

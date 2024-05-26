@@ -285,10 +285,4 @@ public class ModelLargeElectrolyticSeparator extends ModelBase {
             return 3;
     }
 
-    public int getScreenTick(double tick) {
-        if (tick >= 0.2F && tick < 0.3F || tick >= 0.4F && tick < 0.5F || tick >= 0.6F && tick < 0.7F || tick >= 0.8F && tick < 0.9F) {
-            return 1;
-        }
-        return 0;
-    }
 }

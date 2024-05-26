@@ -116,7 +116,7 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
                 }
                 operatingTicks++;
                 if (operatingTicks >= ticksRequired) {
-                    for (int i = 0; i < thread; i++) {
+                    for (int i = 0; i <= thread; i++) {
                         operate(recipe);
                     }
                     operatingTicks = 0;

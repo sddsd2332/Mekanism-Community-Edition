@@ -1,7 +1,7 @@
 package mekanism.multiblockmachine.client.render.item.machine;
 
 import mekanism.client.render.MekanismRenderer;
-import mekanism.multiblockmachine.client.model.machine.ModelLargeElectrolyticSeparator;
+import mekanism.multiblockmachine.client.model.machine.ModelLargeChemicalInfuser;
 import mekanism.multiblockmachine.common.util.MekanismMultiblockMachineUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -13,9 +13,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 
 @SideOnly(Side.CLIENT)
-public class RenderLargeElectrolyticSeparatorItem {
-
-    private static ModelLargeElectrolyticSeparator model = new ModelLargeElectrolyticSeparator();
+public class RenderLargeChemicalInfuserItem {
+    private static ModelLargeChemicalInfuser model = new ModelLargeChemicalInfuser();
 
     public static void renderStack(@Nonnull ItemStack stack, ItemCameraTransforms.TransformType transformType) {
         GlStateManager.pushMatrix();
@@ -26,8 +25,8 @@ public class RenderLargeElectrolyticSeparatorItem {
             GlStateManager.rotate(90, 0, 1, 0);
         }
         GlStateManager.translate(0, 0, 0);
-        MekanismRenderer.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE,"ElectrolyticSeparator/ElectrolyticSeparator.png"));
-        model.render(0,0.022F, false, Minecraft.getMinecraft().renderEngine,0,0,0);
+        MekanismRenderer.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "ChemicalInfuser/ChemicalInfuser.png"));
+        model.render(0, 0.022F, false, Minecraft.getMinecraft().renderEngine, 0, 0, 0);
         GlStateManager.popMatrix();
     }
 }

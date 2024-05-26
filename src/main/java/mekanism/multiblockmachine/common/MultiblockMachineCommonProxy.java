@@ -6,10 +6,12 @@ import mekanism.common.config.MekanismConfig;
 import mekanism.multiblockmachine.common.inventory.container.generator.ContainerLargeGasGenerator;
 import mekanism.multiblockmachine.common.inventory.container.generator.ContainerLargeHeatGenerator;
 import mekanism.multiblockmachine.common.inventory.container.generator.ContainerLargeWindGenerator;
+import mekanism.multiblockmachine.common.inventory.container.machine.ContainerLargeChemicalInfuser;
 import mekanism.multiblockmachine.common.inventory.container.machine.ContainerLargeElectrolyticSeparator;
 import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeGasGenerator;
 import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeHeatGenerator;
 import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeWindGenerator;
+import mekanism.multiblockmachine.common.tile.machine.TileEntityLargeChemicalInfuser;
 import mekanism.multiblockmachine.common.tile.machine.TileEntityLargeElectrolyticSeparator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -31,7 +33,8 @@ public class MultiblockMachineCommonProxy implements IGuiProvider {
         registerTileEntity(TileEntityLargeWindGenerator.class, "large_wind_Generator");
         registerTileEntity(TileEntityLargeHeatGenerator.class, "large_heat_Generator");
         registerTileEntity(TileEntityLargeGasGenerator.class, "large_gas_Generator");
-        registerTileEntity(TileEntityLargeElectrolyticSeparator.class,"large_electrolytic_separator");
+        registerTileEntity(TileEntityLargeElectrolyticSeparator.class, "large_electrolytic_separator");
+        registerTileEntity(TileEntityLargeChemicalInfuser.class, "large_chemical_infuser");
     }
 
     public void registerTESRs() {
@@ -66,6 +69,7 @@ public class MultiblockMachineCommonProxy implements IGuiProvider {
             case 1 -> new ContainerLargeHeatGenerator(player.inventory, (TileEntityLargeHeatGenerator) tileEntity);
             case 2 -> new ContainerLargeGasGenerator(player.inventory, (TileEntityLargeGasGenerator) tileEntity);
             case 3 -> new ContainerLargeElectrolyticSeparator(player.inventory, (TileEntityLargeElectrolyticSeparator) tileEntity);
+            case 4 -> new ContainerLargeChemicalInfuser(player.inventory, (TileEntityLargeChemicalInfuser) tileEntity);
             default -> null;
         };
     }
