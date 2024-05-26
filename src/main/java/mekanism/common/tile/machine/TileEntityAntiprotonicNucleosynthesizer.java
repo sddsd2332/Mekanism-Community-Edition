@@ -176,7 +176,7 @@ public class TileEntityAntiprotonicNucleosynthesizer extends TileEntityUpgradeab
 
     @Override
     public Map<NucleosynthesizerInput, NucleosynthesizerRecipe> getRecipes() {
-        return null;
+        return RecipeHandler.Recipe.ANTIPROTONIC_NUCLEOSYNTHESIZER.get();
     }
 
     @Override
