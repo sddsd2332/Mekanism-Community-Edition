@@ -452,7 +452,7 @@ public abstract class BlockGenerator extends BlockMekanismContainer {
 
         if (tileEntity instanceof TileEntityElectricBlock) {
             IEnergizedItem electricItem = (IEnergizedItem) itemStack.getItem();
-            electricItem.setEnergy(itemStack, ((TileEntityElectricBlock) tileEntity).electricityStored);
+            electricItem.setEnergy(itemStack, ((TileEntityElectricBlock) tileEntity).electricityStored.get());
         }
         if (tileEntity instanceof TileEntityContainerBlock && ((TileEntityContainerBlock) tileEntity).handleInventory()) {
             ISustainedInventory inventory = (ISustainedInventory) itemStack.getItem();

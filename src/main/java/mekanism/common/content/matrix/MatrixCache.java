@@ -1,6 +1,7 @@
 package mekanism.common.content.matrix;
 
 import mekanism.common.multiblock.MultiblockCache;
+import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -9,7 +10,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 
 public class MatrixCache extends MultiblockCache<SynchronizedMatrixData> {
 
-    public NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+    public NonNullList<ItemStack> inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
 
     @Override
     public void apply(SynchronizedMatrixData data) {
@@ -24,7 +25,7 @@ public class MatrixCache extends MultiblockCache<SynchronizedMatrixData> {
     @Override
     public void load(NBTTagCompound nbtTags) {
         NBTTagList tagList = nbtTags.getTagList("Items", NBT.TAG_COMPOUND);
-        inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
         for (int tagCount = 0; tagCount < tagList.tagCount(); tagCount++) {
             NBTTagCompound tagCompound = tagList.getCompoundTagAt(tagCount);
             byte slotID = tagCompound.getByte("Slot");

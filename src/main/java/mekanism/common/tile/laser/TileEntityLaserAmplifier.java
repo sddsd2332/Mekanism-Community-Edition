@@ -19,6 +19,7 @@ import mekanism.common.tile.prefab.TileEntityContainerBlock;
 import mekanism.common.util.InventoryUtils;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -54,7 +55,7 @@ public class TileEntityLaserAmplifier extends TileEntityContainerBlock implement
 
     public TileEntityLaserAmplifier() {
         super("LaserAmplifier");
-        inventory = NonNullList.withSize(0, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(0, ItemStack.EMPTY);
     }
 
     @Override
@@ -142,13 +143,18 @@ public class TileEntityLaserAmplifier extends TileEntityContainerBlock implement
             }
             int newRedstoneLevel = getRedstoneLevel();
             if (newRedstoneLevel != currentRedstoneLevel) {
-                markDirty();
+                markForUpdateSync();
                 currentRedstoneLevel = newRedstoneLevel;
             }
             if (emittingRedstone != prevRedstone) {
                 world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
             }
         }
+    }
+
+    @Override
+    public boolean supportsAsync() {
+        return false;
     }
 
     @Override

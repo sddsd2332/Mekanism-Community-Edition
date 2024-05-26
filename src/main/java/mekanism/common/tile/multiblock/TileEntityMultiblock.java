@@ -110,7 +110,7 @@ public abstract class TileEntityMultiblock<T extends SynchronizedData<T>> extend
                     }
                     TileEntity tile = obj.getTileEntity(world);
                     if (!obj.isAirBlock(world) && (tile == null || tile.getClass() != getClass()) && !(tile instanceof IStructuralMultiblock || tile instanceof IMultiblock)) {
-                        MekanismUtils.notifyNeighborofChange(world, obj, getPos());
+                        Mekanism.EXECUTE_MANAGER.addSyncTask(() -> MekanismUtils.notifyNeighborofChange(world, obj, getPos()));
                     }
                 }
 

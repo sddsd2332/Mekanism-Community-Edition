@@ -2,6 +2,7 @@ package mekanism.common.tile;
 
 import mekanism.common.tile.prefab.TileEntityEffectsBlock;
 import mekanism.common.util.InventoryUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
@@ -13,7 +14,7 @@ public class TileEntityIndustrialAlarm extends TileEntityEffectsBlock {
 
     public TileEntityIndustrialAlarm() {
         super("machine.IndustrialAlarm", "IndustrialAlarm", 0);
-        inventory = NonNullList.withSize(0, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(0, ItemStack.EMPTY);
     }
 
 

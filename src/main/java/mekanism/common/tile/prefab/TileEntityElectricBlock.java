@@ -1,5 +1,6 @@
 package mekanism.common.tile.prefab;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergyAcceptor;
@@ -38,7 +39,7 @@ public abstract class TileEntityElectricBlock extends TileEntityContainerBlock i
     /**
      * How much energy is stored in this block.
      */
-    public double electricityStored;
+    public final AtomicDouble electricityStored = new AtomicDouble(0);
 
     /**
      * Maximum amount of energy this machine can hold.
@@ -51,8 +52,8 @@ public abstract class TileEntityElectricBlock extends TileEntityContainerBlock i
     public double maxEnergy;
 
     private boolean ic2Registered = false;
-    private CapabilityWrapperManager<IEnergyWrapper, TeslaIntegration> teslaManager = new CapabilityWrapperManager<>(IEnergyWrapper.class, TeslaIntegration.class);
-    private CapabilityWrapperManager<IEnergyWrapper, ForgeEnergyIntegration> forgeEnergyManager = new CapabilityWrapperManager<>(IEnergyWrapper.class, ForgeEnergyIntegration.class);
+    private final CapabilityWrapperManager<IEnergyWrapper, TeslaIntegration> teslaManager = new CapabilityWrapperManager<>(IEnergyWrapper.class, TeslaIntegration.class);
+    private final CapabilityWrapperManager<IEnergyWrapper, ForgeEnergyIntegration> forgeEnergyManager = new CapabilityWrapperManager<>(IEnergyWrapper.class, ForgeEnergyIntegration.class);
 
     /**
      * The base of all blocks that deal with electricity. It has a facing state, initialized state, and a current amount of stored energy.
@@ -114,12 +115,12 @@ public abstract class TileEntityElectricBlock extends TileEntityContainerBlock i
 
     @Override
     public double getEnergy() {
-        return electricityStored;
+        return electricityStored.get();
     }
 
     @Override
     public void setEnergy(double energy) {
-        electricityStored = Math.max(Math.min(energy, getMaxEnergy()), 0);
+        electricityStored.set(Math.max(Math.min(energy, getMaxEnergy()), 0));
         MekanismUtils.saveChunk(this);
     }
 
@@ -171,7 +172,7 @@ public abstract class TileEntityElectricBlock extends TileEntityContainerBlock i
     @Override
     public void readCustomNBT(NBTTagCompound nbtTags) {
         super.readCustomNBT(nbtTags);
-        electricityStored = nbtTags.getDouble("electricityStored");
+        electricityStored.set(nbtTags.getDouble("electricityStored"));
     }
 
     @Override

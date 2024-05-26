@@ -1653,3 +1653,17 @@ holiday.mekanism.may_4.1=愿原力与你同在，
 holiday.mekanism.new_year.1=新年快乐，
 holiday.mekanism.new_year.2=在我们进入这个激动人心的
 holiday.mekanism.new_year.3=%s新年之际，向你致以最美好的祝福
+
+#Commands
+cmd.mekceu.performance_report.title=通用机械 - 并行性能报告（已统计 %s 次执行）
+cmd.mekceu.performance_report.reset=性能报告数据已重置。
+cmd.mekceu.performance_report.total_executed=已执行的任务数量: %s
+cmd.mekceu.performance_report.tasks_avg_per_execution=平均每次执行的任务数: %s
+
+cmd.mekceu.performance_report.total_used_time=总耗时: %s 毫秒
+cmd.mekceu.performance_report.used_time_avg_per_execution=每次执行平均耗时: %s 毫秒
+
+cmd.mekceu.performance_report.task_used_time=并行操作总耗时: %s 毫秒
+
+cmd.mekceu.performance_report.task_used_time_avg=并行操作平均耗时: %s 毫秒
+cmd.mekceu.performance_report.used_time_avg=单个任务平均耗时: %s 微秒

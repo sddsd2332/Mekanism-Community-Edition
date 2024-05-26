@@ -22,6 +22,7 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 import sonar.fluxnetworks.common.tileentity.TileFluxPlug;
 
 import java.util.function.Function;
@@ -35,24 +36,7 @@ public abstract class EnergyAcceptorWrapper implements IStrictEnergyAcceptor {
         if (tileEntity == null || tileEntity.getWorld() == null) {
             return null;
         }
-        EnergyAcceptorWrapper wrapper = null;
-        if (CapabilityUtils.hasCapability(tileEntity, Capabilities.ENERGY_ACCEPTOR_CAPABILITY, side)) {
-            wrapper = fromCapability(tileEntity, Capabilities.ENERGY_ACCEPTOR_CAPABILITY, side, MekanismAcceptor::new);
-        } else if (MekanismUtils.useTesla() && CapabilityUtils.hasCapability(tileEntity, Capabilities.TESLA_CONSUMER_CAPABILITY, side)) {
-            wrapper = fromCapability(tileEntity, Capabilities.TESLA_CONSUMER_CAPABILITY, side, TeslaAcceptor::new);
-        } else if (MekanismUtils.useForge() && CapabilityUtils.hasCapability(tileEntity, CapabilityEnergy.ENERGY, side)) {
-            wrapper = fromCapability(tileEntity, CapabilityEnergy.ENERGY, side, ForgeAcceptor::new);
-        } else if (MekanismUtils.useRF() && tileEntity instanceof IEnergyReceiver) {
-            wrapper = new RFAcceptor((IEnergyReceiver) tileEntity);
-        } else if (MekanismUtils.useIC2()) {
-            IEnergyTile tile = EnergyNet.instance.getSubTile(tileEntity.getWorld(), tileEntity.getPos());
-            if (tile instanceof IEnergySink) {
-                wrapper = new IC2Acceptor((IEnergySink) tile);
-            }
-        }
-        if (MekanismUtils.useFlux() && tileEntity instanceof TileFluxPlug plug) {
-            wrapper = new FluxPlugAcceptor(plug, side);
-        }
+        EnergyAcceptorWrapper wrapper = getAccepterWrapper(tileEntity, side);
 
         if (wrapper != null) {
             wrapper.coord = Coord4D.get(tileEntity);
@@ -61,15 +45,49 @@ public abstract class EnergyAcceptorWrapper implements IStrictEnergyAcceptor {
         return wrapper;
     }
 
-    /**
-     * Note: It is assumed that a check for hasCapability was already ran.
-     */
+    private static @Nullable EnergyAcceptorWrapper getAccepterWrapper(final TileEntity tileEntity, final EnumFacing side) {
+        EnergyAcceptorWrapper wrapper = fromCapability(tileEntity, Capabilities.ENERGY_ACCEPTOR_CAPABILITY, side, MekanismAcceptor::new);
+        if (wrapper != null) {
+            return wrapper;
+        }
+        if (MekanismUtils.useTesla()) {
+            wrapper = fromCapability(tileEntity, Capabilities.TESLA_CONSUMER_CAPABILITY, side, TeslaAcceptor::new);
+        }
+        if (wrapper != null) {
+            return wrapper;
+        }
+        if (MekanismUtils.useForge()) {
+            wrapper = fromCapability(tileEntity, CapabilityEnergy.ENERGY, side, ForgeAcceptor::new);
+        }
+        if (wrapper != null) {
+            return wrapper;
+        }
+        if (MekanismUtils.useRF() && tileEntity instanceof IEnergyReceiver) {
+            wrapper = new RFAcceptor((IEnergyReceiver) tileEntity);
+        }
+        if (wrapper != null) {
+            return wrapper;
+        }
+        if (MekanismUtils.useIC2()) {
+            IEnergyTile tile = EnergyNet.instance.getSubTile(tileEntity.getWorld(), tileEntity.getPos());
+            if (tile instanceof IEnergySink) {
+                wrapper = new IC2Acceptor((IEnergySink) tile);
+            }
+        }
+        if (wrapper != null) {
+            return wrapper;
+        }
+        if (MekanismUtils.useFlux() && tileEntity instanceof TileFluxPlug plug) {
+            wrapper = new FluxPlugAcceptor(plug, side);
+        }
+        return wrapper;
+    }
+
+    @Nullable
     private static <T> EnergyAcceptorWrapper fromCapability(TileEntity tileEntity, Capability<T> capability, EnumFacing side, Function<T, EnergyAcceptorWrapper> makeAcceptor) {
         T acceptor = CapabilityUtils.getCapability(tileEntity, capability, side);
         if (acceptor != null) {
             return makeAcceptor.apply(acceptor);
-        } else {
-            LOGGER.error("Tile {} @ {} told us it had {} cap but returned null", tileEntity, tileEntity.getPos(), capability.getName());
         }
         return null;
     }

@@ -355,7 +355,7 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
                 ((ISustainedInventory) tileEntity).setInventory(getInventory(stack));
             }
             if (tileEntity instanceof TileEntityElectricBlock) {
-                ((TileEntityElectricBlock) tileEntity).electricityStored = getEnergy(stack);
+                ((TileEntityElectricBlock) tileEntity).electricityStored.set(getEnergy(stack));
             }
             if (!world.isRemote && tileEntity instanceof TileEntityQuantumEntangloporter && ItemDataUtils.hasData(stack, "entangleporter_frequency")) {
                 Frequency.Identity freq = Frequency.Identity.load(ItemDataUtils.getCompound(stack, "entangleporter_frequency"));

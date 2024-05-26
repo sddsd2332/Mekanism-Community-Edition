@@ -22,6 +22,11 @@ public class TileEntityReactorLaserFocusMatrix extends TileEntityReactorBlock im
     }
 
     @Override
+    public boolean supportsAsync() {
+        return false;
+    }
+
+    @Override
     public boolean canLasersDig() {
         return false;
     }

@@ -74,7 +74,7 @@ public abstract class TileEntityFarmMachine<RECIPE extends FarmMachineRecipe<REC
 
         gasTank = new GasTank(MAX_GAS);
 
-        inventory = NonNullList.withSize(6, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(6, ItemStack.EMPTY);
 
         BASE_SECONDARY_ENERGY_PER_TICK = secondaryPerTick;
         secondaryEnergyPerTick = secondaryPerTick;
@@ -122,7 +122,7 @@ public abstract class TileEntityFarmMachine<RECIPE extends FarmMachineRecipe<REC
                     operatingTicks = 0;
                 }
                 gasTank.draw(secondaryEnergyThisTick, true);
-                electricityStored -= energyPerTick;
+                electricityStored.addAndGet(-energyPerTick);
             } else {
                 inactive = true;
                 setActive(false);
@@ -198,7 +198,7 @@ public abstract class TileEntityFarmMachine<RECIPE extends FarmMachineRecipe<REC
     @Override
     public void operate(RECIPE recipe) {
         recipe.operate(inventory, 0, gasTank, secondaryEnergyThisTick, 3, 4);
-        markDirty();
+        markForUpdateSync();
     }
 
     @Override

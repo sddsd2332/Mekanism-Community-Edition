@@ -1402,6 +1402,19 @@ cmd.mek.chunk.clear.usage=Remove all chunks from watch list for chunk loading/un
 cmd.mek.chunk.clear=%d chunks removed from watch list
 cmd.mek.chunk.flush=%d chunks unloaded
 
+cmd.mekceu.performance_report.title=Mekanism CEu - Concurrent Performance Reporting (%s Executions Counted)
+cmd.mekceu.performance_report.reset=Performance report has been reset.
+cmd.mekceu.performance_report.total_executed=Total executed: %s
+cmd.mekceu.performance_report.tasks_avg_per_execution=Avg of tasks per execution: %s
+
+cmd.mekceu.performance_report.total_used_time=Total used time: %s ms
+cmd.mekceu.performance_report.used_time_avg_per_execution=Avg spent per execution: %s ms
+
+cmd.mekceu.performance_report.task_used_time=Parallel operation used time: %s ms
+
+cmd.mekceu.performance_report.task_used_time_avg=Parallel operation used time avg: %s ms
+cmd.mekceu.performance_report.used_time_avg=Single task used time average: %s µs
+
 #chat messages
 chat.mek.multiblockformed=Multiblock Formed
 

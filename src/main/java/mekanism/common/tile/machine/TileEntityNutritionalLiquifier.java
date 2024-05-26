@@ -51,7 +51,7 @@ public class TileEntityNutritionalLiquifier extends TileEntityBasicMachine<ItemS
 
         configComponent.setInputConfig(TransmissionType.ENERGY);
 
-        inventory = NonNullList.withSize(4, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(4, ItemStack.EMPTY);
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(1));
@@ -72,7 +72,7 @@ public class TileEntityNutritionalLiquifier extends TileEntityBasicMachine<ItemS
                 } else {
                     operate(recipe);
                     operatingTicks = 0;
-                    markDirty();
+                    markForUpdateSync();
                 }
             } else if (prevEnergy >= getEnergy()) {
                 setActive(false);
@@ -118,7 +118,7 @@ public class TileEntityNutritionalLiquifier extends TileEntityBasicMachine<ItemS
 
     public void operate(NutritionalRecipe recipe) {
         recipe.operate(inventory, gasTank);
-        markDirty();
+        markForUpdateSync();
     }
 
     @Override

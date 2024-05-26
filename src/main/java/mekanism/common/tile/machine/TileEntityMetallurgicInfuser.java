@@ -24,6 +24,7 @@ import mekanism.common.tile.prefab.TileEntityUpgradeableMachine;
 import mekanism.common.util.ChargeUtils;
 import mekanism.common.util.InventoryUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -60,7 +61,7 @@ public class TileEntityMetallurgicInfuser extends TileEntityUpgradeableMachine<I
         configComponent.setConfig(TransmissionType.ITEM, new byte[]{4, 1, 1, 3, 1, 2});
 
         configComponent.setInputConfig(TransmissionType.ENERGY);
-        inventory = NonNullList.withSize(5, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(5, ItemStack.EMPTY);
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(2));
@@ -152,7 +153,7 @@ public class TileEntityMetallurgicInfuser extends TileEntityUpgradeableMachine<I
 
     public void operate(MetallurgicInfuserRecipe recipe) {
         recipe.output(inventory, 2, 3, infuseStored);
-        markDirty();
+        markForUpdateSync();
     }
 
     @Override

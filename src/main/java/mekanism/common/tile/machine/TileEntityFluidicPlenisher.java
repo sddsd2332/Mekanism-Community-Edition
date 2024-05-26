@@ -46,7 +46,7 @@ public class TileEntityFluidicPlenisher extends TileEntityElectricBlock implemen
     public Set<Coord4D> activeNodes = new LinkedHashSet<>();
     public Set<Coord4D> usedNodes = new ObjectOpenHashSet<>();
     public boolean finishedCalc = false;
-    public FluidTank fluidTank = new FluidTank(10000);
+    public FluidTank fluidTank = new FluidTankSync(10000);
     /**
      * How much energy this machine consumes per-tick.
      */
@@ -69,7 +69,7 @@ public class TileEntityFluidicPlenisher extends TileEntityElectricBlock implemen
 
     public TileEntityFluidicPlenisher() {
         super("FluidicPlenisher", MachineType.FLUIDIC_PLENISHER.getStorage());
-        inventory = NonNullList.withSize(4, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(4, ItemStack.EMPTY);
     }
 
     @Override

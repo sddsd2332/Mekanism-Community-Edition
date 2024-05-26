@@ -15,6 +15,7 @@ import mekanism.common.multiblock.MultiblockManager;
 import mekanism.common.util.FluidContainerUtils;
 import mekanism.common.util.FluidContainerUtils.ContainerEditMode;
 import mekanism.common.util.InventoryUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import mekanism.common.util.TileUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -53,7 +54,7 @@ public class TileEntityDynamicTank extends TileEntityMultiblock<SynchronizedTank
 
     public TileEntityDynamicTank(String name) {
         super(name);
-        inventory = NonNullList.withSize(SLOTS.length, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(SLOTS.length, ItemStack.EMPTY);
     }
 
     @Override
@@ -79,10 +80,10 @@ public class TileEntityDynamicTank extends TileEntityMultiblock<SynchronizedTank
         } else if (structure != null) {
             if (structure.fluidStored != null && structure.fluidStored.amount <= 0) {
                 structure.fluidStored = null;
-                markDirty();
+                markForUpdateSync();
             } else if (structure.gasstored != null && structure.gasstored.amount <= 0) {
                 structure.gasstored = null;
-                markDirty();
+                markForUpdateSync();
             }
             if (isRendering) {
                 boolean needsValveUpdate = false;

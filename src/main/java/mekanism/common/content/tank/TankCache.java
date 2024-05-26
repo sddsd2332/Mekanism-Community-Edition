@@ -3,6 +3,7 @@ package mekanism.common.content.tank;
 import mekanism.api.gas.GasStack;
 import mekanism.common.multiblock.MultiblockCache;
 import mekanism.common.util.FluidContainerUtils.ContainerEditMode;
+import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -12,7 +13,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class TankCache extends MultiblockCache<SynchronizedTankData> {
 
-    public NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+    public NonNullList<ItemStack> inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
 
     public FluidStack fluid;
 
@@ -40,7 +41,7 @@ public class TankCache extends MultiblockCache<SynchronizedTankData> {
     public void load(NBTTagCompound nbtTags) {
         editMode = ContainerEditMode.values()[nbtTags.getInteger("editMode")];
         NBTTagList tagList = nbtTags.getTagList("Items", NBT.TAG_COMPOUND);
-        inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
 
         for (int tagCount = 0; tagCount < tagList.tagCount(); tagCount++) {
             NBTTagCompound tagCompound = tagList.getCompoundTagAt(tagCount);

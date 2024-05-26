@@ -66,8 +66,8 @@ public class TileEntityFluidTank extends TileEntityContainerBlock implements IAc
 
     public TileEntityFluidTank() {
         super("FluidTank");
-        fluidTank = new FluidTank(tier.getStorage());
-        inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+        fluidTank = new FluidTankSync(tier.getStorage());
+        inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class TileEntityFluidTank extends TileEntityContainerBlock implements IAc
         tier = FluidTankTier.values()[upgradeTier.ordinal()];
         fluidTank.setCapacity(tier.getStorage());
         Mekanism.packetHandler.sendUpdatePacket(this);
-        markDirty();
+        markForUpdateSync();
         return true;
     }
 
@@ -133,7 +133,7 @@ public class TileEntityFluidTank extends TileEntityContainerBlock implements IAc
 
             int newRedstoneLevel = getRedstoneLevel();
             if (newRedstoneLevel != currentRedstoneLevel) {
-                markDirty();
+                markForUpdateSync();
                 currentRedstoneLevel = newRedstoneLevel;
             }
             if (needsPacket) {

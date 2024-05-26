@@ -17,10 +17,7 @@ import mekanism.common.tile.component.TileComponentEjector;
 import mekanism.common.tile.component.TileComponentSecurity;
 import mekanism.common.tile.component.config.DataType;
 import mekanism.common.tile.prefab.TileEntityContainerBlock;
-import mekanism.common.util.InventoryUtils;
-import mekanism.common.util.ItemDataUtils;
-import mekanism.common.util.MekanismUtils;
-import mekanism.common.util.TileUtils;
+import mekanism.common.util.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -56,7 +53,7 @@ public class TileEntityAmbientAccumulator extends TileEntityContainerBlock imple
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.OUTPUT, new int[]{0}));
         configComponent.fillConfig(TransmissionType.GAS, 1);
 
-        inventory = NonNullList.withSize(1, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(1, ItemStack.EMPTY);
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(1));

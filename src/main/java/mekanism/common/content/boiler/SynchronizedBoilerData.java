@@ -8,6 +8,7 @@ import mekanism.api.gas.GasStack;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.content.tank.SynchronizedTankData.ValveData;
 import mekanism.common.multiblock.SynchronizedData;
+import mekanism.common.util.NonNullListSynchronized;
 import mekanism.common.util.UnitDisplayUtils.TemperatureUnit;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -52,7 +53,7 @@ public class SynchronizedBoilerData extends SynchronizedData<SynchronizedBoilerD
 
     public int steamVolume;
 
-    public NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+    public NonNullList<ItemStack> inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
 
     public Coord4D upperRenderLocation;
 

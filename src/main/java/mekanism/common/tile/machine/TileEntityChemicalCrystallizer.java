@@ -53,7 +53,7 @@ public class TileEntityChemicalCrystallizer extends TileEntityUpgradeableMachine
 
         configComponent.setInputConfig(TransmissionType.ENERGY);
 
-        inventory = NonNullList.withSize(4, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(4, ItemStack.EMPTY);
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(2));
@@ -117,7 +117,7 @@ public class TileEntityChemicalCrystallizer extends TileEntityUpgradeableMachine
 
     public void operate(CrystallizerRecipe recipe) {
         recipe.operate(inputTank, inventory, 1);
-        markDirty();
+        markForUpdateSync();
     }
 
     @Override

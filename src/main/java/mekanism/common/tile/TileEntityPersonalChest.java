@@ -4,6 +4,7 @@ import mekanism.common.security.ISecurityTile;
 import mekanism.common.tile.component.TileComponentSecurity;
 import mekanism.common.tile.prefab.TileEntityContainerBlock;
 import mekanism.common.util.InventoryUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import mekanism.common.util.SecurityUtils;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -28,7 +29,7 @@ public class TileEntityPersonalChest extends TileEntityContainerBlock implements
 
     public TileEntityPersonalChest() {
         super("PersonalChest");
-        inventory = NonNullList.withSize(54, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(54, ItemStack.EMPTY);
         securityComponent = new TileComponentSecurity(this);
     }
 

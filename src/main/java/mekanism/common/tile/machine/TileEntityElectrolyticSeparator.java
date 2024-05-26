@@ -54,7 +54,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
     /**
      * This separator's water slot.
      */
-    public FluidTank fluidTank = new FluidTank(24000);
+    public FluidTank fluidTank = new FluidTankSync(24000);
     /**
      * The maximum amount of gas this block can store.
      */
@@ -107,7 +107,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
 
         configComponent.setInputConfig(TransmissionType.ENERGY);
         ejectorComponent = new TileComponentEjector(this);
-        inventory = NonNullList.withSize(5, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(5, ItemStack.EMPTY);
     }
 
     @Override
@@ -336,7 +336,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
             case 0 -> new Object[]{electricityStored};
             case 1 -> new Object[]{output};
             case 2 -> new Object[]{BASE_MAX_ENERGY};
-            case 3 -> new Object[]{BASE_MAX_ENERGY - electricityStored};
+            case 3 -> new Object[]{BASE_MAX_ENERGY - electricityStored.get()};
             case 4 -> new Object[]{fluidTank.getFluid() != null ? fluidTank.getFluid().amount : 0};
             case 5 ->
                     new Object[]{fluidTank.getFluid() != null ? (fluidTank.getCapacity() - fluidTank.getFluid().amount) : 0};

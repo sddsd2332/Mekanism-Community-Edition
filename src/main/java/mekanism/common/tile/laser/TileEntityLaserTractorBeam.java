@@ -14,6 +14,7 @@ import mekanism.common.security.ISecurityTile;
 import mekanism.common.tile.component.TileComponentSecurity;
 import mekanism.common.tile.prefab.TileEntityContainerBlock;
 import mekanism.common.util.InventoryUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import mekanism.common.util.StackUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -42,7 +43,7 @@ public class TileEntityLaserTractorBeam extends TileEntityContainerBlock impleme
 
     public TileEntityLaserTractorBeam() {
         super("LaserTractorBeam");
-        inventory = NonNullList.withSize(27, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(27, ItemStack.EMPTY);
     }
 
     @Override
@@ -117,6 +118,11 @@ public class TileEntityLaserTractorBeam extends TileEntityContainerBlock impleme
             diggingProgress = 0;
             Mekanism.packetHandler.sendUpdatePacket(this);
         }
+    }
+
+    @Override
+    public boolean supportsAsync() {
+        return false;
     }
 
     public double getEnergy() {

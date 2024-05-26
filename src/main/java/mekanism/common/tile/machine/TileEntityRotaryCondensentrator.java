@@ -41,7 +41,7 @@ public class TileEntityRotaryCondensentrator extends TileEntityMachine implement
 
     public static final int MAX_FLUID = 10000;
     public GasTank gasTank = new GasTank(MAX_FLUID);
-    public FluidTank fluidTank = new FluidTank(MAX_FLUID);
+    public FluidTank fluidTank = new FluidTankSync(MAX_FLUID);
     /**
      * 0: gas -> fluid; 1: fluid -> gas
      */
@@ -77,7 +77,7 @@ public class TileEntityRotaryCondensentrator extends TileEntityMachine implement
 
         configComponent.setInputConfig(TransmissionType.ENERGY);
 
-        inventory = NonNullList.withSize(6, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(6, ItemStack.EMPTY);
 
         ejectorComponent = new TileComponentEjector(this);
 

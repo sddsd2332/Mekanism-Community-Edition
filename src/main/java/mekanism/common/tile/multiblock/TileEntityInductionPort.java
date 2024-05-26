@@ -343,7 +343,7 @@ public class TileEntityInductionPort extends TileEntityInductionCasing implement
             player.sendMessage(new TextComponentString(EnumColor.DARK_BLUE + Mekanism.LOG_TAG + " " + EnumColor.GREY +
                     LangUtils.localize("tooltip.configurator.inductionPortMode") + modeText));
             Mekanism.packetHandler.sendUpdatePacket(this);
-            markDirty();
+            markForUpdateSync();
         }
         return EnumActionResult.SUCCESS;
     }

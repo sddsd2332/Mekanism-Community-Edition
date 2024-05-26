@@ -7,6 +7,7 @@ import mekanism.common.Mekanism;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.tile.prefab.TileEntityEffectsBlock;
 import mekanism.common.util.InventoryUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -25,7 +26,7 @@ public class TileEntityLaser extends TileEntityEffectsBlock {
 
     public TileEntityLaser() {
         super("machine.laser", "Laser", MekanismConfig.current().storage.laser.val());
-        inventory = NonNullList.withSize(0, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(0, ItemStack.EMPTY);
     }
 
     @Override
@@ -79,6 +80,11 @@ public class TileEntityLaser extends TileEntityEffectsBlock {
                 diggingProgress = 0;
             }
         }
+    }
+
+    @Override
+    public boolean supportsAsync() {
+        return false;
     }
 
     @Override

@@ -11,6 +11,7 @@ import mekanism.common.content.transporter.TransitRequest.TransitResponse;
 import mekanism.common.content.transporter.TransporterStack.Path;
 import mekanism.common.util.InventoryUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import mekanism.common.util.StackUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -194,7 +195,7 @@ public class TransporterManager {
         public List<Integer> stackSizes = new ArrayList<>();
 
         public InventoryInfo(IItemHandler handler) {
-            inventory = NonNullList.withSize(handler.getSlots(), ItemStack.EMPTY);
+            inventory = NonNullListSynchronized.withSize(handler.getSlots(), ItemStack.EMPTY);
             for (int i = 0; i < handler.getSlots(); i++) {
                 ItemStack stack = handler.getStackInSlot(i);
                 inventory.set(i, stack);

@@ -3,6 +3,8 @@ package mekanism.common.concurrent;
 
 import io.netty.util.internal.ThrowableUtil;
 import it.unimi.dsi.fastutil.longs.*;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ReferenceSet;
 import mekanism.common.Mekanism;
 import mekanism.common.tile.base.TileEntitySynchronized;
 import mekanism.common.util.concurrent.*;
@@ -32,14 +34,12 @@ public class TaskExecutor {
             new CustomForkJoinWorkerThreadFactory("MEK-ForkJoinPool-worker-%s"),
             null, true);
 
-
     public static long totalExecuted = 0;
     public static long taskUsedTime = 0;
     public static long totalUsedTime = 0;
     public static long executedCount = 0;
 
     public static long tickExisted = 0;
-
 
     private final Queue<ActionExecutor> submitted = Queues.createConcurrentQueue();
 
@@ -197,14 +197,18 @@ public class TaskExecutor {
             return;
         }
 
+        ReferenceSet<TileEntitySynchronized> toUpdate = new ReferenceOpenHashSet<>();
         TileEntitySynchronized tile;
         while ((tile = requireUpdateTEQueue.poll()) != null) {
-            tile.markForUpdate();
+            toUpdate.add(tile);
         }
+        toUpdate.forEach(TileEntitySynchronized::markForUpdate);
 
+        toUpdate.clear();
         while ((tile = requireMarkNoUpdateTEQueue.poll()) != null) {
-            tile.markNoUpdate();
+            toUpdate.add(tile);
         }
+        toUpdate.forEach(TileEntitySynchronized::markNoUpdate);
     }
 
     /**

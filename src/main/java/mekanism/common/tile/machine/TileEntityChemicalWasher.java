@@ -44,7 +44,7 @@ public class TileEntityChemicalWasher extends TileEntityUpgradeableMachine<GasIn
     public static final int MAX_GAS = 10000;
     public static final int MAX_FLUID = 10000;
     public static int WATER_USAGE = 5;
-    public FluidTank fluidTank = new FluidTank(MAX_FLUID);
+    public FluidTank fluidTank = new FluidTankSync(MAX_FLUID);
     public GasTank inputTank = new GasTank(MAX_GAS);
     public GasTank outputTank = new GasTank(MAX_GAS);
     public int gasOutput = 256;
@@ -75,7 +75,7 @@ public class TileEntityChemicalWasher extends TileEntityUpgradeableMachine<GasIn
 
         configComponent.setInputConfig(TransmissionType.ENERGY);
 
-        inventory = NonNullList.withSize(5, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(5, ItemStack.EMPTY);
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(2));

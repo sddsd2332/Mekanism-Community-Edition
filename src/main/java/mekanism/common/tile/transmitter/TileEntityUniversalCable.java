@@ -78,7 +78,7 @@ public class TileEntityUniversalCable extends TileEntityTransmitter<EnergyAccept
             updateShare();
             List<EnumFacing> sides = getConnections(ConnectionType.PULL);
             if (!sides.isEmpty()) {
-                TileEntity[] connectedOutputters = CableUtils.getConnectedOutputters(this, getPos(), getWorld());
+                TileEntity[] connectedOutputters = CableUtils.getConnectedTileEntities(this, getPos(), getWorld());
                 double maxDraw = tier.getCableCapacity();
                 for (EnumFacing side : sides) {
                     TileEntity outputter = connectedOutputters[side.ordinal()];
@@ -132,8 +132,9 @@ public class TileEntityUniversalCable extends TileEntityTransmitter<EnergyAccept
             double last = getSaveShare();
             if (last != lastWrite) {
                 lastWrite = last;
+                markChunkDirty();
                 //markDirty();
-                this.world.markChunkDirty(this.pos, this);
+//                this.world.markChunkDirty(this.pos, this);
             }
         }
     }

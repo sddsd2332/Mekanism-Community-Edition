@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import mekanism.api.Chunk3D;
 import mekanism.api.Coord4D;
 import mekanism.api.Range4D;
@@ -132,7 +133,7 @@ public class TileEntityDigitalMiner extends TileEntityElectricBlock implements I
 
     public TileEntityDigitalMiner() {
         super("DigitalMiner", MachineType.DIGITAL_MINER.getStorage());
-        inventory = NonNullList.withSize(INV_SLOTS.length + 1, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(INV_SLOTS.length + 1, ItemStack.EMPTY);
         radius = 10;
         upgradeComponent.setSupported(Upgrade.ANCHOR);
         upgradeComponent.setSupported(Upgrade.STONE_GENERATOR);
@@ -142,7 +143,7 @@ public class TileEntityDigitalMiner extends TileEntityElectricBlock implements I
     public void onUpdate() {
         super.onUpdate();
         if (getActive()) {
-            for (EntityPlayer player : new HashSet<>(playersUsing)) {
+            for (EntityPlayer player : new ReferenceOpenHashSet<>(playersUsing)) {
                 if (player.openContainer instanceof ContainerNull || player.openContainer instanceof ContainerFilter) {
                     player.closeScreen();
                 }

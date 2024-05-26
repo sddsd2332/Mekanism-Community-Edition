@@ -7,6 +7,8 @@ import mekanism.common.config.MekanismConfig;
 import mekanism.common.frequency.Frequency;
 import mekanism.common.tier.FluidTankTier;
 import mekanism.common.tier.GasTankTier;
+import mekanism.common.util.FluidTankSync;
+import mekanism.common.util.NonNullListSynchronized;
 import mekanism.common.util.TileUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,13 +23,13 @@ import java.util.function.Supplier;
 public class InventoryFrequency extends Frequency {
 
     public static final String ENTANGLOPORTER = "Entangloporter";
-    private static final Supplier<FluidTank> FLUID_TANK_SUPPLIER = () -> new FluidTank(MekanismConfig.current().general.quantumEntangloporterFluidBuffer.val());
+    private static final Supplier<FluidTank> FLUID_TANK_SUPPLIER = () -> new FluidTankSync(MekanismConfig.current().general.quantumEntangloporterFluidBuffer.val());
     private static final Supplier<GasTank> GAS_TANK_SUPPLIER = () -> new GasTank(MekanismConfig.current().general.quantumEntangloporterGasBuffer.val());
 
     public double storedEnergy;
     public FluidTank storedFluid;
     public GasTank storedGas;
-    public NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
+    public NonNullList<ItemStack> inventory = NonNullListSynchronized.withSize(1, ItemStack.EMPTY);
     public double temperature;
 
     public InventoryFrequency(String n, UUID uuid) {
@@ -83,7 +85,7 @@ public class InventoryFrequency extends Frequency {
         }
 
         NBTTagList tagList = nbtTags.getTagList("Items", NBT.TAG_COMPOUND);
-        inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
         for (int tagCount = 0; tagCount < tagList.tagCount(); tagCount++) {
             NBTTagCompound tagCompound = tagList.getCompoundTagAt(tagCount);
             byte slotID = tagCompound.getByte("Slot");
@@ -106,7 +108,7 @@ public class InventoryFrequency extends Frequency {
     @Override
     protected void read(ByteBuf dataStream) {
         super.read(dataStream);
-        storedFluid = new FluidTank(FluidTankTier.ULTIMATE.getOutput());
+        storedFluid = new FluidTankSync(FluidTankTier.ULTIMATE.getOutput());
         storedGas = new GasTank(GasTankTier.ULTIMATE.getOutput());
         storedEnergy = dataStream.readDouble();
         TileUtils.readTankData(dataStream, storedFluid);

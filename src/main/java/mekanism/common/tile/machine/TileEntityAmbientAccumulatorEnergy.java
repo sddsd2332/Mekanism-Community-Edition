@@ -59,7 +59,7 @@ public class TileEntityAmbientAccumulatorEnergy extends TileEntityMachine implem
 
         configComponent.setInputConfig(TransmissionType.ENERGY);
 
-        inventory = NonNullList.withSize(3, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(3, ItemStack.EMPTY);
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(1));

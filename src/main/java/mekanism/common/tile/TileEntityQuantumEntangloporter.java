@@ -2,7 +2,10 @@ package mekanism.common.tile;
 
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import mekanism.api.*;
+import mekanism.api.Chunk3D;
+import mekanism.api.Coord4D;
+import mekanism.api.IHeatTransfer;
+import mekanism.api.TileNetworkList;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.GasTankInfo;
@@ -51,7 +54,7 @@ public class TileEntityQuantumEntangloporter extends TileEntityElectricBlock imp
         IGasHandler, IHeatTransfer, IComputerIntegration, ISecurityTile, IChunkLoader, IUpgradeTile {
 
     private static final int INV_SIZE = 1;//this.inventory size, used for upgrades. Manually handled
-    private static final String[] methods = new String[]{"setFrequency"};
+    private static final String[] methods = {"setFrequency"};
     public InventoryFrequency frequency;
     public double heatToAbsorb = 0;
     public double lastTransferLoss;
@@ -79,7 +82,7 @@ public class TileEntityQuantumEntangloporter extends TileEntityElectricBlock imp
             }
         }
 
-        inventory = NonNullList.withSize(INV_SIZE, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(INV_SIZE, ItemStack.EMPTY);
 
         configComponent.getOutputs(TransmissionType.ITEM).get(2).availableSlots = new int[]{0};
         configComponent.getOutputs(TransmissionType.FLUID).get(2).availableSlots = new int[]{0};
@@ -117,23 +120,28 @@ public class TileEntityQuantumEntangloporter extends TileEntityElectricBlock imp
 
             if (manager != null) {
                 if (frequency != null && !frequency.valid) {
-                    frequency = (InventoryFrequency) manager.validateFrequency(getSecurity().getOwnerUUID(), Coord4D.get(this), frequency);
-                    markDirty();
+                    frequency = (InventoryFrequency) manager.validateFrequency(securityComponent.getOwnerUUID(), Coord4D.get(this), frequency);
+                    markForUpdateSync();
                 }
 
                 if (frequency != null) {
                     frequency = (InventoryFrequency) manager.update(Coord4D.get(this), frequency);
                     if (frequency == null) {
-                        markDirty();
+                        markForUpdateSync();
                     }
                 }
             } else {
                 frequency = null;
                 if (lastFreq != null) {
-                    markDirty();
+                    markForUpdateSync();
                 }
             }
         }
+    }
+
+    @Override
+    public boolean supportsAsync() {
+        return false;
     }
 
     private boolean hasFrequency() {
@@ -156,23 +164,23 @@ public class TileEntityQuantumEntangloporter extends TileEntityElectricBlock imp
     @Override
     public Frequency getFrequency(FrequencyManager manager) {
         if (manager == Mekanism.securityFrequencies) {
-            return getSecurity().getFrequency();
+            return securityComponent.getFrequency();
         }
         return frequency;
     }
 
     public FrequencyManager getManager(Frequency freq) {
-        if (getSecurity().getOwnerUUID() == null || freq == null) {
+        if (securityComponent.getOwnerUUID() == null || freq == null) {
             return null;
         }
         if (freq.isPublic()) {
             return Mekanism.publicEntangloporters;
-        } else if (!Mekanism.privateEntangloporters.containsKey(getSecurity().getOwnerUUID())) {
-            FrequencyManager manager = new FrequencyManager(InventoryFrequency.class, InventoryFrequency.ENTANGLOPORTER, getSecurity().getOwnerUUID());
-            Mekanism.privateEntangloporters.put(getSecurity().getOwnerUUID(), manager);
+        } else if (!Mekanism.privateEntangloporters.containsKey(securityComponent.getOwnerUUID())) {
+            FrequencyManager manager = new FrequencyManager(InventoryFrequency.class, InventoryFrequency.ENTANGLOPORTER, securityComponent.getOwnerUUID());
+            Mekanism.privateEntangloporters.put(securityComponent.getOwnerUUID(), manager);
             manager.createOrLoad(world);
         }
-        return Mekanism.privateEntangloporters.get(getSecurity().getOwnerUUID());
+        return Mekanism.privateEntangloporters.get(securityComponent.getOwnerUUID());
     }
 
     public void setFrequency(String name, boolean publicFreq) {
@@ -182,17 +190,17 @@ public class TileEntityQuantumEntangloporter extends TileEntityElectricBlock imp
             if (freq.name.equals(name)) {
                 frequency = (InventoryFrequency) freq;
                 frequency.activeCoords.add(Coord4D.get(this));
-                markDirty();
+                markForUpdateSync();
                 return;
             }
         }
 
-        Frequency freq = new InventoryFrequency(name, getSecurity().getOwnerUUID()).setPublic(publicFreq);
+        Frequency freq = new InventoryFrequency(name, securityComponent.getOwnerUUID()).setPublic(publicFreq);
         freq.activeCoords.add(Coord4D.get(this));
         manager.addFrequency(freq);
         frequency = (InventoryFrequency) freq;
-        MekanismUtils.saveChunk(this);
-        markDirty();
+//        MekanismUtils.saveChunk(this);
+        markForUpdateSync();
     }
 
     @Override
@@ -204,7 +212,7 @@ public class TileEntityQuantumEntangloporter extends TileEntityElectricBlock imp
         }
 
         NBTTagList tagList = nbtTags.getTagList("upgradesInv", Constants.NBT.TAG_COMPOUND);
-        inventory = NonNullList.withSize(INV_SIZE, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(INV_SIZE, ItemStack.EMPTY);
         for (int tagCount = 0; tagCount < tagList.tagCount(); tagCount++) {
             NBTTagCompound tagCompound = tagList.getCompoundTagAt(tagCount);
             byte slotID = tagCompound.getByte("Slot");
@@ -217,7 +225,7 @@ public class TileEntityQuantumEntangloporter extends TileEntityElectricBlock imp
 
 
     @Override
-   public void writeCustomNBT(NBTTagCompound nbtTags) {
+    public void writeCustomNBT(NBTTagCompound nbtTags) {
         super.writeCustomNBT(nbtTags);
         if (frequency != null) {
             NBTTagCompound frequencyTag = new NBTTagCompound();
@@ -252,7 +260,7 @@ public class TileEntityQuantumEntangloporter extends TileEntityElectricBlock imp
                 boolean isPublic = dataStream.readBoolean();
                 FrequencyManager manager = getManager(new InventoryFrequency(freq, null).setPublic(isPublic));
                 if (manager != null) {
-                    manager.remove(freq, getSecurity().getOwnerUUID());
+                    manager.remove(freq, securityComponent.getOwnerUUID());
                 }
             }
             return;
@@ -509,7 +517,7 @@ public class TileEntityQuantumEntangloporter extends TileEntityElectricBlock imp
         if (!hasFrequency()) {
             return null;
         }
-        return new Object[]{frequency.storedFluid,frequency.storedGas};
+        return new Object[]{frequency.storedFluid, frequency.storedGas};
     }
 
     @Override
@@ -538,7 +546,7 @@ public class TileEntityQuantumEntangloporter extends TileEntityElectricBlock imp
             return false;
         }
         return capability == Capabilities.GAS_HANDLER_CAPABILITY || capability == Capabilities.HEAT_TRANSFER_CAPABILITY
-                || capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || super.hasCapability(capability, side);
+               || capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || super.hasCapability(capability, side);
     }
 
     @Override
@@ -560,7 +568,7 @@ public class TileEntityQuantumEntangloporter extends TileEntityElectricBlock imp
         if (configComponent.isCapabilityDisabled(capability, side, facing)) {
             return true;
         } else if (capability == Capabilities.GAS_HANDLER_CAPABILITY || capability == Capabilities.HEAT_TRANSFER_CAPABILITY ||
-                capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+                   capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return side != null && (!hasFrequency() || configComponent.isCapabilityDisabled(capability, side, facing));
         }
         return super.isCapabilityDisabled(capability, side);

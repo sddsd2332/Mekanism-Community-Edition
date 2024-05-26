@@ -9,10 +9,7 @@ import mekanism.common.base.IComparatorSupport;
 import mekanism.common.base.IFluidHandlerWrapper;
 import mekanism.common.base.ISustainedData;
 import mekanism.common.config.MekanismConfig;
-import mekanism.common.util.ChargeUtils;
-import mekanism.common.util.ItemDataUtils;
-import mekanism.common.util.MekanismUtils;
-import mekanism.common.util.PipeUtils;
+import mekanism.common.util.*;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -42,7 +39,7 @@ public class TileEntityBioGenerator extends TileEntityGenerator implements IFlui
 
     public TileEntityBioGenerator() {
         super("bio", "BioGenerator", MekanismConfig.current().generators.bioGeneratorStorage.val(), MekanismConfig.current().generators.bioGeneration.val() * 2);
-        inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
     }
 
     @Override
@@ -78,7 +75,7 @@ public class TileEntityBioGenerator extends TileEntityGenerator implements IFlui
             if (canOperate()) {
                 setActive(true);
                 bioFuelSlot.setFluid(bioFuelSlot.fluidStored - 1);
-                setEnergy(electricityStored + MekanismConfig.current().generators.bioGeneration.val());
+                setEnergy(electricityStored.get() + MekanismConfig.current().generators.bioGeneration.val());
             } else {
                 setActive(false);
             }
@@ -111,7 +108,7 @@ public class TileEntityBioGenerator extends TileEntityGenerator implements IFlui
 
     @Override
     public boolean canOperate() {
-        return electricityStored < BASE_MAX_ENERGY && bioFuelSlot.fluidStored > 0 && MekanismUtils.canFunction(this);
+        return electricityStored.get() < BASE_MAX_ENERGY && bioFuelSlot.fluidStored > 0 && MekanismUtils.canFunction(this);
     }
 
     @Override
@@ -177,7 +174,7 @@ public class TileEntityBioGenerator extends TileEntityGenerator implements IFlui
             case 0 -> new Object[]{electricityStored};
             case 1 -> new Object[]{output};
             case 2 -> new Object[]{BASE_MAX_ENERGY};
-            case 3 -> new Object[]{BASE_MAX_ENERGY - electricityStored};
+            case 3 -> new Object[]{BASE_MAX_ENERGY - electricityStored.get()};
             case 4 -> new Object[]{bioFuelSlot.fluidStored};
             case 5 -> new Object[]{bioFuelSlot.MAX_FLUID - bioFuelSlot.fluidStored};
             default -> throw new NoSuchMethodException();

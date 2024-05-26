@@ -12,6 +12,7 @@ import mekanism.api.tier.BaseTier;
 import mekanism.common.tier.PipeTier;
 import mekanism.common.transmitters.grid.FluidNetwork;
 import mekanism.common.util.CapabilityUtils;
+import mekanism.common.util.FluidTankSync;
 import mekanism.common.util.PipeUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -34,7 +35,7 @@ public class TileEntityMechanicalPipe extends TileEntityTransmitter<IFluidHandle
 
     public float currentScale;
 
-    public FluidTank buffer = new FluidTank(Fluid.BUCKET_VOLUME);
+    public FluidTank buffer = new FluidTankSync(Fluid.BUCKET_VOLUME);
 
     public FluidStack lastWrite;
     public CapabilityWrapperManager<IFluidHandlerWrapper, FluidHandlerWrapper> manager = new CapabilityWrapperManager<>(IFluidHandlerWrapper.class, FluidHandlerWrapper.class);
@@ -74,8 +75,9 @@ public class TileEntityMechanicalPipe extends TileEntityTransmitter<IFluidHandle
             FluidStack last = getSaveShare();
             if ((last != null && !(lastWrite != null && lastWrite.amount == last.amount && lastWrite.getFluid() == last.getFluid())) || (last == null && lastWrite != null)) {
                 lastWrite = last;
+                markChunkDirty();
                 //markDirty();
-                this.world.markChunkDirty(this.pos, this);
+//                this.world.markChunkDirty(this.pos, this);
             }
         }
     }

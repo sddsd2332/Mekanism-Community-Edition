@@ -15,6 +15,7 @@ import mekanism.common.tile.factory.TileEntityFactory;
 import mekanism.common.util.ChargeUtils;
 import mekanism.common.util.InventoryUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
@@ -52,7 +53,7 @@ public abstract class TileEntityDoubleElectricMachine<RECIPE extends DoubleMachi
         configComponent.setConfig(TransmissionType.ITEM, new byte[]{4, 1, 1, 3, 1, 2});
         configComponent.setInputConfig(TransmissionType.ENERGY);
 
-        inventory = NonNullList.withSize(5, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(5, ItemStack.EMPTY);
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(2));
@@ -84,7 +85,7 @@ public abstract class TileEntityDoubleElectricMachine<RECIPE extends DoubleMachi
                     operate(recipe);
                     operatingTicks = 0;
                 }
-                electricityStored -= energyPerTick;
+                electricityStored.addAndGet(-energyPerTick);
             } else {
                 inactive = true;
                 setActive(false);
@@ -137,7 +138,7 @@ public abstract class TileEntityDoubleElectricMachine<RECIPE extends DoubleMachi
     @Override
     public void operate(RECIPE recipe) {
         recipe.operate(inventory, 0, 1, 2);
-        markDirty();
+        markForUpdateSync();
     }
 
     @Override

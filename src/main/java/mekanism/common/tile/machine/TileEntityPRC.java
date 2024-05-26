@@ -42,7 +42,7 @@ public class TileEntityPRC extends TileEntityUpgradeableMachine<PressurizedInput
 
     private static final String[] methods = new String[]{"getEnergy", "getProgress", "isActive", "facing", "canOperate", "getMaxEnergy", "getEnergyNeeded",
             "getFluidStored", "getGasStored"};
-    public FluidTank inputFluidTank = new FluidTank(10000);
+    public FluidTank inputFluidTank = new FluidTankSync(10000);
     public GasTank inputGasTank = new GasTank(10000);
     public GasTank outputGasTank = new GasTank(10000);
 
@@ -67,7 +67,7 @@ public class TileEntityPRC extends TileEntityUpgradeableMachine<PressurizedInput
 
         configComponent.setInputConfig(TransmissionType.ENERGY);
 
-        inventory = NonNullList.withSize(4, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(4, ItemStack.EMPTY);
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(3));
@@ -91,11 +91,11 @@ public class TileEntityPRC extends TileEntityUpgradeableMachine<PressurizedInput
                 setActive(true);
                 if ((operatingTicks + 1) < ticksRequired) {
                     operatingTicks++;
-                    electricityStored -= MekanismUtils.getEnergyPerTick(this, BASE_ENERGY_PER_TICK + recipe.extraEnergy);
+                    electricityStored.addAndGet(MekanismUtils.getEnergyPerTick(this, BASE_ENERGY_PER_TICK + recipe.extraEnergy));
                 } else if ((operatingTicks + 1) >= ticksRequired && getEnergy() >= MekanismUtils.getEnergyPerTick(this, BASE_ENERGY_PER_TICK + recipe.extraEnergy)) {
                     operate(recipe);
                     operatingTicks = 0;
-                    electricityStored -= MekanismUtils.getEnergyPerTick(this, BASE_ENERGY_PER_TICK + recipe.extraEnergy);
+                    electricityStored.addAndGet(-MekanismUtils.getEnergyPerTick(this, BASE_ENERGY_PER_TICK + recipe.extraEnergy));
                 }
             } else {
                 BASE_TICKS_REQUIRED = 100;
@@ -151,7 +151,7 @@ public class TileEntityPRC extends TileEntityUpgradeableMachine<PressurizedInput
     @Override
     public void operate(PressurizedRecipe recipe) {
         recipe.operate(inventory, 0, inputFluidTank, inputGasTank, outputGasTank, 2);
-        markDirty();
+        markForUpdateSync();
     }
 
     @Override

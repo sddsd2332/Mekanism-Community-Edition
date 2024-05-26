@@ -19,6 +19,7 @@ import mekanism.common.security.SecurityFrequency;
 import mekanism.common.tile.prefab.TileEntityContainerBlock;
 import mekanism.common.util.InventoryUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -44,7 +45,7 @@ public class TileEntitySecurityDesk extends TileEntityContainerBlock implements 
 
     public TileEntitySecurityDesk() {
         super("SecurityDesk");
-        inventory = NonNullList.withSize(SLOTS.length, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(SLOTS.length, ItemStack.EMPTY);
     }
 
     @Override
@@ -96,6 +97,11 @@ public class TileEntitySecurityDesk extends TileEntityContainerBlock implements 
         }
     }
 
+    @Override
+    public boolean supportsAsync() {
+        return false;
+    }
+
     public FrequencyManager getManager(Frequency freq) {
         if (ownerUUID == null || freq == null) {
             return null;
@@ -118,8 +124,8 @@ public class TileEntitySecurityDesk extends TileEntityContainerBlock implements 
         freq.activeCoords.add(Coord4D.get(this));
         manager.addFrequency(freq);
         frequency = (SecurityFrequency) freq;
-        MekanismUtils.saveChunk(this);
-        markDirty();
+//        MekanismUtils.saveChunk(this);
+        markForUpdateSync();
     }
 
     @Override

@@ -66,7 +66,7 @@ import java.util.UUID;
  */
 public class PacketHandler {
 
-    public SimpleNetworkWrapper netHandler = NetworkRegistry.INSTANCE.newSimpleChannel("MEK");
+    public final SimpleNetworkWrapper netHandler = NetworkRegistry.INSTANCE.newSimpleChannel("MEK");
 
     /**
      * Encodes an Object[] of data into a DataOutputStream.
@@ -205,7 +205,7 @@ public class PacketHandler {
      * @param message - the message to send
      * @param player  - the player to send it to
      */
-    public void sendTo(IMessage message, EntityPlayerMP player) {
+    public synchronized void sendTo(IMessage message, EntityPlayerMP player) {
         netHandler.sendTo(message, player);
     }
 
@@ -214,7 +214,7 @@ public class PacketHandler {
      *
      * @param message - message to send
      */
-    public void sendToAll(IMessage message) {
+    public synchronized void sendToAll(IMessage message) {
         netHandler.sendToAll(message);
     }
 
@@ -224,7 +224,7 @@ public class PacketHandler {
      * @param message - the message to send
      * @param point   - the TargetPoint around which to send
      */
-    public void sendToAllAround(IMessage message, TargetPoint point) {
+    public synchronized void sendToAllAround(IMessage message, TargetPoint point) {
         netHandler.sendToAllAround(message, point);
     }
 
@@ -234,7 +234,7 @@ public class PacketHandler {
      * @param message     - the message to send
      * @param dimensionId - the dimension id to target
      */
-    public void sendToDimension(IMessage message, int dimensionId) {
+    public synchronized void sendToDimension(IMessage message, int dimensionId) {
         netHandler.sendToDimension(message, dimensionId);
     }
 
@@ -254,7 +254,7 @@ public class PacketHandler {
      * @param cuboid  - the AABB cuboid to send the packet in
      * @param dimId   - the dimension the cuboid is in
      */
-    public void sendToCuboid(IMessage message, AxisAlignedBB cuboid, int dimId) {
+    public synchronized void sendToCuboid(IMessage message, AxisAlignedBB cuboid, int dimId) {
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
         if (server != null && cuboid != null) {
             for (EntityPlayerMP player : server.getPlayerList().getPlayers()) {
@@ -283,7 +283,7 @@ public class PacketHandler {
         sendToAllTracking(message, new TargetPoint(dimension, x, y, z, 1));
     }
 
-    public void sendToAllTracking(IMessage message, TargetPoint point) {
+    public synchronized void sendToAllTracking(IMessage message, TargetPoint point) {
         netHandler.sendToAllTracking(message, point);
     }
 

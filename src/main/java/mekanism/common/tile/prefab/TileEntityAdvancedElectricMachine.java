@@ -83,7 +83,7 @@ public abstract class TileEntityAdvancedElectricMachine<RECIPE extends AdvancedM
 
         gasTank = new GasTank(MAX_GAS);
 
-        inventory = NonNullList.withSize(5, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(5, ItemStack.EMPTY);
 
         BASE_SECONDARY_ENERGY_PER_TICK = secondaryPerTick;
         secondaryEnergyPerTick = secondaryPerTick;
@@ -139,7 +139,7 @@ public abstract class TileEntityAdvancedElectricMachine<RECIPE extends AdvancedM
                     operatingTicks = 0;
                 }
                 gasTank.draw(secondaryEnergyThisTick, true);
-                electricityStored -= energyPerTick;
+                electricityStored.addAndGet(-energyPerTick);
             } else {
                 inactive = true;
                 setActive(false);
@@ -221,7 +221,7 @@ public abstract class TileEntityAdvancedElectricMachine<RECIPE extends AdvancedM
     @Override
     public void operate(RECIPE recipe) {
         recipe.operate(inventory, 0, 2, gasTank, secondaryEnergyThisTick);
-        markDirty();
+        markForUpdateSync();
     }
 
     @Override

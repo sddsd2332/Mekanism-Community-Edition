@@ -62,8 +62,8 @@ public class TileComponentSecurity implements ITileComponent {
         manager.addFrequency(freq);
         frequency = (SecurityFrequency) freq;
 
-        MekanismUtils.saveChunk(tileEntity);
-        tileEntity.markDirty();
+//        MekanismUtils.saveChunk(tileEntity);
+        tileEntity.markForUpdateSync();
     }
 
     public UUID getOwnerUUID() {

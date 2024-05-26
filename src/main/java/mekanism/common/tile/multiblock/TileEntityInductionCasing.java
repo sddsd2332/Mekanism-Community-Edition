@@ -13,6 +13,7 @@ import mekanism.common.multiblock.MultiblockManager;
 import mekanism.common.util.ChargeUtils;
 import mekanism.common.util.InventoryUtils;
 import mekanism.common.util.LangUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -37,7 +38,7 @@ public class TileEntityInductionCasing extends TileEntityMultiblock<Synchronized
 
     public TileEntityInductionCasing(String name) {
         super(name);
-        inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
     }
 
     @Override

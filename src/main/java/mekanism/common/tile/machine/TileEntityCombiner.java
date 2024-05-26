@@ -29,7 +29,7 @@ public class TileEntityCombiner extends TileEntityDoubleElectricMachine<Combiner
                         if (input.useItem(inventory, 0, false)) {
                             if (inventory.get(1).isEmpty()) {
                                 inventory.set(1, getRecipes().get(input).getInput().extraStack);
-                                electricityStored -= getRecipes().get(input).getInput().extraStack.getCount() * 10;
+                                electricityStored.addAndGet(-getRecipes().get(input).getInput().extraStack.getCount() * 10);
                             }
                         }
                     }

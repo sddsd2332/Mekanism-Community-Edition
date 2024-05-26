@@ -107,8 +107,9 @@ public class TileEntityPressurizedTube extends TileEntityTransmitter<IGasHandler
             GasStack last = getSaveShare();
             if ((last != null && !(lastWrite != null && lastWrite.amount == last.amount && lastWrite.getGas() == last.getGas())) || (last == null && lastWrite != null)) {
                 lastWrite = last;
+                markChunkDirty();
                 //markDirty();
-                this.world.markChunkDirty(this.pos, this);
+//                this.world.markChunkDirty(this.pos, this);
             }
         }
     }

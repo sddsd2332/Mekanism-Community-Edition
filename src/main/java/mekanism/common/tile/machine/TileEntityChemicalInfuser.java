@@ -70,7 +70,7 @@ public class TileEntityChemicalInfuser extends TileEntityBasicMachine<ChemicalPa
         ejectorComponent.setOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(3));
         ejectorComponent.setInputOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(5));
 
-        inventory = NonNullList.withSize(5, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(5, ItemStack.EMPTY);
     }
 
     @Override
@@ -134,7 +134,7 @@ public class TileEntityChemicalInfuser extends TileEntityBasicMachine<ChemicalPa
     public void operate(ChemicalInfuserRecipe recipe) {
         int operations = getUpgradedUsage(recipe);
         recipe.operate(leftTank, rightTank, centerTank, operations);
-        markDirty();
+        markForUpdateSync();
     }
 
     @Override

@@ -188,7 +188,7 @@ public class ItemBlockGenerator extends ItemBlock implements IEnergizedItem, ISp
             }
 
             if (tileEntity instanceof TileEntityElectricBlock) {
-                ((TileEntityElectricBlock) tileEntity).electricityStored = getEnergy(stack);
+                ((TileEntityElectricBlock) tileEntity).electricityStored.set(getEnergy(stack));
             }
             if (tileEntity instanceof ISustainedInventory) {
                 ((ISustainedInventory) tileEntity).setInventory(getInventory(stack));

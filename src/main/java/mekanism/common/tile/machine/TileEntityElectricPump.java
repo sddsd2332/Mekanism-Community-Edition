@@ -53,7 +53,7 @@ public class TileEntityElectricPump extends TileEntityElectricBlock implements I
     /**
      * This pump's tank
      */
-    public FluidTank fluidTank = new FluidTank(10000);
+    public FluidTank fluidTank = new FluidTankSync(10000);
     /**
      * The type of fluid this pump is pumping
      */
@@ -88,7 +88,7 @@ public class TileEntityElectricPump extends TileEntityElectricBlock implements I
 
     public TileEntityElectricPump() {
         super("ElectricPump", MachineType.ELECTRIC_PUMP.getStorage());
-        inventory = NonNullList.withSize(4, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(4, ItemStack.EMPTY);
         upgradeComponent.setSupported(Upgrade.FILTER);
     }
 

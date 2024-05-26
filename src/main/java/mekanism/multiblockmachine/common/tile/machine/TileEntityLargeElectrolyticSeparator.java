@@ -45,7 +45,7 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
     private static final String[] methods = new String[]{"getEnergy", "getOutput", "getMaxEnergy", "getEnergyNeeded", "getWater", "getWaterNeeded", "getHydrogen",
             "getHydrogenNeeded", "getOxygen", "getOxygenNeeded"};
 
-    public FluidTank fluidTank = new FluidTank(FluidTankTier.ULTIMATE.getStorage());
+    public FluidTank fluidTank = new FluidTankSync(FluidTankTier.ULTIMATE.getStorage());
 
     public int MAX_GAS = 2400;
 
@@ -67,7 +67,7 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
 
     public TileEntityLargeElectrolyticSeparator() {
         super("electrolyticseparator", BlockStateMultiblockMachine.MultiblockMachineType.LARGE_ELECTROLYTIC_SEPARATOR,  1,4);
-        inventory = NonNullList.withSize(5, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(5, ItemStack.EMPTY);
     }
 
     @Override
@@ -309,7 +309,7 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
             case 0 -> new Object[]{electricityStored};
             case 1 -> new Object[]{output};
             case 2 -> new Object[]{BASE_MAX_ENERGY};
-            case 3 -> new Object[]{BASE_MAX_ENERGY - electricityStored};
+            case 3 -> new Object[]{BASE_MAX_ENERGY - electricityStored.get()};
             case 4 -> new Object[]{fluidTank.getFluid() != null ? fluidTank.getFluid().amount : 0};
             case 5 ->
                     new Object[]{fluidTank.getFluid() != null ? (fluidTank.getCapacity() - fluidTank.getFluid().amount) : 0};

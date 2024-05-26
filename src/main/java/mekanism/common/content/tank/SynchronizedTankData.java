@@ -4,6 +4,7 @@ import mekanism.api.Coord4D;
 import mekanism.api.gas.GasStack;
 import mekanism.common.multiblock.SynchronizedData;
 import mekanism.common.util.FluidContainerUtils.ContainerEditMode;
+import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
@@ -27,7 +28,7 @@ public class SynchronizedTankData extends SynchronizedData<SynchronizedTankData>
     public int prevGasStage = 0;
     public ContainerEditMode editMode = ContainerEditMode.BOTH;
 
-    public NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+    public NonNullList<ItemStack> inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
 
     public Set<ValveData> valves = new ObjectOpenHashSet<>();
 

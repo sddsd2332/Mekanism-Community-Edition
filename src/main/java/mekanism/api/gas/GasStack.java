@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
  */
 public class GasStack {
 
-    public int amount;
+    public volatile int amount;
     private Gas type;
 
     /**
