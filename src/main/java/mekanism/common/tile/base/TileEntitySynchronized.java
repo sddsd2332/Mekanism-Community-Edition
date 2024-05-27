@@ -23,6 +23,7 @@ public class TileEntitySynchronized extends TileEntity {
     private boolean inMarkTask = false;
 
     private boolean requireUpdateLight = false;
+    private boolean requireUpdateComparatorOutputLevel = false;
 
     private long lastUpdateTick = 0;
 
@@ -149,6 +150,21 @@ public class TileEntitySynchronized extends TileEntity {
         Mekanism.EXECUTE_MANAGER.addTEUpdateTask(this);
         inUpdateTask = true;
         inMarkTask = true;
+    }
+
+    public void updateComparatorOutputLevelSync() {
+        if (inMarkTask) {
+            return;
+        }
+        Mekanism.EXECUTE_MANAGER.addUpdateComparatorOutputLevelTask(this);
+        requireUpdateComparatorOutputLevel = true;
+    }
+
+    public void updateComparatorOutputLevel() {
+        if (requireUpdateComparatorOutputLevel) {
+            requireUpdateComparatorOutputLevel = false;
+            world.updateComparatorOutputLevel(pos, getBlockType());
+        }
     }
 
     public boolean isInUpdateTask() {

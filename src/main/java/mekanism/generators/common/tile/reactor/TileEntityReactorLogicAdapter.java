@@ -2,6 +2,7 @@ package mekanism.generators.common.tile.reactor;
 
 import io.netty.buffer.ByteBuf;
 import mekanism.api.TileNetworkList;
+import mekanism.common.Mekanism;
 import mekanism.common.integration.computer.IComputerIntegration;
 import mekanism.common.util.LangUtils;
 import net.minecraft.init.Items;
@@ -29,7 +30,7 @@ public class TileEntityReactorLogicAdapter extends TileEntityReactorBlock implem
         if (!world.isRemote) {
             boolean outputting = checkMode();
             if (outputting != prevOutputting) {
-                world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
+                Mekanism.EXECUTE_MANAGER.addSyncTask(() -> world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true));
             }
             prevOutputting = outputting;
         }

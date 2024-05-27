@@ -66,6 +66,11 @@ public abstract class TileEntityReactorBlock extends TileEntityElectricBlock {
     }
 
     @Override
+    public boolean supportsAsync() {
+        return false;
+    }
+
+    @Override
     public boolean sideIsOutput(EnumFacing side) {
         return false;
     }

@@ -38,7 +38,7 @@ public class TileEntityThermalEvaporationValve extends TileEntityThermalEvaporat
             prevMaster = master != null;
             int newRedstoneLevel = getRedstoneLevel();
             if (newRedstoneLevel != currentRedstoneLevel) {
-                world.updateComparatorOutputLevel(pos, getBlockType());
+                updateComparatorOutputLevelSync();
                 currentRedstoneLevel = newRedstoneLevel;
             }
         }

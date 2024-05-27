@@ -14,7 +14,6 @@ import mekanism.common.util.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.common.capabilities.Capability;
@@ -102,7 +101,7 @@ public class TileEntityLargeGasGenerator extends TileEntityMultiblockGenerator i
             }
             int newRedstoneLevel = getRedstoneLevel();
             if (newRedstoneLevel != currentRedstoneLevel) {
-                world.updateComparatorOutputLevel(pos, getBlockType());
+                updateComparatorOutputLevelSync();
                 currentRedstoneLevel = newRedstoneLevel;
             }
             if (MekanismUtils.canFunction(this)) {

@@ -51,6 +51,7 @@ public class TaskExecutor {
     private final Queue<Action> mainThreadActions = Queues.createConcurrentQueue();
     private final Queue<TileEntitySynchronized> requireUpdateTEQueue = Queues.createConcurrentQueue();
     private final Queue<TileEntitySynchronized> requireMarkNoUpdateTEQueue = Queues.createConcurrentQueue();
+    private final Queue<TileEntitySynchronized> requireUpdateComparatorOutputLevel = Queues.createConcurrentQueue();
 
     private final TaskSubmitter submitter = new TaskSubmitter();
 
@@ -163,7 +164,7 @@ public class TaskExecutor {
         while ((action = mainThreadActions.poll()) != null) {
             try {
                 action.doAction();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 Mekanism.logger.warn("An error occurred during synchronous task execution!");
                 Mekanism.logger.warn(ThrowableUtil.stackTraceToString(e));
             }
@@ -193,7 +194,7 @@ public class TaskExecutor {
     }
 
     private void updateTileEntity() {
-        if (requireUpdateTEQueue.isEmpty() && requireMarkNoUpdateTEQueue.isEmpty()) {
+        if (requireUpdateTEQueue.isEmpty() && requireMarkNoUpdateTEQueue.isEmpty() && requireUpdateComparatorOutputLevel.isEmpty()) {
             return;
         }
 
@@ -209,6 +210,12 @@ public class TaskExecutor {
             toUpdate.add(tile);
         }
         toUpdate.forEach(TileEntitySynchronized::markNoUpdate);
+
+        toUpdate.clear();
+        while ((tile = requireUpdateComparatorOutputLevel.poll()) != null) {
+            toUpdate.add(tile);
+        }
+        toUpdate.forEach(TileEntitySynchronized::updateComparatorOutputLevel);
     }
 
     /**
@@ -269,6 +276,10 @@ public class TaskExecutor {
 
     public void addTEMarkNoUpdateTask(final TileEntitySynchronized te) {
         requireMarkNoUpdateTEQueue.offer(te);
+    }
+
+    public void addUpdateComparatorOutputLevelTask(final TileEntitySynchronized te) {
+        requireUpdateComparatorOutputLevel.offer(te);
     }
 
     private void execute(final ActionExecutor executor) {

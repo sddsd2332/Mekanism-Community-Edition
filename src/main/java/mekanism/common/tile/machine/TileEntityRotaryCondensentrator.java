@@ -23,7 +23,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -140,7 +139,7 @@ public class TileEntityRotaryCondensentrator extends TileEntityMachine implement
             prevEnergy = getEnergy();
             int newRedstoneLevel = getRedstoneLevel();
             if (newRedstoneLevel != currentRedstoneLevel) {
-                world.updateComparatorOutputLevel(pos, getBlockType());
+                updateComparatorOutputLevelSync();
                 currentRedstoneLevel = newRedstoneLevel;
 
             }

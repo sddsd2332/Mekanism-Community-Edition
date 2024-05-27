@@ -40,6 +40,8 @@ public class TileEntityMechanicalPipe extends TileEntityTransmitter<IFluidHandle
     public FluidStack lastWrite;
     public CapabilityWrapperManager<IFluidHandlerWrapper, FluidHandlerWrapper> manager = new CapabilityWrapperManager<>(IFluidHandlerWrapper.class, FluidHandlerWrapper.class);
 
+    private int nextTransfer = 0;
+
     @Override
     public BaseTier getBaseTier() {
         return tier.getBaseTier();
@@ -55,15 +57,24 @@ public class TileEntityMechanicalPipe extends TileEntityTransmitter<IFluidHandle
     public void doRestrictedTick() {
         if (!getWorld().isRemote) {
             updateShare();
-            IFluidHandler[] connectedAcceptors = PipeUtils.getConnectedAcceptors(getPos(), getWorld());
-            for (EnumFacing side : getConnections(ConnectionType.PULL)) {
-                IFluidHandler container = connectedAcceptors[side.ordinal()];
-                if (container != null) {
-                    FluidStack received = container.drain(getAvailablePull(), false);
-                    if (received != null && received.amount != 0 && takeFluid(received, false) == received.amount) {
-                        container.drain(takeFluid(received, true), true);
+            if (nextTransfer <= 0) {
+                IFluidHandler[] connectedAcceptors = PipeUtils.getConnectedAcceptors(getPos(), getWorld());
+                boolean successAtLeaseOnce = false;
+                for (EnumFacing side : getConnections(ConnectionType.PULL)) {
+                    IFluidHandler container = connectedAcceptors[side.ordinal()];
+                    if (container != null) {
+                        FluidStack received = container.drain(getAvailablePull(), false);
+                        if (received != null && received.amount != 0 && takeFluid(received, false) == received.amount) {
+                            container.drain(takeFluid(received, true), true);
+                            successAtLeaseOnce = true;
+                        }
                     }
                 }
+                if (!successAtLeaseOnce) {
+                    nextTransfer = 20;
+                }
+            } else {
+                nextTransfer--;
             }
         }
         super.doRestrictedTick();

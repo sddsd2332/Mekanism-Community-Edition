@@ -15,7 +15,7 @@ public abstract class TimeRecordingTask<V> extends RecursiveTask<V> {
         V result = null;
         try {
             result = computeTask();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             Mekanism.logger.warn("An error occurred during fork join task execution!");
             Mekanism.logger.warn(ThrowableUtil.stackTraceToString(e));
         }

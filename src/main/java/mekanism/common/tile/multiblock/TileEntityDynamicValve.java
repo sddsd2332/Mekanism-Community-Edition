@@ -68,7 +68,7 @@ public class TileEntityDynamicValve extends TileEntityDynamicTank implements IFl
         if (!world.isRemote) {
             int newRedstoneLevel = getRedstoneLevel();
             if (newRedstoneLevel != currentRedstoneLevel) {
-                world.updateComparatorOutputLevel(pos, getBlockType());
+                updateComparatorOutputLevelSync();
                 currentRedstoneLevel = newRedstoneLevel;
             }
 

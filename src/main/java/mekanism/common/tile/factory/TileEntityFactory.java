@@ -289,7 +289,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         super.onUpdate();
         if (!world.isRemote) {
             if (ticker == 1) {
-                world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
+                Mekanism.EXECUTE_MANAGER.addSyncTask(() -> world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true));
             }
             if (MekanismConfig.current().mekce.EnableUpgradeConfigure.val()) {
                 MekanismUtils.inject.accept(ticksRequired, this::onUpdate);
@@ -322,6 +322,9 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
                 if (MekanismUtils.canFunction(this) && canOperate(getInputSlot(process), getOutputSlot(process), getSecondaryOutputSlot(process)) && getEnergy() >= energyPerTick && gasTank.getStored() >= secondaryEnergyThisTick) {
                     if (tier != FactoryTier.CREATIVE) {
                         if (recipeType == RecipeType.PRC || recipeType == RecipeType.NUCLEOSYNTHESIZER) {
+                            if ((recipeType == RecipeType.PRC && PRCrecipe == null) || (recipeType == RecipeType.NUCLEOSYNTHESIZER && NnRecipe == null)) {
+                                continue;
+                            }
                             Exenery = recipeType == RecipeType.PRC ? PRCrecipe.extraEnergy : NnRecipe.extraEnergy;
                             boolean update = BASE_TICKS_REQUIRED != (recipeType == RecipeType.PRC ? PRCrecipe.ticks : NnRecipe.ticks);
                             BASE_TICKS_REQUIRED = recipeType == RecipeType.PRC ? PRCrecipe.ticks : NnRecipe.ticks;
@@ -394,7 +397,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
                         gasOutTank.setGas(null);
                         fluidTank.setFluid(null);
                         secondaryEnergyPerTick = getSecondaryEnergyPerTick(recipeType);
-                        world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
+                        Mekanism.EXECUTE_MANAGER.addSyncTask(() -> world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true));
                         MekanismUtils.saveChunk(this);
                     }
                 } else {

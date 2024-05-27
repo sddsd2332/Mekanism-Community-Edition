@@ -68,7 +68,7 @@ public class TileEntityTurbineValve extends TileEntityTurbineCasing implements I
             }
             int newRedstoneLevel = getRedstoneLevel();
             if (newRedstoneLevel != currentRedstoneLevel) {
-                world.updateComparatorOutputLevel(pos, getBlockType());
+                updateComparatorOutputLevelSync();
                 currentRedstoneLevel = newRedstoneLevel;
             }
         }

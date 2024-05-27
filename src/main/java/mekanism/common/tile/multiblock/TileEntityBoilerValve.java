@@ -91,7 +91,7 @@ public class TileEntityBoilerValve extends TileEntityBoilerCasing implements IFl
 
                 int newRedstoneLevel = getRedstoneLevel();
                 if (newRedstoneLevel != currentRedstoneLevel) {
-                    world.updateComparatorOutputLevel(pos, getBlockType());
+                    updateComparatorOutputLevelSync();
                     currentRedstoneLevel = newRedstoneLevel;
                 }
             }

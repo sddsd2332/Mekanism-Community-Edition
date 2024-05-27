@@ -278,6 +278,11 @@ public class TileEntityDigitalMiner extends TileEntityElectricBlock implements I
         }
     }
 
+    @Override
+    public boolean supportsAsync() {
+        return false;
+    }
+
     public double getPerTick() {
         double ret = energyUsage;
         if (silkTouch) {

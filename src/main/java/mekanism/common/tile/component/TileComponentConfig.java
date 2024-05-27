@@ -77,7 +77,8 @@ public class TileComponentConfig implements ITileComponent {
             return false;
         }
         EnumFacing[] translatedFacings = MekanismUtils.getBaseOrientations(facing);
-        return getConfig(type).get(translatedFacings[sideToTest.ordinal()]) == dataIndex;
+        SideConfig config = getConfig(type);
+        return config != null && config.get(translatedFacings[sideToTest.ordinal()]) == dataIndex;
     }
 
     public boolean isCapabilityDisabled(@Nonnull Capability<?> capability, EnumFacing side, EnumFacing tileDirection) {

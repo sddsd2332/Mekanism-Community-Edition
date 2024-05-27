@@ -45,6 +45,11 @@ public class TileEntityThermalEvaporationBlock extends TileEntityContainerBlock 
         attempted = false;
     }
 
+    @Override
+    public boolean supportsAsync() {
+        return false;
+    }
+
     public void addToStructure(Coord4D controller) {
         master = controller;
     }

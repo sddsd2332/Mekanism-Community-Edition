@@ -28,7 +28,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -131,7 +130,7 @@ public class TileEntityLogisticalSorter extends TileEntityEffectsBlock implement
 
         int newRedstoneLevel = getRedstoneLevel();
         if (newRedstoneLevel != currentRedstoneLevel) {
-            world.updateComparatorOutputLevel(pos, getBlockType());
+            updateComparatorOutputLevelSync();
             currentRedstoneLevel = newRedstoneLevel;
         }
     }
