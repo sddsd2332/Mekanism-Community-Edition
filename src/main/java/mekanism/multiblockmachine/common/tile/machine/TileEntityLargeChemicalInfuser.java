@@ -1,10 +1,12 @@
 package mekanism.multiblockmachine.common.tile.machine;
 
 import io.netty.buffer.ByteBuf;
+import mekanism.api.Coord4D;
 import mekanism.api.TileNetworkList;
 import mekanism.api.gas.*;
 import mekanism.common.Mekanism;
 import mekanism.common.Upgrade;
+import mekanism.common.base.IAdvancedBoundingBlock;
 import mekanism.common.base.ISustainedData;
 import mekanism.common.base.ITankManager;
 import mekanism.common.capabilities.Capabilities;
@@ -18,29 +20,36 @@ import mekanism.common.util.*;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
 public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMachine<ChemicalPairInput, GasOutput, ChemicalInfuserRecipe>
-        implements IGasHandler, ISustainedData, Upgrade.IUpgradeInfoHandler, ITankManager {
+        implements IGasHandler, ISustainedData, Upgrade.IUpgradeInfoHandler, ITankManager, IAdvancedBoundingBlock {
 
     public GasTank leftTank = new GasTank(GasTankTier.ULTIMATE.getStorage());
     public GasTank rightTank = new GasTank(GasTankTier.ULTIMATE.getStorage());
     public GasTank centerTank = new GasTank(GasTankTier.ULTIMATE.getStorage());
     public int gasOutput = 256;
     public ChemicalInfuserRecipe cachedRecipe;
-    private int currentRedstoneLevel;
     public int updateDelay;
     public boolean needsPacket;
     public int numPowering;
     public double clientEnergyUsed;
+    public int output = 512;
+    private int currentRedstoneLevel;
 
     public TileEntityLargeChemicalInfuser() {
         super("cheminfuser", BlockStateMultiblockMachine.MultiblockMachineType.LARGE_CHEMICAL_INFUSER, 1, 4);
@@ -78,6 +87,7 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
                 setActive(false);
             }
             prevEnergy = getEnergy();
+            handleTank(centerTank, getTankside());
             int newRedstoneLevel = getRedstoneLevel();
             if (newRedstoneLevel != currentRedstoneLevel) {
                 world.updateComparatorOutputLevel(pos, getBlockType());
@@ -92,6 +102,24 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
             if (updateDelay == 0) {
                 MekanismUtils.updateBlock(world, getPos());
             }
+        }
+    }
+
+    private TileEntity getTankside() {
+        BlockPos pos = getPos().offset(facing).offset(MekanismUtils.getLeft(facing));
+        BlockPos pos2 = getPos().offset(facing).offset(MekanismUtils.getRight(facing));
+        if (world.getTileEntity(pos) != null) {
+            return world.getTileEntity(pos);
+        }else if (world.getTileEntity(pos2) != null) {
+            return world.getTileEntity(pos2);
+        }
+        return null;
+    }
+
+    private void handleTank(GasTank tank, TileEntity tile) {
+        if (tank.getGas() != null) {
+            GasStack toSend = new GasStack(tank.getGas().getGas(), Math.min(tank.getStored(), output));
+            tank.draw(GasUtils.emit(toSend, tile, EnumSet.of(facing)), true);
         }
     }
 
@@ -199,12 +227,12 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
 
     @Override
     public boolean canReceiveGas(EnumFacing side, Gas type) {
-        return getTank(side) != null && getTank(side) != centerTank && getTank(side).canReceive(type);
+        return getTank(side) != null && getTank(side) != centerTank && getTank(side).canReceive(type) && side != facing;
     }
 
     @Override
     public boolean canDrawGas(EnumFacing side, Gas type) {
-        return getTank(side) != null && getTank(side) == centerTank && getTank(side).canDraw(type);
+        return getTank(side) != null && getTank(side) == centerTank && getTank(side).canDraw(type) && side == facing;
     }
 
     @Override
@@ -337,4 +365,184 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
     }
 
 
+    @Override
+    public boolean canBoundReceiveEnergy(BlockPos coord, EnumFacing side) {
+        EnumFacing back = MekanismUtils.getBack(facing);
+        if (coord.equals(getPos().offset(back))) {
+            return side == back;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean canBoundOutPutEnergy(BlockPos location, EnumFacing side) {
+        return false;
+    }
+
+    @Override
+    public void onPower() {
+        numPowering++;
+    }
+
+    @Override
+    public void onNoPower() {
+        numPowering--;
+    }
+
+    @Override
+    public NBTTagCompound getConfigurationData(NBTTagCompound nbtTags) {
+        return nbtTags;
+    }
+
+    @Override
+    public void setConfigurationData(NBTTagCompound nbtTags) {
+
+    }
+
+    @Override
+    public String getDataType() {
+        return getBlockType().getTranslationKey() + "." + fullName + ".name";
+    }
+
+    @Override
+    public void onPlace() {
+        for (int y = 0; y <= 1; y++) {
+            for (int x = -1; x <= 1; x++) {
+                for (int z = -1; z <= 1; z++) {
+                    if (x == 0 && y == 0 && z == 0) {
+                        continue;
+                    }
+                    BlockPos pos1 = getPos().add(x, y, z);
+                    if (y == 0) {
+                        MekanismUtils.makeAdvancedBoundingBlock(world, pos1, Coord4D.get(this));
+                    } else {
+                        MekanismUtils.makeBoundingBlock(world, pos1, Coord4D.get(this));
+                    }
+                    world.notifyNeighborsOfStateChange(pos1, getBlockType(), true);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onBreak() {
+        for (int y = 0; y <= 1; y++) {
+            for (int x = -1; x <= 1; x++) {
+                for (int z = -1; z <= 1; z++) {
+                    world.setBlockToAir(getPos().add(x, y, z));
+                }
+            }
+        }
+    }
+
+
+    @Override
+    public boolean hasOffsetCapability(@NotNull Capability<?> capability, @Nullable EnumFacing side, @NotNull Vec3i offset) {
+        if (isOffsetCapabilityDisabled(capability, side, offset)) {
+            return false;
+        }
+        if (capability == Capabilities.GAS_HANDLER_CAPABILITY) {
+            return true;
+        } else if (isStrictEnergy(capability) || capability == CapabilityEnergy.ENERGY || isTesla(capability, side)) {
+            return true;
+        }
+        return hasCapability(capability, side);
+    }
+
+    @Nullable
+    @Override
+    public <T> T getOffsetCapability(@NotNull Capability<T> capability, @Nullable EnumFacing side, @NotNull Vec3i offset) {
+        if (isOffsetCapabilityDisabled(capability, side, offset)) {
+            return null;
+        } else if (capability == Capabilities.GAS_HANDLER_CAPABILITY) {
+            return Capabilities.GAS_HANDLER_CAPABILITY.cast(this);
+        } else if (isStrictEnergy(capability)) {
+            return (T) this;
+        } else if (isTesla(capability, side)) {
+            return (T) getTeslaEnergyWrapper(side);
+        } else if (capability == CapabilityEnergy.ENERGY) {
+            return CapabilityEnergy.ENERGY.cast(getForgeEnergyWrapper(side));
+        }
+        return getCapability(capability, side);
+    }
+
+    @Override
+    public boolean isOffsetCapabilityDisabled(@NotNull Capability<?> capability, @Nullable EnumFacing side, @NotNull Vec3i offset) {
+        EnumFacing back = facing.getOpposite();
+        EnumFacing left = MekanismUtils.getLeft(facing);
+        EnumFacing right = MekanismUtils.getRight(facing);
+        if (capability == Capabilities.GAS_HANDLER_CAPABILITY) {
+            if (facing == EnumFacing.EAST) {
+                if (offset.equals(new Vec3i(1, 0, 1))) {
+                    return side != facing;
+                }
+                if (offset.equals(new Vec3i(1, 0, -1))) {
+                    return side != facing;
+                }
+                if (offset.equals(new Vec3i(-1, 0, 1))) {
+                    return side != left && side != back;
+                }
+                if (offset.equals(new Vec3i(-1, 0, -1))) {
+                    return side != right && side != back;
+                }
+            } else if (facing == EnumFacing.SOUTH) {
+                if (offset.equals(new Vec3i(-1, 0, 1))) {
+                    return side != facing;
+                }
+                if (offset.equals(new Vec3i(1, 0, 1))) {
+                    return side != facing;
+                }
+                if (offset.equals(new Vec3i(1, 0, -1))) {
+                    return side != right && side != back;
+                }
+                if (offset.equals(new Vec3i(-1, 0, -1))) {
+                    return side != left && side != back;
+                }
+            } else if (facing == EnumFacing.WEST) {
+                if (offset.equals(new Vec3i(-1, 0, 1))) {
+                    return side != facing;
+                }
+                if (offset.equals(new Vec3i(-1, 0, -1))) {
+                    return side != facing;
+                }
+                if (offset.equals(new Vec3i(1, 0, -1))) {
+                    return side != left && side != back;
+                }
+                if (offset.equals(new Vec3i(1, 0, 1))) {
+                    return side != right && side != back;
+                }
+            } else if (facing == EnumFacing.NORTH) {
+                if (offset.equals(new Vec3i(-1, 0, -1)) || offset.equals(new Vec3i(1, 0, -1))) {
+                    return side != facing;
+                }
+                if (offset.equals(new Vec3i(1, 0, 1))) {
+                    return side != left && side != back;
+                }
+                if (offset.equals(new Vec3i(-1, 0, 1))) {
+                    return side != right && side != back;
+                }
+            }
+            return true;
+        }
+
+        if (isStrictEnergy(capability) || capability == CapabilityEnergy.ENERGY || isTesla(capability, side)) {
+            if (offset.equals(new Vec3i(back.getXOffset(), 0, back.getZOffset()))) {
+                return side != back;
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean isCapabilityDisabled(@Nonnull Capability<?> capability, EnumFacing side) {
+        if (capability == Capabilities.GAS_HANDLER_CAPABILITY) {
+            return true;
+        }else if (isStrictEnergy(capability) || capability == CapabilityEnergy.ENERGY || isTesla(capability, side)) {
+            return true;
+        }
+        return super.isCapabilityDisabled(capability, side);
+
+    }
 }

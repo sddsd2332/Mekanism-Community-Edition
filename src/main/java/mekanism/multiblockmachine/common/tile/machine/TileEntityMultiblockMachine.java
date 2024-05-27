@@ -34,7 +34,7 @@ public abstract class TileEntityMultiblockMachine extends TileEntityEffectsBlock
 
     public TileEntityMultiblockMachine(String sound,MultiblockMachineType type,int slot) {
         super(sound, type.getBlockName(), type.getStorage());
-        energyPerTick = BASE_ENERGY_PER_TICK = type.getUsage();;
+        energyPerTick = BASE_ENERGY_PER_TICK = type.getUsage();
         upgradeComponent = new TileComponentUpgrade(this,slot ,false);
         upgradeComponent.setSupported(Upgrade.MUFFLING);
         upgradeComponent.setSupported(Upgrade.THREAD);
