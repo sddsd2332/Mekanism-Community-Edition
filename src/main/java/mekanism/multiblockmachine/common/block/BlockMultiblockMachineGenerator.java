@@ -332,6 +332,9 @@ public abstract class BlockMultiblockMachineGenerator extends BlockMekanismConta
             ISustainedInventory inventory = (ISustainedInventory) itemStack.getItem();
             inventory.setInventory(((TileEntityContainerBlock) tileEntity).getInventory(), itemStack);
         }
+        if (tileEntity instanceof IUpgradeTile) {
+            ((IUpgradeTile) tileEntity).getComponent().write(ItemDataUtils.getDataMap(itemStack));
+        }
         if (tileEntity instanceof ISustainedData) {
             ((ISustainedData) tileEntity).writeSustainedData(itemStack);
         }

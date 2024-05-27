@@ -5,6 +5,7 @@ import mekanism.client.gui.element.*;
 import mekanism.client.gui.element.gauge.GuiGasGauge;
 import mekanism.client.gui.element.gauge.GuiGauge;
 import mekanism.client.gui.element.tab.GuiSecurityTab;
+import mekanism.client.gui.element.tab.GuiUpgradeTab;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.multiblockmachine.common.inventory.container.generator.ContainerLargeGasGenerator;
@@ -29,6 +30,7 @@ public class GuiLargeGasGenerator extends GuiMekanismTile<TileEntityLargeGasGene
         addGuiElement(new GuiSlot(GuiSlot.SlotType.NORMAL, this, resource, 16, 34).with(GuiSlot.SlotOverlay.MINUS));
         addGuiElement(new GuiSlot(GuiSlot.SlotType.POWER, this, resource, 142, 34).with(GuiSlot.SlotOverlay.POWER));
         addGuiElement(new GuiPlayerSlot(this, getGuiLocation()));
+        addGuiElement(new GuiUpgradeTab(this, tileEntity, resource));
     }
 
     @Override

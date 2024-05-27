@@ -4,11 +4,14 @@ import io.netty.buffer.ByteBuf;
 import mekanism.api.Coord4D;
 import mekanism.api.TileNetworkList;
 import mekanism.common.Mekanism;
+import mekanism.common.Upgrade;
 import mekanism.common.base.IRedstoneControl;
+import mekanism.common.base.IUpgradeTile;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.computer.IComputerIntegration;
 import mekanism.common.security.ISecurityTile;
 import mekanism.common.tile.component.TileComponentSecurity;
+import mekanism.common.tile.component.TileComponentUpgrade;
 import mekanism.common.tile.prefab.TileEntityEffectsBlock;
 import mekanism.common.util.CableUtils;
 import mekanism.common.util.MekanismUtils;
@@ -22,7 +25,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
-public abstract class TileEntityMultiblockGenerator extends TileEntityEffectsBlock implements IComputerIntegration, IRedstoneControl, ISecurityTile {
+public abstract class TileEntityMultiblockGenerator extends TileEntityEffectsBlock implements IComputerIntegration, IRedstoneControl, ISecurityTile, IUpgradeTile {
 
     /**
      * Output per tick this generator can transfer.
@@ -35,6 +38,7 @@ public abstract class TileEntityMultiblockGenerator extends TileEntityEffectsBlo
     public RedstoneControl controlType;
 
     public TileComponentSecurity securityComponent = new TileComponentSecurity(this);
+    public TileComponentUpgrade upgradeComponent;
 
     /**
      * Generator -- a block that produces energy. It has a certain amount of fuel it can store as well as an output rate.
@@ -42,10 +46,19 @@ public abstract class TileEntityMultiblockGenerator extends TileEntityEffectsBlo
      * @param name      - full name of this generator
      * @param maxEnergy - how much energy this generator can store
      */
-    public TileEntityMultiblockGenerator(String soundPath, String name, double maxEnergy, double out) {
+    public TileEntityMultiblockGenerator(String soundPath, String name, double maxEnergy, double out, int slot) {
         super("gen." + soundPath, name, maxEnergy);
         output = out;
         controlType = RedstoneControl.DISABLED;
+        upgradeComponent = new TileComponentUpgrade(this, slot, Upgrade.THREAD, false);
+    }
+
+    public int Thread() {
+        int thread = 1;
+        if (upgradeComponent.isUpgradeInstalled(Upgrade.THREAD)) {
+            thread = upgradeComponent.getUpgrades(Upgrade.THREAD) + 1;
+        }
+        return thread;
     }
 
     @Override
@@ -159,5 +172,20 @@ public abstract class TileEntityMultiblockGenerator extends TileEntityEffectsBlo
     @Override
     public TileComponentSecurity getSecurity() {
         return securityComponent;
+    }
+
+    @Override
+    public TileComponentUpgrade getComponent() {
+        return upgradeComponent;
+    }
+
+
+    @Override
+    public void recalculateUpgradables(Upgrade upgrade) {
+        super.recalculateUpgradables(upgrade);
+        if (upgrade == Upgrade.ENERGY) {
+            maxEnergy = MekanismUtils.getMaxEnergy(this, BASE_MAX_ENERGY);
+            setEnergy(Math.min(getMaxEnergy(), getEnergy()));
+        }
     }
 }

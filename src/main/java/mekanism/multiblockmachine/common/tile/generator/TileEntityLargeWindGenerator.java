@@ -3,6 +3,7 @@ package mekanism.multiblockmachine.common.tile.generator;
 import io.netty.buffer.ByteBuf;
 import mekanism.api.Coord4D;
 import mekanism.api.TileNetworkList;
+import mekanism.common.Upgrade;
 import mekanism.common.base.IAdvancedBoundingBlock;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.util.CableUtils;
@@ -46,8 +47,9 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
     private boolean bladeDamage;
 
     public TileEntityLargeWindGenerator() {
-        super("wind", "LargeWindGenerator", MekanismConfig.current().multiblock.largewindGeneratorStorage.val(), MekanismConfig.current().multiblock.largewindGenerationMax.val() * 2);
-        inventory = NonNullList.withSize(SLOTS.length, ItemStack.EMPTY);
+        super("wind", "LargeWindGenerator", MekanismConfig.current().multiblock.largewindGeneratorStorage.val(), MekanismConfig.current().multiblock.largewindGenerationMax.val() * 2, 1);
+        inventory = NonNullList.withSize(SLOTS.length + 1, ItemStack.EMPTY);
+        upgradeComponent.setSupported(Upgrade.ENERGY);
     }
 
     @Override
@@ -72,12 +74,13 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
                 return;
             }
 
+            if (ticker % 200 == 0 && MekanismConfig.current().multiblock.largewindGenerationRangeStops.val() && !machineStop2) {
+                RangeStops();
+            }
+
             if (ticker % 20 == 0) {
                 currentMultiplier = getMultiplier();
                 setActive(MekanismUtils.canFunction(this) && currentMultiplier > 0 && !machineStop && !machineStop2);
-                if (MekanismConfig.current().multiblock.largewindGenerationRangeStops.val()) {
-                    RangeStops();
-                }
             }
             if (getActive()) {
                 setEnergy(electricityStored + (MekanismConfig.current().multiblock.largewindGenerationMin.val() * currentMultiplier));
@@ -183,7 +186,7 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
             float rangG = maxG < minG ? minG - maxG : maxG - minG;
             float slope = rangG / rangeY;
             float toGen = minG + (slope * (clampedY - minY));
-            return (toGen / minG) * 45 - (explode * 0.01F);
+            return ((toGen / minG) * 45 - (explode * 0.01F)) * Thread();
         }
 
         return 0;

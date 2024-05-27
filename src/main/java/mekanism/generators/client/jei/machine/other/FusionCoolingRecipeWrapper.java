@@ -1,4 +1,4 @@
-package mekanism.client.jei.machine.other;
+package mekanism.generators.client.jei.machine.other;
 
 import mekanism.client.jei.machine.MekanismRecipeWrapper;
 import mekanism.common.recipe.machines.FusionCoolingRecipe;

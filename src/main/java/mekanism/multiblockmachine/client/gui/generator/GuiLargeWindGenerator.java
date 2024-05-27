@@ -7,6 +7,7 @@ import mekanism.client.gui.button.GuiDisableableButton;
 import mekanism.client.gui.element.*;
 import mekanism.client.gui.element.tab.GuiSecurityTab;
 import mekanism.client.gui.element.tab.GuiSideHolder;
+import mekanism.client.gui.element.tab.GuiUpgradeTab;
 import mekanism.client.sound.SoundHandler;
 import mekanism.common.Mekanism;
 import mekanism.common.base.IRedstoneControl;
@@ -49,6 +50,7 @@ public class GuiLargeWindGenerator extends GuiMekanismTile<TileEntityLargeWindGe
         addGuiElement(new GuiPlayerSlot(this, resource, 7, 83 + 9));
         addGuiElement(new GuiSlot(GuiSlot.SlotType.STATE_HOLDER, this, resource, 18, 35 + 2));
         addGuiElement(new GuiInnerScreen(this, resource, 48, 21, 80, 62));
+        addGuiElement(new GuiUpgradeTab(this, tileEntity, resource));
         ySize += 9;
     }
 

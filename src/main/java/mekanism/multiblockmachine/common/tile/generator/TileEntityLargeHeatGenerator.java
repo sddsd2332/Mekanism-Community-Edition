@@ -46,8 +46,8 @@ public class TileEntityLargeHeatGenerator extends TileEntityMultiblockGenerator 
     public int numPowering;
 
     public TileEntityLargeHeatGenerator() {
-        super("heat", "LargeHeatGenerator", MekanismConfig.current().multiblock.largeHeatGeneratorStorage.val(), MekanismConfig.current().multiblock.largeHeatGeneration.val());
-        inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+        super("heat", "LargeHeatGenerator", MekanismConfig.current().multiblock.largeHeatGeneratorStorage.val(), MekanismConfig.current().multiblock.largeHeatGeneratorStorage.val(), 2);
+        inventory = NonNullList.withSize(3, ItemStack.EMPTY);
     }
 
     @Override
@@ -77,8 +77,8 @@ public class TileEntityLargeHeatGenerator extends TileEntityMultiblockGenerator 
             transferHeatTo(getBoost());
             if (canOperate()) {
                 setActive(true);
-                lavaTank.drain(10, true);
-                transferHeatTo(MekanismConfig.current().multiblock.largeHeatGeneration.val());
+                lavaTank.drain(10 * Thread(), true);
+                transferHeatTo(MekanismConfig.current().multiblock.largeHeatGeneration.val() * Thread());
             } else {
                 setActive(false);
             }
@@ -276,7 +276,7 @@ public class TileEntityLargeHeatGenerator extends TileEntityMultiblockGenerator 
             double heatLost = thermalEfficiency * getTemp();
             double workDone = heatLost * carnotEfficiency;
             transferHeatTo(-heatLost);
-            setEnergy(getEnergy() + workDone);
+            setEnergy((getEnergy() + workDone));
         }
         return HeatUtils.simulate(this);
     }

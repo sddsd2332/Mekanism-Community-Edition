@@ -5,6 +5,7 @@ import mekanism.client.gui.element.*;
 import mekanism.client.gui.element.gauge.GuiFluidGauge;
 import mekanism.client.gui.element.gauge.GuiGauge;
 import mekanism.client.gui.element.tab.GuiSecurityTab;
+import mekanism.client.gui.element.tab.GuiUpgradeTab;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
@@ -40,6 +41,7 @@ public class GuiLargeHeatGenerator extends GuiMekanismTile<TileEntityLargeHeatGe
             return Arrays.asList(LangUtils.localize("gui.transferred") + ": " + transfer + "/t", LangUtils.localize("gui.dissipated") + ": " + environment + "/t");
         }, this, resource));
         addGuiElement(new GuiPlayerSlot(this, getGuiLocation()));
+        addGuiElement(new GuiUpgradeTab(this, tileEntity, resource));
     }
 
     @Override

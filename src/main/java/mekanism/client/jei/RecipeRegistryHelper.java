@@ -380,15 +380,6 @@ public class RecipeRegistryHelper {
 
     }
 
-    public static void registerFusionCooling(IModRegistry registry) {
-        if (Loader.isModLoaded(MekanismGenerators.MODID)) {
-            addRecipes(registry, Recipe.FUSION_COOLING, FusionCoolingRecipeWrapper::new);
-            registry.addRecipeClickArea(GuiReactorHeat.class, 133, 84, 18, 30, Recipe.FUSION_COOLING.getJEICategory());
-            registry.addRecipeCatalyst(BlockStateReactor.ReactorBlockType.REACTOR_CONTROLLER.getStack(1), Recipe.FUSION_COOLING.getJEICategory());
-            registry.addRecipeCatalyst(BlockStateReactor.ReactorBlockType.REACTOR_PORT.getStack(1), Recipe.FUSION_COOLING.getJEICategory());
-        }
-    }
-
     /**
      * ADD END
      */

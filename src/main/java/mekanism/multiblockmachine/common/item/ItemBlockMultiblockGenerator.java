@@ -8,9 +8,11 @@ import mekanism.api.energy.IEnergizedItem;
 import mekanism.client.MekKeyHandler;
 import mekanism.client.MekanismClient;
 import mekanism.client.MekanismKeyHandler;
+import mekanism.common.Upgrade;
 import mekanism.common.base.ISustainedData;
 import mekanism.common.base.ISustainedInventory;
 import mekanism.common.base.ISustainedTank;
+import mekanism.common.base.IUpgradeTile;
 import mekanism.common.capabilities.ItemCapabilityWrapper;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.MekanismHooks;
@@ -50,6 +52,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Optional.InterfaceList({
@@ -122,8 +125,14 @@ public class ItemBlockMultiblockGenerator extends ItemBlock implements IEnergize
                     }
                 }
 
-                list.add(EnumColor.AQUA + LangUtils.localize("tooltip.inventory") + ": " + EnumColor.GREY +
-                        LangUtils.transYesNo(getInventory(itemstack) != null && getInventory(itemstack).tagCount() != 0));
+                list.add(EnumColor.AQUA + LangUtils.localize("tooltip.inventory") + ": " + EnumColor.GREY + LangUtils.transYesNo(getInventory(itemstack) != null && getInventory(itemstack).tagCount() != 0));
+
+                if (type.supportsUpgrades && ItemDataUtils.hasData(itemstack, "upgrades")) {
+                    Map<Upgrade, Integer> upgrades = Upgrade.buildMap(ItemDataUtils.getDataMap(itemstack));
+                    for (Map.Entry<Upgrade, Integer> entry : upgrades.entrySet()) {
+                        list.add(entry.getKey().getColor() + "- " + entry.getKey().getName() + (entry.getKey().canMultiply() ? ": " + EnumColor.GREY + "x" + entry.getValue() : ""));
+                    }
+                }
             } else {
                 list.addAll(MekanismUtils.splitTooltip(type.getDescription(), itemstack));
             }
@@ -192,6 +201,11 @@ public class ItemBlockMultiblockGenerator extends ItemBlock implements IEnergize
                 }
                 if (getOwnerUUID(stack) == null) {
                     security.getSecurity().setOwnerUUID(player.getUniqueID());
+                }
+            }
+            if (tileEntity instanceof IUpgradeTile) {
+                if (ItemDataUtils.hasData(stack, "upgrades")) {
+                    ((IUpgradeTile) tileEntity).getComponent().read(ItemDataUtils.getDataMap(stack));
                 }
             }
 

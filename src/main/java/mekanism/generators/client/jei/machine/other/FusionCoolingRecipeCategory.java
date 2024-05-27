@@ -1,4 +1,4 @@
-package mekanism.client.jei.machine.other;
+package mekanism.generators.client.jei.machine.other;
 
 import mekanism.client.gui.element.GuiProgress;
 import mekanism.client.gui.element.GuiProgress.ProgressBar;

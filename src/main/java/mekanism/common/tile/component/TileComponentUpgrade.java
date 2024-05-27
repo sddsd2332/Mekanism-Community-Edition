@@ -53,11 +53,12 @@ public class TileComponentUpgrade implements ITileComponent {
         isBack = isBackButton;
     }
 
-    public TileComponentUpgrade(TileEntityContainerBlock tile, int slot, Upgrade upgrade) {
+    public TileComponentUpgrade(TileEntityContainerBlock tile, int slot, Upgrade upgrade,boolean isBackButton) {
         tileEntity = tile;
         upgradeSlot = slot;
         setSupported(upgrade);
         tile.components.add(this);
+        isBack = isBackButton;
     }
 
 

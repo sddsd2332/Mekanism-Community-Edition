@@ -5,6 +5,7 @@ import mekanism.api.Coord4D;
 import mekanism.api.TileNetworkList;
 import mekanism.api.gas.*;
 import mekanism.common.FuelHandler;
+import mekanism.common.Upgrade;
 import mekanism.common.base.IAdvancedBoundingBlock;
 import mekanism.common.base.IComparatorSupport;
 import mekanism.common.base.ISustainedData;
@@ -43,9 +44,10 @@ public class TileEntityLargeGasGenerator extends TileEntityMultiblockGenerator i
     private int animation;
 
     public TileEntityLargeGasGenerator() {
-        super("gas", "LargeGasGenerator", MekanismConfig.current().general.FROM_H2.val() * 100 * 27, MekanismConfig.current().general.FROM_H2.val() * 2 * 27);
-        inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+        super("gas", "LargeGasGenerator", MekanismConfig.current().multiblock.LargeGasGeneratorStorage.val(), MekanismConfig.current().multiblock.LargeGasGeneratorStorage.val(), 2);
+        inventory = NonNullList.withSize(3, ItemStack.EMPTY);
         fuelTank = new GasTank(MAX_GAS);
+        upgradeComponent.setSupported(Upgrade.ENERGY);
     }
 
     @Override
@@ -81,12 +83,12 @@ public class TileEntityLargeGasGenerator extends TileEntityMultiblockGenerator i
                     generationRate = fuel.energyPerTick;
                 }
 
-                int toUse = getToUse();
-                output = Math.max(MekanismConfig.current().general.FROM_H2.val() * 2 * 27, generationRate * getToUse() * 2 * 27);
+                int toUse = getToUse() * Thread();
+                output = (Math.max(MekanismConfig.current().general.FROM_H2.val() * 2 * 27, generationRate * getToUse() * 2 * 27)) * Thread();
 
                 int total = burnTicks + fuelTank.getStored() * maxBurnTicks;
                 total -= toUse;
-                setEnergy(getEnergy() + generationRate * toUse);
+                setEnergy(getEnergy() + generationRate * toUse * Thread());
 
                 if (fuelTank.getStored() > 0) {
                     fuelTank.setGas(new GasStack(fuelTank.getGasType(), total / maxBurnTicks));
@@ -108,7 +110,7 @@ public class TileEntityLargeGasGenerator extends TileEntityMultiblockGenerator i
             if (MekanismUtils.canFunction(this)) {
                 CableUtils.emit(this, 3);
             }
-        }else if (getActive()) {
+        } else if (getActive()) {
             animation = animation % 10;
         }
     }
@@ -359,7 +361,11 @@ public class TileEntityLargeGasGenerator extends TileEntityMultiblockGenerator i
                         continue;
                     }
                     if (y != 2) {
-                        if (x == z || x == -z || x == 0 && z == -1) {
+                        if (x == z || x == -z ||
+                                facing == EnumFacing.NORTH && (x == 0 && z == -1) ||
+                                facing == EnumFacing.WEST && (z == 0 && x == -1) ||
+                                facing == EnumFacing.SOUTH && (x == 0 && z == 1) ||
+                                facing == EnumFacing.EAST && (z == 0 && x == 1)) {
                             MekanismUtils.makeBoundingBlock(world, getPos().add(x, y, z), Coord4D.get(this));
                         } else {
                             MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(x, y, z), Coord4D.get(this));

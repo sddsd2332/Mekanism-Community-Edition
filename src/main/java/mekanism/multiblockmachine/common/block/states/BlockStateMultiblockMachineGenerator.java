@@ -63,9 +63,9 @@ public class BlockStateMultiblockMachineGenerator extends ExtendedBlockState {
     }
 
     public enum MultiblockMachineGeneratorType implements IStringSerializable, IBlockType {
-        LARGE_WIND_GENERATOR(MultiblockMachineGeneratorBlock.MULTIBLOCK_MACHINE_GENERATOR_BLOCK_1, 0, "LargeWindGenerator", 0, 200000, TileEntityLargeWindGenerator::new, true, Plane.HORIZONTAL, false),
-        LARGE_HEAT_GENERATOR(MultiblockMachineGeneratorBlock.MULTIBLOCK_MACHINE_GENERATOR_BLOCK_1, 1, "LargeHeatGenerator", 1, 160000, TileEntityLargeHeatGenerator::new, true, Plane.HORIZONTAL, false),
-        LARGE_GAS_GENERATOR(MultiblockMachineGeneratorBlock.MULTIBLOCK_MACHINE_GENERATOR_BLOCK_1, 2, "LargeGasGenerator", 2, 160000, TileEntityLargeGasGenerator::new, true, Plane.HORIZONTAL, false);
+        LARGE_WIND_GENERATOR(MultiblockMachineGeneratorBlock.MULTIBLOCK_MACHINE_GENERATOR_BLOCK_1, 0, "LargeWindGenerator", 0, 200000, TileEntityLargeWindGenerator::new, true, Plane.HORIZONTAL, false,true),
+        LARGE_HEAT_GENERATOR(MultiblockMachineGeneratorBlock.MULTIBLOCK_MACHINE_GENERATOR_BLOCK_1, 1, "LargeHeatGenerator", 1, 160000, TileEntityLargeHeatGenerator::new, true, Plane.HORIZONTAL, false,true),
+        LARGE_GAS_GENERATOR(MultiblockMachineGeneratorBlock.MULTIBLOCK_MACHINE_GENERATOR_BLOCK_1, 2, "LargeGasGenerator", 2, 160000, TileEntityLargeGasGenerator::new, true, Plane.HORIZONTAL, false,true);
 
 
         public MultiblockMachineGeneratorBlock blockType;
@@ -78,14 +78,15 @@ public class BlockStateMultiblockMachineGenerator extends ExtendedBlockState {
         public Predicate<EnumFacing> facingPredicate;
         public boolean activable;
         public boolean hasRedstoneOutput;
+        public boolean supportsUpgrades;
 
         MultiblockMachineGeneratorType(MultiblockMachineGeneratorBlock block, int m, String name, int gui, double energy, Supplier<TileEntity> tileClass, boolean model, Predicate<EnumFacing> predicate,
-                                       boolean hasActiveTexture) {
-            this(block, m, name, gui, energy, tileClass, model, predicate, hasActiveTexture, false);
+                                       boolean hasActiveTexture,boolean upgrades) {
+            this(block, m, name, gui, energy, tileClass, model, predicate, hasActiveTexture, false, upgrades);
         }
 
         MultiblockMachineGeneratorType(MultiblockMachineGeneratorBlock block, int m, String name, int gui, double energy, Supplier<TileEntity> tileClass, boolean model, Predicate<EnumFacing> predicate,
-                                       boolean hasActiveTexture, boolean hasRedstoneOutput) {
+                                       boolean hasActiveTexture, boolean hasRedstoneOutput,boolean upgrades) {
             blockType = block;
             meta = m;
             blockName = name;
@@ -96,6 +97,7 @@ public class BlockStateMultiblockMachineGenerator extends ExtendedBlockState {
             facingPredicate = predicate;
             activable = hasActiveTexture;
             this.hasRedstoneOutput = hasRedstoneOutput;
+            supportsUpgrades = upgrades;
         }
 
         private static final List<MultiblockMachineGeneratorType> GENERATORS_FOR_CONFIG  = new ArrayList<>();

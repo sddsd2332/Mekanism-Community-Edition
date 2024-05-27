@@ -87,7 +87,8 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
                 setActive(false);
             }
             prevEnergy = getEnergy();
-            handleTank(centerTank, getTankside());
+            handleTank(centerTank, getLeftTankside());
+            handleTank(centerTank, getRightTankside());
             int newRedstoneLevel = getRedstoneLevel();
             if (newRedstoneLevel != currentRedstoneLevel) {
                 world.updateComparatorOutputLevel(pos, getBlockType());
@@ -105,13 +106,18 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
         }
     }
 
-    private TileEntity getTankside() {
+    private TileEntity getLeftTankside() {
         BlockPos pos = getPos().offset(facing).offset(MekanismUtils.getLeft(facing));
-        BlockPos pos2 = getPos().offset(facing).offset(MekanismUtils.getRight(facing));
         if (world.getTileEntity(pos) != null) {
             return world.getTileEntity(pos);
-        }else if (world.getTileEntity(pos2) != null) {
-            return world.getTileEntity(pos2);
+        }
+        return null;
+    }
+
+    private TileEntity getRightTankside() {
+        BlockPos pos = getPos().offset(facing).offset(MekanismUtils.getRight(facing));
+        if (world.getTileEntity(pos) != null) {
+            return world.getTileEntity(pos);
         }
         return null;
     }
@@ -208,16 +214,6 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
         nbtTags.setInteger("numPowering", numPowering);
     }
 
-    public GasTank getTank(EnumFacing side) {
-        if (side == MekanismUtils.getLeft(facing)) {
-            return leftTank;
-        } else if (side == MekanismUtils.getRight(facing)) {
-            return rightTank;
-        } else if (side == facing) {
-            return centerTank;
-        }
-        return null;
-    }
 
     @Nonnull
     @Override
@@ -227,18 +223,28 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
 
     @Override
     public boolean canReceiveGas(EnumFacing side, Gas type) {
-        return getTank(side) != null && getTank(side) != centerTank && getTank(side).canReceive(type) && side != facing;
+        if (side == MekanismUtils.getBack(facing) || side == MekanismUtils.getLeft(facing) || side == MekanismUtils.getRight(facing)) {
+            return leftTank.canReceive(type) || rightTank.canReceive(type);
+        }
+        return false;
     }
 
     @Override
     public boolean canDrawGas(EnumFacing side, Gas type) {
-        return getTank(side) != null && getTank(side) == centerTank && getTank(side).canDraw(type) && side == facing;
+        return centerTank.canDraw(type) && side == facing;
     }
 
     @Override
     public int receiveGas(EnumFacing side, GasStack stack, boolean doTransfer) {
         if (canReceiveGas(side, stack != null ? stack.getGas() : null)) {
-            return getTank(side).receive(stack, doTransfer);
+            if (stack != null && (side == MekanismUtils.getBack(facing) || side == MekanismUtils.getLeft(facing) || side == MekanismUtils.getRight(facing))) {
+                if (leftTank.canReceive(stack.getGas()) && rightTank.getGasType() != stack.getGas()) {
+                    return leftTank.receive(stack, doTransfer);
+                }
+                if (rightTank.canReceive(stack.getGas()) && leftTank.getGasType() != stack.getGas()) {
+                    return rightTank.receive(stack, doTransfer);
+                }
+            }
         }
         return 0;
     }
@@ -539,7 +545,7 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
     public boolean isCapabilityDisabled(@Nonnull Capability<?> capability, EnumFacing side) {
         if (capability == Capabilities.GAS_HANDLER_CAPABILITY) {
             return true;
-        }else if (isStrictEnergy(capability) || capability == CapabilityEnergy.ENERGY || isTesla(capability, side)) {
+        } else if (isStrictEnergy(capability) || capability == CapabilityEnergy.ENERGY || isTesla(capability, side)) {
             return true;
         }
         return super.isCapabilityDisabled(capability, side);
