@@ -186,7 +186,6 @@ public class BlockStateMultiblockMachineGenerator extends ExtendedBlockState {
             BlockMultiblockMachineGenerator block = (BlockMultiblockMachineGenerator) state.getBlock();
             MultiblockMachineGeneratorType type = state.getValue(block.getTypeProperty());
             StringBuilder builder = new StringBuilder();
-            String nameOverride = null;
 
             if (type.hasActiveTexture()) {
                 builder.append(activeProperty.getName());
@@ -210,7 +209,7 @@ public class BlockStateMultiblockMachineGenerator extends ExtendedBlockState {
             if (builder.length() == 0) {
                 builder.append("normal");
             }
-            ResourceLocation baseLocation = new ResourceLocation(MekanismMultiblockMachine.MODID, nameOverride != null ? nameOverride : type.getName());
+            ResourceLocation baseLocation = new ResourceLocation(MekanismMultiblockMachine.MODID,  type.getName());
             return new ModelResourceLocation(baseLocation, builder.toString());
         }
     }

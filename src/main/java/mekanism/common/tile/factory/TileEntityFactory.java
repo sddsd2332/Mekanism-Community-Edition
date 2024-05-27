@@ -131,8 +131,8 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         configComponent.setInputConfig(TransmissionType.FLUID);
 
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.NONE, InventoryUtils.EMPTY));
-        configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.INPUT, new int[]{0}));
-        configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.OUTPUT, new int[]{1}));
+        configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.INPUT, new int[]{1}));
+        configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.OUTPUT, new int[]{2}));
         configComponent.setConfig(TransmissionType.GAS, new byte[]{1, 1, 1, 1, 1, 2});
 
         configComponent.setInputConfig(TransmissionType.ENERGY);
@@ -1235,7 +1235,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
 
     @Override
     public boolean canReceiveGas(EnumFacing side, Gas type) {
-        if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0)) {
+        if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1) && gasTank.canReceive(type)) {
             if (recipeType.getFuelType() == MachineFuelType.ADVANCED || recipeType.getFuelType() == MachineFuelType.FARM) {
                 return recipeType.canReceiveGas(side, type);
             } else if (recipeType == RecipeType.Crystallizer) {
@@ -1254,7 +1254,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
 
     @Override
     public boolean canDrawGas(EnumFacing side, Gas type) {
-        return configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1) && gasOutTank.canDraw(type);
+        return configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(2) && gasOutTank.canDraw(type);
     }
 
     @Nonnull

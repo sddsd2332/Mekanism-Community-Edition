@@ -216,6 +216,7 @@ public class ModelLargeElectrolyticSeparator extends ModelBase {
             GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
             manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "ElectrolyticSeparator/ElectrolyticSeparator_Screen_ON_" + getTick(tick) + ".png"));
             doRender(size);  //渲染屏幕
+            GlStateManager.translate(0F, 0F, -0.0002F);
             if (fluidTank > 0) {
                 manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "ElectrolyticSeparator/Fluid/FluidTank_" + getNumberTanks(fluidTank) + ".png"));
                 doRender(size);//渲染屏幕上的流体数量
@@ -267,8 +268,10 @@ public class ModelLargeElectrolyticSeparator extends ModelBase {
             return 7;
         } else if (number >= 0.9F && number < 1F) {
             return 8;
+        }else if (number>=1F){
+            return 9;
         }
-        return 9;
+        return 0;
     }
 
     public int getTick(double tick) {
@@ -282,10 +285,4 @@ public class ModelLargeElectrolyticSeparator extends ModelBase {
             return 3;
     }
 
-    public int getScreenTick(double tick) {
-        if (tick >= 0.2F && tick < 0.3F || tick >= 0.4F && tick < 0.5F || tick >= 0.6F && tick < 0.7F || tick >= 0.8F && tick < 0.9F) {
-            return 1;
-        }
-        return 0;
-    }
 }

@@ -34,6 +34,8 @@ public class MultiblockMachineConfig extends BaseConfig {
 
     public final BooleanOption largewindGenerationDamage = new BooleanOption(this,"multiblock","largewindGenerationDamage",false,"Whether or not the organism causes harm when it is inside the leaf while it is working");
 
+    public final BooleanOption largewindGenerationRangeStops = new BooleanOption(this,"multiblock","largewindGenerationRangeStops",true,"Centered on the main body, it detects whether there is an identical wind turbine within a range of 50*50, and stops working if there is");
+
     public final DoubleOption largeHeatGeneratorStorage = new DoubleOption(this, "multiblock",
             "MultiblockHeatGeneratorStorage", 4320000D, "Energy capable of being stored");
 
@@ -50,9 +52,14 @@ public class MultiblockMachineConfig extends BaseConfig {
             MultiblockMachineGeneratorType::getGeneratorsForConfig, MultiblockMachineGeneratorType::getBlockName);
 
 
-    public final DoubleOption largeelectrolyticSeparator = new DoubleOption(this, "multiblock", "largeeElectrolyticSeparatorStorage", 160000D * 27,
+    public final DoubleOption largelectrolyticSeparator = new DoubleOption(this, "multiblock", "largeElectrolyticSeparatorStorage", 160000D * 27,
             "Base energy storage (Joules).");
 
+    public final DoubleOption largechemicalInfuserUsage = new DoubleOption(this, "multiblock", "largeChemicalInfuserUsage", 200D,
+            "Energy per operation tick (Joules).");
+
+    public final DoubleOption largechemicalInfuserStorage = new DoubleOption(this, "multiblock", "ChemicalInfuserStorage", 80000D * 27,
+            "Base energy storage (Joules).");
 
     public final TypeConfigManager<MultiblockMachineType> multiblockmachinesManager = new TypeConfigManager<>(this, "multiblockmachines", MultiblockMachineType.class,MultiblockMachineType::getValidMachines,MultiblockMachineType::getBlockName);
 

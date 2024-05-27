@@ -72,10 +72,13 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
             if (isBlacklistDimension) {
                 return;
             }
-            RangeStops();
+
             if (ticker % 20 == 0) {
                 currentMultiplier = getMultiplier();
                 setActive(MekanismUtils.canFunction(this) && currentMultiplier > 0 && !machineStop && !machineStop2);
+                if (MekanismConfig.current().multiblock.largewindGenerationRangeStops.val()) {
+                    RangeStops();
+                }
             }
             if (getActive()) {
                 setEnergy(electricityStored.get() + (MekanismConfig.current().multiblock.largewindGenerationMin.val() * currentMultiplier));
@@ -123,7 +126,7 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
             int type = dataStream.readInt();
             if (type == 1) {
                 machineStop = !machineStop;
-            }else if (type == 2){
+            } else if (type == 2) {
                 machineStop2 = !machineStop2;
             }
         }

@@ -8,9 +8,11 @@ import mekanism.common.util.LangUtils;
 import mekanism.multiblockmachine.common.MekanismMultiblockMachine;
 import mekanism.multiblockmachine.common.MultiblockMachineBlocks;
 import mekanism.multiblockmachine.common.block.BlockMultiblockMachine;
+import mekanism.multiblockmachine.common.tile.machine.TileEntityLargeChemicalInfuser;
 import mekanism.multiblockmachine.common.tile.machine.TileEntityLargeElectrolyticSeparator;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -33,10 +35,10 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class BlockStateMultiblockMachine extends ExtendedBlockState {
-
+    public static final PropertyBool activeProperty = PropertyBool.create("active");
 
     public BlockStateMultiblockMachine(BlockMultiblockMachine block, PropertyEnum<?> typeProperty) {
-        super(block, new IProperty[]{BlockStateFacing.facingProperty, typeProperty}, new IUnlistedProperty[]{});
+        super(block, new IProperty[]{BlockStateFacing.facingProperty, typeProperty,activeProperty}, new IUnlistedProperty[]{});
     }
 
     public enum MultiblockMachineBlock {
@@ -59,7 +61,8 @@ public class BlockStateMultiblockMachine extends ExtendedBlockState {
     }
 
     public enum MultiblockMachineType implements IStringSerializable, IBlockType {
-        LARGE_ELECTROLYTIC_SEPARATOR(MultiblockMachineBlock.MULTI_BLOCK_MACHINE_BLOCK_1, 0, "ElectrolyticSeparator", 3, TileEntityLargeElectrolyticSeparator::new, true, true, false, Plane.HORIZONTAL);
+        LARGE_ELECTROLYTIC_SEPARATOR(MultiblockMachineBlock.MULTI_BLOCK_MACHINE_BLOCK_1, 0, "LargeElectrolyticSeparator", 3, TileEntityLargeElectrolyticSeparator::new, true, true, true, Plane.HORIZONTAL,false),
+        LARGE_CHEMICAL_INFUSER(MultiblockMachineBlock.MULTI_BLOCK_MACHINE_BLOCK_1, 1,"LargeChemicalInfuser",4, TileEntityLargeChemicalInfuser::new,true,true,true, Plane.HORIZONTAL,false);
 
         public MultiblockMachineBlock typeBlock;
         public int meta;
@@ -70,8 +73,9 @@ public class BlockStateMultiblockMachine extends ExtendedBlockState {
         public boolean hasModel;
         public boolean supportsUpgrades;
         public Predicate<EnumFacing> facingPredicate;
+        public boolean activable;
 
-        MultiblockMachineType(MultiblockMachineBlock block, int m, String name, int gui, Supplier<TileEntity> tileClass, boolean electric, boolean model, boolean upgrades, Predicate<EnumFacing> predicate) {
+        MultiblockMachineType(MultiblockMachineBlock block, int m, String name, int gui, Supplier<TileEntity> tileClass, boolean electric, boolean model, boolean upgrades, Predicate<EnumFacing> predicate,boolean hasActiveTexture) {
             typeBlock = block;
             meta = m;
             blockName = name;
@@ -81,7 +85,7 @@ public class BlockStateMultiblockMachine extends ExtendedBlockState {
             hasModel = model;
             supportsUpgrades = upgrades;
             facingPredicate = predicate;
-
+            activable = hasActiveTexture;
         }
 
         private static final List<MultiblockMachineType> VALID_MACHINES = new ArrayList<>();
@@ -136,14 +140,15 @@ public class BlockStateMultiblockMachine extends ExtendedBlockState {
         public double getUsage() {
             return switch (this) {
                 case LARGE_ELECTROLYTIC_SEPARATOR -> MekanismConfig.current().general.FROM_H2.val() * 2;
+                case LARGE_CHEMICAL_INFUSER -> MekanismConfig.current().multiblock.largechemicalInfuserUsage.val();
                 default -> 0;
             };
         }
 
         private double getConfigStorage() {
             return switch (this) {
-                case LARGE_ELECTROLYTIC_SEPARATOR ->
-                        MekanismConfig.current().multiblock.largeelectrolyticSeparator.val();
+                case LARGE_ELECTROLYTIC_SEPARATOR -> MekanismConfig.current().multiblock.largelectrolyticSeparator.val();
+                case LARGE_CHEMICAL_INFUSER -> MekanismConfig.current().multiblock.largechemicalInfuserStorage.val();
                 default -> 400 * getUsage();
             };
         }
@@ -157,7 +162,7 @@ public class BlockStateMultiblockMachine extends ExtendedBlockState {
         }
 
         public ItemStack getStack() {
-            return new ItemStack(typeBlock.getBlock(), 1, meta);
+            return new ItemStack(MultiblockMachineBlocks.MultiblockMachine, 1, meta);
         }
 
         @Override
@@ -178,6 +183,9 @@ public class BlockStateMultiblockMachine extends ExtendedBlockState {
             return !facingPredicate.equals(BlockStateUtils.NO_ROTATION);
         }
 
+        public boolean hasActiveTexture() {
+            return activable;
+        }
     }
 
     public static class MultiblockMachineBlockStateMapper extends StateMapperBase {
@@ -188,7 +196,12 @@ public class BlockStateMultiblockMachine extends ExtendedBlockState {
             BlockMultiblockMachine block = (BlockMultiblockMachine) state.getBlock();
             MultiblockMachineType type = state.getValue(block.getTypeProperty());
             StringBuilder builder = new StringBuilder();
-            String nameOverride = null;
+
+            if (type.hasActiveTexture()) {
+                builder.append(activeProperty.getName());
+                builder.append("=");
+                builder.append(state.getValue(activeProperty));
+            }
 
             if (type.hasRotations()) {
                 EnumFacing facing = state.getValue(BlockStateFacing.facingProperty);
@@ -206,7 +219,7 @@ public class BlockStateMultiblockMachine extends ExtendedBlockState {
             if (builder.length() == 0) {
                 builder.append("normal");
             }
-            ResourceLocation baseLocation = new ModelResourceLocation(MekanismMultiblockMachine.MODID,nameOverride != null ? nameOverride : type.getName());
+            ResourceLocation baseLocation = new ResourceLocation(MekanismMultiblockMachine.MODID,  type.getName());
             return new ModelResourceLocation(baseLocation, builder.toString());
         }
     }

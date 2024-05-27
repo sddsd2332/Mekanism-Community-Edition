@@ -19,5 +19,6 @@ public class MultiblockMachineJEI implements IModPlugin {
     @Override
     public void register(IModRegistry registry) {
         MultiblockRecipeRegistryHelper.registerLargeSeparator(registry);
+        MultiblockRecipeRegistryHelper.registerLargeChemicalInfuser(registry);
     }
 }

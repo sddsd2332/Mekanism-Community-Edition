@@ -29,6 +29,8 @@ public class RenderMultiblockMachineItem extends SubTypeItemRenderer<MultiblockM
         if (type != null) {
             if (type == MultiblockMachineType.LARGE_ELECTROLYTIC_SEPARATOR) {
                 RenderLargeElectrolyticSeparatorItem.renderStack(stack, transformType);
+            }else if (type == MultiblockMachineType.LARGE_CHEMICAL_INFUSER){
+                RenderLargeChemicalInfuserItem.renderStack(stack,transformType);
             }
         }
     }

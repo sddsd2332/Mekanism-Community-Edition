@@ -27,7 +27,7 @@ public class RenderLargeElectrolyticSeparatorItem {
         }
         GlStateManager.translate(0, 0, 0);
         MekanismRenderer.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE,"ElectrolyticSeparator/ElectrolyticSeparator.png"));
-        model.render(0,0.02F, false, Minecraft.getMinecraft().renderEngine,0,0,0);
+        model.render(0,0.022F, false, Minecraft.getMinecraft().renderEngine,0,0,0);
         GlStateManager.popMatrix();
     }
 }

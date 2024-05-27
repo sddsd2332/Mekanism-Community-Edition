@@ -1,16 +1,14 @@
 package mekanism.multiblockmachine.common.tile.machine;
 
 import io.netty.buffer.ByteBuf;
+import mekanism.api.Coord4D;
 import mekanism.api.TileNetworkList;
 import mekanism.api.gas.*;
 import mekanism.common.Mekanism;
 import mekanism.common.MekanismFluids;
 import mekanism.common.Upgrade;
 import mekanism.common.Upgrade.IUpgradeInfoHandler;
-import mekanism.common.base.FluidHandlerWrapper;
-import mekanism.common.base.IFluidHandlerWrapper;
-import mekanism.common.base.ISustainedData;
-import mekanism.common.base.ITankManager;
+import mekanism.common.base.*;
 import mekanism.common.block.states.BlockStateMachine;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.config.MekanismConfig;
@@ -25,29 +23,34 @@ import mekanism.common.util.*;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
 public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBasicMachine<FluidInput, ChemicalPairOutput, SeparatorRecipe>
-        implements IFluidHandlerWrapper, ISustainedData, IGasHandler, IUpgradeInfoHandler, ITankManager {
+        implements IFluidHandlerWrapper, ISustainedData, IGasHandler, IUpgradeInfoHandler, ITankManager, IAdvancedBoundingBlock {
 
     private static final String[] methods = new String[]{"getEnergy", "getOutput", "getMaxEnergy", "getEnergyNeeded", "getWater", "getWaterNeeded", "getHydrogen",
             "getHydrogenNeeded", "getOxygen", "getOxygenNeeded"};
 
     public FluidTank fluidTank = new FluidTankSync(FluidTankTier.ULTIMATE.getStorage());
-
-    public int MAX_GAS = 2400;
 
     public GasTank leftTank = new GasTank(GasTankTier.ULTIMATE.getStorage());
 
@@ -64,10 +67,11 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
     private int currentRedstoneLevel;
     public int updateDelay;
     public boolean needsPacket;
+    public int numPowering;
 
     public TileEntityLargeElectrolyticSeparator() {
-        super("electrolyticseparator", BlockStateMultiblockMachine.MultiblockMachineType.LARGE_ELECTROLYTIC_SEPARATOR,  1,4);
-        inventory = NonNullListSynchronized.withSize(5, ItemStack.EMPTY);
+        super("electrolyticseparator", BlockStateMultiblockMachine.MultiblockMachineType.LARGE_ELECTROLYTIC_SEPARATOR, 1, 4);
+        inventory = NonNullList.withSize(5, ItemStack.EMPTY);
     }
 
     @Override
@@ -112,7 +116,7 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
                 }
                 operatingTicks++;
                 if (operatingTicks >= ticksRequired) {
-                    for (int i = 0; i < thread; i++) {
+                    for (int i = 0; i <= thread; i++) {
                         operate(recipe);
                     }
                     operatingTicks = 0;
@@ -124,8 +128,8 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
                 setActive(false);
             }
             int dumpAmount = 8 * Math.min((int) Math.pow(2, upgradeComponent.getUpgrades(Upgrade.SPEED)), MekanismConfig.current().mekce.MAXspeedmachines.val());
-            handleTank(leftTank, dumpLeft, dumpAmount);
-            handleTank(rightTank, dumpRight, dumpAmount);
+            handleTank(leftTank, dumpLeft, getLeftTankside(), dumpAmount);
+            handleTank(rightTank, dumpRight, getRightTankside(), dumpAmount);
             prevEnergy = getEnergy();
 
             int newRedstoneLevel = getRedstoneLevel();
@@ -137,8 +141,7 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
                 Mekanism.packetHandler.sendUpdatePacket(this);
             }
             needsPacket = false;
-        }
-        else if (updateDelay > 0) {
+        } else if (updateDelay > 0) {
             updateDelay--;
             if (updateDelay == 0) {
                 MekanismUtils.updateBlock(world, getPos());
@@ -146,9 +149,28 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
         }
     }
 
-    private void handleTank(GasTank tank, GasMode mode, int dumpAmount) {
+    private TileEntity getLeftTankside() {
+        BlockPos pos = getPos().offset(facing).offset(MekanismUtils.getLeft(facing));
+        if (world.getTileEntity(pos) != null) {
+            return world.getTileEntity(pos);
+        }
+        return null;
+    }
+
+    private TileEntity getRightTankside() {
+        BlockPos pos = getPos().offset(facing).offset(MekanismUtils.getRight(facing));
+        if (world.getTileEntity(pos) != null) {
+            return world.getTileEntity(pos);
+        }
+        return null;
+    }
+
+    private void handleTank(GasTank tank, GasMode mode, TileEntity tile, int dumpAmount) {
         if (tank.getGas() != null) {
-            if (mode == GasMode.DUMPING) {
+            if (mode != GasMode.DUMPING) {
+                GasStack toSend = new GasStack(tank.getGas().getGas(), Math.min(tank.getStored(), output));
+                tank.draw(GasUtils.emit(toSend, tile, EnumSet.of(facing)), true);
+            } else {
                 tank.draw(dumpAmount, true);
             }
             if (mode == GasMode.DUMPING_EXCESS && tank.getNeeded() < output) {
@@ -254,7 +276,8 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
             dumpLeft = GasMode.values()[dataStream.readInt()];
             dumpRight = GasMode.values()[dataStream.readInt()];
             clientEnergyUsed = dataStream.readDouble();
-            if(updateDelay == 0){
+            numPowering = dataStream.readInt();
+            if (updateDelay == 0) {
                 updateDelay = MekanismConfig.current().general.UPDATE_DELAY.val();
                 MekanismUtils.updateBlock(world, getPos());
             }
@@ -270,6 +293,7 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
         data.add(dumpLeft.ordinal());
         data.add(dumpRight.ordinal());
         data.add(clientEnergyUsed);
+        data.add(numPowering);
         return data;
     }
 
@@ -283,6 +307,7 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
         rightTank.read(nbtTags.getCompoundTag("rightTank"));
         dumpLeft = GasMode.values()[nbtTags.getInteger("dumpLeft")];
         dumpRight = GasMode.values()[nbtTags.getInteger("dumpRight")];
+        numPowering = nbtTags.getInteger("numPowering");
     }
 
     @Override
@@ -295,7 +320,7 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
         nbtTags.setTag("rightTank", rightTank.write(new NBTTagCompound()));
         nbtTags.setInteger("dumpLeft", dumpLeft.ordinal());
         nbtTags.setInteger("dumpRight", dumpRight.ordinal());
-
+        nbtTags.setInteger("numPowering", numPowering);
     }
 
     @Override
@@ -450,11 +475,6 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
     @Nonnull
     @Override
     public int[] getSlotsForFace(@Nonnull EnumFacing side) {
-        if (side == MekanismUtils.getRight(facing)) {
-            return new int[]{3};
-        } else if (side == facing || side == facing.getOpposite()) {
-            return new int[]{1, 2};
-        }
         return InventoryUtils.EMPTY;
     }
 
@@ -464,7 +484,7 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
     }
 
     public double getScaledLeftTankGasLevel() {
-        return (double) leftTank.getStored()/ leftTank.getMaxGas();
+        return (double) leftTank.getStored() / leftTank.getMaxGas();
     }
 
     public double getScaledRightTankGasLevel() {
@@ -472,6 +492,214 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
     }
 
     public double getScaledFluidTankLevel() {
-        return (double) fluidTank.getFluidAmount()/ fluidTank.getCapacity();
+        return (double) fluidTank.getFluidAmount() / fluidTank.getCapacity();
+    }
+
+    @Override
+    public boolean isPowered() {
+        return redstone || numPowering > 0;
+    }
+
+
+    @Override
+    public boolean canBoundReceiveEnergy(BlockPos coord, EnumFacing side) {
+        EnumFacing back = MekanismUtils.getBack(facing);
+        if (coord.equals(getPos().offset(back))) {
+            return side == back;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean canBoundOutPutEnergy(BlockPos location, EnumFacing side) {
+        return false;
+    }
+
+
+    @Override
+    public boolean sideIsConsumer(EnumFacing side) {
+        return side == MekanismUtils.getBack(facing);
+    }
+
+    @Override
+    public void onPower() {
+        numPowering++;
+    }
+
+    @Override
+    public void onNoPower() {
+        numPowering--;
+    }
+
+    @Override
+    public NBTTagCompound getConfigurationData(NBTTagCompound nbtTags) {
+        return nbtTags;
+    }
+
+    @Override
+    public void setConfigurationData(NBTTagCompound nbtTags) {
+
+    }
+
+    @Override
+    public String getDataType() {
+        return getBlockType().getTranslationKey() + "." + fullName + ".name";
+    }
+
+    @Override
+    public void onPlace() {
+        for (int y = 0; y <= 1; y++) {
+            for (int x = -1; x <= 1; x++) {
+                for (int z = -1; z <= 1; z++) {
+                    if (x == 0 && y == 0 && z == 0) {
+                        continue;
+                    }
+                    BlockPos pos1 = getPos().add(x, y, z);
+                    if (y == 0) {
+                        MekanismUtils.makeAdvancedBoundingBlock(world, pos1, Coord4D.get(this));
+                    } else {
+                        MekanismUtils.makeBoundingBlock(world, pos1, Coord4D.get(this));
+                    }
+                    world.notifyNeighborsOfStateChange(pos1, getBlockType(), true);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onBreak() {
+        for (int y = 0; y <= 1; y++) {
+            for (int x = -1; x <= 1; x++) {
+                for (int z = -1; z <= 1; z++) {
+                    world.setBlockToAir(getPos().add(x, y, z));
+                }
+            }
+        }
+    }
+
+
+    @Override
+    public boolean hasOffsetCapability(@NotNull Capability<?> capability, @Nullable EnumFacing side, @NotNull Vec3i offset) {
+        if (isOffsetCapabilityDisabled(capability, side, offset)) {
+            return false;
+        }
+        if (capability == Capabilities.GAS_HANDLER_CAPABILITY) {
+            return true;
+        } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            return true;
+        } else if (isStrictEnergy(capability) || capability == CapabilityEnergy.ENERGY || isTesla(capability, side)) {
+            return true;
+        }
+        return hasCapability(capability, side);
+    }
+
+    @Nullable
+    @Override
+    public <T> T getOffsetCapability(@NotNull Capability<T> capability, @Nullable EnumFacing side, @NotNull Vec3i offset) {
+        if (isOffsetCapabilityDisabled(capability, side, offset)) {
+            return null;
+        } else if (capability == Capabilities.GAS_HANDLER_CAPABILITY) {
+            return Capabilities.GAS_HANDLER_CAPABILITY.cast(this);
+        } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(new FluidHandlerWrapper(this, side));
+        } else if (isStrictEnergy(capability)) {
+            return (T) this;
+        } else if (isTesla(capability, side)) {
+            return (T) getTeslaEnergyWrapper(side);
+        } else if (capability == CapabilityEnergy.ENERGY) {
+            return CapabilityEnergy.ENERGY.cast(getForgeEnergyWrapper(side));
+        }
+        return getCapability(capability, side);
+    }
+
+    @Override
+    public boolean isOffsetCapabilityDisabled(@Nonnull Capability<?> capability, EnumFacing side, @Nonnull Vec3i offset) {
+        EnumFacing back = facing.getOpposite();
+        EnumFacing left = MekanismUtils.getLeft(facing);
+        EnumFacing right = MekanismUtils.getRight(facing);
+        if (capability == Capabilities.GAS_HANDLER_CAPABILITY) {
+            if (facing == EnumFacing.EAST) {
+                if (offset.equals(new Vec3i(1, 0, 1))) {
+                    return side != facing;
+                }
+                if (offset.equals(new Vec3i(1, 0, -1))) {
+                    return side != facing;
+                }
+            } else if (facing == EnumFacing.SOUTH) {
+                if (offset.equals(new Vec3i(-1, 0, 1))) {
+                    return side != facing;
+                }
+                if (offset.equals(new Vec3i(1, 0, 1))) {
+                    return side != facing;
+                }
+            } else if (facing == EnumFacing.WEST) {
+                if (offset.equals(new Vec3i(-1, 0, 1))) {
+                    return side != facing;
+                }
+                if (offset.equals(new Vec3i(-1, 0, -1))) {
+                    return side != facing;
+                }
+            } else if (facing == EnumFacing.NORTH) {
+                if (offset.equals(new Vec3i(-1, 0, -1))) {
+                    return side != facing;
+                }
+                if (offset.equals(new Vec3i(1, 0, -1))) {
+                    return side != facing;
+                }
+            }
+            return true;
+        }
+        if (isStrictEnergy(capability) || capability == CapabilityEnergy.ENERGY || isTesla(capability, side)) {
+            if (offset.equals(new Vec3i(back.getXOffset(), 0, back.getZOffset()))) {
+                return side != back;
+            }
+            return true;
+        }
+
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            if (facing == EnumFacing.EAST) {
+                if (offset.equals(new Vec3i(-1, 0, 1))) {
+                    return side != left && side != back;
+                }
+                if (offset.equals(new Vec3i(-1, 0, -1))) {
+                    return side != right && side != back;
+                }
+            } else if (facing == EnumFacing.SOUTH) {
+                if (offset.equals(new Vec3i(1, 0, -1))) {
+                    return side != right && side != back;
+                }
+                if (offset.equals(new Vec3i(-1, 0, -1))) {
+                    return side != left && side != back;
+                }
+            } else if (facing == EnumFacing.WEST) {
+                if (offset.equals(new Vec3i(1, 0, -1))) {
+                    return side != left && side != back;
+                }
+                if (offset.equals(new Vec3i(1, 0, 1))) {
+                    return side != right && side != back;
+                }
+            } else if (facing == EnumFacing.NORTH) {
+                if (offset.equals(new Vec3i(1, 0, 1))) {
+                    return side != left && side != back;
+                }
+                if (offset.equals(new Vec3i(-1, 0, 1))) {
+                    return side != right && side != back;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isCapabilityDisabled(@Nonnull Capability<?> capability, EnumFacing side) {
+        if (capability == Capabilities.GAS_HANDLER_CAPABILITY) {
+            return true;
+        } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            return true;
+        } else if (isStrictEnergy(capability) || capability == CapabilityEnergy.ENERGY || isTesla(capability, side)) {
+            return true;
+        }
+        return super.isCapabilityDisabled(capability, side);
     }
 }
