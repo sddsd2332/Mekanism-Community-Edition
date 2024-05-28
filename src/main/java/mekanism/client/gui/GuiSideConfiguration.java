@@ -91,7 +91,6 @@ public class GuiSideConfiguration extends GuiMekanismTile<TileEntityContainerBlo
             sideDataButtons.add(button);
         }
         buttonList.add(clearButton = new GuiDisableableButton(buttonID++, guiLeft + 136, guiTop + 95, 14).with(GuiDisableableButton.ImageOverlay.CLEAR_SIDES));
-        updateEnabledButtons();
     }
 
     @Override
@@ -214,10 +213,7 @@ public class GuiSideConfiguration extends GuiMekanismTile<TileEntityContainerBlo
                 break;
             }
         }
-        backButton.enabled = configurable.getConfig().getBackButton();
-        backButton.visible = configurable.getConfig().getBackButton();
     }
-
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int button) throws IOException {

@@ -83,7 +83,7 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
                 setActive(MekanismUtils.canFunction(this) && currentMultiplier > 0 && !machineStop && !machineStop2);
             }
             if (getActive()) {
-                setEnergy(electricityStored + (MekanismConfig.current().multiblock.largewindGenerationMin.val() * currentMultiplier));
+                setEnergy(electricityStored.get() + (MekanismConfig.current().multiblock.largewindGenerationMin.val() * currentMultiplier));
                 if (MekanismConfig.current().multiblock.largewindGenerationDamage.val()) {
                     kill();
                 }
@@ -204,7 +204,7 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
             case 0 -> new Object[]{electricityStored};
             case 1 -> new Object[]{output};
             case 2 -> new Object[]{BASE_MAX_ENERGY};
-            case 3 -> new Object[]{BASE_MAX_ENERGY - electricityStored};
+            case 3 -> new Object[]{BASE_MAX_ENERGY - electricityStored.get()};
             case 4 -> new Object[]{getMultiplier()};
             default -> throw new NoSuchMethodException();
         };
@@ -212,7 +212,7 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
 
     @Override
     public boolean canOperate() {
-        return electricityStored < BASE_MAX_ENERGY && getMultiplier() > 0 && MekanismUtils.canFunction(this);
+        return electricityStored.get() < BASE_MAX_ENERGY && getMultiplier() > 0 && MekanismUtils.canFunction(this);
     }
 
     @Override
