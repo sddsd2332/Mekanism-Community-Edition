@@ -230,12 +230,6 @@ public class TileEntityChemicalCrystallizer extends TileEntityUpgradeableMachine
         return false;
     }
 
-    @Nonnull
-    @Override
-    public int[] getSlotsForFace(@Nonnull EnumFacing side) {
-        return configComponent.getOutput(TransmissionType.ITEM, side, facing).availableSlots;
-    }
-
     @Override
     public TileComponentConfig getConfig() {
         return configComponent;

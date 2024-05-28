@@ -30,7 +30,7 @@ public class TileComponentConfig implements ITileComponent {
     private Map<TransmissionType, ArrayList<SideData>> sideOutputs = new EnumMap<>(TransmissionType.class);
     private Map<TransmissionType, Boolean> ejecting = new EnumMap<>(TransmissionType.class);
     private Map<TransmissionType, Boolean> canEject = new EnumMap<>(TransmissionType.class);
-
+    private boolean isBack;
     public TileComponentConfig(TileEntityContainerBlock tile, TransmissionType... types) {
         tileEntity = tile;
         for (TransmissionType type : types) {
@@ -246,5 +246,13 @@ public class TileComponentConfig implements ITileComponent {
     public void setEjecting(TransmissionType type, boolean eject) {
         ejecting.put(type, eject);
         MekanismUtils.saveChunk(tileEntity);
+    }
+
+    public boolean setBackButton(boolean back) {
+        return isBack = back;
+    }
+
+    public boolean getBackButton() {
+        return isBack;
     }
 }

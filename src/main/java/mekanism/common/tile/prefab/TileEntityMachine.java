@@ -28,21 +28,22 @@ public abstract class TileEntityMachine extends TileEntityEffectsBlock implement
     public double BASE_ENERGY_PER_TICK;
 
     public double energyPerTick;
-
+    public TileComponentUpgrade upgradeComponent;
+    public TileComponentSecurity securityComponent = new TileComponentSecurity(this);
     /**
      * This machine's current RedstoneControl type.
      */
     private RedstoneControl controlType = RedstoneControl.DISABLED;
 
-    public TileComponentUpgrade upgradeComponent;
-    public TileComponentSecurity securityComponent = new TileComponentSecurity(this);
-
-    public TileEntityMachine(String sound, MachineType type, int upgradeSlot) {
-        super(sound, type.getBlockName(), type.getStorage());
-        energyPerTick = BASE_ENERGY_PER_TICK = type.getUsage();
-
+    public TileEntityMachine(String sound, String name, double baseMaxEnergy, int upgradeSlot,double Usage) {
+        super(sound, name, baseMaxEnergy);
+        energyPerTick = BASE_ENERGY_PER_TICK = Usage;
         upgradeComponent = new TileComponentUpgrade(this, upgradeSlot);
         upgradeComponent.setSupported(Upgrade.MUFFLING);
+    }
+
+    public TileEntityMachine(String sound, MachineType type, int upgradeSlot) {
+        this(sound, type.getBlockName(), type.getStorage(),upgradeSlot,type.getUsage());
     }
 
     @Override

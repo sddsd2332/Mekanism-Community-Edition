@@ -213,6 +213,9 @@ public class TileComponentUpgrade implements ITileComponent {
     public void invalidate() {
     }
 
+    public boolean setBackButton(boolean back) {
+        return isBack = back;
+    }
 
     public boolean getBackButton() {
         return isBack;

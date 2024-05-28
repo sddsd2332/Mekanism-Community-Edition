@@ -1,6 +1,5 @@
-package mekanism.multiblockmachine.common.block;
+package mekanism.smartfactory.common.block;
 
-import mekanism.api.Coord4D;
 import mekanism.api.IMekWrench;
 import mekanism.api.energy.IEnergizedItem;
 import mekanism.api.energy.IStrictEnergyStorage;
@@ -12,17 +11,15 @@ import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.wrenches.Wrenches;
 import mekanism.common.security.ISecurityItem;
 import mekanism.common.security.ISecurityTile;
-import mekanism.common.tile.TileEntityLogisticalSorter;
 import mekanism.common.tile.prefab.TileEntityBasicBlock;
 import mekanism.common.tile.prefab.TileEntityContainerBlock;
-import mekanism.common.util.InventoryUtils;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.SecurityUtils;
-import mekanism.multiblockmachine.common.MekanismMultiblockMachine;
-import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine;
-import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine.MultiblockMachineBlock;
-import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine.MultiblockMachineType;
+import mekanism.smartfactory.common.MekanismSmartFactory;
+import mekanism.smartfactory.common.block.states.BlockStateSmartFactoryMachine;
+import mekanism.smartfactory.common.block.states.BlockStateSmartFactoryMachine.SmartFactoryMachineBlock;
+import mekanism.smartfactory.common.block.states.BlockStateSmartFactoryMachine.SmartFactoryMachineType;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -42,49 +39,50 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
-public abstract class BlockMultiblockMachine extends BlockMekanismContainer {
+public abstract class BlockSmartFactoryMachine extends BlockMekanismContainer {
 
-
-    protected BlockMultiblockMachine() {
+    protected BlockSmartFactoryMachine() {
         super(Material.IRON);
         setHardness(3.5F);
         setResistance(16F);
-        setCreativeTab(MekanismMultiblockMachine.tabMekanismMultiblockMachine);
     }
 
-    public static BlockMultiblockMachine getBlockMachine(MultiblockMachineBlock block) {
-        return new BlockMultiblockMachine() {
+    public static BlockSmartFactoryMachine getBlockMachine(SmartFactoryMachineBlock block) {
+        return new BlockSmartFactoryMachine() {
             @Override
-            public MultiblockMachineBlock getMachineBlock() {
+            public SmartFactoryMachineBlock getMachineBlock() {
                 return block;
             }
         };
     }
 
-    public abstract MultiblockMachineBlock getMachineBlock();
+    public abstract SmartFactoryMachineBlock getMachineBlock();
+
 
     @Nonnull
     @Override
     public BlockStateContainer createBlockState() {
-        return new BlockStateMultiblockMachine(this, getTypeProperty());
+        return new BlockStateSmartFactoryMachine(this, getTypeProperty());
     }
 
     @Nonnull
     @Override
     @Deprecated
     public IBlockState getStateFromMeta(int meta) {
-        MultiblockMachineType type = MultiblockMachineType.get(getMachineBlock(), meta & 0xF);
+        SmartFactoryMachineType type = SmartFactoryMachineType.get(getMachineBlock(), meta & 0xF);
         return getDefaultState().withProperty(getTypeProperty(), type);
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        MultiblockMachineType type = state.getValue(getTypeProperty());
+        SmartFactoryMachineType type = state.getValue(getTypeProperty());
         return type.meta;
     }
+
 
     @Nonnull
     @Override
@@ -95,7 +93,7 @@ public abstract class BlockMultiblockMachine extends BlockMekanismContainer {
             state = state.withProperty(BlockStateFacing.facingProperty, ((TileEntityBasicBlock) tile).facing);
         }
         if (tile instanceof IActiveState) {
-            state = state.withProperty(BlockStateMultiblockMachine.activeProperty, ((IActiveState) tile).getActive());
+            state = state.withProperty(BlockStateSmartFactoryMachine.activeProperty, ((IActiveState) tile).getActive());
         }
         return state;
     }
@@ -142,6 +140,7 @@ public abstract class BlockMultiblockMachine extends BlockMekanismContainer {
         super.breakBlock(world, pos, state);
     }
 
+
     @Override
     public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
         if (MekanismConfig.current().client.enableAmbientLighting.val()) {
@@ -160,10 +159,9 @@ public abstract class BlockMultiblockMachine extends BlockMekanismContainer {
         return state.getBlock().getMetaFromState(state);
     }
 
-
     @Override
     public void getSubBlocks(CreativeTabs creativetabs, NonNullList<ItemStack> list) {
-        for (MultiblockMachineType type : MultiblockMachineType.values()) {
+        for (SmartFactoryMachineType type : SmartFactoryMachineType.values()) {
             if (type.typeBlock == getMachineBlock() && type.isEnabled()) {
                 list.add(new ItemStack(this, 1, type.meta));
             }
@@ -201,13 +199,14 @@ public abstract class BlockMultiblockMachine extends BlockMekanismContainer {
                 }
             }
         }
+
         if (tileEntity != null) {
-            MultiblockMachineType type = MultiblockMachineType.get(getMachineBlock(), metadata);
+            SmartFactoryMachineType type = SmartFactoryMachineType.get(getMachineBlock(), metadata);
             switch (type) {
                 default -> {
                     if (!entityplayer.isSneaking() && type.guiId != -1) {
                         if (SecurityUtils.canAccess(entityplayer, tileEntity)) {
-                            entityplayer.openGui(MekanismMultiblockMachine.instance, type.guiId, world, pos.getX(), pos.getY(), pos.getZ());
+                            entityplayer.openGui(MekanismSmartFactory.instance, type.guiId, world, pos.getX(), pos.getY(), pos.getZ());
                         } else {
                             SecurityUtils.displayNoAccess(entityplayer);
                         }
@@ -222,10 +221,10 @@ public abstract class BlockMultiblockMachine extends BlockMekanismContainer {
     @Override
     public TileEntity createTileEntity(@Nonnull World world, @Nonnull IBlockState state) {
         int metadata = state.getBlock().getMetaFromState(state);
-        if (MultiblockMachineType.get(getMachineBlock(), metadata) == null) {
+        if (SmartFactoryMachineType.get(getMachineBlock(), metadata) == null) {
             return null;
         }
-        return MultiblockMachineType.get(getMachineBlock(), metadata).create();
+        return SmartFactoryMachineType.get(getMachineBlock(), metadata).create();
     }
 
     @Override
@@ -252,7 +251,6 @@ public abstract class BlockMultiblockMachine extends BlockMekanismContainer {
     public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT;
     }
-
 
     @Override
     @Deprecated
@@ -288,9 +286,9 @@ public abstract class BlockMultiblockMachine extends BlockMekanismContainer {
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    protected ItemStack getDropItem(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+    protected ItemStack getDropItem(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos) {
         TileEntityBasicBlock tileEntity = (TileEntityBasicBlock) world.getTileEntity(pos);
         ItemStack itemStack = new ItemStack(this, 1, state.getBlock().getMetaFromState(state));
         if (itemStack.getTagCompound() == null) {
@@ -346,7 +344,7 @@ public abstract class BlockMultiblockMachine extends BlockMekanismContainer {
     @Override
     @Deprecated
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
-        MultiblockMachineType type = MultiblockMachineType.get(getMachineBlock(), state.getBlock().getMetaFromState(state));
+        SmartFactoryMachineType type = SmartFactoryMachineType.get(getMachineBlock(), state.getBlock().getMetaFromState(state));
         if (type == null) {
             return super.getBoundingBox(state, world, pos);
         }
@@ -374,7 +372,7 @@ public abstract class BlockMultiblockMachine extends BlockMekanismContainer {
         return super.getBlockFaceShape(world, state, pos, face);
     }
 
-    public PropertyEnum<MultiblockMachineType> getTypeProperty() {
+    public PropertyEnum<SmartFactoryMachineType> getTypeProperty() {
         return getMachineBlock().getProperty();
     }
 

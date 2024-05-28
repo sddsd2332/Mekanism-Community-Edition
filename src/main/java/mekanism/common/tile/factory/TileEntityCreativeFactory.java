@@ -29,8 +29,8 @@ public class TileEntityCreativeFactory extends TileEntityFactory {
         configComponent.setInputConfig(TransmissionType.FLUID);
 
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.NONE, InventoryUtils.EMPTY));
-        configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.INPUT, new int[]{0}));
-        configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.OUTPUT, new int[]{1}));
+        configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.INPUT, new int[]{1}));
+        configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.OUTPUT, new int[]{2}));
         configComponent.setConfig(TransmissionType.GAS, new byte[]{1, 1, 1, 1, 1, 2});
 
         configComponent.setInputConfig(TransmissionType.ENERGY);

@@ -81,6 +81,7 @@ public class GuiTransporterConfig extends GuiMekanismTile<TileEntityContainerBlo
             buttonList.add(button);
             sideDataButtons.add(button);
         }
+        updateEnabledButtons();
     }
 
     @Override
@@ -169,6 +170,12 @@ public class GuiTransporterConfig extends GuiMekanismTile<TileEntityContainerBlo
         if (tile == null || mc.world.getTileEntity(tile.getPos()) == null) {
             mc.displayGuiScreen(null);
         }
+        updateEnabledButtons();
+    }
+
+    private void updateEnabledButtons() {
+        backButton.enabled = configurable.getConfig().getBackButton();
+        backButton.visible = configurable.getConfig().getBackButton();
     }
 
     @Override

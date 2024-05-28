@@ -1,15 +1,14 @@
-package mekanism.multiblockmachine.common.block.states;
+package mekanism.smartfactory.common.block.states;
 
 import mekanism.common.base.IBlockType;
 import mekanism.common.block.states.BlockStateFacing;
 import mekanism.common.block.states.BlockStateUtils;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.util.LangUtils;
-import mekanism.multiblockmachine.common.MekanismMultiblockMachine;
-import mekanism.multiblockmachine.common.MultiblockMachineBlocks;
-import mekanism.multiblockmachine.common.block.BlockMultiblockMachine;
-import mekanism.multiblockmachine.common.tile.machine.TileEntityLargeChemicalInfuser;
-import mekanism.multiblockmachine.common.tile.machine.TileEntityLargeElectrolyticSeparator;
+import mekanism.smartfactory.common.MekanismSmartFactory;
+import mekanism.smartfactory.common.SmartFactoryBlocks;
+import mekanism.smartfactory.common.block.BlockSmartFactoryMachine;
+import mekanism.smartfactory.common.tile.machine.TileEntityAEEnergizedSmelter;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
@@ -20,7 +19,6 @@ import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Plane;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -34,43 +32,44 @@ import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public class BlockStateMultiblockMachine extends ExtendedBlockState {
+public class BlockStateSmartFactoryMachine extends ExtendedBlockState {
+
     public static final PropertyBool activeProperty = PropertyBool.create("active");
 
-    public BlockStateMultiblockMachine(BlockMultiblockMachine block, PropertyEnum<?> typeProperty) {
+
+    public BlockStateSmartFactoryMachine(BlockSmartFactoryMachine block, PropertyEnum<?> typeProperty) {
         super(block, new IProperty[]{BlockStateFacing.facingProperty, typeProperty, activeProperty}, new IUnlistedProperty[]{});
     }
 
-    public enum MultiblockMachineBlock {
-        MULTI_BLOCK_MACHINE_BLOCK_1;
+    public enum SmartFactoryMachineBlock {
+        SMART_FACTORY_MACHINE_BLOCK_1;
 
-        PropertyEnum<MultiblockMachineType> machineTypeProperty;
+        PropertyEnum<SmartFactoryMachineType> machineTypeProperty;
 
-        public PropertyEnum<MultiblockMachineType> getProperty() {
+        public PropertyEnum<SmartFactoryMachineType> getProperty() {
             if (machineTypeProperty == null) {
-                machineTypeProperty = PropertyEnum.create("type", MultiblockMachineType.class, input -> input != null && input.typeBlock == this && input.isValidMachine());
+                machineTypeProperty = PropertyEnum.create("type", SmartFactoryMachineType.class, input -> input != null && input.typeBlock == this && input.isValidMachine());
             }
             return machineTypeProperty;
         }
 
         public Block getBlock() {
             return switch (this) {
-                case MULTI_BLOCK_MACHINE_BLOCK_1 -> MultiblockMachineBlocks.MultiblockMachine;
+                case SMART_FACTORY_MACHINE_BLOCK_1 -> SmartFactoryBlocks.SmartFactoryMachine;
             };
         }
     }
 
-    public enum MultiblockMachineType implements IStringSerializable, IBlockType {
-        LARGE_ELECTROLYTIC_SEPARATOR(MultiblockMachineBlock.MULTI_BLOCK_MACHINE_BLOCK_1, 0, "LargeElectrolyticSeparator", 3, TileEntityLargeElectrolyticSeparator::new, true, true, true, Plane.HORIZONTAL, false),
-        LARGE_CHEMICAL_INFUSER(MultiblockMachineBlock.MULTI_BLOCK_MACHINE_BLOCK_1, 1, "LargeChemicalInfuser", 4, TileEntityLargeChemicalInfuser::new, true, true, true, Plane.HORIZONTAL, false);
+    public enum SmartFactoryMachineType implements IStringSerializable, IBlockType {
+        AE_ENERGIZED_SMELTER(SmartFactoryMachineBlock.SMART_FACTORY_MACHINE_BLOCK_1, 0, "AEEnergizedSmelter", 0, TileEntityAEEnergizedSmelter::new, true, false, true, EnumFacing.Plane.HORIZONTAL, true);
 
-        private static final List<MultiblockMachineType> VALID_MACHINES = new ArrayList<>();
+        private static final List<SmartFactoryMachineType> VALID_MACHINES = new ArrayList<>();
 
         static {
-            Arrays.stream(MultiblockMachineType.values()).filter(MultiblockMachineType::isValidMachine).forEach(VALID_MACHINES::add);
+            Arrays.stream(SmartFactoryMachineType.values()).filter(SmartFactoryMachineType::isValidMachine).forEach(VALID_MACHINES::add);
         }
 
-        public MultiblockMachineBlock typeBlock;
+        public SmartFactoryMachineBlock typeBlock;
         public int meta;
         public String blockName;
         public int guiId;
@@ -81,7 +80,7 @@ public class BlockStateMultiblockMachine extends ExtendedBlockState {
         public Predicate<EnumFacing> facingPredicate;
         public boolean activable;
 
-        MultiblockMachineType(MultiblockMachineBlock block, int m, String name, int gui, Supplier<TileEntity> tileClass, boolean electric, boolean model, boolean upgrades, Predicate<EnumFacing> predicate, boolean hasActiveTexture) {
+        SmartFactoryMachineType(SmartFactoryMachineBlock block, int m, String name, int gui, Supplier<TileEntity> tileClass, boolean electric, boolean model, boolean upgrades, Predicate<EnumFacing> predicate, boolean hasActiveTexture) {
             typeBlock = block;
             meta = m;
             blockName = name;
@@ -94,20 +93,19 @@ public class BlockStateMultiblockMachine extends ExtendedBlockState {
             activable = hasActiveTexture;
         }
 
-        public static List<MultiblockMachineType> getValidMachines() {
+        public static List<SmartFactoryMachineType> getValidMachines() {
             return VALID_MACHINES;
         }
 
-
-        public static MultiblockMachineType get(Block block, int meta) {
-            if (block instanceof BlockMultiblockMachine) {
-                return get(((BlockMultiblockMachine) block).getMachineBlock(), meta);
+        public static SmartFactoryMachineType get(Block block, int meta) {
+            if (block instanceof BlockSmartFactoryMachine) {
+                return get(((BlockSmartFactoryMachine) block).getMachineBlock(), meta);
             }
             return null;
         }
 
-        public static MultiblockMachineType get(MultiblockMachineBlock block, int meta) {
-            for (MultiblockMachineType type : values()) {
+        public static SmartFactoryMachineType get(SmartFactoryMachineBlock block, int meta) {
+            for (SmartFactoryMachineType type : values()) {
                 if (type.meta == meta && type.typeBlock == block) {
                     return type;
                 }
@@ -115,7 +113,7 @@ public class BlockStateMultiblockMachine extends ExtendedBlockState {
             return null;
         }
 
-        public static MultiblockMachineType get(ItemStack stack) {
+        public static SmartFactoryMachineType get(ItemStack stack) {
             return get(Block.getBlockFromItem(stack.getItem()), stack.getItemDamage());
         }
 
@@ -126,12 +124,13 @@ public class BlockStateMultiblockMachine extends ExtendedBlockState {
 
         @Override
         public boolean isEnabled() {
-            return MekanismConfig.current().multiblock.multiblockmachinesManager.isEnabled(this);
+            return true;
         }
 
         public boolean isValidMachine() {
             return true;
         }
+
 
         public TileEntity create() {
             return this.tileEntitySupplier != null ? this.tileEntitySupplier.get() : null;
@@ -139,17 +138,14 @@ public class BlockStateMultiblockMachine extends ExtendedBlockState {
 
         public double getUsage() {
             return switch (this) {
-                case LARGE_ELECTROLYTIC_SEPARATOR -> MekanismConfig.current().general.FROM_H2.val() * 2;
-                case LARGE_CHEMICAL_INFUSER -> MekanismConfig.current().multiblock.largechemicalInfuserUsage.val();
+                case AE_ENERGIZED_SMELTER -> MekanismConfig.current().usage.energizedSmelter.val();
                 default -> 0;
             };
         }
 
         private double getConfigStorage() {
             return switch (this) {
-                case LARGE_ELECTROLYTIC_SEPARATOR ->
-                        MekanismConfig.current().multiblock.largelectrolyticSeparator.val();
-                case LARGE_CHEMICAL_INFUSER -> MekanismConfig.current().multiblock.largechemicalInfuserStorage.val();
+                case AE_ENERGIZED_SMELTER -> MekanismConfig.current().storage.energizedSmelter.val();
                 default -> 400 * getUsage();
             };
         }
@@ -163,7 +159,7 @@ public class BlockStateMultiblockMachine extends ExtendedBlockState {
         }
 
         public ItemStack getStack() {
-            return new ItemStack(MultiblockMachineBlocks.MultiblockMachine, 1, meta);
+            return new ItemStack(SmartFactoryBlocks.SmartFactoryMachine, 1, meta);
         }
 
         @Override
@@ -189,14 +185,15 @@ public class BlockStateMultiblockMachine extends ExtendedBlockState {
         }
     }
 
-    public static class MultiblockMachineBlockStateMapper extends StateMapperBase {
+    public static class SmartFactoryMachineBlockStateMapper extends StateMapperBase {
 
         @Nonnull
         @Override
         protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
-            BlockMultiblockMachine block = (BlockMultiblockMachine) state.getBlock();
-            MultiblockMachineType type = state.getValue(block.getTypeProperty());
+            BlockSmartFactoryMachine block = (BlockSmartFactoryMachine) state.getBlock();
+            SmartFactoryMachineType type = state.getValue(block.getTypeProperty());
             StringBuilder builder = new StringBuilder();
+
 
             if (type.hasActiveTexture()) {
                 builder.append(activeProperty.getName());
@@ -220,9 +217,8 @@ public class BlockStateMultiblockMachine extends ExtendedBlockState {
             if (builder.length() == 0) {
                 builder.append("normal");
             }
-            ResourceLocation baseLocation = new ResourceLocation(MekanismMultiblockMachine.MODID, type.getName());
+            ResourceLocation baseLocation = new ResourceLocation(MekanismSmartFactory.MODID, type.getName());
             return new ModelResourceLocation(baseLocation, builder.toString());
         }
     }
-
 }
