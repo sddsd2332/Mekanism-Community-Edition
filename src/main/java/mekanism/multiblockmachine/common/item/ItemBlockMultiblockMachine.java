@@ -191,7 +191,7 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
                 ((ISustainedInventory) tileEntity).setInventory(getInventory(stack));
             }
             if (tileEntity instanceof TileEntityElectricBlock) {
-                ((TileEntityElectricBlock) tileEntity).electricityStored = getEnergy(stack);
+                ((TileEntityElectricBlock) tileEntity).electricityStored.set(getEnergy(stack));
             }
             return true;
         }

@@ -1,8 +1,11 @@
 package mekanism.common.transmitters.grid;
 
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ReferenceSet;
 import mekanism.api.Coord4D;
 import mekanism.api.transmitters.DynamicNetwork;
 import mekanism.api.transmitters.IGridTransmitter;
+import mekanism.common.base.target.EnergyAcceptorTarget;
 import mekanism.common.base.target.FluidHandlerTarget;
 import mekanism.common.util.CapabilityUtils;
 import mekanism.common.util.EmitUtils;
@@ -106,7 +109,7 @@ public class FluidNetwork extends DynamicNetwork<IFluidHandler, FluidNetwork, Fl
     }
 
     private int tickEmit(FluidStack fluidToSend) {
-        Set<FluidHandlerTarget> availableAcceptors = new ObjectOpenHashSet<>();
+        ReferenceSet<FluidHandlerTarget> availableAcceptors = new ReferenceOpenHashSet<>();
         int totalHandlers = 0;
         for (Coord4D coord : possibleAcceptors) {
             EnumSet<EnumFacing> sides = acceptorDirections.get(coord);

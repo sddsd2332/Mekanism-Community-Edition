@@ -2,6 +2,9 @@ package mekanism.api.gas;
 
 import net.minecraft.nbt.NBTTagCompound;
 
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 /**
  * An optional way of managing and/or storing gasses. Would be very useful in TileEntity and Entity gas storage.
  *
@@ -9,9 +12,11 @@ import net.minecraft.nbt.NBTTagCompound;
  */
 public class GasTank implements GasTankInfo {
 
-    public GasStack stored;
+    private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
 
-    private int maxGas;
+    public volatile GasStack stored;
+
+    private volatile int maxGas;
 
     private GasTank() {
     }
@@ -48,22 +53,28 @@ public class GasTank implements GasTankInfo {
      * @param doDraw - if the gas should actually be removed from this tank
      * @return gas taken from this GasTank as a GasStack value
      */
-    public GasStack draw(int amount, boolean doDraw) {
+    public synchronized GasStack draw(int amount, boolean doDraw) {
         if (stored == null || amount <= 0) {
             return null;
         }
 
-        GasStack ret = new GasStack(stored.getGas(), Math.min(getStored(), amount));
-        if (ret.amount > 0) {
-            if (doDraw) {
-                stored.amount -= ret.amount;
-                if (stored.amount <= 0) {
-                    stored = null;
+        try {
+            rwLock.readLock().lock();
+
+            GasStack ret = new GasStack(stored.getGas(), Math.min(getStored(), amount));
+            if (ret.amount > 0) {
+                if (doDraw) {
+                    stored.amount -= ret.amount;
+                    if (stored.amount <= 0) {
+                        stored = null;
+                    }
                 }
+                return ret;
             }
-            return ret;
+            return null;
+        } finally {
+            rwLock.readLock().unlock();
         }
-        return null;
     }
 
     /**
@@ -73,22 +84,28 @@ public class GasTank implements GasTankInfo {
      * @param doReceive - if the gas should actually be added to this tank
      * @return the amount of gas accepted by this tank
      */
-    public int receive(GasStack amount, boolean doReceive) {
+    public synchronized int receive(GasStack amount, boolean doReceive) {
         if (amount == null || (stored != null && !stored.isGasEqual(amount))) {
             return 0;
         }
 
-        int toFill = Math.min(getMaxGas() - getStored(), amount.amount);
+        try {
+            rwLock.readLock().lock();
 
-        if (doReceive) {
-            if (stored == null) {
-                stored = amount.copy().withAmount(getStored() + toFill);
-            } else {
-                stored.amount = Math.min(getMaxGas(), getStored() + amount.amount);
+            int toFill = Math.min(maxGas - getStored(), amount.amount);
+
+            if (doReceive) {
+                if (stored == null) {
+                    stored = amount.copy().withAmount(getStored() + toFill);
+                } else {
+                    stored.amount = Math.min(maxGas, getStored() + amount.amount);
+                }
             }
-        }
 
-        return toFill;
+            return toFill;
+        } finally {
+            rwLock.readLock().unlock();
+        }
     }
 
     /**
@@ -98,7 +115,12 @@ public class GasTank implements GasTankInfo {
      * @return if this GasTank can accept the defined gas
      */
     public boolean canReceive(Gas gas) {
-        return getNeeded() != 0 && (stored == null || gas == null || gas == stored.getGas());
+        try {
+            rwLock.readLock().lock();
+            return getNeeded() != 0 && (stored == null || gas == null || gas == stored.getGas());
+        } finally {
+            rwLock.readLock().unlock();
+        }
     }
 
     /**
@@ -108,7 +130,12 @@ public class GasTank implements GasTankInfo {
      * @return if this GasTank can accept the defined gas
      */
     public boolean canReceiveType(Gas gas) {
-        return stored == null || gas == null || gas == stored.getGas();
+        try {
+            rwLock.readLock().lock();
+            return stored == null || gas == null || gas == stored.getGas();
+        } finally {
+            rwLock.readLock().unlock();
+        }
     }
 
     /**
@@ -118,7 +145,12 @@ public class GasTank implements GasTankInfo {
      * @return if this GasTank can be drawn of the defined gas
      */
     public boolean canDraw(Gas gas) {
-        return stored != null && (gas == null || gas == stored.getGas());
+        try {
+            rwLock.readLock().lock();
+            return stored != null && (gas == null || gas == stored.getGas());
+        } finally {
+            rwLock.readLock().unlock();
+        }
     }
 
     /**
@@ -127,7 +159,7 @@ public class GasTank implements GasTankInfo {
      * @return Amount of gas needed
      */
     public int getNeeded() {
-        return getMaxGas() - getStored();
+        return maxGas - getStored();
     }
 
     /**
@@ -154,7 +186,12 @@ public class GasTank implements GasTankInfo {
      */
     @Override
     public GasStack getGas() {
-        return stored;
+        try {
+            rwLock.readLock().lock();
+            return stored;
+        } finally {
+            rwLock.readLock().unlock();
+        }
     }
 
     /**
@@ -163,12 +200,18 @@ public class GasTank implements GasTankInfo {
      * @param stack - value to set this tank's GasStack value to
      */
     public void setGas(GasStack stack) {
-        stored = stack;
-        if (stored != null) {
-            stored.amount = Math.min(getMaxGas(), stored.amount);
-            if (stored.amount <= 0) {
-                stored = null;
+        try {
+            rwLock.readLock().lock();
+
+            stored = stack;
+            if (stored != null) {
+                stored.amount = Math.min(maxGas, stored.amount);
+                if (stored.amount <= 0) {
+                    stored = null;
+                }
             }
+        } finally {
+            rwLock.readLock().unlock();
         }
     }
 
@@ -178,7 +221,12 @@ public class GasTank implements GasTankInfo {
      * @return gas type contained
      */
     public Gas getGasType() {
-        return stored != null ? stored.getGas() : null;
+        try {
+            rwLock.readLock().lock();
+            return stored != null ? stored.getGas() : null;
+        } finally {
+            rwLock.readLock().unlock();
+        }
     }
 
     /**
@@ -188,7 +236,12 @@ public class GasTank implements GasTankInfo {
      */
     @Override
     public int getStored() {
-        return stored != null ? stored.amount : 0;
+        try {
+            rwLock.readLock().lock();
+            return stored != null ? stored.amount : 0;
+        } finally {
+            rwLock.readLock().unlock();
+        }
     }
 
     /**

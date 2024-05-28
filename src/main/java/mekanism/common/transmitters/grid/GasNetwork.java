@@ -1,5 +1,7 @@
 package mekanism.common.transmitters.grid;
 
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ReferenceSet;
 import mekanism.api.Coord4D;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
@@ -122,7 +124,7 @@ public class GasNetwork extends DynamicNetwork<IGasHandler, GasNetwork, GasStack
     }
 
     private int tickEmit(GasStack stack) {
-        Set<GasHandlerTarget> availableAcceptors = new ObjectOpenHashSet<>();
+        ReferenceSet<GasHandlerTarget> availableAcceptors = new ReferenceOpenHashSet<>();
         int totalHandlers = 0;
         Gas type = stack.getGas();
         for (Coord4D coord : possibleAcceptors) {

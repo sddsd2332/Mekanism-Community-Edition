@@ -1,5 +1,7 @@
 package mekanism.common.transmitters.grid;
 
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ReferenceSet;
 import mekanism.api.Coord4D;
 import mekanism.api.energy.EnergyStack;
 import mekanism.api.transmitters.DynamicNetwork;
@@ -88,7 +90,7 @@ public class EnergyNetwork extends DynamicNetwork<EnergyAcceptorWrapper, EnergyN
     }
 
     private double tickEmit(double energyToSend) {
-        Set<EnergyAcceptorTarget> targets = new ObjectOpenHashSet<>();
+        ReferenceSet<EnergyAcceptorTarget> targets = new ReferenceOpenHashSet<>();
         int totalHandlers = 0;
         for (Coord4D coord : possibleAcceptors) {
             EnumSet<EnumFacing> sides = acceptorDirections.get(coord);

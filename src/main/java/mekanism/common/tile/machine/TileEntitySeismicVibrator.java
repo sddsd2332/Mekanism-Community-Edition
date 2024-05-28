@@ -14,6 +14,7 @@ import mekanism.common.tile.component.TileComponentSecurity;
 import mekanism.common.tile.prefab.TileEntityElectricBlock;
 import mekanism.common.util.ChargeUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -47,7 +48,7 @@ public class TileEntitySeismicVibrator extends TileEntityElectricBlock implement
 
     public TileEntitySeismicVibrator() {
         super("SeismicVibrator", MachineType.SEISMIC_VIBRATOR.getStorage());
-        inventory = NonNullList.withSize(SLOTS.length, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(SLOTS.length, ItemStack.EMPTY);
     }
 
     @Override

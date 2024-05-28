@@ -1,5 +1,6 @@
 package mekanism.common.inventory;
 
+import mekanism.common.tile.base.TileEntitySynchronized;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ItemStackHelper;
@@ -138,7 +139,11 @@ public class InventoryList implements IInventory {
      */
     @Override
     public void markDirty() {
-        this.te.markDirty();
+        if (te instanceof TileEntitySynchronized teSync) {
+            teSync.markForUpdateSync();
+        } else {
+            this.te.markDirty();
+        }
     }
 
     /**

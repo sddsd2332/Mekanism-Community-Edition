@@ -49,7 +49,7 @@ public class TileEntityHybridStorage extends TileEntityElectricBlock implements 
     public TileComponentSecurity securityComponent;
     public GasTank gasTank1 = new GasTank(GasTankTier.ULTIMATE.getStorage());
     public GasTank gasTank2 = new GasTank(GasTankTier.ULTIMATE.getStorage());
-    public FluidTank fluidTank = new FluidTank(FluidTankTier.ULTIMATE.getStorage());
+    public FluidTank fluidTank = new FluidTankSync(FluidTankTier.ULTIMATE.getStorage());
     public RedstoneControl controlType;
     public ContainerEditMode editMode = ContainerEditMode.BOTH;
 
@@ -75,7 +75,7 @@ public class TileEntityHybridStorage extends TileEntityElectricBlock implements 
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.OUTPUT_2, new int[]{2}));
         configComponent.setConfig(TransmissionType.GAS, new byte[]{1, 1, 1, 1, 1, 2});
 
-        inventory = NonNullList.withSize(128, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(128, ItemStack.EMPTY);
 
         controlType = RedstoneControl.DISABLED;
         securityComponent = new TileComponentSecurity(this);

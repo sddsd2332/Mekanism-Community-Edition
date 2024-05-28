@@ -67,7 +67,7 @@ public class TileEntityEnergyCube extends TileEntityElectricBlock implements ICo
         configComponent.setIOConfig(TransmissionType.ENERGY);
         configComponent.setEjecting(TransmissionType.ENERGY, true);
 
-        inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
         controlType = RedstoneControl.DISABLED;
 
         ejectorComponent = new TileComponentEjector(this);
@@ -93,13 +93,18 @@ public class TileEntityEnergyCube extends TileEntityElectricBlock implements ICo
     }
 
     @Override
+    public boolean supportsAsync() {
+        return false;
+    }
+
+    @Override
     public boolean upgrade(BaseTier upgradeTier) {
         if (upgradeTier.ordinal() != tier.ordinal() + 1) {
             return false;
         }
         tier = EnergyCubeTier.values()[upgradeTier.ordinal()];
         Mekanism.packetHandler.sendUpdatePacket(this);
-        markDirty();
+        markForUpdateSync();
         return true;
     }
 
@@ -217,7 +222,7 @@ public class TileEntityEnergyCube extends TileEntityElectricBlock implements ICo
         super.setEnergy(energy);
         int newRedstoneLevel = getRedstoneLevel();
         if (newRedstoneLevel != currentRedstoneLevel) {
-            markDirty();
+            markForUpdateSync();
             currentRedstoneLevel = newRedstoneLevel;
         }
     }

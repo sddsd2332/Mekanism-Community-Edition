@@ -12,6 +12,7 @@ import mekanism.api.tier.BaseTier;
 import mekanism.common.tier.PipeTier;
 import mekanism.common.transmitters.grid.FluidNetwork;
 import mekanism.common.util.CapabilityUtils;
+import mekanism.common.util.FluidTankSync;
 import mekanism.common.util.PipeUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -34,10 +35,12 @@ public class TileEntityMechanicalPipe extends TileEntityTransmitter<IFluidHandle
 
     public float currentScale;
 
-    public FluidTank buffer = new FluidTank(Fluid.BUCKET_VOLUME);
+    public FluidTank buffer = new FluidTankSync(Fluid.BUCKET_VOLUME);
 
     public FluidStack lastWrite;
     public CapabilityWrapperManager<IFluidHandlerWrapper, FluidHandlerWrapper> manager = new CapabilityWrapperManager<>(IFluidHandlerWrapper.class, FluidHandlerWrapper.class);
+
+    private int nextTransfer = 0;
 
     @Override
     public BaseTier getBaseTier() {
@@ -54,15 +57,24 @@ public class TileEntityMechanicalPipe extends TileEntityTransmitter<IFluidHandle
     public void doRestrictedTick() {
         if (!getWorld().isRemote) {
             updateShare();
-            IFluidHandler[] connectedAcceptors = PipeUtils.getConnectedAcceptors(getPos(), getWorld());
-            for (EnumFacing side : getConnections(ConnectionType.PULL)) {
-                IFluidHandler container = connectedAcceptors[side.ordinal()];
-                if (container != null) {
-                    FluidStack received = container.drain(getAvailablePull(), false);
-                    if (received != null && received.amount != 0 && takeFluid(received, false) == received.amount) {
-                        container.drain(takeFluid(received, true), true);
+            if (nextTransfer <= 0) {
+                IFluidHandler[] connectedAcceptors = PipeUtils.getConnectedAcceptors(getPos(), getWorld());
+                boolean successAtLeaseOnce = false;
+                for (EnumFacing side : getConnections(ConnectionType.PULL)) {
+                    IFluidHandler container = connectedAcceptors[side.ordinal()];
+                    if (container != null) {
+                        FluidStack received = container.drain(getAvailablePull(), false);
+                        if (received != null && received.amount != 0 && takeFluid(received, false) == received.amount) {
+                            container.drain(takeFluid(received, true), true);
+                            successAtLeaseOnce = true;
+                        }
                     }
                 }
+                if (!successAtLeaseOnce) {
+                    nextTransfer = 20;
+                }
+            } else {
+                nextTransfer--;
             }
         }
         super.doRestrictedTick();
@@ -74,8 +86,9 @@ public class TileEntityMechanicalPipe extends TileEntityTransmitter<IFluidHandle
             FluidStack last = getSaveShare();
             if ((last != null && !(lastWrite != null && lastWrite.amount == last.amount && lastWrite.getFluid() == last.getFluid())) || (last == null && lastWrite != null)) {
                 lastWrite = last;
+                markChunkDirty();
                 //markDirty();
-                this.world.markChunkDirty(this.pos, this);
+//                this.world.markChunkDirty(this.pos, this);
             }
         }
     }

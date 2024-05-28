@@ -91,7 +91,7 @@ public class TileEntityBoilerValve extends TileEntityBoilerCasing implements IFl
 
                 int newRedstoneLevel = getRedstoneLevel();
                 if (newRedstoneLevel != currentRedstoneLevel) {
-                    world.updateComparatorOutputLevel(pos, getBlockType());
+                    updateComparatorOutputLevelSync();
                     currentRedstoneLevel = newRedstoneLevel;
                 }
             }
@@ -263,7 +263,7 @@ public class TileEntityBoilerValve extends TileEntityBoilerCasing implements IFl
             player.sendMessage(new TextComponentString(EnumColor.DARK_BLUE + Mekanism.LOG_TAG + " " + EnumColor.GREY +
                     LangUtils.localize("tooltip.configurator.reactorPortEject") + modeText));
             Mekanism.packetHandler.sendUpdatePacket(this);
-            markDirty();
+            markForUpdateSync();
         }
         return EnumActionResult.SUCCESS;
     }

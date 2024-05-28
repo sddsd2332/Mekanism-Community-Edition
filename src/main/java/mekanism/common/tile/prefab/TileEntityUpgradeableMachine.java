@@ -53,7 +53,7 @@ public abstract class TileEntityUpgradeableMachine<INPUT extends MachineInput<IN
         factory.doAutoSync = doAutoSync;
 
         //Electric
-        factory.electricityStored = electricityStored;
+        factory.electricityStored.set(electricityStored.get());
 
         //Machine
         factory.progress[0] = operatingTicks;
@@ -82,7 +82,7 @@ public abstract class TileEntityUpgradeableMachine<INPUT extends MachineInput<IN
         }
 
         factory.upgraded = true;
-        factory.markDirty();
+        factory.markForUpdateSync();
         Mekanism.packetHandler.sendUpdatePacket(factory);
         return true;
     }

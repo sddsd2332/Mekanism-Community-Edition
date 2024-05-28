@@ -18,7 +18,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.*;
@@ -33,7 +32,7 @@ public class TileEntityHeatGenerator extends TileEntityGenerator implements IFlu
     /**
      * The FluidTank for this generator.
      */
-    public FluidTank lavaTank = new FluidTank(24000);
+    public FluidTank lavaTank = new FluidTankSync(24000);
     public double temperature = 0;
     public double thermalEfficiency = 0.5D;
     public double invHeatCapacity = 1;
@@ -45,7 +44,7 @@ public class TileEntityHeatGenerator extends TileEntityGenerator implements IFlu
 
     public TileEntityHeatGenerator() {
         super("heat", "HeatGenerator", MekanismConfig.current().generators.heatGeneratorStorage.val(), MekanismConfig.current().generators.heatGeneration.val() * 2);
-        inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
     }
 
     @Override
@@ -91,7 +90,7 @@ public class TileEntityHeatGenerator extends TileEntityGenerator implements IFlu
 
             int newRedstoneLevel = getRedstoneLevel();
             if (newRedstoneLevel != currentRedstoneLevel) {
-                world.updateComparatorOutputLevel(pos, getBlockType());
+                updateComparatorOutputLevelSync();
                 currentRedstoneLevel = newRedstoneLevel;
             }
         }
@@ -113,7 +112,7 @@ public class TileEntityHeatGenerator extends TileEntityGenerator implements IFlu
 
     @Override
     public boolean canOperate() {
-        return electricityStored < BASE_MAX_ENERGY && lavaTank.getFluid() != null && lavaTank.getFluid().amount >= 10 && MekanismUtils.canFunction(this);
+        return electricityStored.get() < BASE_MAX_ENERGY && lavaTank.getFluid() != null && lavaTank.getFluid().amount >= 10 && MekanismUtils.canFunction(this);
     }
 
     @Override
@@ -216,7 +215,7 @@ public class TileEntityHeatGenerator extends TileEntityGenerator implements IFlu
             case 0 -> new Object[]{electricityStored};
             case 1 -> new Object[]{output};
             case 2 -> new Object[]{BASE_MAX_ENERGY};
-            case 3 -> new Object[]{BASE_MAX_ENERGY - electricityStored};
+            case 3 -> new Object[]{BASE_MAX_ENERGY - electricityStored.get()};
             case 4 -> new Object[]{lavaTank.getFluid() != null ? lavaTank.getFluid().amount : 0};
             case 5 ->
                     new Object[]{lavaTank.getCapacity() - (lavaTank.getFluid() != null ? lavaTank.getFluid().amount : 0)};

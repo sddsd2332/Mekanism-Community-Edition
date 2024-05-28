@@ -75,7 +75,7 @@ public class TileEntityGasTank extends TileEntityContainerBlock implements IGasH
         configComponent.setEjecting(TransmissionType.GAS, true);
 
         gasTank = new GasTank(tier.getStorage());
-        inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
         dumping = GasMode.IDLE;
         controlType = RedstoneControl.DISABLED;
 
@@ -114,7 +114,7 @@ public class TileEntityGasTank extends TileEntityContainerBlock implements IGasH
             currentGasAmount = newGasAmount;
             int newRedstoneLevel = getRedstoneLevel();
             if (newRedstoneLevel != currentRedstoneLevel) {
-                markDirty();
+                markForUpdateSync();
                 currentRedstoneLevel = newRedstoneLevel;
             }
         }
@@ -128,7 +128,7 @@ public class TileEntityGasTank extends TileEntityContainerBlock implements IGasH
         tier = GasTankTier.values()[upgradeTier.ordinal()];
         gasTank.setMaxGas(tier.getStorage());
         Mekanism.packetHandler.sendUpdatePacket(this);
-        markDirty();
+        markForUpdateSync();
         return true;
     }
 
@@ -149,7 +149,7 @@ public class TileEntityGasTank extends TileEntityContainerBlock implements IGasH
             }
         } else if (slotID == 0) {
             return item instanceof IGasItem gasItem && gasItem.getGas(itemstack) != null &&
-                    gasItem.getGas(itemstack).amount == gasItem.getMaxGas(itemstack);
+                   gasItem.getGas(itemstack).amount == gasItem.getMaxGas(itemstack);
         }
         return false;
     }

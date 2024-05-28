@@ -25,7 +25,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -46,7 +45,7 @@ public class TileEntityFluidicPlenisher extends TileEntityElectricBlock implemen
     public Set<Coord4D> activeNodes = new LinkedHashSet<>();
     public Set<Coord4D> usedNodes = new ObjectOpenHashSet<>();
     public boolean finishedCalc = false;
-    public FluidTank fluidTank = new FluidTank(10000);
+    public FluidTank fluidTank = new FluidTankSync(10000);
     /**
      * How much energy this machine consumes per-tick.
      */
@@ -69,7 +68,7 @@ public class TileEntityFluidicPlenisher extends TileEntityElectricBlock implemen
 
     public TileEntityFluidicPlenisher() {
         super("FluidicPlenisher", MachineType.FLUIDIC_PLENISHER.getStorage());
-        inventory = NonNullList.withSize(4, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(4, ItemStack.EMPTY);
     }
 
     @Override
@@ -114,7 +113,7 @@ public class TileEntityFluidicPlenisher extends TileEntityElectricBlock implemen
 
             int newRedstoneLevel = getRedstoneLevel();
             if (newRedstoneLevel != currentRedstoneLevel) {
-                world.updateComparatorOutputLevel(pos, getBlockType());
+                updateComparatorOutputLevelSync();
                 currentRedstoneLevel = newRedstoneLevel;
             }
         }

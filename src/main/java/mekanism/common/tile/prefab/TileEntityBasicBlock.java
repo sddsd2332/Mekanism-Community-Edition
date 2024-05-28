@@ -1,7 +1,7 @@
 package mekanism.common.tile.prefab;
 
 import io.netty.buffer.ByteBuf;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import mekanism.api.Coord4D;
 import mekanism.api.TileNetworkList;
 import mekanism.common.Mekanism;
@@ -45,7 +45,7 @@ import java.util.Set;
     /**
      * The players currently using this block.
      */
-    public Set<EntityPlayer> playersUsing = new ObjectOpenHashSet<>();
+    public Set<EntityPlayer> playersUsing = new ReferenceOpenHashSet<>();
 
     /**
      * A timer used to send packets to clients.
@@ -69,29 +69,58 @@ import java.util.Set;
 
     @Override
     public void doRestrictedTick() {
+        if (checkInvalidBlock()) {
+            return;
+        }
+
+        tickComponents();
+
+        if (world.isRemote || !supportsAsync()) {
+            doAsyncTick();
+        } else {
+            Mekanism.EXECUTE_MANAGER.addTask(this::doAsyncTick);
+        }
+    }
+
+    private void doAsyncTick() {
+        onUpdate();
+        ticker++;
+        redstoneLastTick = redstone;
+        autoClientSync();
+    }
+
+    private void autoClientSync() {
+        if (!world.isRemote && doAutoSync && !playersUsing.isEmpty()) {
+            if (supportsAsync()) {
+                Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
+                    TileEntityMessage message = new TileEntityMessage(this);
+                    playersUsing.forEach(player -> Mekanism.packetHandler.sendTo(message, (EntityPlayerMP) player));
+                });
+            } else {
+                TileEntityMessage message = new TileEntityMessage(this);
+                playersUsing.forEach(player -> Mekanism.packetHandler.sendTo(message, (EntityPlayerMP) player));
+            }
+        }
+    }
+
+    private boolean checkInvalidBlock() {
         if (!world.isRemote && MekanismConfig.current().general.destroyDisabledBlocks.val()) {
             MachineType type = MachineType.get(getBlockType(), getBlockMetadata());
             if (type != null && !type.isEnabled()) {
-                Mekanism.logger.info("Destroying machine of type '" + type.getBlockName() + "' at coords " + Coord4D.get(this) + " as according to config.");
+                Mekanism.logger.info("Destroying machine of type '{}' at coords {} as according to config.", type.getBlockName(), Coord4D.get(this));
                 world.setBlockToAir(getPos());
-                return;
+                return true;
             }
         }
+        return false;
+    }
 
-        for (ITileComponent component : components) {
-            component.tick();
-        }
+    protected void tickComponents() {
+        components.forEach(ITileComponent::tick);
+    }
 
-        onUpdate();
-        if (!world.isRemote) {
-            if (doAutoSync && playersUsing.size() > 0) {
-                for (EntityPlayer player : playersUsing) {
-                    Mekanism.packetHandler.sendTo(new TileEntityMessage(this), (EntityPlayerMP) player);
-                }
-            }
-        }
-        ticker++;
-        redstoneLastTick = redstone;
+    public boolean supportsAsync() {
+        return true;
     }
 
     @Override
@@ -198,7 +227,7 @@ import java.util.Set;
         }
         if (facing != clientFacing && !world.isRemote) {
             Mekanism.packetHandler.sendUpdatePacket(this);
-            markDirty();
+            markForUpdateSync();
             clientFacing = facing;
         }
     }

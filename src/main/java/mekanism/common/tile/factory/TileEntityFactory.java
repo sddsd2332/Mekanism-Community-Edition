@@ -146,13 +146,13 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
     public TileEntityFactory(FactoryTier type, MachineType machine) {
         super("null", machine, 0);
         tier = type;
-        inventory = NonNullList.withSize(5 + type.processes * 3, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(5 + type.processes * 3, ItemStack.EMPTY);
         progress = new int[type.processes];
         isActive = false;
         cachedRecipe = new MachineRecipe[tier.processes];
         gasTank = new GasTank(tier == FactoryTier.CREATIVE ? Integer.MAX_VALUE : BASE_MAX_TANK * tier.processes);
         gasOutTank = new GasTank(tier == FactoryTier.CREATIVE ? Integer.MAX_VALUE : BASE_MAX_TANK * tier.processes);
-        fluidTank = new FluidTank(tier == FactoryTier.CREATIVE ? Integer.MAX_VALUE : BASE_MAX_TANK * tier.processes);
+        fluidTank = new FluidTankSync(tier == FactoryTier.CREATIVE ? Integer.MAX_VALUE : BASE_MAX_TANK * tier.processes);
         maxInfuse = tier != FactoryTier.CREATIVE ? BASE_MAX_INFUSE * tier.processes : Integer.MAX_VALUE;
         BASE_TICKS_REQUIRED = tier != FactoryTier.CREATIVE ? 200 : 1;
         if (tier == FactoryTier.CREATIVE) {
@@ -229,7 +229,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         factory.doAutoSync = doAutoSync;
 
         //Electric
-        factory.electricityStored = electricityStored;
+        factory.electricityStored.set(electricityStored.get());
 
         //Factory
         System.arraycopy(progress, 0, factory.progress, 0, tier.processes);
@@ -279,7 +279,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         }
 
         factory.upgraded = true;
-        factory.markDirty();
+        factory.markForUpdateSync();
         Mekanism.packetHandler.sendUpdatePacket(factory);
         return true;
     }
@@ -289,7 +289,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         super.onUpdate();
         if (!world.isRemote) {
             if (ticker == 1) {
-                world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
+                Mekanism.EXECUTE_MANAGER.addSyncTask(() -> world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true));
             }
             if (MekanismConfig.current().mekce.EnableUpgradeConfigure.val()) {
                 MekanismUtils.inject.accept(ticksRequired, this::onUpdate);
@@ -308,7 +308,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
             double prev = getEnergy();
             if (tier == FactoryTier.CREATIVE) {
                 energyPerTick = 0;
-                electricityStored = Double.MAX_VALUE;
+                electricityStored.set(Double.MAX_VALUE);
             }
             if (recipeType == RecipeType.Dissolution) {
                 secondaryEnergyThisTick = Math.max(BASE_INJECT_USAGE * tier.processes, StatUtils.inversePoisson(BASE_INJECT_USAGE * tier.processes));
@@ -322,6 +322,9 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
                 if (MekanismUtils.canFunction(this) && canOperate(getInputSlot(process), getOutputSlot(process), getSecondaryOutputSlot(process)) && getEnergy() >= energyPerTick && gasTank.getStored() >= secondaryEnergyThisTick) {
                     if (tier != FactoryTier.CREATIVE) {
                         if (recipeType == RecipeType.PRC || recipeType == RecipeType.NUCLEOSYNTHESIZER) {
+                            if ((recipeType == RecipeType.PRC && PRCrecipe == null) || (recipeType == RecipeType.NUCLEOSYNTHESIZER && NnRecipe == null)) {
+                                continue;
+                            }
                             Exenery = recipeType == RecipeType.PRC ? PRCrecipe.extraEnergy : NnRecipe.extraEnergy;
                             boolean update = BASE_TICKS_REQUIRED != (recipeType == RecipeType.PRC ? PRCrecipe.ticks : NnRecipe.ticks);
                             BASE_TICKS_REQUIRED = recipeType == RecipeType.PRC ? PRCrecipe.ticks : NnRecipe.ticks;
@@ -394,7 +397,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
                         gasOutTank.setGas(null);
                         fluidTank.setFluid(null);
                         secondaryEnergyPerTick = getSecondaryEnergyPerTick(recipeType);
-                        world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
+                        Mekanism.EXECUTE_MANAGER.addSyncTask(() -> world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true));
                         MekanismUtils.saveChunk(this);
                     }
                 } else {
@@ -410,9 +413,9 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         gasTank.draw(secondaryEnergyThisTick, tier != FactoryTier.CREATIVE);
         if (tier != FactoryTier.CREATIVE) {
             if (recipeType == RecipeType.PRC || recipeType == RecipeType.NUCLEOSYNTHESIZER) {
-                electricityStored -= MekanismUtils.getEnergyPerTick(this, BASE_ENERGY_PER_TICK + Exenery);
+                electricityStored.addAndGet(-MekanismUtils.getEnergyPerTick(this, BASE_ENERGY_PER_TICK + Exenery));
             } else {
-                electricityStored -= energyPerTick;
+                electricityStored.addAndGet(-energyPerTick);
             }
         } else {
             inventory.get(getOutputSlot(process)).setCount(inventory.get(getOutputSlot(process)).getMaxStackSize());
@@ -946,7 +949,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
             BasicMachineRecipe<?> recipe = (BasicMachineRecipe<?>) cachedRecipe[process];
             recipe.operate(inventory, inputSlot, outputSlot);
         }
-        markDirty();
+        markForUpdateSync();
     }
 
     public int getUpgradedUsage() {
@@ -1009,7 +1012,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
             TileUtils.readTankData(dataStream, gasTank);
             TileUtils.readTankData(dataStream, gasOutTank);
             if (upgraded) {
-                markDirty();
+                markForUpdateSync();
                 MekanismUtils.updateBlock(world, getPos());
                 upgraded = false;
             }
@@ -1496,7 +1499,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
                     ItemStack newStack = stack.isEmpty() ? checkStack : stack;
                     inventory.set(slotID, StackUtils.size(newStack, (total + 1) / 2));
                     inventory.set(checkSlotID, StackUtils.size(newStack, total / 2));
-                    markDirty();
+                    markForUpdateSync();
                     return;
                 }
             }
@@ -1655,7 +1658,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
                 index++;
             }
             sorted.clear();
-            factory.markDirty();
+            factory.markForUpdateSync();
         }
 
         /**

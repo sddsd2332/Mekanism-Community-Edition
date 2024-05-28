@@ -26,7 +26,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -53,7 +52,7 @@ public class TileEntityElectricPump extends TileEntityElectricBlock implements I
     /**
      * This pump's tank
      */
-    public FluidTank fluidTank = new FluidTank(10000);
+    public FluidTank fluidTank = new FluidTankSync(10000);
     /**
      * The type of fluid this pump is pumping
      */
@@ -88,7 +87,7 @@ public class TileEntityElectricPump extends TileEntityElectricBlock implements I
 
     public TileEntityElectricPump() {
         super("ElectricPump", MachineType.ELECTRIC_PUMP.getStorage());
-        inventory = NonNullList.withSize(4, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(4, ItemStack.EMPTY);
         upgradeComponent.setSupported(Upgrade.FILTER);
     }
 
@@ -141,10 +140,15 @@ public class TileEntityElectricPump extends TileEntityElectricBlock implements I
             }
             int newRedstoneLevel = getRedstoneLevel();
             if (newRedstoneLevel != currentRedstoneLevel) {
-                world.updateComparatorOutputLevel(pos, getBlockType());
+                updateComparatorOutputLevelSync();
                 currentRedstoneLevel = newRedstoneLevel;
             }
         }
+    }
+
+    @Override
+    public boolean supportsAsync() {
+        return false;
     }
 
     public boolean hasFilter() {

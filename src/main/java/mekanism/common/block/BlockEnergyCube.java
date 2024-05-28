@@ -235,7 +235,7 @@ public class BlockEnergyCube extends BlockMekanismContainer {
         tierItem.setBaseTier(itemStack, tileEntity.tier.getBaseTier());
 
         IEnergizedItem energizedItem = (IEnergizedItem) itemStack.getItem();
-        energizedItem.setEnergy(itemStack, tileEntity.electricityStored);
+        energizedItem.setEnergy(itemStack, tileEntity.electricityStored.get());
 
         ISustainedInventory inventory = (ISustainedInventory) itemStack.getItem();
         inventory.setInventory(tileEntity.getInventory(), itemStack);

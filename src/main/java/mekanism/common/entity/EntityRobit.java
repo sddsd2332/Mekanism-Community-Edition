@@ -21,6 +21,7 @@ import mekanism.common.item.ItemConfigurator;
 import mekanism.common.item.ItemRobit;
 import mekanism.common.tile.TileEntityChargepad;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import micdoodle8.mods.galacticraft.api.entity.IEntityBreathable;
 import net.darkhax.tesla.api.ITeslaProducer;
 import net.minecraft.entity.EntityCreature;
@@ -76,7 +77,7 @@ public class EntityRobit extends EntityCreature implements IInventory, ISustaine
     private static final DataParameter<Boolean> DROP_PICKUP = EntityDataManager.createKey(EntityRobit.class, DataSerializers.BOOLEAN);
     public double MAX_ELECTRICITY = 100000;
     public Coord4D homeLocation;
-    public NonNullList<ItemStack> inventory = NonNullList.withSize(31, ItemStack.EMPTY);
+    public NonNullList<ItemStack> inventory = NonNullListSynchronized.withSize(31, ItemStack.EMPTY);
     public int furnaceBurnTime = 0;
     public int currentItemBurnTime = 0;
     public int furnaceCookTime = 0;
@@ -389,7 +390,7 @@ public class EntityRobit extends EntityCreature implements IInventory, ISustaine
         setDropPickup(nbtTags.getBoolean("dropPickup"));
         homeLocation = Coord4D.read(nbtTags);
         NBTTagList tagList = nbtTags.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-        inventory = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(getSizeInventory(), ItemStack.EMPTY);
         for (int tagCount = 0; tagCount < tagList.tagCount(); tagCount++) {
             NBTTagCompound tagCompound = tagList.getCompoundTagAt(tagCount);
             byte slotID = tagCompound.getByte("Slot");
@@ -549,7 +550,7 @@ public class EntityRobit extends EntityCreature implements IInventory, ISustaine
         if (nbtTags == null || nbtTags.tagCount() == 0) {
             return;
         }
-        inventory = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(getSizeInventory(), ItemStack.EMPTY);
         for (int slots = 0; slots < nbtTags.tagCount(); slots++) {
             NBTTagCompound tagCompound = nbtTags.getCompoundTagAt(slots);
             byte slotID = tagCompound.getByte("Slot");

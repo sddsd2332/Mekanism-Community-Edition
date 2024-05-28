@@ -115,7 +115,7 @@ public class ItemBlockEnergyCube extends ItemBlock implements IEnergizedItem, IS
         if (place) {
             TileEntityEnergyCube tileEntity = (TileEntityEnergyCube) world.getTileEntity(pos);
             tileEntity.tier = EnergyCubeTier.values()[getBaseTier(stack).ordinal()];
-            tileEntity.electricityStored = getEnergy(stack);
+            tileEntity.electricityStored.set(getEnergy(stack));
             if (tileEntity.tier == EnergyCubeTier.CREATIVE) {
                 tileEntity.configComponent.fillConfig(TransmissionType.ENERGY, tileEntity.getEnergy() > 0 ? 2 : 1);
             }

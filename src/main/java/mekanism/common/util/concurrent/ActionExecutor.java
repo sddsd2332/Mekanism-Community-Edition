@@ -20,14 +20,12 @@ public class ActionExecutor implements Runnable, Comparable<ActionExecutor> {
         this.priority = priority;
     }
 
-
-
     public void run() {
         long start = System.nanoTime() / 1000;
 
         try {
             action.doAction();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             Mekanism.logger.warn("An error occurred during asynchronous task execution!");
             Mekanism.logger.warn(ThrowableUtil.stackTraceToString(e));
         }

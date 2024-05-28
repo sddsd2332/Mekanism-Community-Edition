@@ -5,6 +5,7 @@ import mekanism.common.Mekanism;
 import mekanism.common.util.InventoryUtils;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -101,7 +102,7 @@ public class ItemCraftingFormula extends ItemMekanism {
             return null;
         }
         NBTTagList tagList = ItemDataUtils.getList(stack, "Items");
-        NonNullList<ItemStack> inventory = NonNullList.withSize(9, ItemStack.EMPTY);
+        NonNullList<ItemStack> inventory = NonNullListSynchronized.withSize(9, ItemStack.EMPTY);
         for (int tagCount = 0; tagCount < tagList.tagCount(); tagCount++) {
             NBTTagCompound tagCompound = tagList.getCompoundTagAt(tagCount);
             byte slotID = tagCompound.getByte("Slot");

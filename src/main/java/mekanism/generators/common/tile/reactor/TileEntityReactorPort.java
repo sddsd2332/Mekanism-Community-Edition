@@ -40,7 +40,7 @@ public class TileEntityReactorPort extends TileEntityReactorBlock implements IFl
 
     public TileEntityReactorPort() {
         super("name", 1);
-        inventory = NonNullList.withSize(0, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(0, ItemStack.EMPTY);
     }
 
     @Override
@@ -357,7 +357,7 @@ public class TileEntityReactorPort extends TileEntityReactorBlock implements IFl
             player.sendMessage(new TextComponentString(EnumColor.DARK_BLUE + Mekanism.LOG_TAG + " " + EnumColor.GREY +
                     LangUtils.localize("tooltip.configurator.reactorPortEject") + modeText));
             Mekanism.packetHandler.sendUpdatePacket(this);
-            markDirty();
+            markForUpdateSync();
         }
         return EnumActionResult.SUCCESS;
     }

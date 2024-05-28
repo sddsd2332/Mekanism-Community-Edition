@@ -3,6 +3,8 @@ package mekanism.common.concurrent;
 
 import io.netty.util.internal.ThrowableUtil;
 import it.unimi.dsi.fastutil.longs.*;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ReferenceSet;
 import mekanism.common.Mekanism;
 import mekanism.common.tile.base.TileEntitySynchronized;
 import mekanism.common.util.concurrent.*;
@@ -32,14 +34,12 @@ public class TaskExecutor {
             new CustomForkJoinWorkerThreadFactory("MEK-ForkJoinPool-worker-%s"),
             null, true);
 
-
     public static long totalExecuted = 0;
     public static long taskUsedTime = 0;
     public static long totalUsedTime = 0;
     public static long executedCount = 0;
 
     public static long tickExisted = 0;
-
 
     private final Queue<ActionExecutor> submitted = Queues.createConcurrentQueue();
 
@@ -51,6 +51,7 @@ public class TaskExecutor {
     private final Queue<Action> mainThreadActions = Queues.createConcurrentQueue();
     private final Queue<TileEntitySynchronized> requireUpdateTEQueue = Queues.createConcurrentQueue();
     private final Queue<TileEntitySynchronized> requireMarkNoUpdateTEQueue = Queues.createConcurrentQueue();
+    private final Queue<TileEntitySynchronized> requireUpdateComparatorOutputLevel = Queues.createConcurrentQueue();
 
     private final TaskSubmitter submitter = new TaskSubmitter();
 
@@ -163,7 +164,7 @@ public class TaskExecutor {
         while ((action = mainThreadActions.poll()) != null) {
             try {
                 action.doAction();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 Mekanism.logger.warn("An error occurred during synchronous task execution!");
                 Mekanism.logger.warn(ThrowableUtil.stackTraceToString(e));
             }
@@ -193,18 +194,28 @@ public class TaskExecutor {
     }
 
     private void updateTileEntity() {
-        if (requireUpdateTEQueue.isEmpty() && requireMarkNoUpdateTEQueue.isEmpty()) {
+        if (requireUpdateTEQueue.isEmpty() && requireMarkNoUpdateTEQueue.isEmpty() && requireUpdateComparatorOutputLevel.isEmpty()) {
             return;
         }
 
+        ReferenceSet<TileEntitySynchronized> toUpdate = new ReferenceOpenHashSet<>();
         TileEntitySynchronized tile;
         while ((tile = requireUpdateTEQueue.poll()) != null) {
-            tile.markForUpdate();
+            toUpdate.add(tile);
         }
+        toUpdate.forEach(TileEntitySynchronized::markForUpdate);
 
+        toUpdate.clear();
         while ((tile = requireMarkNoUpdateTEQueue.poll()) != null) {
-            tile.markNoUpdate();
+            toUpdate.add(tile);
         }
+        toUpdate.forEach(TileEntitySynchronized::markNoUpdate);
+
+        toUpdate.clear();
+        while ((tile = requireUpdateComparatorOutputLevel.poll()) != null) {
+            toUpdate.add(tile);
+        }
+        toUpdate.forEach(TileEntitySynchronized::updateComparatorOutputLevel);
     }
 
     /**
@@ -265,6 +276,10 @@ public class TaskExecutor {
 
     public void addTEMarkNoUpdateTask(final TileEntitySynchronized te) {
         requireMarkNoUpdateTEQueue.offer(te);
+    }
+
+    public void addUpdateComparatorOutputLevelTask(final TileEntitySynchronized te) {
+        requireUpdateComparatorOutputLevel.offer(te);
     }
 
     private void execute(final ActionExecutor executor) {

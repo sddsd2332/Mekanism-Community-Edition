@@ -13,10 +13,7 @@ import mekanism.common.content.boiler.BoilerUpdateProtocol;
 import mekanism.common.content.boiler.SynchronizedBoilerData;
 import mekanism.common.content.tank.SynchronizedTankData.ValveData;
 import mekanism.common.multiblock.MultiblockManager;
-import mekanism.common.util.InventoryUtils;
-import mekanism.common.util.LangUtils;
-import mekanism.common.util.MekanismUtils;
-import mekanism.common.util.TileUtils;
+import mekanism.common.util.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -55,7 +52,7 @@ public class TileEntityBoilerCasing extends TileEntityMultiblock<SynchronizedBoi
 
     public TileEntityBoilerCasing(String name) {
         super(name);
-        inventory = NonNullList.withSize(INV_SLOTS.length, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(INV_SLOTS.length, ItemStack.EMPTY);
     }
 
     @Override
@@ -89,19 +86,19 @@ public class TileEntityBoilerCasing extends TileEntityMultiblock<SynchronizedBoi
             if (structure != null) {
                 if (structure.waterStored != null && structure.waterStored.amount <= 0) {
                     structure.waterStored = null;
-                    markDirty();
+                    markForUpdateSync();
                 }
                 if (structure.steamStored != null && structure.steamStored.amount <= 0) {
                     structure.steamStored = null;
-                    markDirty();
+                    markForUpdateSync();
                 }
                 if (structure.InputGas != null && structure.InputGas.amount <= 0) {
                     structure.InputGas = null;
-                    markDirty();
+                    markForUpdateSync();
                 }
                 if (structure.OutputGas != null && structure.OutputGas.amount <= 0) {
                     structure.OutputGas = null;
-                    markDirty();
+                    markForUpdateSync();
                 }
 
                 if (isRendering) {

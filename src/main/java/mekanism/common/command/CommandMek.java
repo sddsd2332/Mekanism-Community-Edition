@@ -12,24 +12,33 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.server.command.CommandTreeBase;
 
 import javax.annotation.Nonnull;
+import java.text.DecimalFormat;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Map;
-import java.util.Stack;
 import java.util.UUID;
 
-public class CommandMek extends CommandTreeBase {
+import static mekanism.common.concurrent.TaskExecutor.*;
 
-    private Map<UUID, Stack<BlockPos>> tpStack = new Object2ObjectOpenHashMap<>();
+public class CommandMek extends CommandTreeBase {
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,###.##");
+
+    private final Map<UUID, Deque<BlockPos>> tpStack = new Object2ObjectOpenHashMap<>();
 
     public CommandMek() {
         addSubcommand(new Cmd("debug", "cmd.mek.debug", this::toggleDebug));
         addSubcommand(new Cmd("testrules", "cmd.mek.testrules", this::setupTestRules));
         addSubcommand(new Cmd("tp", "cmd.mek.tp", this::teleportPush));
         addSubcommand(new Cmd("tpop", "cmd.mek.tpop", this::teleportPop));
+        addSubcommand(new Cmd("performance_report", "cmd.mekceu.performance_report", CommandMek::performanceReport));
         addSubcommand(new CommandChunk());
     }
 
@@ -81,7 +90,7 @@ public class CommandMek extends CommandTreeBase {
 
         // Save the current location on the stack
         UUID player = sender.getCommandSenderEntity().getUniqueID();
-        Stack<BlockPos> playerLocations = tpStack.getOrDefault(player, new Stack<>());
+        Deque<BlockPos> playerLocations = tpStack.getOrDefault(player, new ArrayDeque<>());
         playerLocations.push(sender.getPosition());
         tpStack.put(player, playerLocations);
 
@@ -95,7 +104,7 @@ public class CommandMek extends CommandTreeBase {
 
         // Get stack of locations for the user; if there's at least one entry, pop it off
         // and send the user back there
-        Stack<BlockPos> playerLocations = tpStack.getOrDefault(player, new Stack<>());
+        Deque<BlockPos> playerLocations = tpStack.getOrDefault(player, new ArrayDeque<>());
         if (!playerLocations.isEmpty()) {
             BlockPos lastPos = playerLocations.pop();
             tpStack.put(player, playerLocations);
@@ -106,9 +115,8 @@ public class CommandMek extends CommandTreeBase {
         }
     }
 
-    private void teleport(Entity player, double x, double y, double z) {
-        if (player instanceof EntityPlayerMP) {
-            EntityPlayerMP mp = (EntityPlayerMP) player;
+    private static void teleport(Entity player, double x, double y, double z) {
+        if (player instanceof final EntityPlayerMP mp) {
             mp.connection.setPlayerLocation(x, y, z, mp.rotationYaw, mp.rotationPitch);
         } else {
             EntityPlayerSP sp = (EntityPlayerSP) player;
@@ -116,12 +124,59 @@ public class CommandMek extends CommandTreeBase {
         }
     }
 
+    public static void performanceReport(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, String[] args) {
+        String langKey = "cmd.mekceu.performance_report";
+
+        if (args.length > 0 && args[0].equals("reset")) {
+            executedCount = 0;
+            totalExecuted = 0;
+            totalUsedTime = 0;
+            taskUsedTime = 0;
+            sender.sendMessage(new TextComponentTranslation(langKey + ".reset"));
+            return;
+        }
+
+        long executedAvgPerExecution = executedCount == 0 ? 0 : totalExecuted / executedCount;
+        double usedTimeAvgPerExecution = executedCount == 0 ? 0 : (double) (totalUsedTime / executedCount) / 1000;
+        double taskUsedTimeAvg = totalExecuted == 0 ? 0 : (double) (taskUsedTime / executedCount) / 1000;
+        long usedTimeAvg = totalExecuted == 0 ? 0 : taskUsedTime / totalExecuted;
+
+        sender.sendMessage(new TextComponentTranslation(langKey + ".title",
+                TextFormatting.GREEN + formatDecimal(executedCount) + TextFormatting.RESET));
+        sender.sendMessage(new TextComponentString(""));
+
+        sender.sendMessage(new TextComponentTranslation(langKey + ".total_executed",
+                TextFormatting.BLUE + formatDecimal(totalExecuted) + TextFormatting.RESET));
+        sender.sendMessage(new TextComponentTranslation(langKey + ".tasks_avg_per_execution",
+                TextFormatting.BLUE + String.valueOf(executedAvgPerExecution) + TextFormatting.RESET));
+        sender.sendMessage(new TextComponentString(""));
+
+        sender.sendMessage(new TextComponentTranslation(langKey + ".total_used_time",
+                TextFormatting.BLUE + String.valueOf(totalUsedTime / 1000) + TextFormatting.RESET));
+        sender.sendMessage(new TextComponentTranslation(langKey + ".used_time_avg_per_execution",
+                TextFormatting.YELLOW + String.format("%.2f", usedTimeAvgPerExecution) + TextFormatting.RESET));
+        sender.sendMessage(new TextComponentString(""));
+
+        sender.sendMessage(new TextComponentTranslation(langKey + ".task_used_time",
+                TextFormatting.BLUE + formatDecimal(((double) taskUsedTime / 1000L)) + TextFormatting.RESET));
+        sender.sendMessage(new TextComponentString(""));
+
+        sender.sendMessage(new TextComponentTranslation(langKey + ".task_used_time_avg",
+                TextFormatting.YELLOW + String.format("%.2f", taskUsedTimeAvg) + TextFormatting.RESET));
+        sender.sendMessage(new TextComponentTranslation(langKey + ".used_time_avg",
+                TextFormatting.BLUE + String.valueOf(usedTimeAvg) + TextFormatting.RESET));
+    }
+
+    public static String formatDecimal(double value) {
+        return DECIMAL_FORMAT.format(value);
+    }
+
     // Wrapper class that makes it easier to create single method commands
     public static class Cmd extends CommandBase {
 
-        private String name;
-        private String usage;
-        private CmdExecute ex;
+        private final String name;
+        private final String usage;
+        private final CmdExecute ex;
 
         Cmd(String name, String usage, CmdExecute ex) {
             this.name = name;

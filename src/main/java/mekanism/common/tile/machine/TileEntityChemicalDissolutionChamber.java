@@ -65,7 +65,7 @@ public class TileEntityChemicalDissolutionChamber extends TileEntityUpgradeableM
 
         configComponent.setInputConfig(TransmissionType.ENERGY);
 
-        inventory = NonNullList.withSize(5, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(5, ItemStack.EMPTY);
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(2));
@@ -159,7 +159,7 @@ public class TileEntityChemicalDissolutionChamber extends TileEntityUpgradeableM
 
     public void operate(DissolutionRecipe recipe) {
         recipe.operate(inventory, 1, outputTank);
-        markDirty();
+        markForUpdateSync();
     }
 
     public void minorOperate() {

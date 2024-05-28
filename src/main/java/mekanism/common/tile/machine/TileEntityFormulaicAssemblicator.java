@@ -22,10 +22,7 @@ import mekanism.common.tile.component.TileComponentSecurity;
 import mekanism.common.tile.component.TileComponentUpgrade;
 import mekanism.common.tile.component.config.DataType;
 import mekanism.common.tile.prefab.TileEntityElectricBlock;
-import mekanism.common.util.ChargeUtils;
-import mekanism.common.util.InventoryUtils;
-import mekanism.common.util.MekanismUtils;
-import mekanism.common.util.StackUtils;
+import mekanism.common.util.*;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -100,7 +97,7 @@ public class TileEntityFormulaicAssemblicator extends TileEntityElectricBlock im
         configComponent.setConfig(TransmissionType.ITEM, new byte[]{0, 0, 0, 3, 1, 2});
         configComponent.setInputConfig(TransmissionType.ENERGY);
 
-        inventory = NonNullList.withSize(36, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(36, ItemStack.EMPTY);
 
         upgradeComponent = new TileComponentUpgrade(this, SLOT_UPGRADE);
 
@@ -268,7 +265,7 @@ public class TileEntityFormulaicAssemblicator extends TileEntityElectricBlock im
             if (formula != null) {
                 moveItemsToGrid();
             }
-            markDirty();
+            markForUpdateSync();
             return true;
         }
         return false;
@@ -299,7 +296,7 @@ public class TileEntityFormulaicAssemblicator extends TileEntityElectricBlock im
             if (!recipeStack.isEmpty()) {
                 //Update recipeStack as well so we can check if it is empty without having to get it again
                 inventory.set(i, recipeStack = tryMoveToInput(recipeStack));
-                markDirty();
+                markForUpdateSync();
                 if (!recipeStack.isEmpty()) {
                     ret = false;
                 }
@@ -311,7 +308,7 @@ public class TileEntityFormulaicAssemblicator extends TileEntityElectricBlock im
                     if (!stockStack.isEmpty() && formula.isIngredientInPos(world, stockStack, i - SLOT_CRAFT_MATRIX_FIRST)) {
                         inventory.set(i, StackUtils.size(stockStack, 1));
                         stockStack.shrink(1);
-                        markDirty();
+                        markForUpdateSync();
                         found = true;
                         break;
                     }
@@ -336,7 +333,7 @@ public class TileEntityFormulaicAssemblicator extends TileEntityElectricBlock im
                 inventory.set(i, tryMoveToInput(recipeStack));
             }
         }
-        markDirty();
+        markForUpdateSync();
     }
 
     private void toggleAutoMode() {
@@ -347,7 +344,7 @@ public class TileEntityFormulaicAssemblicator extends TileEntityElectricBlock im
             moveItemsToInput(false);
             autoMode = true;
         }
-        markDirty();
+        markForUpdateSync();
     }
 
     private void toggleStockControl() {
@@ -368,14 +365,14 @@ public class TileEntityFormulaicAssemblicator extends TileEntityElectricBlock im
                     if (compareStack.isEmpty()) {
                         inventory.set(j, stockStack);
                         inventory.set(i, ItemStack.EMPTY);
-                        markDirty();
+                        markForUpdateSync();
                         return;
                     } else if (compareStack.getCount() < compareStack.getMaxStackSize()) {
                         if (InventoryUtils.areItemsStackable(stockStack, compareStack)) {
                             int newCount = compareStack.getCount() + stockStack.getCount();
                             compareStack.setCount(Math.min(compareStack.getMaxStackSize(), newCount));
                             stockStack.setCount(Math.max(0, newCount - compareStack.getMaxStackSize()));
-                            markDirty();
+                            markForUpdateSync();
                             return;
                         }
                     }
@@ -433,7 +430,7 @@ public class TileEntityFormulaicAssemblicator extends TileEntityElectricBlock im
                 RecipeFormula formula = new RecipeFormula(world, inventory, SLOT_CRAFT_MATRIX_FIRST);
                 if (formula.isValidFormula(world)) {
                     item.setInventory(formulaStack, formula.input);
-                    markDirty();
+                    markForUpdateSync();
                 }
             }
         }

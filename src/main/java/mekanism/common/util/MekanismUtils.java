@@ -25,6 +25,7 @@ import mekanism.common.tier.FactoryTier;
 import mekanism.common.tier.GasTankTier;
 import mekanism.common.tile.TileEntityAdvancedBoundingBlock;
 import mekanism.common.tile.TileEntityBoundingBlock;
+import mekanism.common.tile.base.TileEntitySynchronized;
 import mekanism.common.tile.component.SideConfig;
 import mekanism.common.util.UnitDisplayUtils.ElectricUnit;
 import mekanism.common.util.UnitDisplayUtils.TemperatureUnit;
@@ -497,12 +498,20 @@ public final class MekanismUtils {
         if (!world.isBlockLoaded(pos)) {
             return;
         }
+
+        // Schedule update.
+        TileEntity tileEntity = world.getTileEntity(pos);
+        if (!world.isRemote && tileEntity instanceof TileEntitySynchronized teSync) {
+            teSync.markNoUpdate();
+            teSync.setRequireUpdateLight(true);
+            return;
+        }
+
         //Schedule a render update regardless of it is an IActiveState with IActiveState#renderUpdate() as true
         // This is because that is mainly used for rendering machine effects, but we need to run a render update
         // anyways here in case IActiveState#renderUpdate() is false and we just had the block rotate.
         // For example the laser, or charge pad.
         world.markBlockRangeForRenderUpdate(pos, pos);
-        TileEntity tileEntity = world.getTileEntity(pos);
         if (!(tileEntity instanceof IActiveState) || ((IActiveState) tileEntity).lightUpdate() && MekanismConfig.current().client.machineEffects.val()) {
             updateAllLightTypes(world, pos);
         }

@@ -9,6 +9,7 @@ import mekanism.common.tile.prefab.TileEntityEffectsBlock;
 import mekanism.common.util.ChargeUtils;
 import mekanism.common.util.InventoryUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -36,7 +37,7 @@ public class TileEntityChargepad extends TileEntityEffectsBlock {
 
     public TileEntityChargepad() {
         super("machine.chargepad", "Chargepad", MachineType.CHARGEPAD.getStorage());
-        inventory = NonNullList.withSize(0, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(0, ItemStack.EMPTY);
     }
 
     @Override

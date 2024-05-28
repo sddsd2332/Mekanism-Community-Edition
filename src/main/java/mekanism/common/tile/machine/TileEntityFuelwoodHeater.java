@@ -14,6 +14,7 @@ import mekanism.common.tile.prefab.TileEntityContainerBlock;
 import mekanism.common.util.CapabilityUtils;
 import mekanism.common.util.HeatUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -54,7 +55,7 @@ public class TileEntityFuelwoodHeater extends TileEntityContainerBlock implement
 
     public TileEntityFuelwoodHeater() {
         super("FuelwoodHeater");
-        inventory = NonNullList.withSize(1, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(1, ItemStack.EMPTY);
     }
 
     @Override

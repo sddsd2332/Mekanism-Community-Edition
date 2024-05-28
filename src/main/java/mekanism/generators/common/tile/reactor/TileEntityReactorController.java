@@ -9,9 +9,7 @@ import mekanism.common.Mekanism;
 import mekanism.common.MekanismFluids;
 import mekanism.common.base.IActiveState;
 import mekanism.common.config.MekanismConfig;
-import mekanism.common.util.InventoryUtils;
-import mekanism.common.util.MekanismUtils;
-import mekanism.common.util.TileUtils;
+import mekanism.common.util.*;
 import mekanism.generators.common.FusionReactor;
 import mekanism.generators.common.item.ItemHohlraum;
 import net.minecraft.client.Minecraft;
@@ -40,8 +38,8 @@ public class TileEntityReactorController extends TileEntityReactorBlock implemen
     public static final int MAX_FLUID = 100 * Fluid.BUCKET_VOLUME;
     public static final int MAX_FUEL = MAX_FLUID * 100;
 
-    public FluidTank waterTank = new FluidTank(MAX_FLUID);
-    public FluidTank steamTank = new FluidTank(MAX_FLUID);
+    public FluidTank waterTank = new FluidTankSync(MAX_FLUID);
+    public FluidTank steamTank = new FluidTankSync(MAX_FLUID);
 
     public GasTank deuteriumTank = new GasTank(MAX_FUEL);
     public GasTank tritiumTank = new GasTank(MAX_FUEL);
@@ -58,7 +56,7 @@ public class TileEntityReactorController extends TileEntityReactorBlock implemen
 
     public TileEntityReactorController() {
         super("ReactorController", MekanismConfig.current().generators.reactorGeneratorStorage.val());
-        inventory = NonNullList.withSize(1, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(1, ItemStack.EMPTY);
     }
 
     @Override

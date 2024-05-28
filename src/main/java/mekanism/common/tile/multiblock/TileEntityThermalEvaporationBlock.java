@@ -5,6 +5,7 @@ import mekanism.common.integration.computer.IComputerIntegration;
 import mekanism.common.tile.prefab.TileEntityContainerBlock;
 import mekanism.common.util.InventoryUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -28,12 +29,12 @@ public class TileEntityThermalEvaporationBlock extends TileEntityContainerBlock 
 
     public TileEntityThermalEvaporationBlock() {
         super("ThermalEvaporationBlock");
-        inventory = NonNullList.withSize(0, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(0, ItemStack.EMPTY);
     }
 
     public TileEntityThermalEvaporationBlock(String fullName) {
         super(fullName);
-        inventory = NonNullList.withSize(0, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(0, ItemStack.EMPTY);
     }
 
     @Override
@@ -42,6 +43,11 @@ public class TileEntityThermalEvaporationBlock extends TileEntityContainerBlock 
             updateController();
         }
         attempted = false;
+    }
+
+    @Override
+    public boolean supportsAsync() {
+        return false;
     }
 
     public void addToStructure(Coord4D controller) {

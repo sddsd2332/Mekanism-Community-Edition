@@ -7,6 +7,7 @@ import mekanism.common.base.IBoundingBlock;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.util.ChargeUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
@@ -26,7 +27,7 @@ public class TileEntityWindGenerator extends TileEntityGenerator implements IBou
 
     public TileEntityWindGenerator() {
         super("wind", "WindGenerator", MekanismConfig.current().generators.windGeneratorStorage.val(), MekanismConfig.current().generators.windGenerationMax.val() * 2);
-        inventory = NonNullList.withSize(SLOTS.length, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(SLOTS.length, ItemStack.EMPTY);
     }
 
     @Override
@@ -58,7 +59,7 @@ public class TileEntityWindGenerator extends TileEntityGenerator implements IBou
                 setActive(MekanismUtils.canFunction(this) && currentMultiplier > 0);
             }
             if (getActive()) {
-                setEnergy(electricityStored + (MekanismConfig.current().generators.windGenerationMin.val() * currentMultiplier));
+                setEnergy(electricityStored.get() + (MekanismConfig.current().generators.windGenerationMin.val() * currentMultiplier));
             }
         } else if (getActive()) {
             angle = (angle + (getPos().getY() + 4F) / SPEED_SCALED) % 360;
@@ -114,7 +115,7 @@ public class TileEntityWindGenerator extends TileEntityGenerator implements IBou
             case 0 -> new Object[]{electricityStored};
             case 1 -> new Object[]{output};
             case 2 -> new Object[]{BASE_MAX_ENERGY};
-            case 3 -> new Object[]{BASE_MAX_ENERGY - electricityStored};
+            case 3 -> new Object[]{BASE_MAX_ENERGY - electricityStored.get()};
             case 4 -> new Object[]{getMultiplier()};
             default -> throw new NoSuchMethodException();
         };
@@ -122,7 +123,7 @@ public class TileEntityWindGenerator extends TileEntityGenerator implements IBou
 
     @Override
     public boolean canOperate() {
-        return electricityStored < BASE_MAX_ENERGY && getMultiplier() > 0 && MekanismUtils.canFunction(this);
+        return electricityStored.get() < BASE_MAX_ENERGY && getMultiplier() > 0 && MekanismUtils.canFunction(this);
     }
 
     @Override

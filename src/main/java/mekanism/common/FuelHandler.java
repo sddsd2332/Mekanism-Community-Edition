@@ -3,7 +3,8 @@ package mekanism.common;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.fuels.IFuel;
 import buildcraft.api.mj.MjAPI;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import mekanism.api.gas.Gas;
 import mekanism.common.integration.redstoneflux.RFIntegration;
 import mekanism.common.util.MekanismUtils;
@@ -11,25 +12,24 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.ModAPIManager;
 
-import java.util.Map;
-
 public class FuelHandler {
 
-    public static Map<String, FuelGas> fuels = new Object2ObjectOpenHashMap<>();
+    public static Reference2ObjectMap<Gas, FuelGas> fuels = new Reference2ObjectOpenHashMap<>();
 
     public static void addGas(Gas gas, int burnTicks, double energyPerMilliBucket) {
-        fuels.put(gas.getName(), new FuelGas(burnTicks, energyPerMilliBucket));
+        fuels.put(gas, new FuelGas(burnTicks, energyPerMilliBucket));
     }
 
     public static FuelGas getFuel(Gas gas) {
-        if (fuels.containsKey(gas.getName())) {
-            return fuels.get(gas.getName());
+        FuelGas fuelGas = fuels.get(gas);
+        if (fuelGas != null) {
+            return fuelGas;
         }
         if (BCPresent() && gas.hasFluid() && BuildcraftFuelRegistry.fuel != null) {
             IFuel bcFuel = BuildcraftFuelRegistry.fuel.getFuel(new FluidStack(gas.getFluid(), 1));
             if (bcFuel != null) {
                 FuelGas fuel = new FuelGas(bcFuel);
-                fuels.put(gas.getName(), fuel);
+                fuels.put(gas, fuel);
                 return fuel;
             }
         }

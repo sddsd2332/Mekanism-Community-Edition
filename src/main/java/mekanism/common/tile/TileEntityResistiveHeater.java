@@ -13,10 +13,7 @@ import mekanism.common.integration.computer.IComputerIntegration;
 import mekanism.common.security.ISecurityTile;
 import mekanism.common.tile.component.TileComponentSecurity;
 import mekanism.common.tile.prefab.TileEntityEffectsBlock;
-import mekanism.common.util.CapabilityUtils;
-import mekanism.common.util.ChargeUtils;
-import mekanism.common.util.HeatUtils;
-import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -54,7 +51,7 @@ public class TileEntityResistiveHeater extends TileEntityEffectsBlock implements
 
     public TileEntityResistiveHeater() {
         super("machine.resistiveheater", "ResistiveHeater", MachineType.RESISTIVE_HEATER.getStorage());
-        inventory = NonNullList.withSize(SLOTS.length, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(SLOTS.length, ItemStack.EMPTY);
     }
 
     @Override

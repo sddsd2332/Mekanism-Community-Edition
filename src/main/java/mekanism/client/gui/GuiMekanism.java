@@ -1,5 +1,6 @@
 package mekanism.client.gui;
 
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import mekanism.api.EnumColor;
 import mekanism.client.gui.element.GuiElement;
 import mekanism.client.render.MekanismRenderer;
@@ -30,7 +31,7 @@ import java.util.Set;
 public abstract class GuiMekanism extends GuiContainer implements IGuiWrapper {
 
     private final ResourceLocation Base = MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "Base.png");
-    private Set<GuiElement> guiElements = new ObjectOpenHashSet<>();
+    private Set<GuiElement> guiElements = new ReferenceOpenHashSet<>();
 
     public GuiMekanism(Container container) {
         super(container);

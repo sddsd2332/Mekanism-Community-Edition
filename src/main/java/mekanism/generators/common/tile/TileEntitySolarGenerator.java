@@ -5,6 +5,7 @@ import mekanism.api.TileNetworkList;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.util.ChargeUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import micdoodle8.mods.galacticraft.api.world.ISolarLevel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -28,7 +29,7 @@ public class TileEntitySolarGenerator extends TileEntityGenerator {
 
     public TileEntitySolarGenerator(String name, double maxEnergy, double output) {
         super("solar", name, maxEnergy, output);
-        inventory = NonNullList.withSize(1, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(1, ItemStack.EMPTY);
     }
 
     public boolean canSeeSun() {
@@ -144,7 +145,7 @@ public class TileEntitySolarGenerator extends TileEntityGenerator {
             case 0 -> new Object[]{electricityStored};
             case 1 -> new Object[]{output};
             case 2 -> new Object[]{BASE_MAX_ENERGY};
-            case 3 -> new Object[]{BASE_MAX_ENERGY - electricityStored};
+            case 3 -> new Object[]{BASE_MAX_ENERGY - electricityStored.get()};
             case 4 -> new Object[]{seesSun};
             default -> throw new NoSuchMethodException();
         };

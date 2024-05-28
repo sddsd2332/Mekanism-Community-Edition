@@ -3,6 +3,7 @@ package mekanism.generators.common.tile.reactor;
 import mekanism.api.Coord4D;
 import mekanism.common.tile.prefab.TileEntityElectricBlock;
 import mekanism.common.util.InventoryUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import mekanism.generators.common.FusionReactor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -24,7 +25,7 @@ public abstract class TileEntityReactorBlock extends TileEntityElectricBlock {
 
     public TileEntityReactorBlock() {
         super("ReactorBlock", 0);
-        inventory = NonNullList.withSize(0, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(0, ItemStack.EMPTY);
     }
 
     public TileEntityReactorBlock(String name, double maxEnergy) {
@@ -62,6 +63,11 @@ public abstract class TileEntityReactorBlock extends TileEntityElectricBlock {
             updateController();
         }
         attempted = false;
+    }
+
+    @Override
+    public boolean supportsAsync() {
+        return false;
     }
 
     @Override

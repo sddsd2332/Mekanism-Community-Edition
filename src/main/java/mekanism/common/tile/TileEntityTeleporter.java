@@ -29,6 +29,7 @@ import mekanism.common.tile.component.TileComponentUpgrade;
 import mekanism.common.tile.prefab.TileEntityElectricBlock;
 import mekanism.common.util.ChargeUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -82,7 +83,7 @@ public class TileEntityTeleporter extends TileEntityElectricBlock implements ICo
 
     public TileEntityTeleporter() {
         super("Teleporter", MachineType.TELEPORTER.getStorage());
-        inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
         securityComponent = new TileComponentSecurity(this);
         chunkLoaderComponent = new TileComponentChunkLoader(this);
         upgradeComponent = new TileComponentUpgrade(this, 1);
@@ -183,6 +184,11 @@ public class TileEntityTeleporter extends TileEntityElectricBlock implements ICo
     }
 
     @Override
+    public boolean supportsAsync() {
+        return false;
+    }
+
+    @Override
     public Frequency getFrequency(FrequencyManager manager) {
         if (manager == Mekanism.securityFrequencies) {
             return getSecurity().getFrequency();
@@ -259,7 +265,7 @@ public class TileEntityTeleporter extends TileEntityElectricBlock implements ICo
         for (Entity e : world.getEntitiesWithinAABB(Entity.class, teleportBounds)) {
             list.add(e.getPersistentID());
         }
-        Set<UUID> teleportCopy = new HashSet<>(didTeleport);
+        Set<UUID> teleportCopy = new ObjectOpenHashSet<>(didTeleport);
         for (UUID id : teleportCopy) {
             if (!list.contains(id)) {
                 didTeleport.remove(id);

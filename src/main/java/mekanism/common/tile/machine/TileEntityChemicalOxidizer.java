@@ -55,7 +55,7 @@ public class TileEntityChemicalOxidizer extends TileEntityUpgradeableMachine<Ite
 
         configComponent.setInputConfig(TransmissionType.ENERGY);
 
-        inventory = NonNullList.withSize(4, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(4, ItemStack.EMPTY);
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(1));
@@ -76,7 +76,7 @@ public class TileEntityChemicalOxidizer extends TileEntityUpgradeableMachine<Ite
                 } else {
                     operate(recipe);
                     operatingTicks = 0;
-                    markDirty();
+                    markForUpdateSync();
                 }
             } else if (prevEnergy >= getEnergy()) {
                 setActive(false);
@@ -134,7 +134,7 @@ public class TileEntityChemicalOxidizer extends TileEntityUpgradeableMachine<Ite
 
     public void operate(OxidationRecipe recipe) {
         recipe.operate(inventory, 0, gasTank);
-        markDirty();
+        markForUpdateSync();
     }
 
     @Override

@@ -15,6 +15,7 @@ import mekanism.common.tile.factory.TileEntityFactory;
 import mekanism.common.util.ChargeUtils;
 import mekanism.common.util.InventoryUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
@@ -51,7 +52,7 @@ public abstract class TileEntityElectricMachine<RECIPE extends BasicMachineRecip
         configComponent.setConfig(TransmissionType.ITEM, new byte[]{1, 1, 1, 3, 1, 2});
         configComponent.setInputConfig(TransmissionType.ENERGY);
 
-        inventory = NonNullList.withSize(4, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(4, ItemStack.EMPTY);
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(2));
@@ -75,7 +76,7 @@ public abstract class TileEntityElectricMachine<RECIPE extends BasicMachineRecip
             RECIPE recipe = getRecipe();
             if (canOperate(recipe) && MekanismUtils.canFunction(this) && getEnergy() >= energyPerTick) {
                 setActive(true);
-                electricityStored -= energyPerTick;
+                electricityStored.addAndGet(-energyPerTick);
                 if ((operatingTicks + 1) < ticksRequired) {
                     operatingTicks++;
                 } else if ((operatingTicks + 1) >= ticksRequired) {
@@ -128,7 +129,7 @@ public abstract class TileEntityElectricMachine<RECIPE extends BasicMachineRecip
     @Override
     public void operate(RECIPE recipe) {
         recipe.operate(inventory, 0, 2);
-        markDirty();
+        markForUpdateSync();
     }
 
     @Override

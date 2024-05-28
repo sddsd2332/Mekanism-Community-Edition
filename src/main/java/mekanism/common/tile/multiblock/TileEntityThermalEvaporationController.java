@@ -44,8 +44,8 @@ public class TileEntityThermalEvaporationController extends TileEntityThermalEva
     public static final int MAX_HEIGHT = 18;
     private static final int[] SLOTS = {0, 1, 2, 3};
 
-    public FluidTank inputTank = new FluidTank(0);
-    public FluidTank outputTank = new FluidTank(MAX_OUTPUT);
+    public FluidTank inputTank = new FluidTankSync(0);
+    public FluidTank outputTank = new FluidTankSync(MAX_OUTPUT);
 
     public Set<Coord4D> tankParts = new ObjectOpenHashSet<>();
     public IEvaporationSolar[] solars = new IEvaporationSolar[4];
@@ -81,7 +81,7 @@ public class TileEntityThermalEvaporationController extends TileEntityThermalEva
 
     public TileEntityThermalEvaporationController() {
         super("ThermalEvaporationController");
-        inventory = NonNullList.withSize(SLOTS.length, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(SLOTS.length, ItemStack.EMPTY);
     }
 
     @Override
@@ -295,7 +295,7 @@ public class TileEntityThermalEvaporationController extends TileEntityThermalEva
             return false;
         }
         structured = true;
-        markDirty();
+        markForUpdateSync();
         return true;
     }
 

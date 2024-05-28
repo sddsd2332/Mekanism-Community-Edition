@@ -72,6 +72,15 @@ public final class CableUtils {
         return outputters;
     }
 
+    public static TileEntity[] getConnectedTileEntities(TileEntity source, BlockPos pos, World world) {
+        TileEntity[] outputters = {null, null, null, null, null, null};
+        for (EnumFacing orientation : EnumFacing.VALUES) {
+            final TileEntity te = MekanismUtils.getTileEntity(world, pos.offset(orientation));
+            outputters[orientation.ordinal()] = te;
+        }
+        return outputters;
+    }
+
     public static boolean isOutputter(TileEntity source, TileEntity tileEntity, EnumFacing side) {
         if (tileEntity == null) {
             return false;

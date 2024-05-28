@@ -6,6 +6,7 @@ import mekanism.common.base.ItemHandlerWrapper;
 import mekanism.common.capabilities.CapabilityWrapperManager;
 import mekanism.common.capabilities.IToggleableCapability;
 import mekanism.common.util.LangUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.ItemStackHelper;
@@ -87,7 +88,7 @@ public abstract class TileEntityContainerBlock extends TileEntityBasicBlock impl
         super.readCustomNBT(nbtTags);
         if (handleInventory()) {
             NBTTagList tagList = nbtTags.getTagList("Items", NBT.TAG_COMPOUND);
-            inventory = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
+            inventory = NonNullListSynchronized.withSize(getSizeInventory(), ItemStack.EMPTY);
             for (int tagCount = 0; tagCount < tagList.tagCount(); tagCount++) {
                 NBTTagCompound tagCompound = tagList.getCompoundTagAt(tagCount);
                 byte slotID = tagCompound.getByte("Slot");
@@ -134,28 +135,34 @@ public abstract class TileEntityContainerBlock extends TileEntityBasicBlock impl
     @Nonnull
     @Override
     public ItemStack decrStackSize(int slotID, int amount) {
-        if (getInventory() == null) {
-            return ItemStack.EMPTY;
+        synchronized (inventory) {
+            if (getInventory() == null) {
+                return ItemStack.EMPTY;
+            }
+            return ItemStackHelper.getAndSplit(getInventory(), slotID, amount);
         }
-        return ItemStackHelper.getAndSplit(getInventory(), slotID, amount);
     }
 
     @Nonnull
     @Override
     public ItemStack removeStackFromSlot(int slotID) {
-        if (getInventory() == null) {
-            return ItemStack.EMPTY;
+        synchronized (inventory) {
+            if (getInventory() == null) {
+                return ItemStack.EMPTY;
+            }
+            return ItemStackHelper.getAndRemove(getInventory(), slotID);
         }
-        return ItemStackHelper.getAndRemove(getInventory(), slotID);
     }
 
     @Override
     public void setInventorySlotContents(int slotID, @Nonnull ItemStack itemstack) {
-        getInventory().set(slotID, itemstack);
-        if (!itemstack.isEmpty() && itemstack.getCount() > getInventoryStackLimit()) {
-            itemstack.setCount(getInventoryStackLimit());
+        synchronized (inventory) {
+            getInventory().set(slotID, itemstack);
+            if (!itemstack.isEmpty() && itemstack.getCount() > getInventoryStackLimit()) {
+                itemstack.setCount(getInventoryStackLimit());
+            }
+            markForUpdateSync();
         }
-        markDirty();
     }
 
     @Override
@@ -211,7 +218,7 @@ public abstract class TileEntityContainerBlock extends TileEntityBasicBlock impl
         if (nbtTags == null || nbtTags.tagCount() == 0 || !handleInventory()) {
             return;
         }
-        inventory = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(getSizeInventory(), ItemStack.EMPTY);
         for (int slots = 0; slots < nbtTags.tagCount(); slots++) {
             NBTTagCompound tagCompound = nbtTags.getCompoundTagAt(slots);
             byte slotID = tagCompound.getByte("Slot");
