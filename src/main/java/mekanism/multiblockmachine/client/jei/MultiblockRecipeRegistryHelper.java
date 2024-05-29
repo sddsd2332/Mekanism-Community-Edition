@@ -2,6 +2,7 @@ package mekanism.multiblockmachine.client.jei;
 
 import mekanism.common.recipe.RecipeHandler;
 import mekanism.multiblockmachine.client.gui.machine.GuiLargeChemicalInfuser;
+import mekanism.multiblockmachine.client.gui.machine.GuiLargeChemicalWasher;
 import mekanism.multiblockmachine.client.gui.machine.GuiLargeElectrolyticSeparator;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine.MultiblockMachineType;
 import mezz.jei.api.IModRegistry;
@@ -25,6 +26,13 @@ public class MultiblockRecipeRegistryHelper {
         registerRecipeItem(registry, MultiblockMachineType.LARGE_CHEMICAL_INFUSER, RecipeHandler.Recipe.CHEMICAL_INFUSER);
     }
 
+    public static void registerLargeChemicalWasher(IModRegistry registry) {
+        if (!MultiblockMachineType.LARGE_CHEMICAL_WASHER.isEnabled()) {
+            return;
+        }
+        registry.addRecipeClickArea(GuiLargeChemicalWasher.class,61, 39, 55, 8, RecipeHandler.Recipe.CHEMICAL_WASHER.getJEICategory());
+        registerRecipeItem(registry, MultiblockMachineType.LARGE_CHEMICAL_WASHER, RecipeHandler.Recipe.CHEMICAL_WASHER);
+    }
 
     private static void registerRecipeItem(IModRegistry registry, MultiblockMachineType type, RecipeHandler.Recipe recipe) {
         registry.addRecipeCatalyst(type.getStack(), recipe.getJEICategory());

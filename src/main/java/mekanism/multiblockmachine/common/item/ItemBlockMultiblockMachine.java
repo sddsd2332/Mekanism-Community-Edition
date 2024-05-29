@@ -151,6 +151,19 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
                     }
                 }
             }
+        }else if (type == MultiblockMachineType.LARGE_CHEMICAL_WASHER){
+            BlockPos.MutableBlockPos testPos = new BlockPos.MutableBlockPos();
+            for (int yPos = 0; yPos <= 2; yPos++) {
+                for (int xPos = -1; xPos <= 1; xPos++) {
+                    for (int zPos = -1; zPos <= 1; zPos++) {
+                        testPos.setPos(pos.getX() + xPos, pos.getY() + yPos, pos.getZ() + zPos);
+                        Block b = world.getBlockState(testPos).getBlock();
+                        if (!world.isValid(testPos) || !world.isBlockLoaded(testPos, false) || !b.isReplaceable(world, testPos)) {
+                            place = false;
+                        }
+                    }
+                }
+            }
         }
         if (place && super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, state)) {
             TileEntityBasicBlock tileEntity = (TileEntityBasicBlock) world.getTileEntity(pos);

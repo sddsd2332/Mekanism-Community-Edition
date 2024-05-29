@@ -92,10 +92,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
         configComponent.setConfig(TransmissionType.ITEM, new byte[]{0, 0, 1, 4, 2, 3});
         configComponent.setCanEject(TransmissionType.ITEM, false);
 
-        configComponent.addOutput(TransmissionType.FLUID, new SideData(DataType.NONE, InventoryUtils.EMPTY));
-        configComponent.addOutput(TransmissionType.FLUID, new SideData(DataType.INPUT, new int[]{0}));
-        configComponent.setConfig(TransmissionType.FLUID, new byte[]{0, 0, 1, 0, 0, 0});
-        configComponent.setCanEject(TransmissionType.FLUID, false);
+        configComponent.setInputConfig(TransmissionType.FLUID);
 
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.NONE, InventoryUtils.EMPTY));
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.OUTPUT_1, new int[]{1}));
@@ -217,10 +214,6 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
         return Recipe.ELECTROLYTIC_SEPARATOR.get();
     }
 
-    public boolean canFill(ChemicalPairOutput gases) {
-        return leftTank.canReceive(gases.leftGas.getGas()) && leftTank.getNeeded() >= gases.leftGas.amount
-                && rightTank.canReceive(gases.rightGas.getGas()) && rightTank.getNeeded() >= gases.rightGas.amount;
-    }
 
     @Override
     public boolean canExtractItem(int slotID, @Nonnull ItemStack itemstack, @Nonnull EnumFacing side) {
@@ -367,8 +360,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
 
     @Override
     public boolean canFill(EnumFacing from, @Nonnull FluidStack fluid) {
-        SideData data = configComponent.getOutput(TransmissionType.FLUID, from, facing);
-        if (data.hasSlot(0)) {
+        if (configComponent.getOutput(TransmissionType.FLUID, from, facing).ioState == SideData.IOState.INPUT) {
             return FluidContainerUtils.canFill(fluidTank.getFluid(), fluid) && Recipe.ELECTROLYTIC_SEPARATOR.containsRecipe(fluid.getFluid());
         }
         return false;
@@ -381,7 +373,10 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
 
     @Override
     public FluidTankInfo[] getTankInfo(EnumFacing from) {
-        return new FluidTankInfo[]{fluidTank.getInfo()};
+        if (configComponent.getOutput(TransmissionType.FLUID, from, facing).ioState != SideData.IOState.OFF) {
+            return new FluidTankInfo[]{fluidTank.getInfo()};
+        }
+        return PipeUtils.EMPTY;
     }
 
     @Override
@@ -396,8 +391,10 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
 
     @Override
     public GasStack drawGas(EnumFacing side, int amount, boolean doTransfer) {
-        if (canDrawGas(side, null)) {
-            return getTank(side).draw(amount, doTransfer);
+        if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1)){
+            return leftTank.draw(amount, doTransfer);
+        } else if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(2)) {
+            return rightTank.draw(amount, doTransfer);
         }
         return null;
     }
@@ -409,7 +406,12 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
 
     @Override
     public boolean canDrawGas(EnumFacing side, Gas type) {
-        return getTank(side) != null && getTank(side).getGas() != null && getTank(side).stored.getGas() == type;
+        if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1)){
+            return leftTank.getGas() != null && leftTank.getGas().getGas() == type;
+        }else if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(2)) {
+            return rightTank.getGas() != null && rightTank.getGas().getGas() == type;
+        }
+        return false;
     }
 
     @Nonnull

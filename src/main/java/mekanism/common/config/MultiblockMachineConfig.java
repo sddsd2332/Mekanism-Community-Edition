@@ -64,6 +64,12 @@ public class MultiblockMachineConfig extends BaseConfig {
     public final DoubleOption LargeGasGeneratorStorage = new DoubleOption(this, "multiblock", "LargeGasGeneratorStorage", 80000D * 27,
             "Base energy storage (Joules).");
 
+    public final DoubleOption LargeChemicalWasherUsage = new DoubleOption(this, "multiblock", "LargeChemicalWasherUsage", 200D,
+            "Energy per operation tick (Joules).");
+
+    public final DoubleOption LargeChemicalWasherStorage = new DoubleOption(this, "multiblock", "LargeChemicalWasherStorage", 80000D * 27,
+            "Base energy storage (Joules).");
+
     public final TypeConfigManager<MultiblockMachineType> multiblockmachinesManager = new TypeConfigManager<>(this, "multiblockmachines", MultiblockMachineType.class,MultiblockMachineType::getValidMachines,MultiblockMachineType::getBlockName);
 
 

@@ -278,7 +278,7 @@ public class TileEntityChemicalWasher extends TileEntityUpgradeableMachine<GasIn
     @Override
     public boolean canFill(EnumFacing from, @Nonnull FluidStack fluid) {
         if (configComponent.getOutput(TransmissionType.FLUID, from, facing).ioState == SideData.IOState.INPUT) {
-            return FluidContainerUtils.canFill(fluidTank.getFluid(), fluid);
+            return FluidContainerUtils.canFill(fluidTank.getFluid(), fluid) && fluid.getFluid().equals(FluidRegistry.WATER);
         }
         return false;
     }

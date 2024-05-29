@@ -1,4 +1,4 @@
-package mekanism.multiblockmachine.common.tile.machine;
+package mekanism.multiblockmachine.common.tile.machine.prefab;
 
 import mekanism.common.base.IElectricMachine;
 import mekanism.common.integration.computer.IComputerIntegration;

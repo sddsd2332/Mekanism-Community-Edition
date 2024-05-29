@@ -18,6 +18,7 @@ import mekanism.common.recipe.outputs.GasOutput;
 import mekanism.common.tier.GasTankTier;
 import mekanism.common.util.*;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine;
+import mekanism.multiblockmachine.common.tile.machine.prefab.TileEntityMultiblockBasicMachine;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;

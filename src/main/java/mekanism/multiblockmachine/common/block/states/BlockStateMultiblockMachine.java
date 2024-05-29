@@ -9,6 +9,7 @@ import mekanism.multiblockmachine.common.MekanismMultiblockMachine;
 import mekanism.multiblockmachine.common.MultiblockMachineBlocks;
 import mekanism.multiblockmachine.common.block.BlockMultiblockMachine;
 import mekanism.multiblockmachine.common.tile.machine.TileEntityLargeChemicalInfuser;
+import mekanism.multiblockmachine.common.tile.machine.TileEntityLargeChemicalWasher;
 import mekanism.multiblockmachine.common.tile.machine.TileEntityLargeElectrolyticSeparator;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
@@ -62,7 +63,8 @@ public class BlockStateMultiblockMachine extends ExtendedBlockState {
 
     public enum MultiblockMachineType implements IStringSerializable, IBlockType {
         LARGE_ELECTROLYTIC_SEPARATOR(MultiblockMachineBlock.MULTI_BLOCK_MACHINE_BLOCK_1, 0, "LargeElectrolyticSeparator", 3, TileEntityLargeElectrolyticSeparator::new, true, true, true, Plane.HORIZONTAL, false),
-        LARGE_CHEMICAL_INFUSER(MultiblockMachineBlock.MULTI_BLOCK_MACHINE_BLOCK_1, 1, "LargeChemicalInfuser", 4, TileEntityLargeChemicalInfuser::new, true, true, true, Plane.HORIZONTAL, false);
+        LARGE_CHEMICAL_INFUSER(MultiblockMachineBlock.MULTI_BLOCK_MACHINE_BLOCK_1, 1, "LargeChemicalInfuser", 4, TileEntityLargeChemicalInfuser::new, true, true, true, Plane.HORIZONTAL, false),
+        LARGE_CHEMICAL_WASHER(MultiblockMachineBlock.MULTI_BLOCK_MACHINE_BLOCK_1, 2,"LargeChemicalWasher",5, TileEntityLargeChemicalWasher::new,true,true,true, Plane.HORIZONTAL, false);
 
         private static final List<MultiblockMachineType> VALID_MACHINES = new ArrayList<>();
 
@@ -141,15 +143,16 @@ public class BlockStateMultiblockMachine extends ExtendedBlockState {
             return switch (this) {
                 case LARGE_ELECTROLYTIC_SEPARATOR -> MekanismConfig.current().general.FROM_H2.val() * 2;
                 case LARGE_CHEMICAL_INFUSER -> MekanismConfig.current().multiblock.largechemicalInfuserUsage.val();
+                case LARGE_CHEMICAL_WASHER -> MekanismConfig.current().multiblock.LargeChemicalWasherUsage.val();
                 default -> 0;
             };
         }
 
         private double getConfigStorage() {
             return switch (this) {
-                case LARGE_ELECTROLYTIC_SEPARATOR ->
-                        MekanismConfig.current().multiblock.largelectrolyticSeparator.val();
+                case LARGE_ELECTROLYTIC_SEPARATOR -> MekanismConfig.current().multiblock.largelectrolyticSeparator.val();
                 case LARGE_CHEMICAL_INFUSER -> MekanismConfig.current().multiblock.largechemicalInfuserStorage.val();
+                case LARGE_CHEMICAL_WASHER -> MekanismConfig.current().multiblock.LargeChemicalWasherStorage.val();
                 default -> 400 * getUsage();
             };
         }

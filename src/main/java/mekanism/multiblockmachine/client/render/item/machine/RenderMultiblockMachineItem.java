@@ -31,6 +31,8 @@ public class RenderMultiblockMachineItem extends SubTypeItemRenderer<MultiblockM
                 RenderLargeElectrolyticSeparatorItem.renderStack(stack, transformType);
             }else if (type == MultiblockMachineType.LARGE_CHEMICAL_INFUSER){
                 RenderLargeChemicalInfuserItem.renderStack(stack,transformType);
+            }else if (type == MultiblockMachineType.LARGE_CHEMICAL_WASHER){
+                RenderLargeChemicalWasherItem.renderStack(stack,transformType);
             }
         }
     }

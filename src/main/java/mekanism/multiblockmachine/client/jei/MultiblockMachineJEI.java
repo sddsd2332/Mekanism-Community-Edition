@@ -1,5 +1,6 @@
 package mekanism.multiblockmachine.client.jei;
 
+import mekanism.client.jei.GuiElementHandler;
 import mekanism.client.jei.MekanismJEI;
 import mekanism.multiblockmachine.common.MultiblockMachineBlocks;
 import mezz.jei.api.IModPlugin;
@@ -18,7 +19,9 @@ public class MultiblockMachineJEI implements IModPlugin {
 
     @Override
     public void register(IModRegistry registry) {
+        registry.addAdvancedGuiHandlers(new GuiElementHandler());
         MultiblockRecipeRegistryHelper.registerLargeSeparator(registry);
         MultiblockRecipeRegistryHelper.registerLargeChemicalInfuser(registry);
+        MultiblockRecipeRegistryHelper.registerLargeChemicalWasher(registry);
     }
 }

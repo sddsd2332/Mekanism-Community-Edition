@@ -1,4 +1,4 @@
-package mekanism.multiblockmachine.common.tile.machine;
+package mekanism.multiblockmachine.common.tile.machine.prefab;
 
 import io.netty.buffer.ByteBuf;
 import mekanism.api.TileNetworkList;
