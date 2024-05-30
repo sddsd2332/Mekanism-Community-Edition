@@ -363,7 +363,6 @@ public class ModelLargeGasGenerator extends ModelBase {
         bb_main.cubeList.add(new ModelBox(bb_main, 192, 207, -23.0F, -44.0F, -23.0F, 11, 38, 11, 0.0F, false));
         bb_main.cubeList.add(new ModelBox(bb_main, 192, 207, -23.0F, -44.0F, 12.0F, 11, 38, 11, 0.0F, false));
         bb_main.cubeList.add(new ModelBox(bb_main, 192, 207, 12.0F, -44.0F, 12.0F, 11, 38, 11, 0.0F, false));
-        bb_main.cubeList.add(new ModelBox(bb_main, 236, 142, -16.0F, -42.0F, -16.0F, 32, 6, 32, 0.0F, false));
         bb_main.cubeList.add(new ModelBox(bb_main, 244, 239, 14.0F, -18.0F, -23.25F, 7, 10, 1, 0.0F, false));
         bb_main.cubeList.add(new ModelBox(bb_main, 244, 239, 14.0F, -30.0F, -23.25F, 7, 10, 1, 0.0F, false));
         bb_main.cubeList.add(new ModelBox(bb_main, 244, 239, 14.0F, -42.0F, -23.25F, 7, 10, 1, 0.0F, false));
