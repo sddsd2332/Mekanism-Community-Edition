@@ -16,6 +16,7 @@ import mekanism.common.base.IFactory.RecipeType;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.block.states.BlockStateTransmitter.TransmitterType;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.integration.forgeenergy.FEIntegration;
 import mekanism.common.integration.ic2.IC2Integration;
 import mekanism.common.integration.redstoneflux.RFIntegration;
 import mekanism.common.integration.tesla.TeslaIntegration;
@@ -709,6 +710,7 @@ public final class MekanismUtils {
             case RF -> UnitDisplayUtils.getDisplayShort(RFIntegration.toRFAsDouble(energy), ElectricUnit.REDSTONE_FLUX);
             case EU -> UnitDisplayUtils.getDisplayShort(IC2Integration.toEU(energy), ElectricUnit.ELECTRICAL_UNITS);
             case T -> UnitDisplayUtils.getDisplayShort(TeslaIntegration.toTeslaAsDouble(energy), ElectricUnit.TESLA);
+            case FE -> UnitDisplayUtils.getDisplayShort(FEIntegration.tofeAsDouble(energy),ElectricUnit.FORGE_ENERGY);
         };
     }
 
@@ -732,6 +734,7 @@ public final class MekanismUtils {
             case RF -> RFIntegration.fromRF(energy);
             case EU -> IC2Integration.fromEU(energy);
             case T -> TeslaIntegration.fromTesla(energy);
+            case FE -> FEIntegration.fromfe(energy);
             default -> energy;
         };
     }
@@ -747,6 +750,7 @@ public final class MekanismUtils {
             case RF -> RFIntegration.toRFAsDouble(energy);
             case EU -> IC2Integration.toEU(energy);
             case T -> TeslaIntegration.toTeslaAsDouble(energy);
+            case FE -> FEIntegration.tofeAsDouble(energy);
             default -> energy;
         };
     }

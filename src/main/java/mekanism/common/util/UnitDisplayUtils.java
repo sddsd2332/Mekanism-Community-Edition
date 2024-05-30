@@ -118,8 +118,8 @@ public class UnitDisplayUtils {
         JOULES("Joule", "J"),
         REDSTONE_FLUX("Redstone Flux", "RF"),
         TESLA("Tesla", "T"),
-        ELECTRICAL_UNITS("Electrical Unit", "EU");
-
+        ELECTRICAL_UNITS("Electrical Unit", "EU"),
+        FORGE_ENERGY("Forge Energy", "FE");
         public String name;
         public String symbol;
 
@@ -226,7 +226,8 @@ public class UnitDisplayUtils {
         J,
         RF,
         EU,
-        T
+        T,
+        FE
     }
 
     public enum TempType {
