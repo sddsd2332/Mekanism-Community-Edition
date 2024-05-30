@@ -131,7 +131,7 @@ tile.MachineBlock.EnrichmentChamber.name=Enrichment Chamber
 tile.MachineBlock.OsmiumCompressor.name=Osmium Compressor
 tile.MachineBlock.Combiner.name=Combiner
 tile.MachineBlock.Crusher.name=Crusher
-tile.MachineBlock.Factory.name=Factory
+tile.MachineBlock.Factory.name= Factory
 tile.MachineBlock.MetallurgicInfuser.name=Metallurgic Infuser
 tile.MachineBlock.PurificationChamber.name=Purification Chamber
 tile.MachineBlock.EnergizedSmelter.name=Energized Smelter
@@ -170,7 +170,7 @@ tile.MachineBlock3.FormulaicAssemblicator.name=Formulaic Assemblicator
 tile.MachineBlock3.FuelwoodHeater.name=Fuelwood Heater
 
 # Add new machine block start
-tile.MachineBlock3.Factory.name=Factory
+tile.MachineBlock3.Factory.name= Factory
 tile.MachineBlock3.IsotopicCentrifuge.name=Isotopic Centrifuge
 tile.MachineBlock3.NutritionalLiquifier.name=Nutritional Liquifier
 tile.BasicBlock2.UraniumBlock.name=Uranium Block
