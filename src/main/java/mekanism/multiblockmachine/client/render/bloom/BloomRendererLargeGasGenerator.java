@@ -13,8 +13,11 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
+@SideOnly(Side.CLIENT)
 public class BloomRendererLargeGasGenerator implements IBloomEffect, IRenderSetup {
 
     private final TileEntityLargeGasGenerator gasGenerator;

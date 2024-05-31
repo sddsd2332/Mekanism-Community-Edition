@@ -7,12 +7,14 @@ import mekanism.api.Coord4D;
 import mekanism.api.TileNetworkList;
 import mekanism.api.gas.*;
 import mekanism.common.FuelHandler;
+import mekanism.common.Mekanism;
 import mekanism.common.Upgrade;
 import mekanism.common.base.IAdvancedBoundingBlock;
 import mekanism.common.base.IComparatorSupport;
 import mekanism.common.base.ISustainedData;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.integration.MekanismHooks;
 import mekanism.common.util.*;
 import mekanism.multiblockmachine.client.render.bloom.BloomRendererLargeGasGenerator;
 import net.minecraft.item.ItemStack;
@@ -24,11 +26,11 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.function.Predicate;
 
 public class TileEntityLargeGasGenerator extends TileEntityMultiblockGenerator implements IAdvancedBoundingBlock, IGasHandler, ISustainedData, IComparatorSupport {
 
@@ -43,10 +45,10 @@ public class TileEntityLargeGasGenerator extends TileEntityMultiblockGenerator i
     public int maxBurnTicks;
     public double generationRate = 0;
     public int clientUsed;
-    private int currentRedstoneLevel;
     public int numPowering;
+    private int currentRedstoneLevel;
     private int animation;
-    
+
     private boolean rendererInitialized = false;
 
     public TileEntityLargeGasGenerator() {
@@ -236,9 +238,24 @@ public class TileEntityLargeGasGenerator extends TileEntityMultiblockGenerator i
         super.validate();
         if (world.isRemote && !rendererInitialized) {
             rendererInitialized = true;
-            BloomRendererLargeGasGenerator renderer = new BloomRendererLargeGasGenerator(this);
-            BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
+            if (Mekanism.hooks.GTCEULoaded) {
+                GTECUBloom();
+            } else if (Mekanism.hooks.LumenizedLoaded) {
+                LumenizedBloom();
+            }
         }
+    }
+
+    @Optional.Method(modid = MekanismHooks.GTCEU_MOD_ID)
+    public void GTECUBloom() {
+        BloomRendererLargeGasGenerator renderer = new BloomRendererLargeGasGenerator(this);
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
+    }
+
+    @Optional.Method(modid = MekanismHooks.LUMENIZED_MOD_ID)
+    public void LumenizedBloom() {
+        BloomRendererLargeGasGenerator renderer = new BloomRendererLargeGasGenerator(this);
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
     }
 
     @Override

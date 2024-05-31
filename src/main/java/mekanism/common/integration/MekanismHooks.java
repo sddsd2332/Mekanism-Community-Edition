@@ -65,6 +65,8 @@ public final class MekanismHooks {
     public static final String CRAFTTWEAKER_MOD_ID = "crafttweaker";
     public static final String GROOVYSCRIPT_MOD_ID = "groovyscript";
     public static final String FLUX_NETWORKS_MOD_ID = "fluxnetworks";
+    public static final String GTCEU_MOD_ID = "gregtech";
+    public static final String LUMENIZED_MOD_ID = "lumenized";
 
     public boolean AE2Loaded = false;
     public boolean BuildCraftLoaded = false;
@@ -80,6 +82,8 @@ public final class MekanismHooks {
     public boolean TeslaLoaded = false;
     public boolean GroovyScriptLoaded = false;
     public boolean FluxNetWorksLoaded = false;
+    public boolean GTCEULoaded = false;
+    public boolean LumenizedLoaded = false;
 
     public void hookPreInit() {
         AE2Loaded = Loader.isModLoaded(APPLIED_ENERGISTICS_2_MOD_ID);
@@ -96,13 +100,56 @@ public final class MekanismHooks {
         TeslaLoaded = Loader.isModLoaded(TESLA_MOD_ID);
         GroovyScriptLoaded = Loader.isModLoaded(GROOVYSCRIPT_MOD_ID);
         FluxNetWorksLoaded = Loader.isModLoaded(FLUX_NETWORKS_MOD_ID);
+        GTCEULoaded = Mods.GTCeU.isPresent();
+        LumenizedLoaded = Loader.isModLoaded(LUMENIZED_MOD_ID);
 
-        if (FluxNetWorksLoaded){
+        if (FluxNetWorksLoaded) {
             FluxNetworksIntegration.preInit();
             Mekanism.logger.info("Hooked into Flux Networks successfully.");
         }
-
     }
+
+    public enum Mods {
+        GTCeU(GTCEU_MOD_ID){
+            private boolean initialized = false;
+            private boolean detected = false;
+
+            @Override
+            public boolean isPresent() {
+                if (initialized) {
+                    return detected;
+                }
+                initialized = true;
+                if (!super.isPresent()) {
+                    return detected = false;
+                }
+                try {
+                    Class.forName("gregtech.client.utils.BloomEffectUtil");
+                    return detected = true;
+                } catch (Exception e) {
+                    return detected = false;
+                }
+            }
+        };
+
+        private final String modid;
+        private final boolean loaded;
+
+        Mods(String modName) {
+            this.modid = modName;
+            this.loaded = Loader.isModLoaded(this.modid);
+        }
+
+        public String modName(){
+            return modid;
+        }
+
+        public boolean isPresent() {
+            return loaded;
+        }
+    }
+
+
 
     public void hookInit() {
         //Integrate with Waila
