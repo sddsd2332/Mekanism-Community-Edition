@@ -2,8 +2,10 @@ package mekanism.multiblockmachine.client.render.bloom.generator;
 
 import mekanism.common.util.BloomEffect;
 import mekanism.multiblockmachine.client.model.generator.ModelLargeHeatGenerator;
+import mekanism.multiblockmachine.client.render.generator.RenderLargeHeatGenerator;
 import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeHeatGenerator;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -11,7 +13,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class BloomRenderLargeHeatGenerator extends BloomEffect<TileEntityLargeHeatGenerator> {
 
     private final TileEntityLargeHeatGenerator tile;
-    private ModelLargeHeatGenerator model = new ModelLargeHeatGenerator();
 
     public BloomRenderLargeHeatGenerator(TileEntityLargeHeatGenerator tile) {
         super(tile,180, 0, 270, 90);
@@ -20,6 +21,8 @@ public class BloomRenderLargeHeatGenerator extends BloomEffect<TileEntityLargeHe
 
     @Override
     protected void RenderModelBloom() {
-        model.renderBloom(getTime(), 0.0625F, tile.getActive(), Minecraft.getMinecraft().renderEngine);
+        RenderLargeHeatGenerator renderer = (RenderLargeHeatGenerator) TileEntityRendererDispatcher.instance.renderers.get(TileEntityLargeHeatGenerator.class);
+        ModelLargeHeatGenerator model = renderer.getModel();
+        model.renderBloom(renderer.getTime(), 0.0625F, tile.getActive(), Minecraft.getMinecraft().renderEngine);
     }
 }

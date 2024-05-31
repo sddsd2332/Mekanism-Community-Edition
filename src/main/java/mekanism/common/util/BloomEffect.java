@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class BloomEffect<T extends TileEntityBasicBlock> implements IBloomEffect, IRenderSetup {
 
-    private final Timeticks time = new Timeticks(20, 20, false);
     public T tile;
     public int north;
     public int south;
@@ -59,7 +58,4 @@ public abstract class BloomEffect<T extends TileEntityBasicBlock> implements IBl
 
     protected abstract void RenderModelBloom();
 
-    public double getTime() {
-        return time.getValue() / 20F;
-    }
 }

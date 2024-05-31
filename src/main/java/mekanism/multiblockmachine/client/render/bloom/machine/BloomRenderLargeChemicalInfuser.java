@@ -2,8 +2,10 @@ package mekanism.multiblockmachine.client.render.bloom.machine;
 
 import mekanism.common.util.BloomEffect;
 import mekanism.multiblockmachine.client.model.machine.ModelLargeChemicalInfuser;
+import mekanism.multiblockmachine.client.render.machine.RenderLargeChemicalInfuser;
 import mekanism.multiblockmachine.common.tile.machine.TileEntityLargeChemicalInfuser;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -11,7 +13,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class BloomRenderLargeChemicalInfuser extends BloomEffect<TileEntityLargeChemicalInfuser> {
 
     private final TileEntityLargeChemicalInfuser tile;
-    private ModelLargeChemicalInfuser model = new ModelLargeChemicalInfuser();
 
     public BloomRenderLargeChemicalInfuser(TileEntityLargeChemicalInfuser tile) {
         super(tile, 0, 180, 90, 270);
@@ -20,6 +21,8 @@ public class BloomRenderLargeChemicalInfuser extends BloomEffect<TileEntityLarge
 
     @Override
     protected void RenderModelBloom() {
-        model.renderBloom(getTime(), 0.0625F, tile.getActive(), Minecraft.getMinecraft().renderEngine, tile.getScaledGasTankLevel(), tile.getScaledLeftTankGasLevel(), tile.getScaledRightTankGasLevel());
+        RenderLargeChemicalInfuser  renderer = (RenderLargeChemicalInfuser) TileEntityRendererDispatcher.instance.renderers.get(TileEntityLargeChemicalInfuser.class);
+        ModelLargeChemicalInfuser model = renderer.getModel();
+        model.renderBloom(renderer.getTime(), 0.0625F, tile.getActive(), Minecraft.getMinecraft().renderEngine, tile.getScaledGasTankLevel(), tile.getScaledLeftTankGasLevel(), tile.getScaledRightTankGasLevel());
     }
 }

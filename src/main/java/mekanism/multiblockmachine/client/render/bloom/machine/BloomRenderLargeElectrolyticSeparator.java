@@ -2,8 +2,10 @@ package mekanism.multiblockmachine.client.render.bloom.machine;
 
 import mekanism.common.util.BloomEffect;
 import mekanism.multiblockmachine.client.model.machine.ModelLargeElectrolyticSeparator;
+import mekanism.multiblockmachine.client.render.machine.RenderLargeElectrolyticSeparator;
 import mekanism.multiblockmachine.common.tile.machine.TileEntityLargeElectrolyticSeparator;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -20,6 +22,8 @@ public class BloomRenderLargeElectrolyticSeparator extends BloomEffect<TileEntit
 
     @Override
     protected void RenderModelBloom() {
-        model.renderBloom(getTime(), 0.0625F, tile.getActive(), Minecraft.getMinecraft().renderEngine, tile.getScaledFluidTankLevel(), tile.getScaledLeftTankGasLevel(), tile.getScaledRightTankGasLevel());
+        RenderLargeElectrolyticSeparator renderer = (RenderLargeElectrolyticSeparator) TileEntityRendererDispatcher.instance.renderers.get(TileEntityLargeElectrolyticSeparator.class);
+        ModelLargeElectrolyticSeparator model = renderer.getModel();
+        model.renderBloom(renderer.getTime(), 0.0625F, tile.getActive(), Minecraft.getMinecraft().renderEngine, tile.getScaledFluidTankLevel(), tile.getScaledLeftTankGasLevel(), tile.getScaledRightTankGasLevel());
     }
 }

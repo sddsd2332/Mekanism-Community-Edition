@@ -2,15 +2,17 @@ package mekanism.multiblockmachine.client.render.bloom.generator;
 
 import mekanism.common.util.BloomEffect;
 import mekanism.multiblockmachine.client.model.generator.ModelLargeGasGenerator;
+import mekanism.multiblockmachine.client.render.generator.RenderLargeGasGenerator;
 import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeGasGenerator;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class BloomRendererLargeGasGenerator extends BloomEffect<TileEntityLargeGasGenerator> {
 
-    private final ModelLargeGasGenerator model = new ModelLargeGasGenerator();
+
     private final TileEntityLargeGasGenerator gasGenerator;
 
     public BloomRendererLargeGasGenerator(TileEntityLargeGasGenerator gasGenerator) {
@@ -20,7 +22,9 @@ public class BloomRendererLargeGasGenerator extends BloomEffect<TileEntityLargeG
 
     @Override
     protected void RenderModelBloom() {
-        model.renderBloom(getTime(), 0.0625F, tile.getActive(), Minecraft.getMinecraft().renderEngine);
+        RenderLargeGasGenerator renderer = (RenderLargeGasGenerator) TileEntityRendererDispatcher.instance.renderers.get(TileEntityLargeGasGenerator.class);
+        ModelLargeGasGenerator model = renderer.getModel();
+        model.renderBloom(renderer.getTime(), 0.0625F, tile.getActive(), Minecraft.getMinecraft().renderEngine);
     }
 
 }

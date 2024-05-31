@@ -234,31 +234,6 @@ public class TileEntityLargeGasGenerator extends TileEntityMultiblockGenerator i
     }
 
     @Override
-    public void validate() {
-        super.validate();
-        if (world.isRemote && !rendererInitialized) {
-            rendererInitialized = true;
-            if (Mekanism.hooks.GTCEULoaded) {
-                GTECUBloom();
-            } else if (Mekanism.hooks.LumenizedLoaded) {
-                LumenizedBloom();
-            }
-        }
-    }
-
-    @Optional.Method(modid = MekanismHooks.GTCEU_MOD_ID)
-    public void GTECUBloom() {
-        BloomRendererLargeGasGenerator renderer = new BloomRendererLargeGasGenerator(this);
-        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
-    }
-
-    @Optional.Method(modid = MekanismHooks.LUMENIZED_MOD_ID)
-    public void LumenizedBloom() {
-        BloomRendererLargeGasGenerator renderer = new BloomRendererLargeGasGenerator(this);
-        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
-    }
-
-    @Override
     public void readCustomNBT(NBTTagCompound nbtTags) {
         super.readCustomNBT(nbtTags);
         fuelTank.read(nbtTags.getCompoundTag("fuelTank"));
@@ -504,5 +479,30 @@ public class TileEntityLargeGasGenerator extends TileEntityMultiblockGenerator i
 
     public int getAnimation() {
         return animation;
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        if (world.isRemote && !rendererInitialized) {
+            rendererInitialized = true;
+            if (Mekanism.hooks.GTCEULoaded) {
+                GTECUBloom();
+            } else if (Mekanism.hooks.LumenizedLoaded) {
+                LumenizedBloom();
+            }
+        }
+    }
+
+    @Optional.Method(modid = MekanismHooks.GTCEU_MOD_ID)
+    public void GTECUBloom() {
+        BloomRendererLargeGasGenerator renderer = new BloomRendererLargeGasGenerator(this);
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
+    }
+
+    @Optional.Method(modid = MekanismHooks.LUMENIZED_MOD_ID)
+    public void LumenizedBloom() {
+        BloomRendererLargeGasGenerator renderer = new BloomRendererLargeGasGenerator(this);
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
     }
 }
