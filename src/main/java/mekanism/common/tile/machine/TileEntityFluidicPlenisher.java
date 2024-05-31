@@ -119,6 +119,11 @@ public class TileEntityFluidicPlenisher extends TileEntityElectricBlock implemen
         }
     }
 
+    @Override
+    public boolean supportsAsync() {
+        return false;
+    }
+
     private void doPlenish() {
         if (usedNodes.size() >= MekanismConfig.current().general.maxPlenisherNodes.val()) {
             finishedCalc = true;

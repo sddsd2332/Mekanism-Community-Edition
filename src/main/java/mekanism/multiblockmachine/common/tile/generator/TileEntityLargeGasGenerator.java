@@ -1,5 +1,7 @@
 package mekanism.multiblockmachine.common.tile.generator;
 
+import gregtech.client.shader.postprocessing.BloomType;
+import gregtech.client.utils.BloomEffectUtil;
 import io.netty.buffer.ByteBuf;
 import mekanism.api.Coord4D;
 import mekanism.api.TileNetworkList;
@@ -12,6 +14,7 @@ import mekanism.common.base.ISustainedData;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.util.*;
+import mekanism.multiblockmachine.client.render.bloom.BloomRendererLargeGasGenerator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -25,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.function.Predicate;
 
 public class TileEntityLargeGasGenerator extends TileEntityMultiblockGenerator implements IAdvancedBoundingBlock, IGasHandler, ISustainedData, IComparatorSupport {
 
@@ -42,6 +46,8 @@ public class TileEntityLargeGasGenerator extends TileEntityMultiblockGenerator i
     private int currentRedstoneLevel;
     public int numPowering;
     private int animation;
+    
+    private boolean rendererInitialized = false;
 
     public TileEntityLargeGasGenerator() {
         super("gas", "LargeGasGenerator", MekanismConfig.current().multiblock.LargeGasGeneratorStorage.val(), MekanismConfig.current().multiblock.LargeGasGeneratorStorage.val(), 2);
@@ -223,6 +229,16 @@ public class TileEntityLargeGasGenerator extends TileEntityMultiblockGenerator i
     @Override
     public GasTankInfo[] getTankInfo() {
         return new GasTankInfo[]{fuelTank};
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        if (world.isRemote && !rendererInitialized) {
+            rendererInitialized = true;
+            BloomRendererLargeGasGenerator renderer = new BloomRendererLargeGasGenerator(this);
+            BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
+        }
     }
 
     @Override

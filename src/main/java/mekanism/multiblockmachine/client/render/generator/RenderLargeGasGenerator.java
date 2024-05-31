@@ -28,4 +28,12 @@ public class RenderLargeGasGenerator extends TileEntitySpecialRenderer<TileEntit
         GlStateManager.popMatrix();
     }
 
+    public ModelLargeGasGenerator getModel() {
+        return model;
+    }
+
+    public Timeticks getTime() {
+        return time;
+    }
+
 }

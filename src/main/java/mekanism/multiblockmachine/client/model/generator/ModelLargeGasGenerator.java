@@ -485,6 +485,23 @@ public class ModelLargeGasGenerator extends ModelBase {
         GlStateManager.popMatrix();
     }
 
+    public void renderBloom(double tick, float size, boolean on, TextureManager manager) {
+        GlStateManager.pushMatrix();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        GlStateManager.disableAlpha();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        manager.bindTexture(on ? MekanismMultiblockMachineUtils.getResource(ResourceType.RENDER, "GasGenerator/LargeGasGenerator_ON_" + getTick(tick) + ".png") : OVERLAY_OFF);
+        GlStateManager.scale(1.001F, 1.001F, 1.001F);
+        GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
+        MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
+        doRender(size);
+        MekanismRenderer.disableGlow(glowInfo);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.popMatrix();
+    }
+
     public void doRender(float size) {
         on45.render(size);
         mid45.render(size);
