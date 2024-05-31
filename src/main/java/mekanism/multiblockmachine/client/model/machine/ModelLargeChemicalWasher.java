@@ -132,8 +132,27 @@ public class ModelLargeChemicalWasher extends ModelBase {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         doRender(size); //渲染本体
+        manager.bindTexture(on ? OVERLAY_ON : OVERLAY_OFF);
         GlStateManager.scale(1.001F, 1.001F, 1.001F);
         GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
+        MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
+        doRender(size);
+        if (on) {
+            manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "ChemicalWasher/LED/LED_" + getTick(tick) + ".png"));
+            doRender(size);
+        }
+        MekanismRenderer.disableGlow(glowInfo);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.popMatrix();
+    }
+
+    public void renderBloom(double tick, float size, boolean on, TextureManager manager) {
+        GlStateManager.pushMatrix();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        GlStateManager.disableAlpha();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         manager.bindTexture(on ? OVERLAY_ON : OVERLAY_OFF);
         GlStateManager.scale(1.001F, 1.001F, 1.001F);
         GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);

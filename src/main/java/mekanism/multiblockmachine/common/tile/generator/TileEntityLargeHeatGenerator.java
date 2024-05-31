@@ -1,13 +1,18 @@
 package mekanism.multiblockmachine.common.tile.generator;
 
+import gregtech.client.shader.postprocessing.BloomType;
+import gregtech.client.utils.BloomEffectUtil;
 import io.netty.buffer.ByteBuf;
 import mekanism.api.Coord4D;
 import mekanism.api.IHeatTransfer;
 import mekanism.api.TileNetworkList;
+import mekanism.common.Mekanism;
 import mekanism.common.base.*;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.integration.MekanismHooks;
 import mekanism.common.util.*;
+import mekanism.multiblockmachine.client.render.bloom.generator.BloomRenderLargeHeatGenerator;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,6 +27,7 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,6 +50,7 @@ public class TileEntityLargeHeatGenerator extends TileEntityMultiblockGenerator 
     public double lastEnvironmentLoss;
     private int currentRedstoneLevel;
     public int numPowering;
+    private boolean rendererInitialized = false;
 
     public TileEntityLargeHeatGenerator() {
         super("heat", "LargeHeatGenerator", MekanismConfig.current().multiblock.largeHeatGeneratorStorage.val(), MekanismConfig.current().multiblock.largeHeatGeneratorStorage.val(), 2);
@@ -475,4 +482,29 @@ public class TileEntityLargeHeatGenerator extends TileEntityMultiblockGenerator 
         return super.isCapabilityDisabled(capability, side);
     }
 
+
+    @Override
+    public void validate() {
+        super.validate();
+        if (world.isRemote && !rendererInitialized) {
+            rendererInitialized = true;
+            if (Mekanism.hooks.GTCEULoaded) {
+                GTECUBloom();
+            } else if (Mekanism.hooks.LumenizedLoaded) {
+                LumenizedBloom();
+            }
+        }
+    }
+
+    @Optional.Method(modid = MekanismHooks.GTCEU_MOD_ID)
+    public void GTECUBloom() {
+        BloomRenderLargeHeatGenerator renderer = new BloomRenderLargeHeatGenerator(this);
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
+    }
+
+    @Optional.Method(modid = MekanismHooks.LUMENIZED_MOD_ID)
+    public void LumenizedBloom() {
+        BloomRenderLargeHeatGenerator renderer = new BloomRenderLargeHeatGenerator(this);
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
+    }
 }

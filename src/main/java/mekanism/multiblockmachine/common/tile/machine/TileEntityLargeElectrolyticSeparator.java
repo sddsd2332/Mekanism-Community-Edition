@@ -1,5 +1,7 @@
 package mekanism.multiblockmachine.common.tile.machine;
 
+import gregtech.client.shader.postprocessing.BloomType;
+import gregtech.client.utils.BloomEffectUtil;
 import io.netty.buffer.ByteBuf;
 import mekanism.api.Coord4D;
 import mekanism.api.TileNetworkList;
@@ -12,6 +14,7 @@ import mekanism.common.base.*;
 import mekanism.common.block.states.BlockStateMachine;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.integration.MekanismHooks;
 import mekanism.common.recipe.RecipeHandler;
 import mekanism.common.recipe.inputs.FluidInput;
 import mekanism.common.recipe.machines.SeparatorRecipe;
@@ -20,6 +23,7 @@ import mekanism.common.tier.FluidTankTier;
 import mekanism.common.tier.GasTankTier;
 import mekanism.common.tile.TileEntityGasTank.GasMode;
 import mekanism.common.util.*;
+import mekanism.multiblockmachine.client.render.bloom.machine.BloomRenderLargeElectrolyticSeparator;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine;
 import mekanism.multiblockmachine.common.tile.machine.prefab.TileEntityMultiblockBasicMachine;
 import net.minecraft.item.ItemStack;
@@ -37,6 +41,7 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,10 +70,11 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
 
     public SeparatorRecipe cachedRecipe;
     public double clientEnergyUsed;
-    private int currentRedstoneLevel;
     public int updateDelay;
     public boolean needsPacket;
     public int numPowering;
+    private int currentRedstoneLevel;
+    private boolean rendererInitialized = false;
 
     public TileEntityLargeElectrolyticSeparator() {
         super("electrolyticseparator", BlockStateMultiblockMachine.MultiblockMachineType.LARGE_ELECTROLYTIC_SEPARATOR, 1, 4);
@@ -702,5 +708,30 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
             return true;
         }
         return super.isCapabilityDisabled(capability, side);
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        if (world.isRemote && !rendererInitialized) {
+            rendererInitialized = true;
+            if (Mekanism.hooks.GTCEULoaded) {
+                GTECUBloom();
+            } else if (Mekanism.hooks.LumenizedLoaded) {
+                LumenizedBloom();
+            }
+        }
+    }
+
+    @Optional.Method(modid = MekanismHooks.GTCEU_MOD_ID)
+    public void GTECUBloom() {
+        BloomRenderLargeElectrolyticSeparator renderer = new BloomRenderLargeElectrolyticSeparator(this);
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
+    }
+
+    @Optional.Method(modid = MekanismHooks.LUMENIZED_MOD_ID)
+    public void LumenizedBloom() {
+        BloomRenderLargeElectrolyticSeparator renderer = new BloomRenderLargeElectrolyticSeparator(this);
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
     }
 }

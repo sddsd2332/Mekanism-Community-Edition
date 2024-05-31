@@ -1921,10 +1921,7 @@ public class ModelLargeWindGenerator extends ModelBase {
         GlStateManager.disableAlpha();
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-
-
         doRender(size, angle);
-
         manager.bindTexture(on ? MekanismMultiblockMachineUtils.getResource(ResourceType.RENDER, "WindGenerator/LargeWindGenerator_ON_" + getTick(tick) + ".png") : OVERLAY_OFF);
         GlStateManager.scale(1.001F, 1.001F, 1.001F);
         GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
@@ -1936,7 +1933,24 @@ public class ModelLargeWindGenerator extends ModelBase {
         GlStateManager.popMatrix();
     }
 
-    private void doRender(float size, double angle) {
+    public void renderBloom(double tick,float size, boolean on, TextureManager manager) {
+        GlStateManager.pushMatrix();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        GlStateManager.disableAlpha();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        manager.bindTexture(on ? MekanismMultiblockMachineUtils.getResource(ResourceType.RENDER, "WindGenerator/LargeWindGenerator_ON_" + getTick(tick) + ".png") : OVERLAY_OFF);
+        GlStateManager.scale(1.001F, 1.001F, 1.001F);
+        GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
+        MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
+        doRender(size);
+        MekanismRenderer.disableGlow(glowInfo);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.popMatrix();
+    }
+
+    private void doRender(float size){
         doll_up.render(size);
         uio_up.render(size);
         doll_up2.render(size);
@@ -1944,14 +1958,18 @@ public class ModelLargeWindGenerator extends ModelBase {
         wind_turbine_head.render(size);
         wind_power_middle.render(size);
         bone3.render(size);
-        setRotation(fans, 0F, 0F, getRotation(getAbsoluteAngle(angle)));
-        fans.render(size);
         bone19.render(size);
         south_controller.render(size);
         west_io.render(size);
         east_io.render(size);
         north_io.render(size);
         down.render(size);
+    }
+
+    private void doRender(float size, double angle) {
+        setRotation(fans, 0F, 0F, getRotation(getAbsoluteAngle(angle)));
+        fans.render(size);
+        doRender(size);
     }
 
     public float getRotation(double angle) {

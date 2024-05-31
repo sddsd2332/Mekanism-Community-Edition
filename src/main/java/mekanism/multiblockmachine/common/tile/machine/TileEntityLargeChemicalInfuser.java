@@ -1,5 +1,7 @@
 package mekanism.multiblockmachine.common.tile.machine;
 
+import gregtech.client.shader.postprocessing.BloomType;
+import gregtech.client.utils.BloomEffectUtil;
 import io.netty.buffer.ByteBuf;
 import mekanism.api.Coord4D;
 import mekanism.api.TileNetworkList;
@@ -11,12 +13,14 @@ import mekanism.common.base.ISustainedData;
 import mekanism.common.base.ITankManager;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.integration.MekanismHooks;
 import mekanism.common.recipe.RecipeHandler;
 import mekanism.common.recipe.inputs.ChemicalPairInput;
 import mekanism.common.recipe.machines.ChemicalInfuserRecipe;
 import mekanism.common.recipe.outputs.GasOutput;
 import mekanism.common.tier.GasTankTier;
 import mekanism.common.util.*;
+import mekanism.multiblockmachine.client.render.bloom.machine.BloomRenderLargeChemicalInfuser;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine;
 import mekanism.multiblockmachine.common.tile.machine.prefab.TileEntityMultiblockBasicMachine;
 import net.minecraft.item.ItemStack;
@@ -29,6 +33,7 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,6 +56,7 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
     public double clientEnergyUsed;
     public int output = 512;
     private int currentRedstoneLevel;
+    private boolean rendererInitialized = false;
 
     public TileEntityLargeChemicalInfuser() {
         super("cheminfuser", BlockStateMultiblockMachine.MultiblockMachineType.LARGE_CHEMICAL_INFUSER, 1, 4);
@@ -550,6 +556,30 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
             return true;
         }
         return super.isCapabilityDisabled(capability, side);
+    }
 
+    @Override
+    public void validate() {
+        super.validate();
+        if (world.isRemote && !rendererInitialized) {
+            rendererInitialized = true;
+            if (Mekanism.hooks.GTCEULoaded) {
+                GTECUBloom();
+            } else if (Mekanism.hooks.LumenizedLoaded) {
+                LumenizedBloom();
+            }
+        }
+    }
+
+    @Optional.Method(modid = MekanismHooks.GTCEU_MOD_ID)
+    public void GTECUBloom() {
+        BloomRenderLargeChemicalInfuser renderer = new BloomRenderLargeChemicalInfuser(this);
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
+    }
+
+    @Optional.Method(modid = MekanismHooks.LUMENIZED_MOD_ID)
+    public void LumenizedBloom() {
+        BloomRenderLargeChemicalInfuser renderer = new BloomRenderLargeChemicalInfuser(this);
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
     }
 }

@@ -16,7 +16,7 @@ import mekanism.common.capabilities.Capabilities;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.MekanismHooks;
 import mekanism.common.util.*;
-import mekanism.multiblockmachine.client.render.bloom.BloomRendererLargeGasGenerator;
+import mekanism.multiblockmachine.client.render.bloom.generator.BloomRendererLargeGasGenerator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
