@@ -1,14 +1,18 @@
 package mekanism.common.tile;
 
+import gregtech.client.shader.postprocessing.BloomType;
+import gregtech.client.utils.BloomEffectUtil;
 import io.netty.buffer.ByteBuf;
 import mekanism.api.Coord4D;
 import mekanism.api.TileNetworkList;
+import mekanism.client.render.bloom.BloomRenderSecurityDesk;
 import mekanism.common.Mekanism;
 import mekanism.common.PacketHandler;
 import mekanism.common.base.IBoundingBlock;
 import mekanism.common.frequency.Frequency;
 import mekanism.common.frequency.FrequencyManager;
 import mekanism.common.frequency.IFrequencyHandler;
+import mekanism.common.integration.MekanismHooks;
 import mekanism.common.network.PacketSecurityUpdate.SecurityPacket;
 import mekanism.common.network.PacketSecurityUpdate.SecurityUpdateMessage;
 import mekanism.common.security.IOwnerItem;
@@ -23,10 +27,10 @@ import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -40,7 +44,7 @@ public class TileEntitySecurityDesk extends TileEntityContainerBlock implements 
 
     public UUID ownerUUID;
     public String clientOwner;
-
+    private boolean rendererInitialized = false;
     public SecurityFrequency frequency;
 
     public TileEntitySecurityDesk() {
@@ -187,7 +191,7 @@ public class TileEntitySecurityDesk extends TileEntityContainerBlock implements 
 
 
     @Override
-   public void writeCustomNBT(NBTTagCompound nbtTags) {
+    public void writeCustomNBT(NBTTagCompound nbtTags) {
         super.writeCustomNBT(nbtTags);
         if (ownerUUID != null) {
             nbtTags.setString("ownerUUID", ownerUUID.toString());
@@ -274,5 +278,30 @@ public class TileEntitySecurityDesk extends TileEntityContainerBlock implements 
             return true;
         }
         return super.isCapabilityDisabled(capability, side);
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        if (world.isRemote && !rendererInitialized) {
+            rendererInitialized = true;
+            if (Mekanism.hooks.GTCEULoaded) {
+                GTECUBloom();
+            } else if (Mekanism.hooks.LumenizedLoaded) {
+                LumenizedBloom();
+            }
+        }
+    }
+
+    @net.minecraftforge.fml.common.Optional.Method(modid = MekanismHooks.GTCEU_MOD_ID)
+    public void GTECUBloom() {
+        BloomRenderSecurityDesk renderer = new BloomRenderSecurityDesk(this);
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
+    }
+
+    @Optional.Method(modid = MekanismHooks.LUMENIZED_MOD_ID)
+    public void LumenizedBloom() {
+        BloomRenderSecurityDesk renderer = new BloomRenderSecurityDesk(this);
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
     }
 }

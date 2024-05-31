@@ -1,17 +1,22 @@
 package mekanism.generators.common.tile;
 
+import gregtech.client.shader.postprocessing.BloomType;
+import gregtech.client.utils.BloomEffectUtil;
 import io.netty.buffer.ByteBuf;
 import mekanism.api.Coord4D;
 import mekanism.api.IHeatTransfer;
 import mekanism.api.TileNetworkList;
+import mekanism.common.Mekanism;
 import mekanism.common.base.FluidHandlerWrapper;
 import mekanism.common.base.IComparatorSupport;
 import mekanism.common.base.IFluidHandlerWrapper;
 import mekanism.common.base.ISustainedData;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.integration.MekanismHooks;
 import mekanism.common.util.*;
 import mekanism.common.util.FluidContainerUtils.FluidChecker;
+import mekanism.generators.client.render.bloom.BloomRenderHeatGenerator;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,6 +28,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Optional;
 
 import javax.annotation.Nonnull;
 
@@ -41,6 +47,7 @@ public class TileEntityHeatGenerator extends TileEntityGenerator implements IFlu
     public double lastTransferLoss;
     public double lastEnvironmentLoss;
     private int currentRedstoneLevel;
+    private boolean rendererInitialized = false;
 
     public TileEntityHeatGenerator() {
         super("heat", "HeatGenerator", MekanismConfig.current().generators.heatGeneratorStorage.val(), MekanismConfig.current().generators.heatGeneration.val() * 2);
@@ -124,7 +131,7 @@ public class TileEntityHeatGenerator extends TileEntityGenerator implements IFlu
     }
 
     @Override
-   public void writeCustomNBT(NBTTagCompound nbtTags) {
+    public void writeCustomNBT(NBTTagCompound nbtTags) {
         super.writeCustomNBT(nbtTags);
         if (lavaTank.getFluid() != null) {
             nbtTags.setTag("lavaTank", lavaTank.writeToNBT(new NBTTagCompound()));
@@ -334,5 +341,30 @@ public class TileEntityHeatGenerator extends TileEntityGenerator implements IFlu
     @Override
     public int getRedstoneLevel() {
         return MekanismUtils.redstoneLevelFromContents(lavaTank.getFluidAmount(), lavaTank.getCapacity());
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        if (world.isRemote && !rendererInitialized) {
+            rendererInitialized = true;
+            if (Mekanism.hooks.GTCEULoaded) {
+                GTECUBloom();
+            } else if (Mekanism.hooks.LumenizedLoaded) {
+                LumenizedBloom();
+            }
+        }
+    }
+
+    @net.minecraftforge.fml.common.Optional.Method(modid = MekanismHooks.GTCEU_MOD_ID)
+    public void GTECUBloom() {
+        BloomRenderHeatGenerator renderer = new BloomRenderHeatGenerator(this);
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
+    }
+
+    @Optional.Method(modid = MekanismHooks.LUMENIZED_MOD_ID)
+    public void LumenizedBloom() {
+        BloomRenderHeatGenerator renderer = new BloomRenderHeatGenerator(this);
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
     }
 }

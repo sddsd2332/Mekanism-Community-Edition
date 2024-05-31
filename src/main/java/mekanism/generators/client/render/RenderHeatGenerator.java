@@ -27,4 +27,8 @@ public class RenderHeatGenerator extends TileEntitySpecialRenderer<TileEntityHea
         model.render(0.0625F, tileEntity.getActive(), rendererDispatcher.renderEngine);
         GlStateManager.popMatrix();
     }
+
+    public ModelHeatGenerator getModel(){
+        return model;
+    }
 }

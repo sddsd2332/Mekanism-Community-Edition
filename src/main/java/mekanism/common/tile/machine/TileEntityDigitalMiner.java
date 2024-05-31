@@ -1,5 +1,7 @@
 package mekanism.common.tile.machine;
 
+import gregtech.client.shader.postprocessing.BloomType;
+import gregtech.client.utils.BloomEffectUtil;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -9,6 +11,7 @@ import mekanism.api.Chunk3D;
 import mekanism.api.Coord4D;
 import mekanism.api.Range4D;
 import mekanism.api.TileNetworkList;
+import mekanism.client.render.bloom.BloomRenderDigitalMiner;
 import mekanism.common.HashList;
 import mekanism.common.Mekanism;
 import mekanism.common.Upgrade;
@@ -25,6 +28,7 @@ import mekanism.common.content.miner.ThreadMinerSearch.State;
 import mekanism.common.content.transporter.InvStack;
 import mekanism.common.content.transporter.TransitRequest;
 import mekanism.common.content.transporter.TransitRequest.TransitResponse;
+import mekanism.common.integration.MekanismHooks;
 import mekanism.common.inventory.container.ContainerFilter;
 import mekanism.common.inventory.container.ContainerNull;
 import mekanism.common.network.PacketTileEntity.TileEntityMessage;
@@ -61,6 +65,7 @@ import net.minecraftforge.common.util.Constants.WorldEvents;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -71,7 +76,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class TileEntityDigitalMiner extends TileEntityElectricBlock implements IUpgradeTile, IRedstoneControl, IActiveState, ISustainedData, IChunkLoader, IAdvancedBoundingBlock,IHasVisualization {
+public class TileEntityDigitalMiner extends TileEntityElectricBlock implements IUpgradeTile, IRedstoneControl, IActiveState, ISustainedData, IChunkLoader, IAdvancedBoundingBlock, IHasVisualization {
 
     private static final int[] INV_SLOTS = IntStream.range(0, 28).toArray();
 
@@ -81,7 +86,7 @@ public class TileEntityDigitalMiner extends TileEntityElectricBlock implements I
     public ThreadMinerSearch searcher = new ThreadMinerSearch(this);
     public final double BASE_ENERGY_USAGE = MachineType.DIGITAL_MINER.getUsage();
     public double energyUsage = BASE_ENERGY_USAGE;
-
+    private boolean rendererInitialized = false;
     private int radius;
 
     public boolean inverse;
@@ -548,7 +553,7 @@ public class TileEntityDigitalMiner extends TileEntityElectricBlock implements I
     }
 
     @Override
-   public void writeCustomNBT(NBTTagCompound nbtTags) {
+    public void writeCustomNBT(NBTTagCompound nbtTags) {
         super.writeCustomNBT(nbtTags);
         if (searcher.state == State.SEARCHING) {
             reset();
@@ -592,7 +597,8 @@ public class TileEntityDigitalMiner extends TileEntityElectricBlock implements I
                 case 3 -> start();
                 case 4 -> stop();
                 case 5 -> reset();
-                case 6 -> setRadius(Math.min(dataStream.readInt(), MekanismConfig.current().general.digitalMinerMaxRadius.val()));
+                case 6 ->
+                        setRadius(Math.min(dataStream.readInt(), MekanismConfig.current().general.digitalMinerMaxRadius.val()));
                 case 7 -> minY = dataStream.readInt();
                 case 8 -> maxY = dataStream.readInt();
                 case 9 -> silkTouch = !silkTouch;
@@ -1248,5 +1254,30 @@ public class TileEntityDigitalMiner extends TileEntityElectricBlock implements I
     @Override
     public boolean canDisplayVisuals() {
         return this.getRadius() <= 64;
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        if (world.isRemote && !rendererInitialized) {
+            rendererInitialized = true;
+            if (Mekanism.hooks.GTCEULoaded) {
+                GTECUBloom();
+            } else if (Mekanism.hooks.LumenizedLoaded) {
+                LumenizedBloom();
+            }
+        }
+    }
+
+    @net.minecraftforge.fml.common.Optional.Method(modid = MekanismHooks.GTCEU_MOD_ID)
+    public void GTECUBloom() {
+        BloomRenderDigitalMiner renderer = new BloomRenderDigitalMiner(this);
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
+    }
+
+    @Optional.Method(modid = MekanismHooks.LUMENIZED_MOD_ID)
+    public void LumenizedBloom() {
+        BloomRenderDigitalMiner renderer = new BloomRenderDigitalMiner(this);
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
     }
 }

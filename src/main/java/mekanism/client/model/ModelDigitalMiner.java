@@ -447,9 +447,24 @@ public class ModelDigitalMiner extends ModelBase {
         GlStateManager.scale(1.001F, 1.001F, 1.001F);
         GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
         GlowInfo glowInfo = MekanismRenderer.enableGlow();
-
         doRender(size);
+        MekanismRenderer.disableGlow(glowInfo);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.popMatrix();
+    }
 
+    public void renderBloom(double tick, float size, boolean on, TextureManager manager) {
+        GlStateManager.pushMatrix();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        GlStateManager.disableAlpha();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+        manager.bindTexture(on ? isON(tick) : OVERLAY_OFF);
+        GlStateManager.scale(1.001F, 1.001F, 1.001F);
+        GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
+        GlowInfo glowInfo = MekanismRenderer.enableGlow();
+        doRender(size);
         MekanismRenderer.disableGlow(glowInfo);
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();

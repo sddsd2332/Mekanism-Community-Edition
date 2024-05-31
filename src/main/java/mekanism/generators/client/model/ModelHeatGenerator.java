@@ -165,6 +165,23 @@ public class ModelHeatGenerator extends ModelBase {
         GlStateManager.popMatrix();
     }
 
+    public void renderBloom(float size, boolean on, TextureManager manager) {
+        GlStateManager.pushMatrix();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        GlStateManager.disableAlpha();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+        manager.bindTexture(on ? OVERLAY_ON : OVERLAY_OFF);
+        GlStateManager.scale(1.001F, 1.001F, 1.001F);
+        GlStateManager.translate(0, -0.0011F, 0);
+        GlowInfo glowInfo = MekanismRenderer.enableGlow();
+        doRender(size);
+        MekanismRenderer.disableGlow(glowInfo);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.popMatrix();
+    }
+
     private void doRender(float size) {
         drum.render(size);
         ring1.render(size);

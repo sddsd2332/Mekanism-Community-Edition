@@ -25,4 +25,8 @@ public class RenderSecurityDesk extends TileEntitySpecialRenderer<TileEntitySecu
         model.render(0.0625F, rendererDispatcher.renderEngine);
         GlStateManager.popMatrix();
     }
+
+    public ModelSecurityDesk getModel() {
+        return model;
+    }
 }

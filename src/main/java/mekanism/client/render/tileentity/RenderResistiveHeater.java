@@ -25,4 +25,8 @@ public class RenderResistiveHeater extends TileEntitySpecialRenderer<TileEntityR
         model.render(0.0625F, tileEntity.isActive, rendererDispatcher.renderEngine, true);
         GlStateManager.popMatrix();
     }
+
+    public ModelResistiveHeater getModel() {
+        return model;
+    }
 }

@@ -1,14 +1,18 @@
 package mekanism.common.tile;
 
+import gregtech.client.shader.postprocessing.BloomType;
+import gregtech.client.utils.BloomEffectUtil;
 import io.netty.buffer.ByteBuf;
 import mekanism.api.Coord4D;
 import mekanism.api.IHeatTransfer;
 import mekanism.api.TileNetworkList;
+import mekanism.client.render.bloom.BloomRenderResistiveHeater;
 import mekanism.common.Mekanism;
 import mekanism.common.base.IRedstoneControl;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.integration.MekanismHooks;
 import mekanism.common.integration.computer.IComputerIntegration;
 import mekanism.common.security.ISecurityTile;
 import mekanism.common.tile.component.TileComponentSecurity;
@@ -18,9 +22,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Optional;
 
 import javax.annotation.Nonnull;
 
@@ -48,6 +52,7 @@ public class TileEntityResistiveHeater extends TileEntityEffectsBlock implements
     public double lastEnvironmentLoss;
     public RedstoneControl controlType = RedstoneControl.DISABLED;
     public TileComponentSecurity securityComponent = new TileComponentSecurity(this);
+    private boolean rendererInitialized = false;
 
     public TileEntityResistiveHeater() {
         super("machine.resistiveheater", "ResistiveHeater", MachineType.RESISTIVE_HEATER.getStorage());
@@ -120,7 +125,7 @@ public class TileEntityResistiveHeater extends TileEntityEffectsBlock implements
 
 
     @Override
-   public void writeCustomNBT(NBTTagCompound nbtTags) {
+    public void writeCustomNBT(NBTTagCompound nbtTags) {
         super.writeCustomNBT(nbtTags);
         nbtTags.setDouble("energyUsage", energyUsage);
         nbtTags.setDouble("temperature", temperature);
@@ -316,5 +321,30 @@ public class TileEntityResistiveHeater extends TileEntityEffectsBlock implements
     @Override
     public boolean isItemValidForSlot(int slot, @Nonnull ItemStack stack) {
         return ChargeUtils.canBeDischarged(stack);
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        if (world.isRemote && !rendererInitialized) {
+            rendererInitialized = true;
+            if (Mekanism.hooks.GTCEULoaded) {
+                GTECUBloom();
+            } else if (Mekanism.hooks.LumenizedLoaded) {
+                LumenizedBloom();
+            }
+        }
+    }
+
+    @net.minecraftforge.fml.common.Optional.Method(modid = MekanismHooks.GTCEU_MOD_ID)
+    public void GTECUBloom() {
+        BloomRenderResistiveHeater renderer = new BloomRenderResistiveHeater(this);
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
+    }
+
+    @Optional.Method(modid = MekanismHooks.LUMENIZED_MOD_ID)
+    public void LumenizedBloom() {
+        BloomRenderResistiveHeater renderer = new BloomRenderResistiveHeater(this);
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
     }
 }
