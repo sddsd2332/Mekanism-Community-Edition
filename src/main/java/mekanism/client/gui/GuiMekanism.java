@@ -32,7 +32,7 @@ public abstract class GuiMekanism extends GuiContainer implements IGuiWrapper {
 
     private final ResourceLocation Base = MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "Base.png");
     private Set<GuiElement> guiElements = new ReferenceOpenHashSet<>();
-
+    private boolean atuoBG = true;
     public GuiMekanism(Container container) {
         super(container);
     }
@@ -100,7 +100,9 @@ public abstract class GuiMekanism extends GuiContainer implements IGuiWrapper {
         MekanismRenderer.resetColor();
         mc.renderEngine.bindTexture(getGuiLocation());
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-        drawGuiBG(xSize, ySize);
+        if (atuoBG) {
+            drawGuiBG(xSize, ySize);
+        }
         int xAxis = mouseX - guiLeft;
         int yAxis = mouseY - guiTop;
         //Bringing Elements forward to ContainerBackgroundLayer makes it easier to override Elements
@@ -240,5 +242,9 @@ public abstract class GuiMekanism extends GuiContainer implements IGuiWrapper {
 
     protected ResourceLocation getGuiLocation() {
         return MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "Null.png");
+    }
+
+    public boolean CloseAtuoBG(boolean auto){
+        return atuoBG = auto;
     }
 }

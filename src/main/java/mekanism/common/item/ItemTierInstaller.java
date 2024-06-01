@@ -40,9 +40,9 @@ public class ItemTierInstaller extends ItemMekanism implements IMetaItem {
             if (tile instanceof TileEntityBasicBlock && ((TileEntityBasicBlock) tile).playersUsing.size() > 0) {
                 return EnumActionResult.FAIL;
             }
-            if (((ITierUpgradeable) tile).upgrade(tier)) {
+            if (((ITierUpgradeable) tile).upgrade(tier) && ((ITierUpgradeable) tile).UpgradeAmount() <= stack.getCount()) {
                 if (!player.capabilities.isCreativeMode) {
-                    stack.shrink(1);
+                    stack.shrink(((ITierUpgradeable) tile).UpgradeAmount());
                 }
                 return EnumActionResult.SUCCESS;
             }

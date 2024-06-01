@@ -93,7 +93,7 @@ public class MEKCEConfig extends BaseConfig {
 
     public final BooleanOption EnableConfiguratorWrench = new BooleanOption(this,"mekce","EnableConfiguratorWrench",true,"Enable the configurator's wrench mode");
 
-    public final IntOption MAXTierSize = new IntOption(this,"mekce","MAXTierSize",1,
+    public final IntOption MAXTierSize = new IntOption(this,"mekce","MAXTierSize",8,
             "The maximum number of stacks that can be stacked in Tier Instale",1,64).setRequiresGameRestart(true);
 
     public final BooleanOption EnableUpgradeConfigure  = new BooleanOption(this,"mekce","EnableUpgradeConfigure",false,"Enable an upgrade similar to IC2");
