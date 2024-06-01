@@ -1,7 +1,7 @@
 package mekanism.common.capabilities;
 
 import mekanism.api.IAlloyInteraction;
-import mekanism.api.tier.AlloyTier;
+import mekanism.common.tier.AlloyTier;
 import mekanism.common.capabilities.DefaultStorageHelper.NullStorage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

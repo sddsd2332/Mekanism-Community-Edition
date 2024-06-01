@@ -6,8 +6,8 @@ import it.unimi.dsi.fastutil.ints.IntSet;
 import mekanism.api.Coord4D;
 import mekanism.api.EnumColor;
 import mekanism.api.TileNetworkList;
-import mekanism.api.tier.AlloyTier;
-import mekanism.api.tier.BaseTier;
+import mekanism.common.tier.AlloyTier;
+import mekanism.common.tier.BaseTier;
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.common.Mekanism;
 import mekanism.common.base.ILogisticalTransporter;
@@ -40,9 +40,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 public class TileEntityLogisticalTransporter extends TileEntityTransmitter<TileEntity, InventoryNetwork, Void> {
 

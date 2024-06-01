@@ -1,6 +1,6 @@
 package mekanism.common;
 
-import mekanism.api.tier.AlloyTier;
+import mekanism.common.tier.AlloyTier;
 import mekanism.common.item.*;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;

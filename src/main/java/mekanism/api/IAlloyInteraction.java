@@ -1,6 +1,6 @@
 package mekanism.api;
 
-import mekanism.api.tier.AlloyTier;
+import mekanism.common.tier.AlloyTier;
 
 /**
  * Implement this class in your TileEntity if it can interact with Mekanism alloys.

@@ -1,7 +1,5 @@
 package mekanism.common.tier;
 
-import mekanism.api.tier.BaseTier;
-import mekanism.api.tier.ITier;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
 
 import java.util.function.Consumer;

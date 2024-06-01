@@ -2,7 +2,7 @@ package mekanism.common.item;
 
 import mcmultipart.api.multipart.IMultipart;
 import mekanism.api.EnumColor;
-import mekanism.api.tier.BaseTier;
+import mekanism.common.tier.BaseTier;
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.client.MekKeyHandler;
 import mekanism.client.MekanismKeyHandler;

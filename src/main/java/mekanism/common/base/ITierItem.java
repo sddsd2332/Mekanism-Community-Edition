@@ -1,6 +1,6 @@
 package mekanism.common.base;
 
-import mekanism.api.tier.BaseTier;
+import mekanism.common.tier.BaseTier;
 import net.minecraft.item.ItemStack;
 
 public interface ITierItem {

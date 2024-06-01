@@ -1,7 +1,7 @@
 package mekanism.common.base;
 
 import mekanism.api.ITierOptionalUpgradeable;
-import mekanism.api.tier.BaseTier;
+import mekanism.common.tier.BaseTier;
 
 /**
  * 可升级组件

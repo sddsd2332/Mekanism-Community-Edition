@@ -2,7 +2,7 @@ package mekanism.common.tile.transmitter;
 
 import mekanism.api.Coord4D;
 import mekanism.api.IAlloyInteraction;
-import mekanism.api.tier.AlloyTier;
+import mekanism.common.tier.AlloyTier;
 import mekanism.api.transmitters.DynamicNetwork;
 import mekanism.api.transmitters.DynamicNetwork.NetworkClientRequest;
 import mekanism.api.transmitters.IGridTransmitter;

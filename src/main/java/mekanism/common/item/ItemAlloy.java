@@ -1,7 +1,7 @@
 package mekanism.common.item;
 
 import mekanism.api.IAlloyInteraction;
-import mekanism.api.tier.AlloyTier;
+import mekanism.common.tier.AlloyTier;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.util.CapabilityUtils;

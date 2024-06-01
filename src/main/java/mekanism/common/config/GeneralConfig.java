@@ -1,6 +1,6 @@
 package mekanism.common.config;
 
-import mekanism.api.tier.BaseTier;
+import mekanism.common.tier.BaseTier;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.config.options.*;
 import mekanism.common.tier.FluidTankTier;
