@@ -13,8 +13,11 @@ item.EnergyUpgrade.name=Energie-Upgrade
 item.FilterUpgrade.name=Filter-Upgrade
 item.MufflingUpgrade.name=Schalldämpfer-Upgrade
 item.GasUpgrade.name=Gas-Upgrade
+item.AnchorUpgrade.name=Anker-Upgrade
+item.StoneGeneratorUpgrade.name=Steingenerator-Upgrade
+item.ThreadUpgrade.name=Gewinde-Upgrade
 item.Robit.name=Robit
-item.AtomicDisassembler.name=Atomar-Disassembler
+item.AtomicDisassembler.name=Atomarer Disassembler
 item.ElectricBow.name=Elektrischer Bogen
 item.EnrichedIron.name=Angereichertes Eisen
 item.CompressedCarbon.name=Komprimierter Kohlenstoff
@@ -37,36 +40,42 @@ item.BrineBucket.name=Eimer mit Salzwasser
 item.LithiumBucket.name=Eimer mit Lithium
 item.HeavyWaterBucket.name=Eimer mit Schwerem Wasser
 item.FreeRunners.name=Freiläufer
-item.ArmoredJetpack.name=Panzer-Jetpack
+item.ArmoredJetpack.name=Gepanzertes Jetpack
+item.ArmoredFreeRunners.name=Gepanzerte Freiläufer
 item.ConfigurationCard.name=Konfigurationskarte
 item.SeismicReader.name=Seismisches Lesegerät
 item.HDPEPellet.name=HDPE-Pellet
-item.HDPERod.name=HDPE-Stange
-item.HDPESheet.name=HDPE-Bogen
+item.HDPERod.name=HDPE Stange
+item.HDPESheet.name=HDPE Bogen
 item.PlaStick.name=PlaStick
 item.Substrate.name=Substrat
 item.Flamethrower.name=Flammenwerfer
 item.GaugeDropper.name=Ventilspender
 item.BioFuel.name=Biomasse
 item.CraftingFormula.name=Fertigungsformel
+item.Canteen.name=Feldflasche
+item.CosmicAlloy.name=Kosmische Legierung
 
 # Control Circuits
 item.BasicControlCircuit.name=Basis-Kontrollschaltkreis
-item.AdvancedControlCircuit.name=Fortgeschr. Kontrollschaltkreis
+item.AdvancedControlCircuit.name=Fortgeschrittener Kontrollschaltkreis
 item.EliteControlCircuit.name=Elite-Kontrollschaltkreis
 item.UltimateControlCircuit.name=Ultimativer Kontrollschaltkreis
+item.CreativeControlCircuit.name=Kreativer Kontrollschaltkreis
 
 # Gas Tank
 tile.GasTankBasic.name=Basis-Gastank
-tile.GasTankAdvanced.name=Fortgeschr. Gastank
-tile.GasTankElite.name=Elite-Gastank
+tile.GasTankAdvanced.name=Fortgeschrittener Gastank
+tile.GasTankElite.name=Elite Gastank
 tile.GasTankUltimate.name=Ultimativer Gastank
+tile.GasTankCreative.name=Kreativer Gastank
 
 # Fluid Tank (part of MachineBlock2, naming handled differently)
 tile.FluidTankBasic.name=Basis-Tank
-tile.FluidTankAdvanced.name=Fortgeschr. Tank
-tile.FluidTankElite.name=Elite-Tank
+tile.FluidTankAdvanced.name=Fortgeschrittener Tank
+tile.FluidTankElite.name=Elite Tank
 tile.FluidTankUltimate.name=Ultimativer Tank
+tile.FluidTankCreative.name=Kreativer Tank
 
 # Cardboard Box
 tile.CardboardBox.name=Pappkarton
@@ -84,10 +93,11 @@ tile.BasicBlock.RefinedObsidian.name=Raffiniertes Obsidian
 tile.BasicBlock.CharcoalBlock.name=Holzkohleblock
 tile.BasicBlock.RefinedGlowstone.name=Raffiniertes Glowstone
 tile.BasicBlock.SteelBlock.name=Stahlblock
-tile.BasicBlock.BinBasic.name=Basis-Silo
-tile.BasicBlock.BinAdvanced.name=Fortgeschr. Silo
-tile.BasicBlock.BinElite.name=Elite-Silo
-tile.BasicBlock.BinUltimate.name=Ultimatives Silo
+tile.BasicBlock.BinBasic.name=Basis-Tonne
+tile.BasicBlock.BinAdvanced.name=Fortgeschrittene Tonne
+tile.BasicBlock.BinElite.name=Elite-Tonne
+tile.BasicBlock.BinUltimate.name=Ultimative Tonne
+tile.BasicBlock.BinCreative.name=Kreative Tonne
 tile.BasicBlock.TeleporterFrame.name=Teleporter-Rahmen
 tile.BasicBlock.SteelCasing.name=Stahlhülle
 tile.BasicBlock.DynamicTank.name=Dynamischer Tank
@@ -95,7 +105,7 @@ tile.BasicBlock.StructuralGlass.name=Strukturglas
 tile.BasicBlock.DynamicValve.name=Dynamisches Ventil
 tile.BasicBlock.CopperBlock.name=Kupferblock
 tile.BasicBlock.TinBlock.name=Zinnblock
-tile.BasicBlock.ThermalEvaporationController.name=Thermalverdampfungs-Controller
+tile.BasicBlock.ThermalEvaporationController.name=Thermalverdampfungs Controller
 tile.BasicBlock.ThermalEvaporationValve.name=Thermalverdampfungsventil
 
 # Basic Block 2 (second ID iteration)
@@ -106,9 +116,9 @@ tile.BasicBlock2.InductionCellBasic.name=Basis-Induktionszelle
 tile.BasicBlock2.InductionCellAdvanced.name=Fortgeschrittene Induktionszelle
 tile.BasicBlock2.InductionCellElite.name=Elite-Induktionszelle
 tile.BasicBlock2.InductionCellUltimate.name=Ultimative Induktionszelle
-tile.BasicBlock2.InductionProviderBasic.name=Basis-Induktions-Provider
+tile.BasicBlock2.InductionProviderBasic.name=Basis Induktions-Provider
 tile.BasicBlock2.InductionProviderAdvanced.name=Fortgeschrittener Induktions-Provider
-tile.BasicBlock2.InductionProviderElite.name=Elite-Induktions-Provider
+tile.BasicBlock2.InductionProviderElite.name=Elite Induktions-Provider
 tile.BasicBlock2.InductionProviderUltimate.name=Ultimativer Induktions-Provider
 tile.BasicBlock2.SuperheatingElement.name=Überhitzungselement
 tile.BasicBlock2.PressureDisperser.name=Druckventil
@@ -130,7 +140,7 @@ tile.MachineBlock.ElectricPump.name=Elektrische Pumpe
 tile.MachineBlock.PersonalChest.name=Persönliche Truhe
 tile.MachineBlock.Chargepad.name=Ladepad
 tile.MachineBlock.LogisticalSorter.name=Logistischer Sortierer
-tile.MachineBlock.DigitalMiner.name=Digitalbergbaugerät
+tile.MachineBlock.DigitalMiner.name=Digitales Bergbaugerät
 
 # Machine Block 2 (second ID iteration)
 tile.MachineBlock2.RotaryCondensentrator.name=Rotationskondensentrator
@@ -158,6 +168,83 @@ tile.MachineBlock3.Oredictionificator.name=Oredictionificator
 tile.MachineBlock3.ResistiveHeater.name=Stromwärmeheizung
 tile.MachineBlock3.FormulaicAssemblicator.name=Formelfertigungsfabrikator
 tile.MachineBlock3.FuelwoodHeater.name=Feuerholzverfeuerer
+
+# Add new machine block start
+tile.MachineBlock3.Factory.name= Fabrik
+tile.MachineBlock3.IsotopicCentrifuge.name=Isotopenzentrifuge
+tile.MachineBlock3.NutritionalLiquifier.name=Nährstoffverflüssiger
+tile.BasicBlock2.UraniumBlock.name=Uran-Block
+tile.BasicBlock2.LeadBlock.name=Bleiblock
+
+tile.BasicBlock3.SpsCasing.name=SPS-Gehäuse (WIP)
+tile.BasicBlock3.FissionReacherCasing.name=Gehäuse des Spaltreaktors (WIP)
+tile.BasicBlock3.ControlRodAssembly.name=Steuerstab-Montage (WIP)
+tile.BasicBlock3.FissionFuelAssembly.name=Brennelementanordnung (WIP)
+tile.BasicBlock3.BasicEnergyCubeCraft.name=Basis-Energiewürfel - Crafting
+tile.BasicBlock3.AdvancedEnergyCubeCraft.name=Fortgeschrittener Energiewürfel - Crafting
+tile.BasicBlock3.EliteEnergyCubeCraft.name=Elite Energiewürfel - Crafting
+tile.BasicBlock3.UltimateEnergyCubeCraft.name=Ultimativer Energiewürfel - Crafting
+tile.BasicBlock3.CreativeEnergyCubeCraft.name=Krativer Energiewürfel - Crafting
+
+tile.BasicBlock3.BasicEnergyCubeFrame.name=Basic Energiewürfel - Rahmen
+tile.BasicBlock3.AdvancedEnergyCubeFrame.name=Fortgeschrittener Energiewürfel - Rahmen
+tile.BasicBlock3.EliteEnergyCubeFrame.name=Elite Energiewürfel - Rahmen
+tile.BasicBlock3.UltimateEnergyCubeFrame.name=Ultimativer Energiewürfel - Rahmen
+tile.BasicBlock3.CreativeEnergyCubeFrame.name=Kreativer Energiewürfel - Rahmen
+tile.MachineBlock3.antiprotonicnucleosynthesizer.name=Antiprotonischer Nukleosynthesizer (WIP)
+gui.FusionCooling=Kühlungsformel für Fusionsreaktoren
+
+tile.OreBlock.UraniumOre.name=Uranerz
+tile.OreBlock.LeadOre.name=Bleierz
+tile.OreBlock.FluoriteOre.name=Fluorit-Erz
+item.dirtyUraniumDust.name=Dreckiger Uranstaub
+item.uraniumIngot.name=Uran-Barren
+item.leadIngot.name=Bleibarren
+item.uraniumNugget.name=Urannugget
+item.leadNugget.name=Bleinugget
+gas.cleanUranium=Sauberer Uranschlamm
+oregas.uranium=Uranerz
+item.uraniumDust.name=Uranium Dust
+item.FluoriteClump.name=Fluorite-Klumpen
+item.fluoriteDust.name=Fluoritstaub
+item.fluoritedustDust.name=Fluoritstaub
+item.charcoalDust.name=Charcoal Dust
+item.PlutoniumPellet.name=Plutonium Pellet
+item.AntimatterPellet.name=Antimatter Pellet
+item.ReprocessedFissileFragment.name=Reprocessed Fissile Fragment
+item.YellowCakeUranium.name=Yellow Cake Uranium
+item.PoloniumPellet.name=Polonium Pellet
+item.uraniumClump.name=Uranium Clump
+item.uraniumShard.name=Uranium Shard
+item.uraniumCrystal.name=Uranium Crystal
+item.EnergyTabletCraft.name=Energy Tablet - Crafting
+item.CosmicMatter.name=Cosmic Matter
+item.Scrap.name=Scrap
+item.ScrapBox.name=Scrap Box
+item.EmptyCrystals.name=Empty Crystals
+item.MekTool.name=Meka-Tool
+gas.uranium=Uranium Slurry
+gas.Biofuel=Biofuel
+fluid.liquidsuperheatedsodium=Superheated Sodium
+fluid.liquidhydrofluricacid=Flüssige Flusssäure
+tile.MachineBlock3.OrganicFarm.name=Bio-Bauernhof
+tile.MachineBlock3.SuperchargedCoil.name=Aufgeladene Spule (WIP)
+gas.nutrientsolution=Nährstofflösung
+gas.oxygenenrichedwater=OSauerstoffreiches Wasser
+gas.unstabledimensional=Instabile dimensionale Gase
+tile.MachineBlock3.AmbientAccumulator.name=Umgebungsgassammler
+tile.MachineBlock3.AmbientAccumulatorEnergy.name=Umgebungsgassammler(Elektrische Ausführung)
+tile.MachineBlock4.Stamping.name=CNC-Stanzmaschine
+tile.MachineBlock4.Rolling.name=CNC-Walzmaschine
+tile.MachineBlock4.Brushed.name=CNC-Drahtziehmaschine
+tile.MachineBlock4.Turning.name=CNC-Drehmaschine
+tile.MachineBlock4.Alloy.name=Legierungsofen
+tile.MachineBlock4.CellExtractor.name=Zellextraktor
+tile.MachineBlock4.CellSeparator.name=Zellseparator
+tile.MachineBlock4.Recycler.name=Recycler
+tile.MachineBlock4.IndustrialAlarm.name=Industrielle Alarmanlage
+tile.MachineBlock4.Void.name=Leere Ausgrabung
+tile.MachineBlock4.Hybrid_Storage.name=Hybrider Speicher (WIP)
 
 # Plastic
 tile.PlasticBlock.name=Plastikblock
@@ -202,7 +289,7 @@ tile.Transmitter.UltimateLogisticalTransporter.name=Ultimativer Logistischer Tra
 tile.Transmitter.RestrictiveTransporter.name=Restriktiver Transporter
 tile.Transmitter.DiversionTransporter.name=Diversionstransporter
 tile.Transmitter.BasicThermodynamicConductor.name=Thermodynamischer Basisleiter
-tile.Transmitter.AdvancedThermodynamicConductor.name=Fortgeschr. Thermodynamischer Leiter
+tile.Transmitter.AdvancedThermodynamicConductor.name=Fortgeschrittener Thermodynamischer Leiter
 tile.Transmitter.EliteThermodynamicConductor.name=Thermodynamischer Eliteleiter
 tile.Transmitter.UltimateThermodynamicConductor.name=Ultimativer Thermodynamischer Leiter
 
@@ -210,9 +297,9 @@ tile.Transmitter.UltimateThermodynamicConductor.name=Ultimativer Thermodynamisch
 tile.GlowPanel.name=Leuchtplatte
 
 # Energy Cubes
-tile.EnergyCubeBasic.name=Basis-Energiewürfel
+tile.EnergyCubeBasic.name=Basis Energiewürfel
 tile.EnergyCubeAdvanced.name=Fortgeschrittener Energiewürfel
-tile.EnergyCubeElite.name=Elite-Energiewürfel
+tile.EnergyCubeElite.name=Elite Energiewürfel
 tile.EnergyCubeUltimate.name=Ultimativer Energiewürfel
 tile.EnergyCubeCreative.name=Kreativer Energiewürfel
 
@@ -221,6 +308,7 @@ item.basicTierInstaller.name=Gewöhnlich Stufe Einbauwerkzeug
 item.advancedTierInstaller.name=Fortgeschritten Stufe Einbauwerkzeug
 item.eliteTierInstaller.name=Elite Stufe Einbauwerkzeug
 item.ultimateTierInstaller.name=Ultimativ Stufe Einbauwerkzeug
+item.creativeTierInstaller.name=Creative Tier Installer
 
 # Dust
 item.ironDust.name=Eisenstaub
@@ -282,6 +370,15 @@ item.steelIngot.name=Stahlbarren
 item.copperIngot.name=Kupferbarren
 item.tinIngot.name=Zinnbarren
 
+# Nuggets
+item.obsidianNugget.name=Raffinierter Obsidiannugget
+item.osmiumNugget.name=Osmiumnugget
+item.bronzeNugget.name=Bronzenugget
+item.glowstoneNugget.name=Glowstonenugget
+item.steelNugget.name=Stahlnugget
+item.copperNugget.name=Kupfernugget
+item.tinNugget.name=Zinnnugget
+
 # Gasses
 gas.hydrogen=Wasserstoff
 gas.oxygen=Sauerstoff
@@ -322,6 +419,37 @@ gas.cleanLead=Sauberer Bleischlamm
 gas.fuel=Verdampftes Benzin
 gas.oil=Verdampftes Öl
 
+# add new gases
+gas.hydrofluoricacid=Flusssäure
+gas.antimatter=Antimaterie
+gas.fissilefuel=Spaltbares Material
+gas.superheatedsodium=Überhitztes Natrium
+gas.uraniumhexafluoride=Uranhexafluorid
+gas.uraniumoxide=Uranoxid
+gas.nuclearwaste=Atommüll
+gas.plutonium=Plutonium
+gas.polonium=Polonium
+gas.spentnuclearwaste=Verbrauchter Atommüll
+gas.nutritionalpaste=Nahrungspaste
+
+# Colors gas
+gas.black.name=Schwarzes Pigment
+gas.red.name=Rotes Pigment
+gas.green.name=Grünes Pigment
+gas.brown.name=Braunes Pigment
+gas.blue.name=Blaues Pigment
+gas.purple.name=Violettes Pigment
+gas.cyan.name=Türkises Pigment
+gas.silver.name=Hellgraues Pigment
+gas.gray.name=Graues Pigment
+gas.pink.name=Rosa Pigment
+gas.lime.name=Hellgrünes Pigment
+gas.yellow.name=Gelbes Pigment
+gas.lightBlue.name=Hellblaues Pigment
+gas.magenta.name=Magenta-Pigment
+gas.orange.name=Oranges Pigment
+gas.white.name=Weißes Pigment
+
 # Fluids
 fluid.liquidhydrogen=Flüssiger Wasserstoff
 fluid.liquidoxygen=Flüssiger Sauerstoff
@@ -351,11 +479,11 @@ oregas.obsidian=Obsidianerz
 oregas.lead=Bleierz
 
 # Tier names
-tier.Basic=Gewöhnliche
-tier.Advanced=Fortgeschrittene
-tier.Elite=Elite
-tier.Ultimate=Ultimative
-tier.Creative=Kreativ
+tier.Basic=Gewöhnliche 
+tier.Advanced=Fortgeschrittene 
+tier.Elite=Elite 
+tier.Ultimate=Ultimative 
+tier.Creative=Kreative 
 
 # Transmission types
 transmission.Energy=Energie
@@ -383,12 +511,19 @@ upgrade.gas=Gas
 upgrade.gas.desc=Erhöht die Effizienz von !ngasverwendenden Maschinen.
 upgrade.muffling=Dämpfung
 upgrade.muffling.desc=Verringert den von Maschinen produzierten Schall.
+upgrade.anchor=Anker
+upgrade.anchor.desc=Hält eine Maschine Chunk geladen.
+upgrade.stonegenerator=Steingenerator
+upgrade.stonegenerator.desc=Erzeugt Stein oder Pflasterstein, wenn er benötigt wird
+upgrade.thread=Zusätzliche Threads
+upgrade.thread.desc=Parallele Verarbeitung bestehender Arbeitsrezepte für Maschinen
 
 # Key description text
 mekanism.key.mode=Item Modus wechsel
 mekanism.key.armorMode=Rüstungs Modus wechsel
 mekanism.key.feetMode=Fuß Modus wechsel
 mekanism.key.voice=Stimme
+mekanism.key.enableHUD=Zeige HUD
 
 # Entities
 entity.Robit.name=Robit
@@ -396,10 +531,12 @@ entity.BabySkeleton.name=Baby-Skelett
 
 # Config Gui
 mekanism.configgui.ctgy.general=Mekanism: Generelle Einstellungen
+mekanism.configgui.ctgy.mekce=MEK:CE Einstellungen
 mekanism.configgui.ctgy.machines=Maschineneinstellungen
 mekanism.configgui.ctgy.tier=Stufeneintellungen
 mekanism.configgui.ctgy.usage=Nutzungseinstellungen
 mekanism.configgui.ctgy.client=Client-Einstellungen
+mekanism.configgui.ctgy.storage=Energiespeicherungseinstellungen
 
 # Config Tooltips
 mekanism.configgui.ctgy.general.tooltip=Generelle Einstellungen bezüglich Mekanism und all seinen Modulen
@@ -407,6 +544,8 @@ mekanism.configgui.ctgy.machines.tooltip=Einstellungen bezüglich dem (De-)Aktiv
 mekanism.configgui.ctgy.tier.tooltip=Einstellugen bezüglich der Upgrade-Stufen in Mekanism und ihren Werten
 mekanism.configgui.ctgy.usage.tooltip=Einstellungen bezüglich Maschinerie und ihren Energieverbauch
 mekanism.configgui.ctgy.client.tooltip=Client-spezifische Einstellungen bezüglich Mekanism und seinen Modulen
+mekanism.configgui.ctgy.storage.tooltip=Einstellungen bezüglich Maschinen und deren maximaler Energiespeicherung
+mekanism.configgui.ctgy.mekce.tooltip=Zusätzliche Anpassungseinstellungen
 
 # Gui text
 gui.condensentrating=Kondensentrieren
@@ -423,6 +562,7 @@ gui.output=Output
 gui.delete=Löschen
 gui.status=Status
 gui.autoEject=Auto-Auswerfen
+gui.clear=Clear side
 gui.itemstack=ItemStack
 gui.oredict=OreDict
 gui.material=Material
@@ -457,6 +597,7 @@ gui.finished=Beendet
 gui.well=Alles ist gut!
 gui.upgrade=Upgrade
 gui.infinite=Unendlich
+gui.radi=Radi
 gui.min=Min
 gui.max=Max
 gui.delay=Verzögerung
@@ -481,9 +622,12 @@ gui.dynamicTank=Dynamischer Tank
 gui.industrialTurbine=Industrieturbine
 gui.thermoelectricBoiler=Thermoelektrischer Dampfkessel
 gui.visuals=Visuelles
+mekanism.gui.visuals.toobig=Radius too big to display visuals
 gui.noEject=Kein Auswerfen möglich
 gui.undefined=Undefiniert
 gui.owner=Eigentümer
+gui.itemowner=Item Owner
+gui.Teleportercolor=Adjust the color of the portal
 gui.public=Öffentlich
 gui.private=Privat
 gui.add=Hinzufügen
@@ -495,8 +639,11 @@ gui.producing=Produziert
 gui.maxOutput=Max-Output
 gui.storing=Speichert
 gui.skyBlocked=Himmel nicht sichtbar
+gui.noWind=No wind
 gui.using=Verbraucht
 gui.needed=Benötigt
+mekanism.gui.bufferfree=Free Buffer
+mekanism.gui.insufficientbuffer=Insufficient energy buffer!
 gui.noRecipe=Kein Rezept
 gui.conflict=Konflikt
 gui.height=Höhe
@@ -557,6 +704,13 @@ gui.nowOwn=Die gehört dieses Item nicht
 gui.frequency=Frequenz
 gui.mode=Modus
 gui.burnRate=Brennrate
+gui.energyContents=Energieinhalt
+gui.redstoneOutput=Redstone-Ausgang
+gui.maxWaterOutput=Maximaler Wasserausstoß
+gui.stockControl=Bestandskontrolle
+gui.allowDefault=Standard zulassen
+gui.sizeMode=Größenmodus
+mekanism.gui.sizeModeConflict=hat derzeit keine Wirkung, da der Einzelgegenstandsmodus aktiviert ist.
 
 gui.reactor.injectionRate=Injektionsrate
 
@@ -564,13 +718,22 @@ gui.upgrades=Upgrades
 gui.upgrades.supported=Unterstützt
 gui.upgrades.noSelection=Keine Auswahl
 gui.upgrades.amount=Menge
-gui.upgrades.max=Max
+ggui.upgrades.max=Max
 gui.upgrades.effect=Effekt
+gui.upgrades.unistall=Deinstallieren
+gui.upgrades.uninstall=Deinstalliert ein einzelnes Upgrade, Shift gedrückt halten, um alle zu deinstallieren
 
 gui.chemicalInfuser.short=C. Infundierer
 gui.chemicalDissolutionChamber.short=C. Auflösungsk.
 gui.thermalEvaporationController.short=Thermalv.-Controller
-
+gui.dimension2=Dimensionsanforderungs-ID
+gui.dimension2Name=Dimensionsanforderungsname
+gui.dimensionId=Die aktuelle Dimensions-ID
+gui.dimensionName=Der aktuelle Dimensionsname
+gui.dimensionGas=Die aktuelle Dimension produziert Gas
+gui.dimensionNoGas=Es gibt kein Gas in der aktuellen Dimension
+gui.probability=Wahrscheinlichkeit
+gui.probability2=Ausgabe-Wahrscheinlichkeit
 gui.dictionary.noKey=Kein Key.
 
 gui.configuration=Konfiguration
@@ -582,17 +745,37 @@ gui.rotaryCondensentrator.toggleOperation=Schalte Betrieb
 
 gui.factory.secondaryEnergy=Sekundärenergie
 gui.factory.autoSort=Auto-Sortieren
+gui.factory.autoSort.isold=Alter Auto-Sortierstatus wird verwendet
+gui.factory.autoSort.old=Altes Auto-Sortieren
+gui.factory.autoSort.old.info=Wenn automatische Klassifizierung in Ordnung ist, aktivieren Sie dies nicht
+gui.factory.autoSort.old.info2=Dies kann Probleme mit der alten automatischen Klassifizierung verursachen
+
 
 # Recipe types
-gui.factory.Smelting=Schmelzen
-gui.factory.Enriching=Anreichern
-gui.factory.Crushing=Zerstoßen
-gui.factory.Compressing=Komprimieren
-gui.factory.Combining=Kombinieren
-gui.factory.Purifying=Purifizieren
-gui.factory.Injecting=Injezieren
-gui.factory.Infusing=Infundieren
-gui.factory.Sawing=Sägen
+gui.factory.Smelting= Schmelz
+gui.factory.Enriching= Anreicherungs
+gui.factory.Crushing= Zerstoß
+gui.factory.Compressing= Komprimier
+gui.factory.Combining= Kombinier
+gui.factory.Purifying= Purifizier
+gui.factory.Injecting= Injezier
+gui.factory.Infusing= Infusions
+gui.factory.Sawing= Säge
+gui.factory.Farm= Farm
+gui.factory.Stamping= Präge
+gui.factory.Rolling= Walz
+gui.factory.Brushed= Bürst
+gui.factory.Turning= Dreh
+gui.factory.Alloy= Legier
+gui.factory.Extractor= Extraktions
+gui.factory.Separator= Separations
+gui.factory.Recycler= Recycle
+gui.factory.Dissolution= Auflösungs
+gui.factory.Crystallizer= Kristallisations
+gui.factory.PRC= Druckreaktors
+gui.factory.Oxidizer= Oxidierer
+gui.factory.Nucleosynthesizer= Nukleosynthesizierer
+gui.factory.Washer= Waschmaschine
 
 gui.seismicReader.short=S. Lesegerät
 gui.seismicReader.solids=Feststoffe
@@ -626,6 +809,7 @@ gui.robit=Robit
 gui.robit.smelting=Robit-Schmelzen
 gui.robit.inventory=Robit-Inventar
 gui.robit.crafting=Robit-Werkbank
+gui.robit.repair=Robit repair
 gui.robit.greeting=Hallo, Ich bin
 gui.robit.toggleFollow=Schalte 'Folgen'-Modus
 gui.robit.rename=Benenne diesen Robit um
@@ -645,8 +829,11 @@ gui.password=Passwort
 
 mekanism.gui.logisticalSorter.default=Standard
 mekanism.gui.logisticalSorter.autoEject=Auto
+mekanism.gui.logisticalSorter.autoEject.tooltip=Wirft Gegenstände automatisch an angeschlossene Lagerorte aus.
 mekanism.gui.logisticalSorter.roundRobin=RR
-mekanism.gui.logisticalSorter.roundRobin.tooltip=Round-Robin
+mekanism.gui.logisticalSorter.roundRobin.tooltip=Wechselt zwischen allen angeschlossenen Lagerorten beim Senden von Gegenständen.
+mekanism.gui.logisticalSorter.singleItem=Einzeln
+mekanism.gui.logisticalSorter.singleItem.tooltip=Sendet jedes Mal einen einzelnen Gegenstand anstelle eines ganzen Stapels (überschreibt min und max in ItemStack-Filtern).
 
 gui.teleporter.notReady=Nicht bereit
 gui.teleporter.ready=Bereit
@@ -656,6 +843,8 @@ gui.teleporter.exceeds=Links > 2
 gui.teleporter.needsEnergy=Benötigt Energie
 gui.teleporter.noAccess=Du hast keinen Zugriff auf diesen Teleporter
 gui.teleporter.noFreq=Keine Frequenz
+gui.teleporter.Searching=Suche
+gui.teleporter.Paused=Pausiert
 
 gui.entangloporter.noAccess=Du hast keinen Zugriff auf diesen Quantenporter
 
@@ -673,6 +862,8 @@ gui.digitalMiner.inverse=Inversionsmodus
 gui.digitalMiner.requireReplace=Erfordert erneute Platzierung
 gui.digitalMiner.fuzzyMode=Ungenauer Modus
 gui.digitalMiner.missingBlock=Fehlender Block
+mekanism.gui.digitalMiner.capacity=Energiekapazität
+mekanism.gui.digitalMiner.lowPower=Wenig Energie
 
 # Recipe names
 recipe.mekanismShaped=Geformt
@@ -700,6 +891,13 @@ tooltip.configurator.plenisherReset=Flüssigkeitsfüllerkalkulation zurücksetze
 tooltip.configurator.inductionPortMode=Induktionsport-Transfermodus geändert zu
 tooltip.configurator.toggleColor=Farbe geändert zu
 tooltip.configurator.viewColor=Aktuelle Farbe
+tooltip.configurator.reactorPortEject=Reaktorport-Auswurfmodus umgeschaltet auf
+tooltip.configurator.modeChange=Verbindungstyp geändert zu
+
+mekanism.pipe.connectiontype.normal=Normal
+mekanism.pipe.connectiontype.push=Push
+mekanism.pipe.connectiontype.pull=Pull
+mekanism.pipe.connectiontype.none=None
 
 tooltip.upgrade.speed=Geschwindigkeit
 tooltip.upgrade.energy=Energie
@@ -726,6 +924,7 @@ tooltip.diversionDesc=Kontrollierbar via Redstone
 tooltip.noGas=Kein Gas gespeichert
 tooltip.stored=Gespeichert
 tooltip.channel=Kanal
+tooltip.walkie_disabled=Sprachserver deaktiviert.
 tooltip.mode=Modus
 tooltip.efficiency=Effizienz
 tooltip.modeToggle=Modus gewechselt auf
@@ -738,7 +937,7 @@ tooltip.block=Block
 tooltip.meta=Metadaten
 tooltip.tile=Tile
 tooltip.keysFound=Key(s) gefunden
-tooltip.noKey=Kein key
+tooltip.noKey=Kein Key
 tooltip.hp=HP
 mekanism.tooltip.configureState=Status Konfigurieren: %s
 tooltip.outputRate=Output-Rate
@@ -751,13 +950,26 @@ tooltip.itemAmount=Item-Menge
 tooltip.invalid=Ungültig
 tooltip.encoded=Codiert
 tooltip.ingredients=Bestandteile
+tooltip.conduction=Wärmeleitung
+tooltip.insulation=Isolierung
+tooltip.heatCapacity=Wärmekapazität
+
+mekanism.tooltip.portableTank.bucketMode=Eimermodus: %s
 
 mekanism.tooltip.disassembler.normal=normal
-mekanism.tooltip.disassembler.slow=slow
-mekanism.tooltip.disassembler.fast=fast
-mekanism.tooltip.disassembler.vein=vein
-mekanism.tooltip.disassembler.extended_vein=Erweitertes vein mining
-mekanism.tooltip.disassembler.off=off
+mekanism.tooltip.disassembler.slow=langsam
+mekanism.tooltip.disassembler.fast=schnell
+mekanism.tooltip.disassembler.vein=Ader
+mekanism.tooltip.disassembler.extended_vein=Erweitertes Ader-Mining
+mekanism.tooltip.disassembler.off=aus
+
+mekanism.tooltip.mektool.normal=normal
+mekanism.tooltip.mektool.slow=slow
+mekanism.tooltip.mektool.fast=fast
+mekanism.tooltip.mektool.very_fast=very fast
+mekanism.tooltip.mektool.vein=vein
+mekanism.tooltip.mektool.extended_vein=extended
+mekanism.tooltip.mektool.off=off
 
 tooltip.configurationCard.got=Konfigurationsdaten erhalten: %s
 tooltip.configurationCard.set=Konfigurationsdaten übertragen: %s
@@ -768,7 +980,19 @@ tooltip.balloon=Ballon
 tooltip.jetpack.regular=Regulär
 tooltip.jetpack.hover=Schweben
 tooltip.jetpack.disabled=Deaktiviert
+tooltip.jetpack.mode=Jetpack Mode:
+tooltip.jetpack.stored=Jetpack Fuel:
 
+tooltip.freerunner.regular=Regular
+tooltip.freerunner.disabled=Disabled
+tooltip.freerunner.safety=Safety
+tooltip.free_runners.mode=Runners Mode:
+tooltip.free_runners.stored=Runners Energy:
+
+tooltip.scuba_tank.mode=Scuba Tank:
+
+tooltip.flamethrower.mode=Flamethrower Mode：
+tooltip.flamethrower.stored=Flamethrower:
 tooltip.flamethrower.combat=Kampf
 tooltip.flamethrower.heat=Hitze
 tooltip.flamethrower.inferno=Inferno
@@ -776,6 +1000,7 @@ mekanism.tooltip.flamethrower.modeBump=Flammenwerfermodus geändert: %s
 
 tooltip.seismicReader.needsEnergy=Nicht genügend Energie, um Erschütterung zu bestimmen
 tooltip.seismicReader.noVibrations=Nicht fähig, Vibrationen zu erkennen
+tooltip.mekanism.SeismicReader=A portable machine that uses seismic vibrations to provide information on differing layers of the world.
 
 tooltip.Bin=Ein Block, um große Mengen eines einzelnen Items zu lagern.
 tooltip.TeleporterFrame=Der Rahmen für den Teleporter-Multiblock. Innerhalb des Rahmens können Portale generiert werden.
@@ -831,6 +1056,7 @@ tooltip.Factory=Eine Maschine, die als Upgrade zu gewöhnlichen Machinen dient; 
 tooltip.ResistiveHeater=Ein dichter, gewundener Widerstand, der elektrische Energie direkt in Wärme umwandeln kann.
 tooltip.FormulaicAssemblicator=Eine Maschine, die mithilfe von Energie mit hohem Tempo Items und Blöcke nach Fertigungsformeln fertigt. Fungiert auch als Werkbank.
 tooltip.FuelwoodHeater=Eine Maschine, die große Mengen an Wärmeenergie durch das Verbrennen brennbarer Dinge erzeugt.
+tooltip.QuantumEntangloporter=Ein hochentwickelter Block, der in der Lage ist, jede praktische Ressource über große Entfernungen und Dimensionen zu übertragen.
 
 tooltip.HeatGenerator=Ein Generator, der die Wärme aus Lava oder anderen Brennstoffen zur Energieerzeugung nutzt.
 tooltip.SolarGenerator=Ein Generator, der die Energie der Sonne zur Energieerzeugung nutzt.
@@ -844,6 +1070,7 @@ tooltip.ElectromagneticCoil=Ein Block, der kinetische energie in elektrischen St
 tooltip.TurbineCasing=Druckresistentes Gehäuse für die Industrieturbine.
 tooltip.TurbineValve=Gehäuseart für die Industrieturbine, die Energie- und Dampftransfer ermöglicht.
 tooltip.TurbineVent=Gehäuseart für die Industrieturbine mit integriertem Dampfabzug. Sie sollte auf Höhe oder oberhalb des Rotationskomplexes platziert sein.
+tooltip.SaturatingCondenser=Ein Block, der Dampf, der von einer Industrieturbine verarbeitet wurde, in wiederverwendbares Wasser kondensiert. Diese können in beliebiger Anordnung über Ihrem Rotationskomplex platziert werden.
 
 tooltip.ReactorGlass=Verstärktes Glas, welches im Fusionsreaktor-Multiblock verwendet werden kann.
 tooltip.ReactorLaserFocusMatrix=Eine Scheibe aus Reaktorglas, welche fähig ist, optische Energy zu absorbieren, und so den Fusionsreaktor aufheizt.
@@ -856,20 +1083,59 @@ tooltip.ReactorLogicAdapter=Ein Block, welcher verwendet werden kann, um einen R
 tooltip.OsmiumOre=Ein hartes Mineral, dass in fast jeder Höhenlage der Welt gefunden werden kann. Es ist für seine zahlreichen Verwendungszwecke in der Konstruktion von Maschinen bekannt.
 tooltip.CopperOre=Ein häufig vorkommendes, leitfähiges Material, dass für die Produktion von Kabeln verwendet werden kann. Seine Fähigkeit, großer Hitze zu widerstehen, !nmacht es auch essentiell für fortgeschrittene Maschinen.
 tooltip.TinOre=Ein leiches, jedoch robustes und leitfähiges Material, dass etwas schwieriger zu finden ist als Kupfer.
+tooltip.FluoriteOre=Ein Mineral, das relativ tief unter der Erdoberfläche gefunden wird. Die Kristalle können zu Flusssäure verarbeitet werden, einer wesentlichen Chemikalie für die Uranverarbeitung.
+tooltip.LeadOre=Ein etwas seltenes Metall, das hervorragend radioaktive Partikel abwehren kann.
+tooltip.UraniumOre=Ein häufiges, schweres Metall, das bei richtiger Verarbeitung enorme Energiemengen liefern kann. In seiner natürlich vorkommenden Form ist es nicht radioaktiv genug, um Schaden zu verursachen.
+
+# Add new machine block and item tooltip - start
+tooltip.IsotopicCentrifuge=Eine Maschine mit nur einem Zweck: das, was sie lädt, sehr, sehr schnell zu drehen.
+tooltip.NutritionalLiquifier=Eine Maschine, die jede Nahrung zu einer harmlosen, leicht verdaulichen Nährpaste verarbeitet.
+tooltip.canteen1=Nur Nährpaste kann hinzugefügt werden.
+tooltip.canteen2=Warum ist dieser Artikel so teuer?
+tooltip.MekTool1=Eine sehr leistungsstarke Grabmaschine.
+tooltip.MekTool2=Wenn über 25% gespült, wird der Schaden super verdoppelt.
+tooltip.MekTool3=Wenn es mehr als 90% ist, könnte es einen Blitzverkaufseffekt haben?
+tooltip.MekTool4=☢☣✪Gefährliches Werkzeug, Warnung✪☣☢
+tooltip.SuperchargedCoil=Wird im Supercritical Phase Shifter Multiblock verwendet, um große Energiemengen zu liefern. Muss an einem SPS-Port angeschlossen sein.
+tooltip.OrganicFarm=Eine sehr leistungsstarke Einblock-Farmmaschine.
+tooltip.AmbientAccumulator=Eine Maschine, die die Gase der aktuellen Dimension sammeln kann.
+tooltip.antiprotonicnucleosynthesizer=Eine Maschine, die eine kleine Menge Antimaterie und eine große Menge Energie verwendet, um verschiedene Ressourcen auf atomare Weise umzuwandeln.
+tooltip.Stamping=Eine Maschine, die starken Druck verwendet, um Platten herzustellen.
+tooltip.Rolling=Eine Maschine, die drehende Walzen verwendet, um Bleche zu verdünnen.
+tooltip.Brushed=Eine Maschine, die die Oberfläche durch ständiges Polieren glatt macht.
+tooltip.Turning=Eine Maschine, die üblicherweise zur Bearbeitung von Zylindern verwendet wird.
+tooltip.Alloy=Eine Maschine, die häufig zum Schmelzen von zwei verschiedenen Metallen verwendet wird.
+tooltip.CellExtractor=Eine Maschine, die Zellen aus verschiedenen organischen Materialien extrahiert.
+tooltip.CellSeparator=Eine Maschine, die Zellen durch schnelles Drehen trennt.
+tooltip.Recycler=Eine Maschine, die sich auf das Recycling von Gegenständen spezialisiert hat.
+tooltip.IndustrialAlarm=Nicht nur Ihr alltäglicher Alarm... dies ist ein „industrieller“ Alarm!
+tooltip.Hybrid_Storage=Blöcke, die gleichzeitig 120 Gegenstände, 2 Gase, 1 Flüssigkeit und Energie speichern können.
 
 # Side data
 sideData.None=Nichts
-sideData.Input=Input
-sideData.Output=Output
+sideData.Input=Eingang
+sideData.Input_1=Eingang(1)
+sideData.Input_2=Eingang(2)
+sideData.Output=Ausgang
+sideData.Output_1=Ausgang(1)
+sideData.Output_2=Ausgang(2)
+sideData.Input_Output=Ein-/Ausgang
+sideData.Input_Extra=Zusätzlicher Eingang
 sideData.Energy=Energie
 sideData.Gas=Gas
-sideData.Extra=Extra
+sideData.Extra=Zusatz
 sideData.Infuse=Infusion
 sideData.Fluid=Flüssigkeit
 sideData.Fill=Füllen
 sideData.Empty=Leeren
 sideData.Charge=Laden
 sideData.Discharge=Entladen
+sideData.back=Hinten
+sideData.bottom=Unten
+sideData.front=Vorne
+sideData.left=Links
+sideData.right=Rechts
+sideData.top=Oben
 
 # Redstone control
 control.disabled=Deaktiviert
@@ -938,6 +1204,23 @@ reactor.depleted.desc=Der Reaktor hat nicht genügend Treibstoff, um eine Reakti
 
 # Creative tab
 itemGroup.tabMekanism=Mekanism
+itemGroup.tabMekanismTools=Mekanism Tools
+itemGroup.tabMekanismGenerators=Mekanism Generators
+itemGroup.tabMekanismAddition=Mekanism Addition
+
+#Warning tab
+gui.no_energy=Nicht genug Energie zum Betrieb
+gui.item_no_space=Nicht genug Platz für das Item im Ausgang
+gui.gas_no_space=Nicht genug Platz für das Gas im Ausgang
+gui.fluid_no_space=Nicht genug Platz für die Flüssigkeit im Ausgang
+gui.enough_no_space=Nicht genug Platz im Ausgang
+gui.steam_no_space=Nicht genug Platz für den Dampf im Ausgang
+gui.no_freq=Keine Frequenz für die Verbindung
+gui.infuse_no_item=Keine Infusionsgegenstände vorhanden
+gui.no_item=Keine Gegenstände vorhanden
+gui.no_gas=Kein Gas vorhanden
+gui.no_fluid=Keine Flüssigkeit vorhanden
+gui.no_heat=Keine Hitze vorhanden
 
 #############
 # GENERATORS
@@ -961,6 +1244,7 @@ tile.Generator.ElectromagneticCoil.name=Elektromagnetische Spule
 tile.Generator.TurbineCasing.name=Turbinengehäuse
 tile.Generator.TurbineValve.name=Turbinenventil
 tile.Generator.TurbineVent.name=Turbinenabzug
+tile.Generator.SaturatingCondenser.name=Saturating Condenser
 
 tile.Reactor.ReactorController.name=Reaktor-Controller
 tile.Reactor.ReactorFrame.name=Reaktorrahmen
@@ -986,7 +1270,21 @@ gui.maxPlasma=Max. Plasmatemp
 gui.maxCasing=Max. Hüllentemp
 gui.passiveGeneration=Passive Generierung
 gui.steamProduction=Dampfproduktion
+gui.editrate=Edit Rate
+gui.Plasma=Plasma
+gui.Case=Case
 
+# Config Gui
+mekanism.configgui.ctgy.generators.general=General Settings
+mekanism.configgui.ctgy.generators.generators=Generator Settings
+mekanism.configgui.ctgy.generators.generation=Generation Settings
+
+# Config Tooltips
+mekanism.configgui.ctgy.generators.general.tooltip=Settings regarding MekanismGenerators' general configuration
+mekanism.configgui.ctgy.generators.generators.tooltip=Settings regarding enabling and disabling of specific generators
+mekanism.configgui.ctgy.generators.generation.tooltip=Settings regarding the energy usage of generators
+
+#########
 # TOOLS
 #########
 
@@ -1008,6 +1306,7 @@ item.ObsidianAxe.name=Obsidianaxt
 item.ObsidianShovel.name=Obsidianschaufel
 item.ObsidianHoe.name=Obsidianhacke
 item.ObsidianSword.name=Obsidianschwert
+item.ObsidianShield.name=Obsidian Shield
 
 # Lapis Lazuli
 item.LapisLazuliHelmet.name=Lapislazulihelm
@@ -1020,6 +1319,7 @@ item.LapisLazuliAxe.name=Lapislazuliaxt
 item.LapisLazuliShovel.name=Lapislazulischaufel
 item.LapisLazuliHoe.name=Lapislazulihacke
 item.LapisLazuliSword.name=Lapislazulischwert
+item.LapisShield.name=Lapis Lazuli Shield
 
 # Osmium
 item.OsmiumHelmet.name=Osmiumhelm
@@ -1032,6 +1332,7 @@ item.OsmiumAxe.name=Osmiumaxt
 item.OsmiumShovel.name=Osmiumschaufel
 item.OsmiumHoe.name=Osmiumhacke
 item.OsmiumSword.name=Osmiumschwert
+item.OsmiumShield.name=Osmium Shield
 
 # Bronze
 item.BronzeHelmet.name=Bronzehelm
@@ -1044,6 +1345,7 @@ item.BronzeAxe.name=Bronzeaxt
 item.BronzeShovel.name=Bronzeschaufel
 item.BronzeHoe.name=Bronzehacke
 item.BronzeSword.name=Bronzeschwert
+item.BronzeShield.name=Bronze Shield
 
 # Glow
 item.GlowstoneHelmet.name=Glowstone-Helm
@@ -1056,6 +1358,7 @@ item.GlowstoneAxe.name=Glowstone-Axt
 item.GlowstoneShovel.name=Glowstone-Schaufel
 item.GlowstoneHoe.name=Glowstone-Hacke
 item.GlowstoneSword.name=Glowstone-Schwert
+item.GlowstoneShield.name=Glowstone Shield
 
 # Steel
 item.SteelHelmet.name=Stahlhelm
@@ -1068,6 +1371,7 @@ item.SteelAxe.name=Stahlaxt
 item.SteelShovel.name=Stahlschaufel
 item.SteelHoe.name=Stahlhacke
 item.SteelSword.name=Stahlschwert
+item.SteelShield.name=Steel Shield
 
 # Config Gui
 mekanism.configgui.ctgy.tools.general=Generelles
@@ -1078,3 +1382,313 @@ mekanism.configgui.ctgy.tools.tools=Werkzeug-Balance
 mekanism.configgui.ctgy.tools.general.tooltip=Einstellungen bezüglich MekanismTools' genereller Konfiguration
 mekanism.configgui.ctgy.tools.armor.tooltip=Einstellungen bezüglich der Schutzwerte und Balance der MekanismTools Rüstungssets
 mekanism.configgui.ctgy.tools.tools.tooltip=Einstellungen bezüglich der Effizientwerte und Balance der MekanismTools Werkzeugsets
+
+# Commands
+cmd.mek.usage=
+cmd.mek.debug.usage=
+cmd.mek.debug=
+cmd.mek.testrules.usage=Setup-Weltregeln für Tests (kein Mob-Spawning, Tag-Nacht-Zyklus oder Wetter)
+cmd.mek.testrules=Mob-Spawning, Tag-Nacht-Zyklus und Wetter deaktiviert!
+cmd.mek.tp.usage=Teleportieren zu neuen Koordinaten, letzte Position auf einem Stack speichern
+cmd.mek.tp=Teleportiert zu %d,%d,%d - letzte Position auf Stack gespeichert
+cmd.mek.tp.missing.args=Teleportieren erfordert drei Koordinaten: x, y, z
+cmd.mek.tpop.usage=Zurück zur letzten Position auf dem Stack
+cmd.mek.tpop=Zurück zu %d,%d,%d; %d Positionen auf dem Stack
+cmd.mek.tpop.empty.stack=Keine Positionen auf dem Stack
+
+cmd.mek.chunk.usage=
+cmd.mek.chunk.watch.usage=Chunk des Anrufers zur Überwachungsliste für Lade-/Entladeereignisse hinzufügen
+cmd.mek.chunk.watch=Chunk %d,%d zur Überwachungsliste hinzugefügt
+cmd.mek.chunk.unwatch.usage=Chunk des Anrufers von der Überwachungsliste für Lade-/Entladeereignisse entfernen
+cmd.mek.chunk.unwatch=Chunk %d,%d von der Überwachungsliste entfernt
+cmd.mek.chunk.clear.usage=Alle Chunks von der Überwachungsliste für Lade-/Entladeereignisse entfernen
+cmd.mek.chunk.clear=%d Chunks von der Überwachungsliste entfernt
+cmd.mek.chunk.flush=%d Chunks entladen
+
+cmd.mekceu.performance_report.title=Mekanism CEu - Gleichzeitige Leistungsberichterstattung (%s Ausführungen gezählt)
+cmd.mekceu.performance_report.reset=Leistungsbericht wurde zurückgesetzt.
+cmd.mekceu.performance_report.total_executed=Insgesamt ausgeführt: %s
+cmd.mekceu.performance_report.tasks_avg_per_execution=Durchschnitt der Aufgaben pro Ausführung: %s
+
+cmd.mekceu.performance_report.total_used_time=Gesamtverbrauchte Zeit: %s ms
+cmd.mekceu.performance_report.used_time_avg_per_execution=Durchschnittszeit pro Ausführung: %s ms
+
+cmd.mekceu.performance_report.task_used_time=Verwendete Zeit der parallelen Operation: %s ms
+
+cmd.mekceu.performance_report.task_used_time_avg=Durchschnittlich verwendete Zeit der parallelen Operation: %s ms
+cmd.mekceu.performance_report.used_time_avg=Durchschnittliche Zeit für einzelne Aufgaben: %s µs
+
+#chat messages
+chat.mek.multiblockformed=Multiblock gebildet
+
+#advancements
+advancements.mekanism.advanced_control_circuit.description=Stelle eine erweiterte Steuerschaltung her
+advancements.mekanism.advanced_control_circuit.title=Fortschrittliche Technologie
+advancements.mekanism.advanced_qio_drive.description=Erhöhe die Speicherbandbreite deines QIO-Laufwerks
+advancements.mekanism.advanced_qio_drive.title=Hochdichter Speicher
+advancements.mekanism.alarm.description=Alarme sind laut, besonders die industriellen
+advancements.mekanism.alarm.title=Lärm machen
+advancements.mekanism.alloy_upgrading.description=Aktualisiere Sender in der Welt mit der nächsten Legierungsstufe
+advancements.mekanism.alloy_upgrading.title=In-Place-Sender-Upgrades
+advancements.mekanism.antimatter.description=Erzeuge Materie, die hier eigentlich nicht existieren dürfte
+advancements.mekanism.antimatter.title=Unmögliches Material
+advancements.mekanism.atomic_alloy.description=Stelle eine der stärksten Legierungen her
+advancements.mekanism.atomic_alloy.title=Top-Tier-Legierung
+advancements.mekanism.auto_collection.description=Traktorstrahlen ziehen die Abfälle der gebrochenen Blöcke ein
+advancements.mekanism.auto_collection.title=Ein wirklich kurzer Trip
+advancements.mekanism.automated_crafting.description=Stelle eine Maschine her, die das Handwerk für dich erledigt
+advancements.mekanism.automated_crafting.title=Ein intelligenter Handwerkstisch
+advancements.mekanism.basic_control_circuit.description=Einen Stein überlisten, dass er denkt
+advancements.mekanism.basic_control_circuit.title=Ein einfacher Schaltkreis
+advancements.mekanism.basic_qio_drive.description=Erstelle ein QIO-Laufwerk, um deine Gegenstände zu speichern
+advancements.mekanism.basic_qio_drive.title=Das grundlegendste Laufwerk
+advancements.mekanism.breathing_assistance.description=Stelle Tauchausrüstung her, um deine Sauerstoffversorgung unter Wasser aufzufüllen und Verunreinigungen herauszufiltern
+advancements.mekanism.breathing_assistance.title=Leichter atmen
+advancements.mekanism.chemical_crystallizer.description=Stelle einen chemischen Kristallisator, eine Auflösungszelle und eine Waschstation her
+advancements.mekanism.chemical_crystallizer.title=Das meiste für dein Geld
+advancements.mekanism.chemical_tank.description=Stelle einen Behälter her, um (fast) alle deine Chemikalien zu lagern
+advancements.mekanism.chemical_tank.title=Nützlicher als du denkst
+advancements.mekanism.chemical_transport.description=Stelle ein Druckrohr her
+advancements.mekanism.chemical_transport.title=Transport von Chemikalien
+advancements.mekanism.cleaning_gauges.description=Verwende einen Anzeige-Tropfer an jeder Anzeige in einem Mekanism-GUI
+advancements.mekanism.cleaning_gauges.title=Reinigung der Anzeigen
+advancements.mekanism.configuration_copying.description=Verwende eine Konfigurationskarte, um die Konfiguration einer Maschine auf eine andere zu kopieren
+advancements.mekanism.configuration_copying.title=Strg+C, Strg+V
+advancements.mekanism.configurator.description=Stelle einen Konfigurator her, um die Einstellungen von Blöcken zu ändern
+advancements.mekanism.configurator.title=Alles konfigurieren
+advancements.mekanism.dictionary.description=Stelle ein Wörterbuch her, um die generischen "Tags" der Welt um dich herum zu lernen
+advancements.mekanism.dictionary.title=Zeit zu lernen
+advancements.mekanism.digital_miner.description=Verwandle deinen besten Freund in einen digitalen Minenarbeiter
+advancements.mekanism.digital_miner.title=Im Inneren gefangen
+advancements.mekanism.disassembler.description=Stelle einen atomaren Zerleger her
+advancements.mekanism.disassembler.title=Braucht mehr Geschwindigkeeeit!
+advancements.mekanism.diversion_item_transport.description=Präzise Seitenkontrolle
+advancements.mekanism.diversion_item_transport.title=Netzwerksplitter
+advancements.mekanism.elite_control_circuit.description=Erstelle einen Schaltkreis mit noch mehr Wegen
+advancements.mekanism.elite_control_circuit.title=Mach es präzise
+advancements.mekanism.elite_qio_drive.description=Nutze die Relativität, um die Bandbreite weiter zu erhöhen
+advancements.mekanism.elite_qio_drive.title=Es ist alles relativ
+advancements.mekanism.energy_cube.description=Baue einen Energiewürfel, um deine überschüssige Energie zu speichern
+advancements.mekanism.energy_cube.title=Für später aufheben
+advancements.mekanism.energy_transport.description=Stelle ein universelles Kabel her
+advancements.mekanism.energy_transport.title=Transport von Energie
+advancements.mekanism.enricher.description=Stelle eine Anreicherungskammer her, um die Materialeffizienz zu erhöhen
+advancements.mekanism.enricher.title=Mehr aus weniger herausholen
+advancements.mekanism.environmental_radiation.description=Verwende einen Geigerzähler, um zu sehen, wie sehr deine Experimente die Umwelt verstrahlt haben
+advancements.mekanism.environmental_radiation.title=Denke an die Umwelt
+advancements.mekanism.factory.description=Baue eine beliebige Art von Fabrik
+advancements.mekanism.factory.title=Die Fabrik muss wachsen!
+advancements.mekanism.fluid_tank.description=Baue einen Flüssigkeitstank, um deine Flüssigkeiten zu lagern
+advancements.mekanism.fluid_tank.title=Größere Eimer
+advancements.mekanism.fluid_transport.description=Stelle ein mechanisches Rohr her
+advancements.mekanism.fluid_transport.title=Transport von Flüssigkeiten
+advancements.mekanism.full_canteen.description=Fülle eine Feldflasche vollständig mit Nährpaste
+advancements.mekanism.full_canteen.title=Leckere Paste
+advancements.mekanism.heat_transport.description=Stelle einen thermodynamischen Leiter her
+advancements.mekanism.heat_transport.title=Wärmeübertragung
+advancements.mekanism.hydrogen_powered_flight.description=Verwende einen Jetpack, um in die Lüfte zu steigen
+advancements.mekanism.hydrogen_powered_flight.title=Wasserstoffbetriebener Flug
+advancements.mekanism.infused_alloy.description=Infundiere Eisen mit Redstone
+advancements.mekanism.infused_alloy.title=Die Legierung, die alles begann
+advancements.mekanism.infusing_efficiency.description=Bereichere deine Infusionseingänge, um ihre Effizienz zu steigern
+advancements.mekanism.infusing_efficiency.title=Infusionseffizienz
+advancements.mekanism.injection_chamber.description=Injiziere Chemikalien, um mehr Ressourcen zu erhalten
+advancements.mekanism.injection_chamber.title=Injektionen... 1, 2, 3, 4
+advancements.mekanism.installer.description=Stelle eine beliebige Installationsstufe her, um deine Fabriken vor Ort aufzurüsten
+advancements.mekanism.installer.title=Vor-Ort-Upgrades
+advancements.mekanism.item_transport.description=Stelle einen logistischen Transporter her
+advancements.mekanism.item_transport.title=Transport von Gegenständen
+advancements.mekanism.laser.description=Stelle einen Laser her
+advancements.mekanism.laser.title=Laser schießen
+advancements.mekanism.laser_death.description=Durch einen Laser sterben
+advancements.mekanism.laser_death.title=Laser schießen
+advancements.mekanism.liquifier.description=Stelle einen Nährstoffverflüssiger her, um deine Nahrung zu verflüssigen
+advancements.mekanism.liquifier.title=Verflüssigen und dann trinken
+advancements.mekanism.logistical_sorter.description=Filtere, welche Gegenstände du wohin sendest
+advancements.mekanism.logistical_sorter.title=Erweitertes Sortieren von Gegenständen
+advancements.mekanism.machine_security.description=Erstelle einen Sicherheitsschreibtisch, um deine Maschinen einfacher zu sichern
+advancements.mekanism.machine_security.title=Persönliche Sicherheit
+advancements.mekanism.materials.description=Erwerbe einige natürliche Mekanism-Ressourcen
+advancements.mekanism.materials.title=Erste Schritte
+advancements.mekanism.mekasuit.description=Schütze dich mit einem vollständigen MekaSuit und einem Meka-Tool
+advancements.mekanism.mekasuit.title=Mekanist
+advancements.mekanism.metallurgic_infuser.description=Stelle einen metallurgischen Infusor her
+advancements.mekanism.metallurgic_infuser.title=Ein Metallur-was?
+advancements.mekanism.modification_station.description=Stelle eine Modifikationsstation her, um deinen MekaSuit und dein Meka-Tool aufzurüsten
+advancements.mekanism.modification_station.title=Änderungen vornehmen
+advancements.mekanism.moving_blocks.description=Verwende eine Pappschachtel, um einen anderen Block zu bewegen
+advancements.mekanism.moving_blocks.title=Blöcke bewegen
+advancements.mekanism.network_reader.description=Siehe den Inhalt eines Sendernetzwerks an
+advancements.mekanism.network_reader.title=Das Netzwerk lesen
+advancements.mekanism.nucleosynthesizer.description=Stelle einen antiprotonischen Nukleosynthesizer her und mach dir keine Sorgen, wenn du den Namen nicht aussprechen kannst
+advancements.mekanism.nucleosynthesizer.title=Materiemanipulation
+advancements.mekanism.painting_machine.description=Stelle eine Lackiermaschine her, um die Farbe von Gegenständen zu ändern
+advancements.mekanism.painting_machine.title=Lass uns malen!
+advancements.mekanism.personal_radiation.description=Verwende ein Dosimeter, um zu sehen, wie stark du dich selbst verstrahlt hast
+advancements.mekanism.personal_radiation.title=Das war nicht schlau
+advancements.mekanism.personal_storage.description=Erstelle ein persönliches Speicherelement, um Gegenstände sicher zu lagern
+advancements.mekanism.personal_storage.title=Alles meins
+advancements.mekanism.playing_with_fire.description=Sei verantwortlich und brenne keine Wälder nieder
+advancements.mekanism.playing_with_fire.title=Mit Feuer spielen
+advancements.mekanism.plenisher.description=Stelle einen Flüssigkeitsauffüller her, um die Flüssigkeiten zurückzubringen!
+advancements.mekanism.plenisher.title=Jetzt rückwärts
+advancements.mekanism.plutonium.description=Verfeinere deinen nuklearen Abfall zu Plutonium
+advancements.mekanism.plutonium.title=Plutonium, nicht Polonium
+advancements.mekanism.polonium.description=Verfeinere deinen nuklearen Abfall zu Polonium
+advancements.mekanism.polonium.title=Polonium, nicht Plutonium
+advancements.mekanism.portable_qio_dashboard.description=Stelle ein tragbares QIO-Dashboard her
+advancements.mekanism.portable_qio_dashboard.title=Wer braucht schon Rucksäcke
+advancements.mekanism.portable_teleporter.description=Stelle einen tragbaren Teleporter her
+advancements.mekanism.portable_teleporter.title=Beam mich hoch, Scotty
+advancements.mekanism.pump.description=Stelle eine elektrische Pumpe her, um Flüssigkeiten automatisch „aufzusaugen“
+advancements.mekanism.pump.title=Flüssigkeiten aufnehmen
+advancements.mekanism.purification_chamber.description=Stelle eine Reinigungskammer her und mache noch mehr aus weniger!
+advancements.mekanism.purification_chamber.title=Weiter reinigen
+advancements.mekanism.qio_dashboard.description=Warte, dieses Ding hat WIE VIELE Handwerksfenster?
+advancements.mekanism.qio_dashboard.title=So viel mehr als ein Monitor
+advancements.mekanism.qio_drive_array.description=Warte! Wo sind all die Kabel?
+advancements.mekanism.qio_drive_array.title=Quantitative Orchestrierung von Gegenständen
+advancements.mekanism.qio_exporter.description=Automatisiere das Entfernen von Gegenständen aus deinem QIO
+advancements.mekanism.qio_exporter.title=Automatisiertes Exportieren
+advancements.mekanism.qio_importer.description=Automatisiere das Hinzufügen von Gegenständen zu deinem QIO
+advancements.mekanism.qio_importer.title=Automatisiertes Importieren
+advancements.mekanism.qio_redstone_adapter.description=Stelle einen QIO-Redstone-Adapter her
+advancements.mekanism.qio_redstone_adapter.title=Nummernbasierte Automatisierung
+advancements.mekanism.quantum_entangloporter.description=Sofortiger Ressourcentransport
+advancements.mekanism.quantum_entangloporter.title=Quantenverschränkung
+advancements.mekanism.radiation_poisoning.description=Erleide Strahlenschäden
+advancements.mekanism.radiation_poisoning.title=Man kann die Strahlung wirklich schmecken
+advancements.mekanism.radiation_poisoning_death.description=An Strahlenvergiftung sterben
+advancements.mekanism.radiation_poisoning_death.title=Nicht gut, nicht schlecht
+advancements.mekanism.radiation_prevention.description=Schütze dich vor Strahlung mit einem Hazmat-Anzug
+advancements.mekanism.radiation_prevention.title=Strahlungsschutz
+advancements.mekanism.reinforced_alloy.description=Diamanten machen alles besser!
+advancements.mekanism.reinforced_alloy.title=Mach es stärker
+advancements.mekanism.restrictive_item_transport.description=Verringert die Priorität eines Pfades für den Transport von Gegenständen
+advancements.mekanism.restrictive_item_transport.title=Restriktives Netzwerk
+advancements.mekanism.robit.description=Stelle einen Robit her und platziere ihn auf einem Ladepad
+advancements.mekanism.robit.title=Ein neuer bester Freund!
+advancements.mekanism.robit_aesthetics.description=Gib einem Robit einen neuen Anstrich
+advancements.mekanism.robit_aesthetics.title=Ein neuer Anstrich
+advancements.mekanism.root.description=Willkommen bei Mekanism!
+advancements.mekanism.root.title=Mekanism
+advancements.mekanism.running_free.description=Schütze dich vor Stürzen mit einem Paar Freiläufer
+advancements.mekanism.running_free.title=Frei laufen
+advancements.mekanism.sawmill.description=Stelle ein Präzisionssägewerk her
+advancements.mekanism.sawmill.title=Schneiden, schneiden, schneiden
+advancements.mekanism.seismic_vibrations.description=Stelle einen Seismischen Vibrator und einen Seismischen Leser her und sieh dir dann die Welt unter dir an
+advancements.mekanism.seismic_vibrations.title=Einfach vibrieren
+advancements.mekanism.simple_mass_storage.description=Erstelle einen Behälter, um große Mengen eines Gegenstands zu lagern
+advancements.mekanism.simple_mass_storage.title=Grundlegende Massenspeicherung
+advancements.mekanism.sna.description=Stelle einen Solar-Neutronen-Aktivator her
+advancements.mekanism.sna.title=Verwendet keine Neutrinos
+advancements.mekanism.sps.description=Das Ding scheint nicht sicher zu sein
+advancements.mekanism.sps.title=Superkritische Phasenverschiebung?
+advancements.mekanism.stabilizing_chunks.description=Stelle einen Dimensionalen Stabilisator und ein Anker-Upgrade her
+advancements.mekanism.stabilizing_chunks.title=Stabilisierende Chunks
+advancements.mekanism.steel_casing.description=Wird selbst in den fortschrittlichsten Maschinen verwendet
+advancements.mekanism.steel_casing.title=Die perfekte Grundlage
+advancements.mekanism.steel_ingot.description=Infundiere Eisen mit Kohlenstoff und wiederhole es
+advancements.mekanism.steel_ingot.title=Industrielle Revolution
+advancements.mekanism.stone_generator.description=Verhindert Löcher im Boden seit 2021
+advancements.mekanism.stone_generator.title=Mit Stein ersetzen
+advancements.mekanism.stopping_lasers.description=Blockiere einen Laser mit einem Schild
+advancements.mekanism.stopping_lasers.title=Laser stoppen
+advancements.mekanism.teleportation_core.description=Konstruiere den Kern aller Teleportationstechnologien
+advancements.mekanism.teleportation_core.title=Die Grundlage der Teleportation
+advancements.mekanism.teleporter.description=Erstelle und reise durch einen Teleporter
+advancements.mekanism.teleporter.title=Denke mit Portalen
+advancements.mekanism.ultimate_control_circuit.description=Kann dieses Ding jetzt Minecraft ausführen?
+advancements.mekanism.ultimate_control_circuit.title=Wo ist mein Supercomputer?
+advancements.mekanism.ultimate_qio_drive.description=Wohin gehen all die Gegenstände
+advancements.mekanism.ultimate_qio_drive.title=Paralleles Universum erkannt
+advancements.mekanism.upgraded_mekasuit.description=Installiere die maximale Anzahl aller Module in den MekaSuit und das Meka-Tool
+advancements.mekanism.upgraded_mekasuit.title=Wahre Hingabe
+advancements.mekanism.waste_removal.description=Sichere Lagerung für deine radioaktiven Chemikalien und Entsorgung von nuklearen Abfällen
+advancements.mekanism.waste_removal.title=Abfallentsorgung
+advancements.mekanism.yellow_cake.description=Erstelle einen Kuchen, der nicht gegessen werden darf
+advancements.mekanism.yellow_cake.title=Anschauen, nicht essen
+
+advancements.mekanismtools.alternate_armor.description=Stelle ein beliebiges Rüstungsteil aus Mekanism-Werkzeugen her
+advancements.mekanismtools.alternate_armor.title=Mehr Rüstungstypen!
+advancements.mekanismtools.alternate_tools.description=Stelle ein beliebiges Werkzeug oder eine Waffe (außer Paxeln) aus Mekanism-Werkzeugen her
+advancements.mekanismtools.alternate_tools.title=Mehr Werkzeugtypen!
+advancements.mekanismtools.better_than_netherite.description=Schütze dich mit einem Stück raffinierter Obsidian-Rüstung
+advancements.mekanismtools.better_than_netherite.title=Besser als Netherite
+advancements.mekanismtools.loved_by_piglins.description=Raffinierte Leuchtstein-Rüstung leuchtet noch heller als Gold!
+advancements.mekanismtools.loved_by_piglins.title=Geliebt von Piglins
+advancements.mekanismtools.not_enough_shielding.description=Stelle ein beliebiges Schild aus Mekanism-Werkzeugen her
+advancements.mekanismtools.not_enough_shielding.title=Nicht genug Schutz
+advancements.mekanismtools.paxel.description=Stelle ein beliebiges Paxel (Pickaxe, Axe, Shovel) her
+advancements.mekanismtools.paxel.title=Multi-Werkzeug
+
+advancements.mekanismgenerators.burn_the_gas.description=Baue einen Gasverbrennungsgenerator, um Ethylen zu verbrennen
+advancements.mekanismgenerators.burn_the_gas.title=Verbrenne das Gas
+advancements.mekanismgenerators.heat_generator.description=Baue einen Wärmegenerator, um mit der Stromerzeugung zu beginnen
+advancements.mekanismgenerators.heat_generator.title=Dein erster Generator
+advancements.mekanismgenerators.solar_generator.description=Erneuerbare Energie am Tag
+advancements.mekanismgenerators.solar_generator.title=Die Kraft der Sonne
+advancements.mekanismgenerators.wind_generator.description=Hoffentlich gibt es in der Nähe etwas Wind
+advancements.mekanismgenerators.wind_generator.title=Dreh Baby Dreh
+
+#subtitle mekanism
+sound_event.mekanism.item.flamethrower.active=Flammenwerfer brennt
+sound_event.mekanism.item.flamethrower.idle=Flammenwerfer zischt
+sound_event.mekanism.item.geiger_elevated=Erhöhte Geigerzähler-Klicks
+sound_event.mekanism.item.geiger_fast=Konstante Geigerzähler-Klicks
+sound_event.mekanism.item.geiger_medium=Geigerzähler klickt
+sound_event.mekanism.item.geiger_slow=Geigerzähler klickt langsam
+sound_event.mekanism.item.gravitational_modulation_unit=Gravitation moduliert
+sound_event.mekanism.item.hydraulic=Hydraulik verschiebt sich
+sound_event.mekanism.item.jetpack=Jetpack brennt
+sound_event.mekanism.item.scuba_mask=Luft strömt
+sound_event.mekanism.tile.machine.antiprotonic_nucleosynthesizer=Nukleosynthesizer summt
+sound_event.mekanism.tile.machine.chargepad=Ladepad summt
+sound_event.mekanism.tile.machine.chemical_crystallizer=Kristallisator summt
+sound_event.mekanism.tile.machine.chemical_dissolution_chamber=Lösungsreaktor summt
+sound_event.mekanism.tile.machine.chemical_infuser=Chemischer Infuser summt
+sound_event.mekanism.tile.machine.chemical_injection_chamber=Injektionskammer verarbeitet
+sound_event.mekanism.tile.machine.chemical_oxidizer=Oxidierer summt
+sound_event.mekanism.tile.machine.chemical_washer=Waschmaschine summt
+sound_event.mekanism.tile.machine.combiner=Kombinierer summt
+sound_event.mekanism.tile.machine.compressor=Kompressor summt
+sound_event.mekanism.tile.machine.crusher=Brecher klirrt
+sound_event.mekanism.tile.machine.electrolytic_separator=Separator trennt
+sound_event.mekanism.tile.machine.energized_smelter=Schmelzofen jault
+sound_event.mekanism.tile.machine.enrichment_chamber=Anreicherungskammer summt
+sound_event.mekanism.tile.machine.industrial_alarm=Alarm ertönt
+sound_event.mekanism.tile.machine.isotopic_centrifuge=Zentrifuge dreht sich
+sound_event.mekanism.tile.machine.laser=Laser summt
+sound_event.mekanism.tile.machine.logistical_sorter=Sorter klickt
+sound_event.mekanism.tile.machine.metallurgic_infuser=Metallurgischer Infuser summt
+sound_event.mekanism.tile.machine.nutritional_liquifier=Nährstoffe verflüssigt
+sound_event.mekanism.tile.machine.painting_machine=Sprühmaschine sprüht
+sound_event.mekanism.tile.machine.pigment_extractor=Pigmentextraktor extrahiert
+sound_event.mekanism.tile.machine.pigment_mixer=Pigmentmischer schwappt
+sound_event.mekanism.tile.machine.precision_sawmill=Sägewerk schneidet
+sound_event.mekanism.tile.machine.pressurized_reaction_chamber=Reaktionskammer summt
+sound_event.mekanism.tile.machine.purification_chamber=Reiniger summt
+sound_event.mekanism.tile.machine.resistive_heater=Heizer summt
+sound_event.mekanism.tile.machine.rotary_condensentrator=Kondensator rotiert
+sound_event.mekanism.tile.machine.sps=SPS summt
+
+#subtitle mekanism generators
+sound_event.mekanismgenerators.tile.generator.bio=Biogenerator summt
+sound_event.mekanismgenerators.tile.generator.gas=Gengenerator summt
+sound_event.mekanismgenerators.tile.generator.heat=Heizgenerator summt
+sound_event.mekanismgenerators.tile.generator.solar=Solargenerator summt
+sound_event.mekanismgenerators.tile.generator.wind=Windgenerator rauscht
+sound_event.mekanismgenerators.tile.machine.fission_reactor=Spaltreaktor summt
+sound_event.mekanismgenerators.tile.machine.fusion_reactor=Fusionsreaktor summt
+!=!
+gui.gas:=Gas:
+
+#holiday
+holiday.mekanism.christmas.1=Frohe Weihnachten,
+holiday.mekanism.christmas.2=Ich wünsche dir viel Weihnachtsfreude
+holiday.mekanism.christmas.3=und erholsame Feiertage mit deiner
+holiday.mekanism.christmas.4=Familie :)
+holiday.mekanism.may_4.1=May the 4th be with you
+holiday.mekanism.new_year.1=Frohes neues Jahr
+holiday.mekanism.new_year.2=Beste Wünsche für dich, während wir in dieses
+holiday.mekanism.new_year.3=neue und aufregende Jahr %s eintreten
