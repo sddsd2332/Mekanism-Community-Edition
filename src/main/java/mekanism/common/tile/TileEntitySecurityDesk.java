@@ -281,7 +281,9 @@ public class TileEntitySecurityDesk extends TileEntityContainerBlock implements 
         super.validate();
         if (world.isRemote && !rendererInitialized) {
             rendererInitialized = true;
-            new BloomRenderSecurityDesk(this);
+            if (Mekanism.hooks.Bloom) {
+                new BloomRenderSecurityDesk(this);
+            }
         }
     }
 }

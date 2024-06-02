@@ -559,7 +559,9 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
         super.validate();
         if (world.isRemote && !rendererInitialized) {
             rendererInitialized = true;
-           new BloomRenderLargeChemicalInfuser(this);
+            if (Mekanism.hooks.Bloom) {
+                new BloomRenderLargeChemicalInfuser(this);
+            }
         }
     }
 

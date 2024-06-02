@@ -26,7 +26,7 @@ public abstract class BloomEffect<T extends TileEntityBasicBlock> implements IBl
         this.south = south;
         this.west = west;
         this.east = east;
-        Bloom(tile,this,this);
+        Bloom(tile, this, this);;
     }
 
     @Override

@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mekanism.api.Coord4D;
 import mekanism.api.IHeatTransfer;
 import mekanism.api.TileNetworkList;
+import mekanism.common.Mekanism;
 import mekanism.common.base.*;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.config.MekanismConfig;
@@ -483,7 +484,9 @@ public class TileEntityLargeHeatGenerator extends TileEntityMultiblockGenerator 
         super.validate();
         if (world.isRemote && !rendererInitialized) {
             rendererInitialized = true;
-            new BloomRenderLargeHeatGenerator(this);
+            if (Mekanism.hooks.Bloom) {
+                new BloomRenderLargeHeatGenerator(this);
+            }
         }
     }
 

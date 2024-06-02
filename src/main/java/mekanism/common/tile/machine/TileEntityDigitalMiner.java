@@ -1258,7 +1258,9 @@ public class TileEntityDigitalMiner extends TileEntityElectricBlock implements I
         super.validate();
         if (world.isRemote && !rendererInitialized) {
             rendererInitialized = true;
-            new BloomRenderDigitalMiner(this);
+            if (Mekanism.hooks.Bloom) {
+                new BloomRenderDigitalMiner(this);
+            }
         }
     }
 

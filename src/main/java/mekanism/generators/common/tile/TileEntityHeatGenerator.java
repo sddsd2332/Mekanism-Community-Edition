@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mekanism.api.Coord4D;
 import mekanism.api.IHeatTransfer;
 import mekanism.api.TileNetworkList;
+import mekanism.common.Mekanism;
 import mekanism.common.base.FluidHandlerWrapper;
 import mekanism.common.base.IComparatorSupport;
 import mekanism.common.base.IFluidHandlerWrapper;
@@ -343,7 +344,10 @@ public class TileEntityHeatGenerator extends TileEntityGenerator implements IFlu
         super.validate();
         if (world.isRemote && !rendererInitialized) {
             rendererInitialized = true;
-            new BloomRenderHeatGenerator(this);
+            if (Mekanism.hooks.Bloom) {
+                new BloomRenderHeatGenerator(this);
+            }
+
         }
     }
 

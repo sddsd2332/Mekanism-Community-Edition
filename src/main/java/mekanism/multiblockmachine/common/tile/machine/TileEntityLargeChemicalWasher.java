@@ -546,7 +546,9 @@ public class TileEntityLargeChemicalWasher extends TileEntityMultiblockBasicMach
         super.validate();
         if (world.isRemote && !rendererInitialized) {
             rendererInitialized = true;
-            new BloomRenderLargeChemicalWasher(this);
+            if (Mekanism.hooks.Bloom) {
+                new BloomRenderLargeChemicalWasher(this);
+            }
         }
     }
 

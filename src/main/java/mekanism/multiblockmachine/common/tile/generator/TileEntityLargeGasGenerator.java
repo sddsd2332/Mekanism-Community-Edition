@@ -5,6 +5,7 @@ import mekanism.api.Coord4D;
 import mekanism.api.TileNetworkList;
 import mekanism.api.gas.*;
 import mekanism.common.FuelHandler;
+import mekanism.common.Mekanism;
 import mekanism.common.Upgrade;
 import mekanism.common.base.IAdvancedBoundingBlock;
 import mekanism.common.base.IComparatorSupport;
@@ -481,7 +482,9 @@ public class TileEntityLargeGasGenerator extends TileEntityMultiblockGenerator i
         super.validate();
         if (world.isRemote && !rendererInitialized) {
             rendererInitialized = true;
-            new BloomRendererLargeGasGenerator(this);
+            if (Mekanism.hooks.Bloom) {
+                new BloomRendererLargeGasGenerator(this);
+            }
         }
     }
 

@@ -3,6 +3,7 @@ package mekanism.multiblockmachine.common.tile.generator;
 import io.netty.buffer.ByteBuf;
 import mekanism.api.Coord4D;
 import mekanism.api.TileNetworkList;
+import mekanism.common.Mekanism;
 import mekanism.common.Upgrade;
 import mekanism.common.base.IAdvancedBoundingBlock;
 import mekanism.common.config.MekanismConfig;
@@ -644,9 +645,9 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
         super.validate();
         if (world.isRemote && !rendererInitialized) {
             rendererInitialized = true;
-            new BloomRenderLargeWindGenerator(this);
+            if (Mekanism.hooks.Bloom) {
+                new BloomRenderLargeWindGenerator(this);
+            }
         }
     }
-
-
 }

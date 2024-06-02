@@ -84,6 +84,7 @@ public final class MekanismHooks {
     public boolean FluxNetWorksLoaded = false;
     public boolean GTCEULoaded = false;
     public boolean LumenizedLoaded = false;
+    public boolean Bloom = false;
 
     public void hookPreInit() {
         AE2Loaded = Loader.isModLoaded(APPLIED_ENERGISTICS_2_MOD_ID);
@@ -102,6 +103,7 @@ public final class MekanismHooks {
         FluxNetWorksLoaded = Loader.isModLoaded(FLUX_NETWORKS_MOD_ID);
         GTCEULoaded = Mods.GTCeU.isPresent();
         LumenizedLoaded = Loader.isModLoaded(LUMENIZED_MOD_ID);
+        Bloom = LumenizedLoaded || GTCEULoaded;
 
         if (FluxNetWorksLoaded) {
             FluxNetworksIntegration.preInit();
