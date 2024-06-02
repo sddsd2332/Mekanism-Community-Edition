@@ -50,7 +50,7 @@ public class TileEntityLargeHeatGenerator extends TileEntityMultiblockGenerator 
 
     public TileEntityLargeHeatGenerator() {
         super("heat", "LargeHeatGenerator", MekanismConfig.current().multiblock.largeHeatGeneratorStorage.val(), MekanismConfig.current().multiblock.largeHeatGeneratorStorage.val(), 2);
-        inventory = NonNullList.withSize(3, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(3, ItemStack.EMPTY);
     }
 
     @Override

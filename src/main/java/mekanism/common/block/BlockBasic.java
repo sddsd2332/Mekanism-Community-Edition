@@ -403,8 +403,8 @@ public abstract class BlockBasic extends BlockTileDrops {
         TileEntity tile = world.getTileEntity(pos);
         ItemStack stack = entityplayer.getHeldItem(hand);
 
-        if (tile instanceof TileEntityThermalEvaporationController) {
-            if (!entityplayer.isSneaking()) {
+        if (tile instanceof TileEntityThermalEvaporationController controller) {
+            if (!entityplayer.isSneaking() && controller.structured) {
                 if (!world.isRemote) {
                     entityplayer.openGui(Mekanism.instance, 33, world, pos.getX(), pos.getY(), pos.getZ());
                 }

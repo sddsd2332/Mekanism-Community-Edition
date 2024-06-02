@@ -13,7 +13,6 @@ import mekanism.common.util.TileUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fluids.FluidTank;
 
@@ -29,7 +28,7 @@ public class InventoryFrequency extends Frequency {
     public double storedEnergy;
     public FluidTank storedFluid;
     public GasTank storedGas;
-    public NonNullList<ItemStack> inventory = NonNullListSynchronized.withSize(1, ItemStack.EMPTY);
+    public NonNullListSynchronized<ItemStack> inventory = NonNullListSynchronized.withSize(1, ItemStack.EMPTY);
     public double temperature;
 
     public InventoryFrequency(String n, UUID uuid) {

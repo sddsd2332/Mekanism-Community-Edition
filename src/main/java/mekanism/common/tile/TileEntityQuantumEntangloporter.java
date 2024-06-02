@@ -35,7 +35,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -439,7 +438,7 @@ public class TileEntityQuantumEntangloporter extends TileEntityElectricBlock imp
     }
 
     @Override
-    public NonNullList<ItemStack> getInventory() {
+    public NonNullListSynchronized<ItemStack> getInventory() {
         return hasFrequency() ? frequency.inventory : null;
     }
 
@@ -546,7 +545,7 @@ public class TileEntityQuantumEntangloporter extends TileEntityElectricBlock imp
             return false;
         }
         return capability == Capabilities.GAS_HANDLER_CAPABILITY || capability == Capabilities.HEAT_TRANSFER_CAPABILITY
-               || capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || super.hasCapability(capability, side);
+                || capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || super.hasCapability(capability, side);
     }
 
     @Override
@@ -568,7 +567,7 @@ public class TileEntityQuantumEntangloporter extends TileEntityElectricBlock imp
         if (configComponent.isCapabilityDisabled(capability, side, facing)) {
             return true;
         } else if (capability == Capabilities.GAS_HANDLER_CAPABILITY || capability == Capabilities.HEAT_TRANSFER_CAPABILITY ||
-                   capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+                capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return side != null && (!hasFrequency() || configComponent.isCapabilityDisabled(capability, side, facing));
         }
         return super.isCapabilityDisabled(capability, side);

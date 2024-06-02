@@ -12,6 +12,13 @@ tile.MultiblockGenerator.LargeHeatGenerator.name=Large Heat Generator
 tooltip.LargeHeatGenerator=A large generator that uses the heat of magma or other combustible resources to generate energy.
 tile.MultiblockGenerator.LargeGasGenerator.name=Large Gas-Burning Generator
 tooltip.LargeGasGenerator=A large generator that harnesses the molecular varying gasses to produce energy.
+tile.MultiblockGenerator.LargeElectrolyticSeparator.name=Large Electrolytic Separator
+tooltip.LargeElectrolyticSeparator=A large machine that uses the process of electrolysis to split apart a certain gas into two different gasses.
+tile.MultiblockGenerator.LargeChemicalInfuser.name=Large Chemical Infuser
+tooltip.LargeChemicalInfuser=A large machine that produces a new gas by infusing two others.
+tile.MultiblockGenerator.LargeChemicalWasher.name=Large Chemical Washer
+tooltip.LargeChemicalWasher=An large ultimate machine that cleans unprocessed slurry and prepares it for crystallization.
+
 # Creative tab
 itemGroup.tabMekanismMultiblockMachine=Mekanism Multiblock Machine
 

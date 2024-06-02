@@ -13,7 +13,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class TankCache extends MultiblockCache<SynchronizedTankData> {
 
-    public NonNullList<ItemStack> inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
+    public NonNullListSynchronized<ItemStack> inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
 
     public FluidStack fluid;
 

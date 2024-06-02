@@ -53,7 +53,7 @@ public class SynchronizedBoilerData extends SynchronizedData<SynchronizedBoilerD
 
     public int steamVolume;
 
-    public NonNullList<ItemStack> inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
+    public NonNullListSynchronized<ItemStack> inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
 
     public Coord4D upperRenderLocation;
 
@@ -102,7 +102,7 @@ public class SynchronizedBoilerData extends SynchronizedData<SynchronizedBoilerD
     }
 
     @Override
-    public NonNullList<ItemStack> getInventory() {
+    public NonNullListSynchronized<ItemStack> getInventory() {
         return inventory;
     }
 

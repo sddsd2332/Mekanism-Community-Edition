@@ -26,7 +26,6 @@ public abstract class GuiReactorInfo extends GuiMekanismTile<TileEntityReactorCo
     public void initGui() {
         super.initGui();
         buttonList.clear();
-
         buttonList.add(backButton = new GuiDisableableButton(0, guiLeft + 6, guiTop + 6, 14, 14).with(GuiDisableableButton.ImageOverlay.BACK));
     }
 

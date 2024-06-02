@@ -124,8 +124,8 @@ public abstract class BlockReactor extends Block implements ITileEntityProvider 
             }
         }
 
-        if (tileEntity instanceof TileEntityReactorController) {
-            if (!entityplayer.isSneaking()) {
+        if (tileEntity instanceof TileEntityReactorController controller) {
+            if (!entityplayer.isSneaking() && controller.fusionReactor.formed) {
                 entityplayer.openGui(MekanismGenerators.instance, ReactorBlockType.get(this, metadata).guiId, world, pos.getX(), pos.getY(), pos.getZ());
                 return true;
             }

@@ -56,7 +56,7 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
 
     public TileEntityLargeChemicalInfuser() {
         super("cheminfuser", BlockStateMultiblockMachine.MultiblockMachineType.LARGE_CHEMICAL_INFUSER, 1, 4);
-        inventory = NonNullList.withSize(5, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(5, ItemStack.EMPTY);
     }
 
     @Override

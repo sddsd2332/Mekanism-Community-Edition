@@ -1,5 +1,7 @@
 package mekanism.generators.common.inventory.container;
 
+import mekanism.api.gas.GasStack;
+import mekanism.common.MekanismFluids;
 import mekanism.common.inventory.container.ContainerMekanism;
 import mekanism.common.util.MekanismUtils;
 import mekanism.generators.common.item.ItemHohlraum;
@@ -11,6 +13,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 
@@ -69,6 +72,15 @@ public class ContainerReactorController extends ContainerMekanism<TileEntityReac
 
         public SlotReactor(IInventory inventory, int index, int x, int y) {
             super(inventory, index, x, y);
+        }
+
+        @Override
+        public boolean isItemValid(ItemStack itemstack) {
+            if (!itemstack.isEmpty() && itemstack.getItem() instanceof ItemHohlraum itemHohlraum) {
+                GasStack gasStack = itemHohlraum.getGas(itemstack);
+                return gasStack != null && gasStack.getGas() == MekanismFluids.FusionFuel && gasStack.amount == ItemHohlraum.MAX_GAS;
+            }
+            return false;
         }
 
         @Override

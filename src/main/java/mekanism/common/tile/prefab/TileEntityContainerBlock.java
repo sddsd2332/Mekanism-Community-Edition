@@ -15,7 +15,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.capabilities.Capability;
@@ -35,7 +34,7 @@ public abstract class TileEntityContainerBlock extends TileEntityBasicBlock impl
     /**
      * The inventory slot itemstacks used by this block.
      */
-    public NonNullList<ItemStack> inventory;
+    public NonNullListSynchronized<ItemStack> inventory;
 
     /**
      * The full name of this machine.
@@ -117,7 +116,7 @@ public abstract class TileEntityContainerBlock extends TileEntityBasicBlock impl
         }
     }
 
-    protected NonNullList<ItemStack> getInventory() {
+    protected NonNullListSynchronized<ItemStack> getInventory() {
         return inventory;
     }
 

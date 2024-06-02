@@ -1,6 +1,6 @@
 package mekanism.generators.common;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import mekanism.api.Coord4D;
 import mekanism.api.IHeatTransfer;
 import mekanism.api.gas.GasStack;
@@ -13,6 +13,7 @@ import mekanism.common.network.PacketTileEntity.TileEntityMessage;
 import mekanism.common.recipe.RecipeHandler;
 import mekanism.common.recipe.inputs.FluidInput;
 import mekanism.common.recipe.machines.FusionCoolingRecipe;
+import mekanism.common.util.NonNullListSynchronized;
 import mekanism.common.util.UnitDisplayUtils.TemperatureUnit;
 import mekanism.generators.common.item.ItemHohlraum;
 import mekanism.generators.common.tile.reactor.TileEntityReactorBlock;
@@ -24,7 +25,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -49,8 +49,8 @@ public class FusionReactor {
     public static double caseWaterConductivity = 0.3;
     public static double caseAirConductivity = 0.1;
     public TileEntityReactorController controller;
-    public Set<TileEntityReactorBlock> reactorBlocks = new ObjectOpenHashSet<>();
-    public Set<IHeatTransfer> heatTransfers = new ObjectOpenHashSet<>();
+    public Set<TileEntityReactorBlock> reactorBlocks = new ReferenceOpenHashSet<>();
+    public Set<IHeatTransfer> heatTransfers = new ReferenceOpenHashSet<>();
     //Current stores of temperature - internally uses ambient-relative kelvin units
     public double plasmaTemperature;
     public double caseTemperature;
@@ -276,7 +276,6 @@ public class FusionReactor {
         }
 
         formed = true;
-
         if (!controller.getWorld().isRemote) {
             Mekanism.packetHandler.sendToDimension(new TileEntityMessage(controller), controller.getWorld().provider.getDimension());
         }
@@ -291,7 +290,6 @@ public class FusionReactor {
 
         for (int[] coords : positions) {
             TileEntity tile = centre.clone().translate(coords[0], coords[1], coords[2]).getTileEntity(controller.getWorld());
-
             if (tile instanceof TileEntityReactorBlock && ((TileEntityReactorBlock) tile).isFrame()) {
                 reactorBlocks.add((TileEntityReactorBlock) tile);
                 ((TileEntityReactorBlock) tile).setReactor(this);
@@ -448,7 +446,7 @@ public class FusionReactor {
         return null;
     }
 
-    public NonNullList<ItemStack> getInventory() {
+    public NonNullListSynchronized<ItemStack> getInventory() {
         return isFormed() ? controller.inventory : null;
     }
 

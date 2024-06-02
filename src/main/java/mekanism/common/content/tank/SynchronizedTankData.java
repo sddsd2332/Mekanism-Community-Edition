@@ -28,7 +28,7 @@ public class SynchronizedTankData extends SynchronizedData<SynchronizedTankData>
     public int prevGasStage = 0;
     public ContainerEditMode editMode = ContainerEditMode.BOTH;
 
-    public NonNullList<ItemStack> inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
+    public NonNullListSynchronized<ItemStack> inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
 
     public Set<ValveData> valves = new ObjectOpenHashSet<>();
 
@@ -55,7 +55,7 @@ public class SynchronizedTankData extends SynchronizedData<SynchronizedTankData>
     }
 
     @Override
-    public NonNullList<ItemStack> getInventory() {
+    public NonNullListSynchronized<ItemStack> getInventory() {
         return inventory;
     }
 

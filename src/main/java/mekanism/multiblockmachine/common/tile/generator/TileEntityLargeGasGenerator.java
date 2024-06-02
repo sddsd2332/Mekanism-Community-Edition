@@ -49,7 +49,7 @@ public class TileEntityLargeGasGenerator extends TileEntityMultiblockGenerator i
 
     public TileEntityLargeGasGenerator() {
         super("gas", "LargeGasGenerator", MekanismConfig.current().multiblock.LargeGasGeneratorStorage.val(), MekanismConfig.current().multiblock.LargeGasGeneratorStorage.val(), 2);
-        inventory = NonNullList.withSize(3, ItemStack.EMPTY);
+        inventory = NonNullListSynchronized.withSize(3, ItemStack.EMPTY);
         fuelTank = new GasTank(MAX_GAS);
         upgradeComponent.setSupported(Upgrade.ENERGY);
     }

@@ -19,7 +19,7 @@ import java.util.Set;
 //TODO: Do something better for purposes of double precision such as BigInt
 public class SynchronizedMatrixData extends SynchronizedData<SynchronizedMatrixData> {
 
-    private NonNullList<ItemStack> inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
+    private NonNullListSynchronized<ItemStack> inventory = NonNullListSynchronized.withSize(2, ItemStack.EMPTY);
     private Set<Coord4D> providers = new ObjectOpenHashSet<>();
     private Set<Coord4D> cells = new ObjectOpenHashSet<>();
     private double queuedOutput;
@@ -35,11 +35,11 @@ public class SynchronizedMatrixData extends SynchronizedData<SynchronizedMatrixD
     private int clientCells;
 
     @Override
-    public NonNullList<ItemStack> getInventory() {
+    public NonNullListSynchronized<ItemStack> getInventory() {
         return inventory;
     }
 
-    public void setInventory(NonNullList<ItemStack> inventory) {
+    public void setInventory(NonNullListSynchronized<ItemStack> inventory) {
         this.inventory = inventory;
     }
 

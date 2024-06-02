@@ -8,6 +8,7 @@ import mekanism.common.PacketHandler;
 import mekanism.common.multiblock.*;
 import mekanism.common.tile.prefab.TileEntityContainerBlock;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -240,7 +241,7 @@ public abstract class TileEntityMultiblock<T extends SynchronizedData<T>> extend
     }
 
     @Override
-    protected NonNullList<ItemStack> getInventory() {
+    protected NonNullListSynchronized<ItemStack> getInventory() {
         return structure != null ? structure.getInventory() : null;
     }
 
