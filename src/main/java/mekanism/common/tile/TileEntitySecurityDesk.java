@@ -24,6 +24,8 @@ import mekanism.common.tile.prefab.TileEntityContainerBlock;
 import mekanism.common.util.InventoryUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.NonNullListSynchronized;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -296,12 +298,26 @@ public class TileEntitySecurityDesk extends TileEntityContainerBlock implements 
     @net.minecraftforge.fml.common.Optional.Method(modid = MekanismHooks.GTCEU_MOD_ID)
     public void GTECUBloom() {
         BloomRenderSecurityDesk renderer = new BloomRenderSecurityDesk(this);
-        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> {
+            WorldClient mcWorld = Minecraft.getMinecraft().world;
+            double entityX = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosX + (Minecraft.getMinecraft().getRenderViewEntity().posX - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosX) * Minecraft.getMinecraft().getRenderPartialTicks();
+            double entityY = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosY + (Minecraft.getMinecraft().getRenderViewEntity().posY - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosY) * Minecraft.getMinecraft().getRenderPartialTicks();
+            double entityZ = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosZ + (Minecraft.getMinecraft().getRenderViewEntity().posZ - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosZ) * Minecraft.getMinecraft().getRenderPartialTicks();
+            return !isInvalid() && world != null && world == mcWorld && mcWorld.getTileEntity(pos) == this && getDistanceSq(entityX, entityY, entityZ) < 4096;
+        });
     }
 
     @Optional.Method(modid = MekanismHooks.LUMENIZED_MOD_ID)
     public void LumenizedBloom() {
         BloomRenderSecurityDesk renderer = new BloomRenderSecurityDesk(this);
-        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> {
+            WorldClient mcWorld = Minecraft.getMinecraft().world;
+            double entityX = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosX + (Minecraft.getMinecraft().getRenderViewEntity().posX - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosX) * Minecraft.getMinecraft().getRenderPartialTicks();
+            double entityY = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosY + (Minecraft.getMinecraft().getRenderViewEntity().posY - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosY) * Minecraft.getMinecraft().getRenderPartialTicks();
+            double entityZ = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosZ + (Minecraft.getMinecraft().getRenderViewEntity().posZ - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosZ) * Minecraft.getMinecraft().getRenderPartialTicks();
+            return !isInvalid() && world != null && world == mcWorld && mcWorld.getTileEntity(pos) == this && getDistanceSq(entityX, entityY, entityZ) < 4096;
+        });
     }
+
+
 }

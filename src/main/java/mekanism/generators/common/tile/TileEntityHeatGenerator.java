@@ -17,6 +17,8 @@ import mekanism.common.integration.MekanismHooks;
 import mekanism.common.util.*;
 import mekanism.common.util.FluidContainerUtils.FluidChecker;
 import mekanism.generators.client.render.bloom.BloomRenderHeatGenerator;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -359,12 +361,24 @@ public class TileEntityHeatGenerator extends TileEntityGenerator implements IFlu
     @net.minecraftforge.fml.common.Optional.Method(modid = MekanismHooks.GTCEU_MOD_ID)
     public void GTECUBloom() {
         BloomRenderHeatGenerator renderer = new BloomRenderHeatGenerator(this);
-        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> {
+            WorldClient mcWorld = Minecraft.getMinecraft().world;
+            double entityX = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosX + (Minecraft.getMinecraft().getRenderViewEntity().posX - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosX) * Minecraft.getMinecraft().getRenderPartialTicks();
+            double entityY = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosY + (Minecraft.getMinecraft().getRenderViewEntity().posY - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosY) * Minecraft.getMinecraft().getRenderPartialTicks();
+            double entityZ = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosZ + (Minecraft.getMinecraft().getRenderViewEntity().posZ - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosZ) * Minecraft.getMinecraft().getRenderPartialTicks();
+            return !isInvalid() && world != null && world == mcWorld && mcWorld.getTileEntity(pos) == this && getDistanceSq(entityX, entityY, entityZ) < 4096;
+        });
     }
 
     @Optional.Method(modid = MekanismHooks.LUMENIZED_MOD_ID)
     public void LumenizedBloom() {
         BloomRenderHeatGenerator renderer = new BloomRenderHeatGenerator(this);
-        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> {
+            WorldClient mcWorld = Minecraft.getMinecraft().world;
+            double entityX = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosX + (Minecraft.getMinecraft().getRenderViewEntity().posX - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosX) * Minecraft.getMinecraft().getRenderPartialTicks();
+            double entityY = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosY + (Minecraft.getMinecraft().getRenderViewEntity().posY - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosY) * Minecraft.getMinecraft().getRenderPartialTicks();
+            double entityZ = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosZ + (Minecraft.getMinecraft().getRenderViewEntity().posZ - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosZ) * Minecraft.getMinecraft().getRenderPartialTicks();
+            return !isInvalid() && world != null && world == mcWorld && mcWorld.getTileEntity(pos) == this && getDistanceSq(entityX, entityY, entityZ) < 4096;
+        });
     }
 }

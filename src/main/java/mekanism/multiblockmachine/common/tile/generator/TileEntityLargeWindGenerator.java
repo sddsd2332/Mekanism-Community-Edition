@@ -14,6 +14,8 @@ import mekanism.common.util.CableUtils;
 import mekanism.common.util.ChargeUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.multiblockmachine.client.render.bloom.generator.BloomRenderLargeWindGenerator;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -660,12 +662,25 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
     @Optional.Method(modid = MekanismHooks.GTCEU_MOD_ID)
     public void GTECUBloom() {
         BloomRenderLargeWindGenerator renderer = new BloomRenderLargeWindGenerator(this);
-        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> {
+            WorldClient mcWorld = Minecraft.getMinecraft().world;
+            double entityX = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosX + (Minecraft.getMinecraft().getRenderViewEntity().posX - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosX) * Minecraft.getMinecraft().getRenderPartialTicks();
+            double entityY = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosY + (Minecraft.getMinecraft().getRenderViewEntity().posY - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosY) * Minecraft.getMinecraft().getRenderPartialTicks();
+            double entityZ = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosZ + (Minecraft.getMinecraft().getRenderViewEntity().posZ - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosZ) * Minecraft.getMinecraft().getRenderPartialTicks();
+            return !isInvalid() && world != null && world == mcWorld && mcWorld.getTileEntity(pos) == this && getDistanceSq(entityX, entityY, entityZ) < 16384;
+        });
     }
 
     @Optional.Method(modid = MekanismHooks.LUMENIZED_MOD_ID)
     public void LumenizedBloom() {
         BloomRenderLargeWindGenerator renderer = new BloomRenderLargeWindGenerator(this);
-        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> !isInvalid());
+        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> {
+            WorldClient mcWorld = Minecraft.getMinecraft().world;
+            double entityX = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosX + (Minecraft.getMinecraft().getRenderViewEntity().posX - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosX) * Minecraft.getMinecraft().getRenderPartialTicks();
+            double entityY = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosY + (Minecraft.getMinecraft().getRenderViewEntity().posY - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosY) * Minecraft.getMinecraft().getRenderPartialTicks();
+            double entityZ = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosZ + (Minecraft.getMinecraft().getRenderViewEntity().posZ - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosZ) * Minecraft.getMinecraft().getRenderPartialTicks();
+            return !isInvalid() && world != null && world == mcWorld && mcWorld.getTileEntity(pos) == this && getDistanceSq(entityX, entityY, entityZ) < 16384;
+        });
     }
+
 }
