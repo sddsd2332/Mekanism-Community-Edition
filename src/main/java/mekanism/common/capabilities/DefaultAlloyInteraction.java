@@ -1,8 +1,8 @@
 package mekanism.common.capabilities;
 
 import mekanism.api.IAlloyInteraction;
-import mekanism.common.tier.AlloyTier;
 import mekanism.common.capabilities.DefaultStorageHelper.NullStorage;
+import mekanism.common.tier.AlloyTier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.capabilities.CapabilityManager;

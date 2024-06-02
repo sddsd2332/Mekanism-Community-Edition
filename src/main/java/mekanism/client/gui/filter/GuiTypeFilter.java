@@ -2,8 +2,8 @@ package mekanism.client.gui.filter;
 
 import mekanism.client.render.MekanismRenderer;
 import mekanism.common.content.filter.IFilter;
-import mekanism.common.tile.machine.TileEntityDigitalMiner;
 import mekanism.common.tile.TileEntityLogisticalSorter;
+import mekanism.common.tile.machine.TileEntityDigitalMiner;
 import mekanism.common.tile.prefab.TileEntityContainerBlock;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;

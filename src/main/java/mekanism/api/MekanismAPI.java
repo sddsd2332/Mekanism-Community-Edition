@@ -1,5 +1,6 @@
 package mekanism.api;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mekanism.api.util.BlockInfo;
 import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
@@ -10,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import java.util.Objects;
 import java.util.Set;
 

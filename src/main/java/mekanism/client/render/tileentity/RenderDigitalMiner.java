@@ -1,6 +1,5 @@
 package mekanism.client.render.tileentity;
 
-import mekanism.api.util.time.Timeticks;
 import mekanism.client.Utils.RenderTileEntityTime;
 import mekanism.client.model.ModelDigitalMiner;
 import mekanism.client.render.MekanismRenderer;

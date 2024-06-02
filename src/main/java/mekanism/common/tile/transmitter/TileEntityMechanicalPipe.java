@@ -2,12 +2,12 @@ package mekanism.common.tile.transmitter;
 
 import io.netty.buffer.ByteBuf;
 import mekanism.api.TileNetworkList;
-import mekanism.common.tier.AlloyTier;
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.common.base.FluidHandlerWrapper;
 import mekanism.common.base.IFluidHandlerWrapper;
 import mekanism.common.block.states.BlockStateTransmitter.TransmitterType;
 import mekanism.common.capabilities.CapabilityWrapperManager;
+import mekanism.common.tier.AlloyTier;
 import mekanism.common.tier.BaseTier;
 import mekanism.common.tier.PipeTier;
 import mekanism.common.transmitters.grid.FluidNetwork;

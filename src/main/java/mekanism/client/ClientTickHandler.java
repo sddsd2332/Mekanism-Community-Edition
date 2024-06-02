@@ -1,7 +1,6 @@
 package mekanism.client;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import mekanism.api.IClientTicker;
 import mekanism.api.gas.GasStack;

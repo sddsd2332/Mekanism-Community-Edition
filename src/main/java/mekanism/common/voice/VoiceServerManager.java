@@ -1,12 +1,12 @@
 package mekanism.common.voice;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mekanism.common.Mekanism;
 import mekanism.common.config.MekanismConfig;
 
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import java.util.Set;
 
 public class VoiceServerManager {

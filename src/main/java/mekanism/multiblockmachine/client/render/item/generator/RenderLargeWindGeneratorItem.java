@@ -6,7 +6,7 @@ import mekanism.multiblockmachine.client.model.generator.ModelLargeWindGenerator
 import mekanism.multiblockmachine.common.util.MekanismMultiblockMachineUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms.*;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

@@ -1,15 +1,11 @@
 package mekanism.multiblockmachine.client.render.machine;
 
-import mekanism.api.util.time.Timeticks;
 import mekanism.client.Utils.RenderTileEntityTime;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.multiblockmachine.client.model.machine.ModelLargeElectrolyticSeparator;
-import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeWindGenerator;
 import mekanism.multiblockmachine.common.tile.machine.TileEntityLargeElectrolyticSeparator;
 import mekanism.multiblockmachine.common.util.MekanismMultiblockMachineUtils;
 import net.minecraft.client.renderer.GlStateManager;
-
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 

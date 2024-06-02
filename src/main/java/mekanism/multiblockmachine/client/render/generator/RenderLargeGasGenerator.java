@@ -4,7 +4,6 @@ import mekanism.client.Utils.RenderTileEntityTime;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.multiblockmachine.client.model.generator.ModelLargeGasGenerator;
 import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeGasGenerator;
-import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeHeatGenerator;
 import mekanism.multiblockmachine.common.util.MekanismMultiblockMachineUtils;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.relauncher.Side;

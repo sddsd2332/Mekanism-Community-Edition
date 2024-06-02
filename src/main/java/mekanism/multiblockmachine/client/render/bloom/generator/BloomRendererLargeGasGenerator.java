@@ -27,4 +27,5 @@ public class BloomRendererLargeGasGenerator extends BloomEffect<TileEntityLargeG
         model.renderBloom(renderer.getTime(), 0.0625F, tile.getActive(), Minecraft.getMinecraft().renderEngine);
     }
 
+
 }

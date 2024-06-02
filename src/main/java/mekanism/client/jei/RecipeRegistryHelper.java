@@ -21,14 +21,10 @@ import mekanism.common.recipe.machines.SmeltingRecipe;
 import mekanism.common.recipe.outputs.MachineOutput;
 import mekanism.common.tier.FactoryTier;
 import mekanism.common.util.MekanismUtils;
-import mekanism.generators.client.gui.GuiReactorHeat;
-import mekanism.generators.common.MekanismGenerators;
-import mekanism.generators.common.block.states.BlockStateReactor;
 import mezz.jei.api.IModRegistry;
 import mezz.jei.api.recipe.IRecipeWrapperFactory;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraftforge.fml.common.Loader;
 
 import java.util.ArrayList;
 import java.util.Collection;

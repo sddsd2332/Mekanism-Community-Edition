@@ -1,5 +1,6 @@
 package mekanism.generators.common.tile.reactor;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mekanism.api.Coord4D;
 import mekanism.common.tile.prefab.TileEntityElectricBlock;
 import mekanism.common.util.InventoryUtils;
@@ -7,12 +8,10 @@ import mekanism.common.util.NonNullListSynchronized;
 import mekanism.generators.common.FusionReactor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import java.util.Set;
 
 public abstract class TileEntityReactorBlock extends TileEntityElectricBlock {

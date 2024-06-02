@@ -26,4 +26,6 @@ public class BloomRenderLargeElectrolyticSeparator extends BloomEffect<TileEntit
         ModelLargeElectrolyticSeparator model = renderer.getModel();
         model.renderBloom(renderer.getTime(), 0.0625F, tile.getActive(), Minecraft.getMinecraft().renderEngine, tile.getScaledFluidTankLevel(), tile.getScaledLeftTankGasLevel(), tile.getScaledRightTankGasLevel());
     }
+
+
 }

@@ -1,6 +1,5 @@
 package mekanism.tools.item;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import mekanism.common.util.LangUtils;
 import mekanism.tools.common.IHasRepairType;

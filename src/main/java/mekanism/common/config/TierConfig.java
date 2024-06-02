@@ -1,6 +1,5 @@
 package mekanism.common.config;
 
-import mekanism.common.tier.BaseTier;
 import mekanism.common.config.options.DoubleOption;
 import mekanism.common.config.options.IntOption;
 import mekanism.common.tier.*;

@@ -1,5 +1,6 @@
 package mekanism.common.tile.multiblock;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mekanism.api.Coord4D;
 import mekanism.common.integration.computer.IComputerIntegration;
 import mekanism.common.tile.prefab.TileEntityContainerBlock;
@@ -10,14 +11,12 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
 import java.util.Deque;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import java.util.LinkedList;
 import java.util.Set;
 

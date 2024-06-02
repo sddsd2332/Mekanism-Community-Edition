@@ -1,5 +1,6 @@
 package mekanism.common.content.tank;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mekanism.api.Coord4D;
 import mekanism.api.gas.GasStack;
 import mekanism.common.multiblock.SynchronizedData;
@@ -10,7 +11,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import java.util.Set;
 
 public class SynchronizedTankData extends SynchronizedData<SynchronizedTankData> {

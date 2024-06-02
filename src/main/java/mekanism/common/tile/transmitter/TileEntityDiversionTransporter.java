@@ -17,9 +17,6 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.TextComponentString;
 
-import java.util.Map;
-import java.util.Set;
-
 public class TileEntityDiversionTransporter extends TileEntityLogisticalTransporter {
 
     public int[] modes = {0, 0, 0, 0, 0, 0};

@@ -2,12 +2,12 @@ package mekanism.common.tile.transmitter;
 
 import mekanism.api.Coord4D;
 import mekanism.api.IAlloyInteraction;
-import mekanism.common.tier.AlloyTier;
 import mekanism.api.transmitters.DynamicNetwork;
 import mekanism.api.transmitters.DynamicNetwork.NetworkClientRequest;
 import mekanism.api.transmitters.IGridTransmitter;
 import mekanism.api.transmitters.TransmitterNetworkRegistry;
 import mekanism.common.capabilities.Capabilities;
+import mekanism.common.tier.AlloyTier;
 import mekanism.common.transmitters.TransmitterImpl;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.entity.player.EntityPlayer;

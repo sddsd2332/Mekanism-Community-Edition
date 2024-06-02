@@ -3,15 +3,16 @@ package mekanism.common.util;
 import gregtech.client.renderer.IRenderSetup;
 import gregtech.client.utils.EffectRenderContext;
 import gregtech.client.utils.IBloomEffect;
-import mekanism.api.util.time.Timeticks;
 import mekanism.client.render.MekanismRenderer;
+import mekanism.common.base.IBloom;
 import mekanism.common.tile.prefab.TileEntityBasicBlock;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BloomEffect<T extends TileEntityBasicBlock> implements IBloomEffect, IRenderSetup {
+public abstract class BloomEffect<T extends TileEntityBasicBlock> implements IBloomEffect, IRenderSetup, IBloom {
 
     public T tile;
     public int north;
@@ -25,6 +26,7 @@ public abstract class BloomEffect<T extends TileEntityBasicBlock> implements IBl
         this.south = south;
         this.west = west;
         this.east = east;
+        Bloom(tile,this,this);
     }
 
     @Override
@@ -57,5 +59,14 @@ public abstract class BloomEffect<T extends TileEntityBasicBlock> implements IBl
     }
 
     protected abstract void RenderModelBloom();
+
+    @Override
+    public boolean shouldRenderBloomEffect(@NotNull EffectRenderContext context) {
+        double entityX = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosX + (Minecraft.getMinecraft().getRenderViewEntity().posX - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosX) * Minecraft.getMinecraft().getRenderPartialTicks();
+        double entityY = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosY + (Minecraft.getMinecraft().getRenderViewEntity().posY - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosY) * Minecraft.getMinecraft().getRenderPartialTicks();
+        double entityZ = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosZ + (Minecraft.getMinecraft().getRenderViewEntity().posZ - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosZ) * Minecraft.getMinecraft().getRenderPartialTicks();
+        return tile.getDistanceSq(entityX, entityY, entityZ) < tile.getMaxRenderDistanceSquared();
+    }
+
 
 }

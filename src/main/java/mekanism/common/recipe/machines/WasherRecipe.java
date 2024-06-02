@@ -9,7 +9,6 @@ import mekanism.common.tile.machine.TileEntityChemicalWasher;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.IFluidTank;
 
 public class WasherRecipe extends MachineRecipe<GasInput, GasOutput, WasherRecipe> {
 

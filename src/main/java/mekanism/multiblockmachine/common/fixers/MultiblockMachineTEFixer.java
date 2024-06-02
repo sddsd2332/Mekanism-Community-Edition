@@ -1,6 +1,6 @@
 package mekanism.multiblockmachine.common.fixers;
 
-import mekanism.common.fixers.MekanismDataFixers.*;
+import mekanism.common.fixers.MekanismDataFixers.MekFixers;
 import mekanism.common.fixers.TEFixer;
 import mekanism.multiblockmachine.common.MekanismMultiblockMachine;
 

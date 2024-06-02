@@ -1,5 +1,6 @@
 package mekanism.common.command;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mekanism.common.command.CommandMek.Cmd;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -13,7 +14,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.server.command.CommandTreeBase;
 
 import javax.annotation.Nonnull;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import java.util.Set;
 
 public class CommandChunk extends CommandTreeBase {

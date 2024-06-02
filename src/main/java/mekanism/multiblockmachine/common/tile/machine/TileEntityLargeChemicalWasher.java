@@ -1,7 +1,5 @@
 package mekanism.multiblockmachine.common.tile.machine;
 
-import gregtech.client.shader.postprocessing.BloomType;
-import gregtech.client.utils.BloomEffectUtil;
 import io.netty.buffer.ByteBuf;
 import mekanism.api.Coord4D;
 import mekanism.api.TileNetworkList;
@@ -11,7 +9,6 @@ import mekanism.common.Upgrade;
 import mekanism.common.base.*;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.config.MekanismConfig;
-import mekanism.common.integration.MekanismHooks;
 import mekanism.common.recipe.RecipeHandler;
 import mekanism.common.recipe.inputs.GasInput;
 import mekanism.common.recipe.machines.WasherRecipe;
@@ -22,8 +19,6 @@ import mekanism.common.util.*;
 import mekanism.multiblockmachine.client.render.bloom.machine.BloomRenderLargeChemicalWasher;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine;
 import mekanism.multiblockmachine.common.tile.machine.prefab.TileEntityMultiblockBasicMachine;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -35,7 +30,6 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -552,35 +546,9 @@ public class TileEntityLargeChemicalWasher extends TileEntityMultiblockBasicMach
         super.validate();
         if (world.isRemote && !rendererInitialized) {
             rendererInitialized = true;
-            if (Mekanism.hooks.GTCEULoaded) {
-                GTECUBloom();
-            } else if (Mekanism.hooks.LumenizedLoaded) {
-                LumenizedBloom();
-            }
+            new BloomRenderLargeChemicalWasher(this);
         }
     }
 
-    @Optional.Method(modid = MekanismHooks.GTCEU_MOD_ID)
-    public void GTECUBloom() {
-        BloomRenderLargeChemicalWasher renderer = new BloomRenderLargeChemicalWasher(this);
-        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> {
-            WorldClient mcWorld = Minecraft.getMinecraft().world;
-            double entityX = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosX + (Minecraft.getMinecraft().getRenderViewEntity().posX - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosX) * Minecraft.getMinecraft().getRenderPartialTicks();
-            double entityY = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosY + (Minecraft.getMinecraft().getRenderViewEntity().posY - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosY) * Minecraft.getMinecraft().getRenderPartialTicks();
-            double entityZ = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosZ + (Minecraft.getMinecraft().getRenderViewEntity().posZ - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosZ) * Minecraft.getMinecraft().getRenderPartialTicks();
-            return !isInvalid() && world != null && world == mcWorld && mcWorld.getTileEntity(pos) == this && getDistanceSq(entityX, entityY, entityZ) < 4096;
-        });
-    }
 
-    @Optional.Method(modid = MekanismHooks.LUMENIZED_MOD_ID)
-    public void LumenizedBloom() {
-        BloomRenderLargeChemicalWasher renderer = new BloomRenderLargeChemicalWasher(this);
-        BloomEffectUtil.registerBloomRender(renderer, BloomType.UNREAL, renderer, ticket -> {
-            WorldClient mcWorld = Minecraft.getMinecraft().world;
-            double entityX = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosX + (Minecraft.getMinecraft().getRenderViewEntity().posX - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosX) * Minecraft.getMinecraft().getRenderPartialTicks();
-            double entityY = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosY + (Minecraft.getMinecraft().getRenderViewEntity().posY - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosY) * Minecraft.getMinecraft().getRenderPartialTicks();
-            double entityZ = Minecraft.getMinecraft().getRenderViewEntity().lastTickPosZ + (Minecraft.getMinecraft().getRenderViewEntity().posZ - Minecraft.getMinecraft().getRenderViewEntity().lastTickPosZ) * Minecraft.getMinecraft().getRenderPartialTicks();
-            return !isInvalid() && world != null && world == mcWorld && mcWorld.getTileEntity(pos) == this && getDistanceSq(entityX, entityY, entityZ) < 4096;
-        });
-    }
 }

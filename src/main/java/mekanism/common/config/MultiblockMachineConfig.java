@@ -3,8 +3,8 @@ package mekanism.common.config;
 import mekanism.common.config.options.BooleanOption;
 import mekanism.common.config.options.DoubleOption;
 import mekanism.common.config.options.IntOption;
-import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine.*;
-import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachineGenerator.*;
+import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine.MultiblockMachineType;
+import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachineGenerator.MultiblockMachineGeneratorType;
 
 public class MultiblockMachineConfig extends BaseConfig {
 

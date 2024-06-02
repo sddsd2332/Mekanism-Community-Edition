@@ -11,7 +11,7 @@ import mekanism.common.tile.component.TileComponentSecurity;
 import mekanism.common.tile.component.TileComponentUpgrade;
 import mekanism.common.tile.prefab.TileEntityEffectsBlock;
 import mekanism.common.util.MekanismUtils;
-import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine.*;
+import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine.MultiblockMachineType;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;

@@ -1,6 +1,5 @@
 package mekanism.tools.item;
 
-import mekanism.common.config.MekanismConfig;
 import mekanism.common.util.LangUtils;
 import mekanism.tools.common.IHasRepairType;
 import mekanism.tools.common.Materials;

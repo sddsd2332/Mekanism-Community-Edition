@@ -5,7 +5,6 @@ import it.unimi.dsi.fastutil.objects.ReferenceSet;
 import mekanism.api.Coord4D;
 import mekanism.api.transmitters.DynamicNetwork;
 import mekanism.api.transmitters.IGridTransmitter;
-import mekanism.common.base.target.EnergyAcceptorTarget;
 import mekanism.common.base.target.FluidHandlerTarget;
 import mekanism.common.util.CapabilityUtils;
 import mekanism.common.util.EmitUtils;
@@ -24,8 +23,6 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.EnumSet;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import java.util.Set;
 
 public class FluidNetwork extends DynamicNetwork<IFluidHandler, FluidNetwork, FluidStack> {
 
