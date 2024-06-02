@@ -23,7 +23,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -34,16 +33,13 @@ import javax.annotation.Nonnull;
 
 public class TileEntityReactorController extends TileEntityReactorBlock implements IActiveState {
 
-    public static final int MAX_FLUID = 100 * Fluid.BUCKET_VOLUME;
-    public static final int MAX_FUEL = MAX_FLUID * 100;
+    public FluidTank waterTank = new FluidTankSync(MekanismConfig.current().generators.FusionReactorsWaterTank.val());
+    public FluidTank steamTank = new FluidTankSync(MekanismConfig.current().generators.FusionReactorsSteamTank.val());
 
-    public FluidTank waterTank = new FluidTankSync(MAX_FLUID);
-    public FluidTank steamTank = new FluidTankSync(MAX_FLUID);
+    public GasTank deuteriumTank = new GasTank(MekanismConfig.current().generators.FusionReactorsDeuteriumTank.val());
+    public GasTank tritiumTank = new GasTank(MekanismConfig.current().generators.FusionReactorsTritiumTank.val());
 
-    public GasTank deuteriumTank = new GasTank(MAX_FUEL);
-    public GasTank tritiumTank = new GasTank(MAX_FUEL);
-
-    public GasTank fuelTank = new GasTank(MAX_FUEL * 2);
+    public GasTank fuelTank = new GasTank(MekanismConfig.current().generators.FusionReactorsFuelTank.val());
 
     public AxisAlignedBB box;
     public double clientTemp = 0;

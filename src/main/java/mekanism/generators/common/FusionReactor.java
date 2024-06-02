@@ -357,8 +357,8 @@ public class FusionReactor {
         injectionRate = rate;
         int capRate = Math.min(Math.min(Math.max(1, rate), MekanismConfig.current().generators.reactorGeneratorInjectionRate.val()), 1000);
         capRate -= capRate % 2;
-        controller.waterTank.setCapacity(TileEntityReactorController.MAX_FLUID * capRate);
-        controller.steamTank.setCapacity(TileEntityReactorController.MAX_FLUID * capRate);
+        controller.waterTank.setCapacity(MekanismConfig.current().generators.FusionReactorsWaterTank.val() * capRate);
+        controller.steamTank.setCapacity(MekanismConfig.current().generators.FusionReactorsSteamTank.val() * capRate);
 
         if (controller.waterTank.getFluid() != null) {
             controller.waterTank.getFluid().amount = Math.min(controller.waterTank.getFluid().amount, controller.waterTank.getCapacity());

@@ -82,6 +82,12 @@ public class GeneratorsConfig extends BaseConfig {
 
     public final IntOption ItemHohlraumMaxGas = new IntOption(this, "generation", "ItemHohlraumMaxGas", 10, "How many gases can be added to Hohlraum",1,Integer.MAX_VALUE);
 
+    public final IntOption FusionReactorsDeuteriumTank = new IntOption(this, "generation","FusionReactorsDeuteriumTank",1000);
+    public final IntOption FusionReactorsTritiumTank = new IntOption(this, "generation","FusionReactorsTritiumTank",1000);
+    public final IntOption FusionReactorsFuelTank = new IntOption(this, "generation","FusionReactorsFuelTank",1000);
+    public final IntOption FusionReactorsWaterTank  = new IntOption(this, "generation","FusionReactorsWaterTank",100000);
+    public final IntOption FusionReactorsSteamTank  = new IntOption(this, "generation","FusionReactorsSteamTank",10000000);
+
     public TypeConfigManager<GeneratorType> generatorsManager = new TypeConfigManager<>(this, "generators", GeneratorType.class,
             GeneratorType::getGeneratorsForConfig, GeneratorType::getBlockName);
 

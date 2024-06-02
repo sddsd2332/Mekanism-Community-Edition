@@ -105,7 +105,7 @@ public class GuiReactorHeat extends GuiReactorInfo {
         addGuiElement(new GuiProgress(new IProgressInfoHandler() {
             @Override
             public double getProgress() {
-                return (tileEntity.getCaseTemp() > 0 && tileEntity.getactivelyCooled() && tile.waterTank.getFluidAmount() > 0 && tile.steamTank.getFluidAmount() < tile.steamTank.getCapacity()) ? (double) time.getValue() / 20F : 0;
+                return (tileEntity.getCaseTemp() > 0 && tileEntity.getactivelyCooled() && tile.steamTank.getFluidAmount() > 0 && tile.steamTank.getFluidAmount() < tile.steamTank.getCapacity()) ? (double) time.getValue() / 20F : 0;
             }
         }, ProgressBar.BI_RIGHT, this, resource, 132, 95));
         addGuiElement(new GuiFluidGauge(() -> tileEntity.waterTank, Type.SMALL, this, resource, 115, 84));
