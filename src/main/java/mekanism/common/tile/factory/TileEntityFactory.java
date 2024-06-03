@@ -1334,9 +1334,6 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
 
     @Override
     public Object[] getTanks() {
-        if (recipeType == RecipeType.OXIDIZER ||recipeType == RecipeType.Dissolution || recipeType == RecipeType.Crystallizer || recipeType.getFuelType() == MachineFuelType.FARM|| recipeType.getFuelType() == MachineFuelType.ADVANCED || recipeType == RecipeType.NUCLEOSYNTHESIZER) {
-            return new Object[]{gasTank, gasOutTank,fluidTank};
-        }
         return new Object[]{fluidTank,gasTank, gasOutTank};
     }
 
@@ -1453,6 +1450,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         } else {
             if (!machineUsesGAS && isMachineUsesGAS) {
                 configComponent.setConfig(TransmissionType.GAS, new byte[]{1, 1, 1, 1, 1, 2});
+                ejectorComponent.setOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(2));
                 isMachineUsesGAS = false;
             }
         }
