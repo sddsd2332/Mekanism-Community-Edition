@@ -93,7 +93,15 @@ public class ItemEnergized extends ItemMekanism implements IEnergizedItem, ISpec
 
     @Override
     public void setEnergy(ItemStack itemStack, double amount) {
-        ItemDataUtils.setDouble(itemStack, "energyStored", Math.max(Math.min(amount, getMaxEnergy(itemStack)), 0));
+        if (amount == 0) {
+            NBTTagCompound dataMap = ItemDataUtils.getDataMap(itemStack);
+            dataMap.removeTag("energyStored");
+            if (dataMap.isEmpty()) {
+                itemStack.setTagCompound(null);
+            }
+        } else {
+            ItemDataUtils.setDouble(itemStack, "energyStored", Math.max(Math.min(amount, getMaxEnergy(itemStack)), 0));
+        }
     }
 
     @Override
