@@ -117,10 +117,10 @@ public class TileComponentEjector implements ITileComponent {
             return false;
         }
 
-        if (type == TransmissionType.GAS) {
-            return ejectGas(outputSides, (GasTank) tankManager.getTanks()[data.availableSlots[0]]);
-        } else if (type == TransmissionType.FLUID) {
-            return ejectFluid(outputSides, (FluidTank) tankManager.getTanks()[data.availableSlots[0]]);
+        if (type == TransmissionType.GAS && tankManager.getTanks()[data.availableSlots[0]] instanceof GasTank gasTank) {
+            return ejectGas(outputSides, gasTank);
+        } else if (type == TransmissionType.FLUID && tankManager.getTanks()[data.availableSlots[0]] instanceof FluidTank fluidTank) {
+            return ejectFluid(outputSides, fluidTank);
         }
 
         return false;
@@ -140,10 +140,10 @@ public class TileComponentEjector implements ITileComponent {
 
         for (int index = 0; index < data.availableSlots.length; index++) {
             if (data.allowExtractionSlot[index]) {
-                if (type == TransmissionType.GAS) {
-                    return ejectGas(outputSides, (GasTank) tankManager.getTanks()[data.availableSlots[index]]);
-                } else if (type == TransmissionType.FLUID) {
-                    return ejectFluid(outputSides, (FluidTank) tankManager.getTanks()[data.availableSlots[index]]);
+                if (type == TransmissionType.GAS && tankManager.getTanks()[data.availableSlots[index]] instanceof GasTank gasTank) {
+                    return ejectGas(outputSides, gasTank);
+                } else if (type == TransmissionType.FLUID && tankManager.getTanks()[data.availableSlots[index]] instanceof FluidTank fluidTank) {
+                    return ejectFluid(outputSides, fluidTank);
                 }
             }
         }
