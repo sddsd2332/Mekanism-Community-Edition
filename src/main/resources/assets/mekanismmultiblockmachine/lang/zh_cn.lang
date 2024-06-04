@@ -12,11 +12,11 @@ tile.MultiblockGenerator.LargeHeatGenerator.name=大型热力发电机
 tooltip.LargeHeatGenerator=一台使用岩浆热量或者其它可燃资源产生能量的大型发电机。
 tile.MultiblockGenerator.LargeGasGenerator.name=大型燃气发电机
 tooltip.LargeGasGenerator=一台利用不同的气体供能的大型发电机。
-tile.MultiblockGenerator.LargeElectrolyticSeparator.name=大型电解分离器
+tile.MultiblockMachine.LargeElectrolyticSeparator.name=大型电解分离器
 tooltip.LargeElectrolyticSeparator=一台使用电解将特定气体分离成两种不同气体的大型机器。
-tile.MultiblockGenerator.LargeChemicalInfuser.name=大型化学灌注器
+tile.MultiblockMachine.LargeChemicalInfuser.name=大型化学灌注器
 tooltip.LargeChemicalInfuser=一台能够通过注入其它两种气体产生新的气体的大型机器。
-tile.MultiblockGenerator.LargeChemicalWasher.name=大型化学清洗机
+tile.MultiblockMachine.LargeChemicalWasher.name=大型化学清洗机
 tooltip.LargeChemicalWasher=一台能够清理未经处理的浆液，为结晶作准备的终极大型机器。
 
 # Creative tab
@@ -24,3 +24,4 @@ itemGroup.tabMekanismMultiblockMachine=通用机械 多方块
 
 mekanism.configgui.ctgy.multiblock.multiblock=多方块设置
 mekanism.configgui.ctgy.multiblock.multiblockmachinegenerators=多方块发电机配置
+mekanism.configgui.ctgy.multiblock.multiblockmachines=多方块机器配置
