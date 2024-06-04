@@ -182,7 +182,15 @@ public class ItemBlockEnergyCube extends ItemBlock implements IEnergizedItem, IS
         if (getBaseTier(itemStack) == BaseTier.CREATIVE && amount != Double.MAX_VALUE) {
             return;
         }
-        ItemDataUtils.setDouble(itemStack, "energyStored", Math.max(Math.min(amount, getMaxEnergy(itemStack)), 0));
+       if (amount == 0) {
+            NBTTagCompound dataMap = ItemDataUtils.getDataMap(itemStack);
+            dataMap.removeTag("energyStored");
+            if (dataMap.isEmpty()) {
+                itemStack.setTagCompound(null);
+            }
+        } else {
+            ItemDataUtils.setDouble(itemStack, "energyStored", Math.max(Math.min(amount, getMaxEnergy(itemStack)), 0));
+        }
     }
 
     @Override
@@ -293,7 +301,11 @@ public class ItemBlockEnergyCube extends ItemBlock implements IEnergizedItem, IS
 
     @Override
     public void setSecurity(ItemStack stack, SecurityMode mode) {
-        ItemDataUtils.setInt(stack, "security", mode.ordinal());
+        if (getOwnerUUID(stack) == null){
+            ItemDataUtils.removeData(stack,"security");
+        }else {
+            ItemDataUtils.setInt(stack, "security", mode.ordinal());
+        }
     }
 
     @Override

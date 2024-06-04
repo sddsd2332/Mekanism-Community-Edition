@@ -328,7 +328,11 @@ public class ItemBlockGasTank extends ItemBlock implements IGasItem, ISustainedI
 
     @Override
     public void setSecurity(ItemStack stack, SecurityMode mode) {
-        ItemDataUtils.setInt(stack, "security", mode.ordinal());
+        if (getOwnerUUID(stack) == null){
+            ItemDataUtils.removeData(stack,"security");
+        }else {
+            ItemDataUtils.setInt(stack, "security", mode.ordinal());
+        }
     }
 
     @Override

@@ -3,6 +3,7 @@ package mekanism.common.util;
 import mekanism.api.energy.IEnergizedItem;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
+import mekanism.common.Mekanism;
 import mekanism.common.Upgrade;
 import mekanism.common.base.IFactory;
 import mekanism.common.base.IFactory.RecipeType;
@@ -15,6 +16,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -167,14 +169,16 @@ public class RecipeUtils {
                     Map<Upgrade, Integer> stackMap = Upgrade.buildMap(ItemDataUtils.getDataMapIfPresent(itemstack));
                     for (Entry<Upgrade, Integer> entry : stackMap.entrySet()) {
                         if (entry != null && entry.getKey() != null && entry.getValue() != null) {
-                            Integer val = upgrades.get(entry.getKey());
-                            upgrades.put(entry.getKey(), Math.min(entry.getKey().getMax(), (val != null ? val : 0) + entry.getValue()));
+                            upgrades.compute(entry.getKey(), (k, val) -> Math.min(entry.getKey().getMax(), (val != null ? val : 0) + entry.getValue()));
                         }
                     }
                 }
             }
-            Upgrade.saveMap(upgrades, ItemDataUtils.getDataMap(toReturn));
+            if (ItemDataUtils.hasData(toReturn, "upgrades")){
+                Upgrade.saveMap(upgrades, ItemDataUtils.getDataMap(toReturn));
+            }
         }
+
         return toReturn;
     }
 
