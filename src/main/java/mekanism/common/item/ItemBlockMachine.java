@@ -569,14 +569,14 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
 
     @Override
     public double getMaxEnergy(ItemStack itemStack) {
-        MachineType machineType = MachineType.get(Block.getBlockFromItem(itemStack.getItem()), itemStack.getItemDamage());
+        MachineType machineType = MachineType.get(itemStack);
         if (machineType.isFactory()) {
             RecipeType recipeType = getRecipeTypeOrNull(itemStack);
             int tierProcess = machineType.factoryTier.processes;
             double baseMaxEnergy = machineType.factoryTier == FactoryTier.CREATIVE ? Double.MAX_VALUE : tierProcess * (recipeType == null ? 1 : Math.max(0.5D * recipeType.getEnergyStorage(), recipeType.getEnergyUsage()));
-            return MekanismUtils.getMaxEnergy(itemStack, baseMaxEnergy);
+            return  ItemDataUtils.hasData(itemStack, "upgrades") ? MekanismUtils.getMaxEnergy(itemStack, baseMaxEnergy) : baseMaxEnergy;
         }
-        return MekanismUtils.getMaxEnergy(itemStack, machineType.getStorage());
+        return ItemDataUtils.hasData(itemStack, "upgrades") ? MekanismUtils.getMaxEnergy(itemStack, machineType.getStorage()) : machineType.getStorage() ;
     }
 
     @Override

@@ -128,12 +128,6 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
     }
 
 
-    @Nonnull
-    @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ) {
-        return super.onItemUse(player, world, pos, hand, side, hitX, hitY, hitZ);
-    }
-
     @Override
     public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, World world, @Nonnull BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull IBlockState state) {
         boolean place = true;
@@ -151,7 +145,7 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
                     }
                 }
             }
-        }else if (type == MultiblockMachineType.LARGE_CHEMICAL_WASHER){
+        } else if (type == MultiblockMachineType.LARGE_CHEMICAL_WASHER) {
             BlockPos.MutableBlockPos testPos = new BlockPos.MutableBlockPos();
             for (int yPos = 0; yPos <= 2; yPos++) {
                 for (int xPos = -1; xPos <= 1; xPos++) {
@@ -274,7 +268,7 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
         if (!MultiblockMachineType.get(itemStack).isElectric) {
             return;
         }
-       if (amount == 0) {
+        if (amount == 0) {
             NBTTagCompound dataMap = ItemDataUtils.getDataMap(itemStack);
             dataMap.removeTag("energyStored");
             if (dataMap.isEmpty()) {
@@ -287,8 +281,8 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
 
     @Override
     public double getMaxEnergy(ItemStack itemStack) {
-        MultiblockMachineType type = MultiblockMachineType.get(Block.getBlockFromItem(itemStack.getItem()), itemStack.getItemDamage());
-        return MekanismUtils.getMaxEnergy(itemStack, type.getStorage());
+        MultiblockMachineType type = MultiblockMachineType.get(itemStack);
+        return ItemDataUtils.hasData(itemStack, "upgrades") ? MekanismUtils.getMaxEnergy(itemStack, type.getStorage()) : type.getStorage();
     }
 
     @Override
@@ -380,9 +374,9 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
 
     @Override
     public void setSecurity(ItemStack stack, ISecurityTile.SecurityMode mode) {
-        if (getOwnerUUID(stack) == null){
-            ItemDataUtils.removeData(stack,"security");
-        }else {
+        if (getOwnerUUID(stack) == null) {
+            ItemDataUtils.removeData(stack, "security");
+        } else {
             ItemDataUtils.setInt(stack, "security", mode.ordinal());
         }
     }

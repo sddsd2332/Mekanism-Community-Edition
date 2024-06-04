@@ -152,7 +152,6 @@ public class ItemBlockMultiblockGenerator extends ItemBlock implements IEnergize
         MultiblockMachineGeneratorType type = MultiblockMachineGeneratorType.get(stack);
         BlockPos.MutableBlockPos testPos = new BlockPos.MutableBlockPos();
         if (type == MultiblockMachineGeneratorType.LARGE_WIND_GENERATOR) {
-
             outer:
             for (int yPos = 0; yPos <= 50; yPos++) {
                 for (int xPos = -3; xPos <= 3; xPos++) {
@@ -293,7 +292,7 @@ public class ItemBlockMultiblockGenerator extends ItemBlock implements IEnergize
     @Override
     public double getMaxEnergy(ItemStack itemStack) {
         MultiblockMachineGeneratorType type = MultiblockMachineGeneratorType.get(itemStack);
-        return type != null ? type.maxEnergy : 0;
+        return type != null ?  (ItemDataUtils.hasData(itemStack, "upgrades") ? MekanismUtils.getMaxEnergy(itemStack, type.maxEnergy) : type.maxEnergy) : 0;
     }
 
     @Override

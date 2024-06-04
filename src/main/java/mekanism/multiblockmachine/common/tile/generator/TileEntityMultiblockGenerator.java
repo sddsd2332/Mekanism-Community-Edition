@@ -114,7 +114,6 @@ public abstract class TileEntityMultiblockGenerator extends TileEntityEffectsBlo
     @Override
     public void handlePacketData(ByteBuf dataStream) {
         super.handlePacketData(dataStream);
-
         if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             controlType = RedstoneControl.values()[dataStream.readInt()];
         }
