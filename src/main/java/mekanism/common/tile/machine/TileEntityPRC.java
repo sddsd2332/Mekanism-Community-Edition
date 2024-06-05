@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mekanism.api.TileNetworkList;
 import mekanism.api.gas.*;
 import mekanism.api.transmitters.TransmissionType;
+import mekanism.common.Mekanism;
 import mekanism.common.SideData;
 import mekanism.common.Upgrade;
 import mekanism.common.base.FluidHandlerWrapper;
@@ -80,8 +81,9 @@ public class TileEntityPRC extends TileEntityUpgradeableMachine<PressurizedInput
         super.onUpdate();
         if (!world.isRemote) {
             PressurizedRecipe recipe = getRecipe();
+            double energy =   MekanismUtils.getEnergyPerTick(this, BASE_ENERGY_PER_TICK + recipe.extraEnergy);
             ChargeUtils.discharge(1, this);
-            if (canOperate(recipe) && MekanismUtils.canFunction(this) && getEnergy() >= MekanismUtils.getEnergyPerTick(this, BASE_ENERGY_PER_TICK + recipe.extraEnergy)) {
+            if (canOperate(recipe) && MekanismUtils.canFunction(this) && getEnergy() >= energy) {
                 boolean update = BASE_TICKS_REQUIRED != recipe.ticks;
                 BASE_TICKS_REQUIRED = recipe.ticks;
                 if (update) {
@@ -90,11 +92,11 @@ public class TileEntityPRC extends TileEntityUpgradeableMachine<PressurizedInput
                 setActive(true);
                 if ((operatingTicks + 1) < ticksRequired) {
                     operatingTicks++;
-                    electricityStored.addAndGet(MekanismUtils.getEnergyPerTick(this, BASE_ENERGY_PER_TICK + recipe.extraEnergy));
-                } else if ((operatingTicks + 1) >= ticksRequired && getEnergy() >= MekanismUtils.getEnergyPerTick(this, BASE_ENERGY_PER_TICK + recipe.extraEnergy)) {
+                    electricityStored.addAndGet(-energy);
+                } else if ((operatingTicks + 1) >= ticksRequired && getEnergy() >= energy) {
                     operate(recipe);
                     operatingTicks = 0;
-                    electricityStored.addAndGet(-MekanismUtils.getEnergyPerTick(this, BASE_ENERGY_PER_TICK + recipe.extraEnergy));
+                    electricityStored.addAndGet(-energy);
                 }
             } else {
                 BASE_TICKS_REQUIRED = 100;
