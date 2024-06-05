@@ -49,7 +49,7 @@ public class GeneratorsClientProxy extends GeneratorsCommonProxy {
     @Override
     public void registerTESRs() {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAdvancedSolarGenerator.class, new RenderAdvancedSolarGenerator());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBioGenerator.class, new RenderBioGenerator());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBioGenerator.class, RenderBioGenerator.INSTANCE);
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGasGenerator.class, new RenderGasGenerator());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHeatGenerator.class, new RenderHeatGenerator());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityReactorController.class, new RenderReactor());
@@ -136,5 +136,6 @@ public class GeneratorsClientProxy extends GeneratorsCommonProxy {
 
     @SubscribeEvent
     public void onStitch(TextureStitchEvent.Pre event) {
+        RenderBioGenerator.resetDisplayInts();
     }
 }

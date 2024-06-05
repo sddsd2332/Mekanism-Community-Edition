@@ -4,11 +4,13 @@ import io.netty.buffer.ByteBuf;
 import mekanism.api.TileNetworkList;
 import mekanism.api.gas.*;
 import mekanism.api.transmitters.TransmissionType;
+import mekanism.common.Mekanism;
 import mekanism.common.SideData;
 import mekanism.common.base.ISustainedData;
 import mekanism.common.base.ITankManager;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.capabilities.Capabilities;
+import mekanism.common.config.MekanismConfig;
 import mekanism.common.recipe.RecipeHandler;
 import mekanism.common.recipe.RecipeHandler.Recipe;
 import mekanism.common.recipe.inputs.GasInput;
@@ -32,10 +34,11 @@ import java.util.Map;
 public class TileEntityChemicalCrystallizer extends TileEntityUpgradeableMachine<GasInput, ItemStackOutput, CrystallizerRecipe> implements IGasHandler, ISustainedData, ITankManager {
 
     public static final int MAX_GAS = 10000;
-
     public GasTank inputTank = new GasTank(MAX_GAS);
-
     public CrystallizerRecipe cachedRecipe;
+    public float prevScale;
+    public int updateDelay;
+    public boolean needsPacket;
 
     public TileEntityChemicalCrystallizer() {
         super("crystallizer", MachineType.CHEMICAL_CRYSTALLIZER, 3, 200);
@@ -56,13 +59,19 @@ public class TileEntityChemicalCrystallizer extends TileEntityUpgradeableMachine
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(2));
-        ejectorComponent.setInputOutputData(TransmissionType.ITEM,configComponent.getOutputs(TransmissionType.ITEM).get(4));
+        ejectorComponent.setInputOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(4));
     }
 
     @Override
     public void onUpdate() {
         super.onUpdate();
         if (!world.isRemote) {
+            if (updateDelay > 0) {
+                updateDelay--;
+                if (updateDelay == 0) {
+                    needsPacket = true;
+                }
+            }
             ChargeUtils.discharge(2, this);
             ItemStack stack = inventory.get(0);
             if (!stack.isEmpty() && stack.getItem() instanceof IGasItem item && item.getGas(stack) != null &&
@@ -86,6 +95,21 @@ public class TileEntityChemicalCrystallizer extends TileEntityUpgradeableMachine
                 operatingTicks = 0;
             }
             prevEnergy = getEnergy();
+            if (needsPacket) {
+                Mekanism.packetHandler.sendUpdatePacket(this);
+            }
+            needsPacket = false;
+        }else {
+            if (updateDelay > 0) {
+                updateDelay--;
+                if (updateDelay == 0) {
+                    MekanismUtils.updateBlock(world, getPos());
+                }
+            }
+            float targetScale = (float) (inputTank.getGas() != null ? inputTank.getGas().amount : 0) / inputTank.getMaxGas();
+            if (Math.abs(prevScale - targetScale) > 0.01) {
+                prevScale = (9 * prevScale + targetScale) / 10;
+            }
         }
     }
 
@@ -129,6 +153,10 @@ public class TileEntityChemicalCrystallizer extends TileEntityUpgradeableMachine
         super.handlePacketData(dataStream);
         if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             TileUtils.readTankData(dataStream, inputTank);
+            if (updateDelay == 0) {
+                updateDelay = MekanismConfig.current().general.UPDATE_DELAY.val();
+                MekanismUtils.updateBlock(world, getPos());
+            }
         }
     }
 
@@ -274,5 +302,14 @@ public class TileEntityChemicalCrystallizer extends TileEntityUpgradeableMachine
     @Override
     public Object[] invoke(int method, Object[] args) throws NoSuchMethodException {
         return new Object[0];
+    }
+
+    @Override
+    public void setActive(boolean active) {
+        super.setActive(active);
+        if (updateDelay == 0) {
+            Mekanism.packetHandler.sendUpdatePacket(this);
+            updateDelay = 10;
+        }
     }
 }

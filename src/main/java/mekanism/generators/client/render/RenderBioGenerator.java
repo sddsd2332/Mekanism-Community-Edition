@@ -4,6 +4,7 @@ import mekanism.client.render.MekanismRenderer;
 import mekanism.client.render.MekanismRenderer.DisplayInteger;
 import mekanism.client.render.MekanismRenderer.GlowInfo;
 import mekanism.client.render.MekanismRenderer.Model3D;
+import mekanism.common.FluidSlot;
 import mekanism.common.MekanismFluids;
 import mekanism.generators.client.model.ModelBioGenerator;
 import mekanism.generators.common.tile.TileEntityBioGenerator;
@@ -26,10 +27,17 @@ import java.util.Map;
 @SideOnly(Side.CLIENT)
 public class RenderBioGenerator extends TileEntitySpecialRenderer<TileEntityBioGenerator> {
 
-    private static final int stages = 40;
-    private ModelBioGenerator model = new ModelBioGenerator();
-    private Map<EnumFacing, DisplayInteger[]> energyDisplays = new EnumMap<>(EnumFacing.class);
+    public static final RenderBioGenerator INSTANCE = new RenderBioGenerator();
 
+    private static Map<EnumFacing, DisplayInteger[]> energyDisplays = new EnumMap<>(EnumFacing.class);
+
+    private ModelBioGenerator model = new ModelBioGenerator();
+
+    private static final int stages = 800;
+
+    public static void resetDisplayInts() {
+        energyDisplays.clear();
+    }
     @Override
     public void render(TileEntityBioGenerator tileEntity, double x, double y, double z, float partialTick, int destroyStage, float alpha) {
         if (tileEntity.bioFuelSlot.fluidStored > 0) {
@@ -44,7 +52,8 @@ public class RenderBioGenerator extends TileEntitySpecialRenderer<TileEntityBioG
             GlStateManager.translate((float) x, (float) y, (float) z);
             GlowInfo glowInfo = MekanismRenderer.enableGlow();
             MekanismRenderer.color(MekanismFluids.Biofuel);
-            getDisplayList(tileEntity.facing)[tileEntity.getScaledFuelLevel(stages - 1)].render();
+            DisplayInteger[] displayList = getDisplayList(tileEntity.facing);
+            displayList[tileEntity.getScaledFuelLevel(stages - 1)].render();
             MekanismRenderer.resetColor();
             MekanismRenderer.disableGlow(glowInfo);
             GlStateManager.disableBlend();
@@ -70,13 +79,12 @@ public class RenderBioGenerator extends TileEntitySpecialRenderer<TileEntityBioG
         if (energyDisplays.containsKey(side)) {
             return energyDisplays.get(side);
         }
-
-        DisplayInteger[] displays = new DisplayInteger[stages];
-
         Model3D model3D = new Model3D();
         model3D.baseBlock = Blocks.WATER;
-
         model3D.setTexture(MekanismFluids.Biofuel.getSprite());
+
+        DisplayInteger[] displays = new DisplayInteger[stages];
+        energyDisplays.put(side,displays);
 
         for (int i = 0; i < stages; i++) {
             displays[i] = DisplayInteger.createAndStart();
@@ -118,8 +126,6 @@ public class RenderBioGenerator extends TileEntitySpecialRenderer<TileEntityBioG
             MekanismRenderer.renderObject(model3D);
             DisplayInteger.endList();
         }
-
-        energyDisplays.put(side, displays);
         return displays;
     }
 }

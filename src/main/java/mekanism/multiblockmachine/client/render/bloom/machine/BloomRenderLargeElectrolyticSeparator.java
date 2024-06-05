@@ -13,7 +13,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class BloomRenderLargeElectrolyticSeparator extends BloomEffect<TileEntityLargeElectrolyticSeparator> {
 
     private final TileEntityLargeElectrolyticSeparator tile;
-    private ModelLargeElectrolyticSeparator model = new ModelLargeElectrolyticSeparator();
 
     public BloomRenderLargeElectrolyticSeparator(TileEntityLargeElectrolyticSeparator tile) {
         super(tile, 0, 180, 90, 270);

@@ -3,6 +3,7 @@ package mekanism.generators.common.tile;
 import io.netty.buffer.ByteBuf;
 import mekanism.api.TileNetworkList;
 import mekanism.common.FluidSlot;
+import mekanism.common.Mekanism;
 import mekanism.common.MekanismItems;
 import mekanism.common.base.FluidHandlerWrapper;
 import mekanism.common.base.IComparatorSupport;
@@ -35,6 +36,8 @@ public class TileEntityBioGenerator extends TileEntityGenerator implements IFlui
     public FluidSlot bioFuelSlot = new FluidSlot(24000, -1);
 
     private int currentRedstoneLevel;
+    public int updateDelay;
+    public boolean needsPacket;
 
     public TileEntityBioGenerator() {
         super("bio", "BioGenerator", MekanismConfig.current().generators.bioGeneratorStorage.val(), MekanismConfig.current().generators.bioGeneration.val() * 2);
@@ -45,6 +48,12 @@ public class TileEntityBioGenerator extends TileEntityGenerator implements IFlui
     public void onUpdate() {
         super.onUpdate();
         if (!world.isRemote) {
+            if (updateDelay > 0) {
+                updateDelay--;
+                if (updateDelay == 0) {
+                    needsPacket = true;
+                }
+            }
             ChargeUtils.charge(1, this);
             if (!inventory.get(0).isEmpty()) {
                 FluidStack fluid = FluidUtil.getFluidContained(inventory.get(0));
@@ -83,7 +92,15 @@ public class TileEntityBioGenerator extends TileEntityGenerator implements IFlui
                 updateComparatorOutputLevelSync();
                 currentRedstoneLevel = newRedstoneLevel;
             }
-
+            if (needsPacket) {
+                Mekanism.packetHandler.sendUpdatePacket(this);
+            }
+            needsPacket = false;
+        } else if (updateDelay > 0) {
+            updateDelay--;
+            if (updateDelay == 0) {
+                MekanismUtils.updateBlock(world, getPos());
+            }
         }
     }
 
@@ -117,7 +134,7 @@ public class TileEntityBioGenerator extends TileEntityGenerator implements IFlui
     }
 
     @Override
-   public void writeCustomNBT(NBTTagCompound nbtTags) {
+    public void writeCustomNBT(NBTTagCompound nbtTags) {
         super.writeCustomNBT(nbtTags);
         nbtTags.setInteger("bioFuelStored", bioFuelSlot.fluidStored);
     }
@@ -152,6 +169,19 @@ public class TileEntityBioGenerator extends TileEntityGenerator implements IFlui
         super.handlePacketData(dataStream);
         if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             bioFuelSlot.fluidStored = dataStream.readInt();
+            if (updateDelay == 0) {
+                updateDelay = MekanismConfig.current().general.UPDATE_DELAY.val();
+                MekanismUtils.updateBlock(world, getPos());
+            }
+        }
+    }
+
+    @Override
+    public void setActive(boolean active) {
+        super.setActive(active);
+        if (updateDelay == 0) {
+            Mekanism.packetHandler.sendUpdatePacket(this);
+            updateDelay = 10;
         }
     }
 

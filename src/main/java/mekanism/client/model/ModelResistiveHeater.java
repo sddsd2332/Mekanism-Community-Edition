@@ -199,8 +199,8 @@ public class ModelResistiveHeater extends ModelBase {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         manager.bindTexture(on ? OVERLAY_ON : OVERLAY_OFF);
-        GlStateManager.scale(1.001F, 1.001F, 1.001F);
-        GlStateManager.translate(0, -0.0011F, 0);
+        GlStateManager.scale(1.0011F, 1.0011F, 1.0011F);
+        GlStateManager.translate(0, -0.0012F, 0);
         GlowInfo glowInfo = MekanismRenderer.enableGlow();
         doRender(size);
         MekanismRenderer.disableGlow(glowInfo);

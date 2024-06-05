@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mekanism.api.TileNetworkList;
 import mekanism.api.gas.*;
 import mekanism.api.transmitters.TransmissionType;
+import mekanism.common.Mekanism;
 import mekanism.common.MekanismFluids;
 import mekanism.common.SideData;
 import mekanism.common.Upgrade;
@@ -42,6 +43,9 @@ public class TileEntityChemicalDissolutionChamber extends TileEntityUpgradeableM
     public int injectUsageThisTick;
     public int operatingTicks = 0;
     public DissolutionRecipe cachedRecipe;
+    public float prevScale;
+    public int updateDelay;
+    public boolean needsPacket;
 
     public TileEntityChemicalDissolutionChamber() {
         super("dissolution", MachineType.CHEMICAL_DISSOLUTION_CHAMBER, 4, 100);
@@ -74,6 +78,12 @@ public class TileEntityChemicalDissolutionChamber extends TileEntityUpgradeableM
     @Override
     public void onUpdate() {
         if (!world.isRemote) {
+            if (updateDelay > 0) {
+                updateDelay--;
+                if (updateDelay == 0) {
+                    needsPacket = true;
+                }
+            }
             ChargeUtils.discharge(3, this);
             TileUtils.receiveGasItem(inventory.get(0), injectTank, MekanismFluids.SulfuricAcid);
             TileUtils.drawGas(inventory.get(2), outputTank);
@@ -98,6 +108,21 @@ public class TileEntityChemicalDissolutionChamber extends TileEntityUpgradeableM
                 operatingTicks = 0;
             }
             prevEnergy = getEnergy();
+            if (needsPacket) {
+                Mekanism.packetHandler.sendUpdatePacket(this);
+            }
+            needsPacket = false;
+        }else {
+            if (updateDelay > 0) {
+                updateDelay--;
+                if (updateDelay == 0) {
+                    MekanismUtils.updateBlock(world, getPos());
+                }
+            }
+            float targetScale = (float) (outputTank.getGas() != null ? outputTank.getGas().amount : 0) / outputTank.getMaxGas();
+            if (Math.abs(prevScale - targetScale) > 0.01) {
+                prevScale = (9 * prevScale + targetScale) / 10;
+            }
         }
     }
 
@@ -309,5 +334,14 @@ public class TileEntityChemicalDissolutionChamber extends TileEntityUpgradeableM
     @Override
     public Object[] invoke(int method, Object[] args) throws NoSuchMethodException {
         return new Object[0];
+    }
+
+    @Override
+    public void setActive(boolean active) {
+        super.setActive(active);
+        if (updateDelay == 0) {
+            Mekanism.packetHandler.sendUpdatePacket(this);
+            updateDelay = 10;
+        }
     }
 }
