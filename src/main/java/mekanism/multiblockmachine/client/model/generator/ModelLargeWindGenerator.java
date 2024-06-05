@@ -1,6 +1,7 @@
 package mekanism.multiblockmachine.client.model.generator;
 
 import mekanism.client.render.MekanismRenderer;
+import mekanism.common.Mekanism;
 import mekanism.multiblockmachine.common.util.MekanismMultiblockMachineUtils;
 import mekanism.multiblockmachine.common.util.MekanismMultiblockMachineUtils.ResourceType;
 import net.minecraft.client.model.ModelBase;
@@ -1922,12 +1923,14 @@ public class ModelLargeWindGenerator extends ModelBase {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         doRender(size, angle);
-        manager.bindTexture(on ? MekanismMultiblockMachineUtils.getResource(ResourceType.RENDER, "WindGenerator/LargeWindGenerator_ON_" + getTick(tick) + ".png") : OVERLAY_OFF);
-        GlStateManager.scale(1.001F, 1.001F, 1.001F);
-        GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
-        MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
-        doRender(size, angle);
-        MekanismRenderer.disableGlow(glowInfo);
+        if (!Mekanism.hooks.Bloom) {
+            manager.bindTexture(on ? MekanismMultiblockMachineUtils.getResource(ResourceType.RENDER, "WindGenerator/LargeWindGenerator_ON_" + getTick(tick) + ".png") : OVERLAY_OFF);
+            GlStateManager.scale(1.001F, 1.001F, 1.001F);
+            GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
+            MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
+            doRender(size, angle);
+            MekanismRenderer.disableGlow(glowInfo);
+        }
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.popMatrix();

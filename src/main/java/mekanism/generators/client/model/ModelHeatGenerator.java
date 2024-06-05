@@ -2,6 +2,7 @@ package mekanism.generators.client.model;
 
 import mekanism.client.render.MekanismRenderer;
 import mekanism.client.render.MekanismRenderer.GlowInfo;
+import mekanism.common.Mekanism;
 import mekanism.generators.common.util.MekanismGeneratorUtils;
 import mekanism.generators.common.util.MekanismGeneratorUtils.ResourceType;
 import net.minecraft.client.model.ModelBase;
@@ -152,14 +153,17 @@ public class ModelHeatGenerator extends ModelBase {
 
         doRender(size);
 
-        manager.bindTexture(on ? OVERLAY_ON : OVERLAY_OFF);
-        GlStateManager.scale(1.001F, 1.001F, 1.001F);
-        GlStateManager.translate(0, -0.0011F, 0);
-        GlowInfo glowInfo = MekanismRenderer.enableGlow();
+        if (!Mekanism.hooks.Bloom) {
+            manager.bindTexture(on ? OVERLAY_ON : OVERLAY_OFF);
+            GlStateManager.scale(1.001F, 1.001F, 1.001F);
+            GlStateManager.translate(0, -0.0011F, 0);
+            GlowInfo glowInfo = MekanismRenderer.enableGlow();
 
-        doRender(size);
+            doRender(size);
 
-        MekanismRenderer.disableGlow(glowInfo);
+            MekanismRenderer.disableGlow(glowInfo);
+        }
+
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.popMatrix();

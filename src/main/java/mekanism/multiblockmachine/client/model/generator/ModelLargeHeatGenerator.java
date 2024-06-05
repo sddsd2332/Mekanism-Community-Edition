@@ -2,6 +2,7 @@ package mekanism.multiblockmachine.client.model.generator;
 
 
 import mekanism.client.render.MekanismRenderer;
+import mekanism.common.Mekanism;
 import mekanism.multiblockmachine.common.util.MekanismMultiblockMachineUtils;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBox;
@@ -281,18 +282,18 @@ public class ModelLargeHeatGenerator extends ModelBase {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         doRender(size);
-        manager.bindTexture(active ? MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER, "HeatGenerator/LargeHeatGenerator_ON_" + getTick(tick) + ".png") : OVERLAY_OFF);
-        GlStateManager.scale(1.001F, 1.001F, 1.001F);
-        GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
-        MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
-        doRender(size);
-        MekanismRenderer.disableGlow(glowInfo);
+        if (!Mekanism.hooks.Bloom) {
+            manager.bindTexture(active ? MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER, "HeatGenerator/LargeHeatGenerator_ON_" + getTick(tick) + ".png") : OVERLAY_OFF);
+            GlStateManager.scale(1.001F, 1.001F, 1.001F);
+            GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
+            MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
+            doRender(size);
+            MekanismRenderer.disableGlow(glowInfo);
+        }
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.popMatrix();
     }
-
-
 
     public void renderBloom(double tick,float size, boolean active, TextureManager manager) {
         GlStateManager.pushMatrix();

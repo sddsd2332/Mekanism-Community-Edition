@@ -3,6 +3,7 @@ package mekanism.client.model;
 import mekanism.client.HolidayManager;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.client.render.MekanismRenderer.GlowInfo;
+import mekanism.common.Mekanism;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
@@ -443,12 +444,14 @@ public class ModelDigitalMiner extends ModelBase {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         doRender(size);
-        manager.bindTexture(on ? isON(tick) : OVERLAY_OFF);
-        GlStateManager.scale(1.001F, 1.001F, 1.001F);
-        GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
-        GlowInfo glowInfo = MekanismRenderer.enableGlow();
-        doRender(size);
-        MekanismRenderer.disableGlow(glowInfo);
+        if (!Mekanism.hooks.Bloom) {
+            manager.bindTexture(on ? isON(tick) : OVERLAY_OFF);
+            GlStateManager.scale(1.001F, 1.001F, 1.001F);
+            GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
+            GlowInfo glowInfo = MekanismRenderer.enableGlow();
+            doRender(size);
+            MekanismRenderer.disableGlow(glowInfo);
+        }
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.popMatrix();

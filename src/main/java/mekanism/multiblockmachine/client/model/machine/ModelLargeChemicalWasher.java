@@ -2,6 +2,7 @@ package mekanism.multiblockmachine.client.model.machine;
 
 
 import mekanism.client.render.MekanismRenderer;
+import mekanism.common.Mekanism;
 import mekanism.multiblockmachine.common.util.MekanismMultiblockMachineUtils;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBox;
@@ -132,16 +133,18 @@ public class ModelLargeChemicalWasher extends ModelBase {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         doRender(size); //渲染本体
-        manager.bindTexture(on ? OVERLAY_ON : OVERLAY_OFF);
-        GlStateManager.scale(1.001F, 1.001F, 1.001F);
-        GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
-        MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
-        doRender(size);
-        if (on) {
-            manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "ChemicalWasher/LED/LED_" + getTick(tick) + ".png"));
+        if (!Mekanism.hooks.Bloom) {
+            manager.bindTexture(on ? OVERLAY_ON : OVERLAY_OFF);
+            GlStateManager.scale(1.001F, 1.001F, 1.001F);
+            GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
+            MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
             doRender(size);
+            if (on) {
+                manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "ChemicalWasher/LED/LED_" + getTick(tick) + ".png"));
+                doRender(size);
+            }
+            MekanismRenderer.disableGlow(glowInfo);
         }
-        MekanismRenderer.disableGlow(glowInfo);
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.popMatrix();
