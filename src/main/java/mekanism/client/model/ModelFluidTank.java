@@ -91,26 +91,45 @@ public class ModelFluidTank extends ModelBase {
         setRotation(LeftGlass, 0F, 0F, 0F);
     }
 
-    public void render(float size, FluidTankTier tier) {
+    public void render(float size, FluidTankTier tier, boolean isEnableGlow) {
+        GlStateManager.pushMatrix();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        doRender(size);
+        if (!isEnableGlow){
+            MekanismRenderer.color(tier.getBaseTier());
+            doRenderGlass(size);
+            MekanismRenderer.resetColor();
+        }
+        GlStateManager.popMatrix();
+
+        if (isEnableGlow) {
+            GlStateManager.pushMatrix();
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            GlStateManager.disableAlpha();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+            MekanismRenderer.color(tier.getBaseTier());
+            doRenderGlass(size);
+            MekanismRenderer.resetColor();
+            GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
+            GlStateManager.popMatrix();
+        }
+    }
+    private void doRender(float size) {
         Base.render(size);
         PoleFL.render(size);
         PoleLB.render(size);
         PoleBR.render(size);
         PoleRF.render(size);
         Top.render(size);
+    }
 
-        GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        GlStateManager.disableAlpha();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-        MekanismRenderer.color(tier.getBaseTier());
+    private void doRenderGlass(float size) {
         FrontGlass.render(size);
         BackGlass.render(size);
         RightGlass.render(size);
         LeftGlass.render(size);
-        MekanismRenderer.resetColor();
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
     }
 
     private void setRotation(ModelRenderer model, float x, float y, float z) {

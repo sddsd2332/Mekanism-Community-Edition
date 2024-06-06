@@ -49,11 +49,9 @@ public class RenderFluidTankItem {
             GlStateManager.disableAlpha();
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-
             MekanismRenderer.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             GlStateManager.translate(-0.5F, -0.5F, -0.5F);
             GlowInfo glowInfo = MekanismRenderer.enableGlow(fluid);
-
             DisplayInteger[] displayList = getListAndRender(fluid);
             if (tier == FluidTankTier.CREATIVE) {
                 fluidScale = 1;
@@ -77,7 +75,7 @@ public class RenderFluidTankItem {
         GlStateManager.translate(0, -0.9F, 0);
         GlStateManager.scale(0.9F, 0.8F, 0.9F);
         MekanismRenderer.bindTexture(MekanismUtils.getResource(ResourceType.RENDER, "FluidTank.png"));
-        fluidTank.render(0.073F, tier);
+        fluidTank.render(0.073F, tier,false);
         GlStateManager.popMatrix();
     }
 

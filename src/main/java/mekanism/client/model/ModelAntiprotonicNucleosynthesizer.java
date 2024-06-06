@@ -227,7 +227,28 @@ public class ModelAntiprotonicNucleosynthesizer extends ModelBase {
 
     }
 
-    public void render(float size) {
+    public void render(float size, boolean isEnableGlow) {
+        GlStateManager.pushMatrix();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        doRender(size);
+        if (!isEnableGlow) {
+            Glass.render(size);
+            Glass2.render(size);
+        }
+        GlStateManager.popMatrix();
+        if (isEnableGlow) {
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            GlStateManager.disableAlpha();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            Glass.render(size);
+            Glass2.render(size);
+            GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
+        }
+    }
+
+    private void doRender(float size) {
         cube.render(size);
         cube2.render(size);
         cube3.render(size);
@@ -252,17 +273,6 @@ public class ModelAntiprotonicNucleosynthesizer extends ModelBase {
         cube22.render(size);
         cube23.render(size);
         cube24.render(size);
-
-        GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        GlStateManager.disableAlpha();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        Glass.render(size);
-        Glass2.render(size);
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
-
-
     }
 
     public void setRotation(ModelRenderer model, float x, float y, float z) {

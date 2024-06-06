@@ -61,7 +61,7 @@ public class RenderIsotopicCentrifuge extends TileEntitySpecialRenderer<TileEnti
         bindTexture(MekanismUtils.getResource(ResourceType.RENDER, "IsotopicCentrifuge.png"));
         MekanismRenderer.rotate(tileEntity.facing, 0, 180, 90, 270);
         GlStateManager.rotate(180, 0, 0, 1);
-        model.render(0.0625F);
+        model.render(0.0625F,true);
         GlStateManager.popMatrix();
         MekanismRenderer.machineRenderer().render(tileEntity, x, y, z, partialTick, destroyStage, alpha);
     }

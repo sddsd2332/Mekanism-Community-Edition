@@ -314,28 +314,27 @@ public class ModelQuantumEntangloporter extends ModelBase {
         setRotation(portLeftLarge, 0F, 0F, 0F);
     }
 
-    public void render(float size, TextureManager manager, boolean renderMain) {
+    public void render(float size, TextureManager manager, boolean isEnableGlow) {
         GlStateManager.pushMatrix();
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        GlStateManager.disableAlpha();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-
-        if (renderMain) {
-            doRender(size);
-        }
-
-        manager.bindTexture(OVERLAY);
-        GlStateManager.scale(1.001F, 1.001F, 1.001F);
-        GlStateManager.translate(0, -0.0011F, 0);
-        GlowInfo glowInfo = MekanismRenderer.enableGlow();
-
         doRender(size);
-
-        MekanismRenderer.disableGlow(glowInfo);
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
         GlStateManager.popMatrix();
+        if (isEnableGlow) {
+            GlStateManager.pushMatrix();
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            GlStateManager.disableAlpha();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+            manager.bindTexture(OVERLAY);
+            GlStateManager.scale(1.001F, 1.001F, 1.001F);
+            GlStateManager.translate(0, -0.0011F, 0);
+            GlowInfo glowInfo = MekanismRenderer.enableGlow();
+            doRender(size);
+            MekanismRenderer.disableGlow(glowInfo);
+            GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
+            GlStateManager.popMatrix();
+        }
     }
 
     public void doRender(float size) {

@@ -130,6 +130,8 @@ public class ModelNutritionalLiquifier extends ModelBase {
 	}
 
 	public void render(float size,boolean isActive) {
+		GlStateManager.pushMatrix();
+		GlStateManager.shadeModel(GL11.GL_SMOOTH);
 		base.render(size);
 		top.render(size);
 		pillar.render(size);
@@ -139,22 +141,33 @@ public class ModelNutritionalLiquifier extends ModelBase {
 		if (!isActive){
 			blade.render(size);
 		}
+		GlStateManager.popMatrix();
 	}
 
 	public void renderBlade(float size) {
-		blade.render(size);
-	}
-	public void renderGlass(float size) {
+		GlStateManager.pushMatrix();
 		GlStateManager.shadeModel(GL11.GL_SMOOTH);
-		GlStateManager.disableAlpha();
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-		glass1.render(size);
-		glass2.render(size);
-		glass3.render(size);
-		glass4.render(size);
-		GlStateManager.disableBlend();
-		GlStateManager.enableAlpha();
+		blade.render(size);
+		GlStateManager.popMatrix();
+	}
+	public void renderGlass(float size,boolean isEnableGlow) {
+		if (isEnableGlow) {
+			GlStateManager.shadeModel(GL11.GL_SMOOTH);
+			GlStateManager.disableAlpha();
+			GlStateManager.enableBlend();
+			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+			glass1.render(size);
+			glass2.render(size);
+			glass3.render(size);
+			glass4.render(size);
+			GlStateManager.disableBlend();
+			GlStateManager.enableAlpha();
+		}else {
+			glass1.render(size);
+			glass2.render(size);
+			glass3.render(size);
+			glass4.render(size);
+		}
 	}
 
     private void setRotation(ModelRenderer model, float x, float y, float z) {

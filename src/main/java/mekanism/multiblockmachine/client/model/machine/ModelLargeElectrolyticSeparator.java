@@ -200,40 +200,45 @@ public class ModelLargeElectrolyticSeparator extends ModelBase {
         bb_main.cubeList.add(new ModelBox(bb_main, 82, 131, -19.0F, -11.0F, -22.0F, 6, 6, 7, 0.0F, false));
     }
 
-    public void render(double tick, float size, boolean on, TextureManager manager, double fluidTank, double leftTank, double rightTank) {
+    public void render(double tick, float size, boolean on, TextureManager manager, double fluidTank, double leftTank, double rightTank, boolean isEnableGlow) {
         GlStateManager.pushMatrix();
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        GlStateManager.disableAlpha();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        doRender(size); //渲染本体
-        manager.bindTexture(on ? MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "ElectrolyticSeparator/ElectrolyticSeparator_LED_ON_" + getTick(tick) + ".png") : OVERLAY_OFF);
-        GlStateManager.scale(1.001F, 1.001F, 1.001F);
-        GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
-        MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
-        doRender(size); //渲染灯光
-        if (on) {
-            GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
-            manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "ElectrolyticSeparator/ElectrolyticSeparator_Screen_ON_" + getTick(tick) + ".png"));
-            doRender(size);  //渲染屏幕
-            GlStateManager.translate(0F, 0F, -0.0002F);
-            if (fluidTank > 0) {
-                manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "ElectrolyticSeparator/Fluid/FluidTank_" + getNumberTanks(fluidTank) + ".png"));
-                doRender(size);//渲染屏幕上的流体数量
-            }
-            if (leftTank > 0) {
-                manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "ElectrolyticSeparator/Left/LeftTank_" + getNumberTanks(leftTank) + ".png"));
-                doRender(size);//渲染屏幕上的气体左储罐数量
-            }
-            if (rightTank > 0) {
-                manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "ElectrolyticSeparator/Right/RightTank_" + getNumberTanks(rightTank) + ".png"));
-                doRender(size);//渲染屏幕上的气体右储罐数量
-            }
-        }
-        MekanismRenderer.disableGlow(glowInfo);
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
+        doRender(size);
         GlStateManager.popMatrix();
+        if (isEnableGlow) {
+            GlStateManager.pushMatrix();
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            GlStateManager.disableAlpha();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            manager.bindTexture(on ? MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "ElectrolyticSeparator/ElectrolyticSeparator_LED_ON_" + getTick(tick) + ".png") : OVERLAY_OFF);
+            GlStateManager.scale(1.001F, 1.001F, 1.001F);
+            GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
+            MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
+            doRender(size); //渲染灯光
+            if (on) {
+                GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
+                manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "ElectrolyticSeparator/ElectrolyticSeparator_Screen_ON_" + getTick(tick) + ".png"));
+                doRender(size);  //渲染屏幕
+                GlStateManager.translate(0F, 0F, -0.0002F);
+                if (fluidTank > 0) {
+                    manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "ElectrolyticSeparator/Fluid/FluidTank_" + getNumberTanks(fluidTank) + ".png"));
+                    doRender(size);//渲染屏幕上的流体数量
+                }
+                if (leftTank > 0) {
+                    manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "ElectrolyticSeparator/Left/LeftTank_" + getNumberTanks(leftTank) + ".png"));
+                    doRender(size);//渲染屏幕上的气体左储罐数量
+                }
+                if (rightTank > 0) {
+                    manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "ElectrolyticSeparator/Right/RightTank_" + getNumberTanks(rightTank) + ".png"));
+                    doRender(size);//渲染屏幕上的气体右储罐数量
+                }
+            }
+            MekanismRenderer.disableGlow(glowInfo);
+            GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
+            GlStateManager.popMatrix();
+        }
     }
 
     public void renderBloom(double tick, float size, boolean on, TextureManager manager, double fluidTank, double leftTank, double rightTank) {
@@ -303,7 +308,7 @@ public class ModelLargeElectrolyticSeparator extends ModelBase {
             return 7;
         } else if (number >= 0.9F && number < 1F) {
             return 8;
-        }else if (number>=1F){
+        } else if (number >= 1F) {
             return 9;
         }
         return 0;

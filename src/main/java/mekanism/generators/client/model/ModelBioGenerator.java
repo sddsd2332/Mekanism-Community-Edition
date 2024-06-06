@@ -61,20 +61,31 @@ public class ModelBioGenerator extends ModelBase {
         setRotation(sideLeft, 0F, 0F, 0F);
     }
 
-    public void render(float size) {
+    public void doRender(float size){
         base.render(size);
         sideRight.render(size);
         sideLeft.render(size);
         back.render(size);
         bar.render(size);
+    }
 
+    public void render(float size,boolean isEnableGlow) {
+        GlStateManager.pushMatrix();
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        GlStateManager.disableAlpha();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-        glass.render(size);
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
+        doRender(size);
+        if (!isEnableGlow){
+            glass.render(size);
+        }
+        GlStateManager.popMatrix();
+        if (isEnableGlow) {
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            GlStateManager.disableAlpha();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+            glass.render(size);
+            GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
+        }
     }
 
     private void setRotation(ModelRenderer model, float x, float y, float z) {

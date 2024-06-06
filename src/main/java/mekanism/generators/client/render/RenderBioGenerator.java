@@ -70,7 +70,7 @@ public class RenderBioGenerator extends TileEntitySpecialRenderer<TileEntityBioG
         MekanismRenderer.rotate(tileEntity.facing, 180, 0, 270, 90);
 
         GlStateManager.rotate(180, 0, 0, 1);
-        model.render(0.0625F);
+        model.render(0.0625F,true);
         GlStateManager.popMatrix();
     }
 

@@ -250,7 +250,23 @@ public class ModelIsotopicCentrifuge extends ModelBase {
         setRotation(Base3, 0F, 0F, 0F);
     }
 
-    public void render(float size) {
+    public void render(float size, boolean isEnableGlow) {
+        GlStateManager.pushMatrix();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        doRender(size);
+        GlStateManager.popMatrix();
+        if (isEnableGlow) {
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            GlStateManager.disableAlpha();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            doRenderGlass(size);
+            GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
+        }
+    }
+
+    private void doRender(float size) {
         Base.render(size);
         decoration.render(size);
         decoration1.render(size);
@@ -276,18 +292,13 @@ public class ModelIsotopicCentrifuge extends ModelBase {
         Subject5.render(size);
         Base2.render(size);
         Base3.render(size);
-        GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        GlStateManager.disableAlpha();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+    }
+
+    private void doRenderGlass(float size) {
         Glass.render(size);
         Glass2.render(size);
         Glass3.render(size);
         Glass4.render(size);
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
-
-
     }
 
     public void setRotation(ModelRenderer model, float x, float y, float z) {

@@ -138,12 +138,26 @@ public class ModelChemicalCrystallizer extends ModelBase {
         setRotation(Shape1, 0F, 0F, 0F);
     }
 
-    public void render(float size) {
+    public void render(float size,boolean isEnableGlow) {
+        GlStateManager.pushMatrix();
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        GlStateManager.disableAlpha();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+        doRender(size);
+        if (!isEnableGlow){
+            Shape1.render(size);
+        }
+        GlStateManager.popMatrix();
+        if (isEnableGlow) {
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            GlStateManager.disableAlpha();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+            Shape1.render(size);
+            GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
+        }
+    }
 
+    private void doRender(float size) {
         tray.render(size);
         support4.render(size);
         rimBack.render(size);
@@ -160,10 +174,6 @@ public class ModelChemicalCrystallizer extends ModelBase {
         rod2.render(size);
         rod3.render(size);
         base.render(size);
-        Shape1.render(size);
-
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
     }
 
     private void setRotation(ModelRenderer model, float x, float y, float z) {

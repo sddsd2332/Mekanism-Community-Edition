@@ -26,7 +26,7 @@ public class RenderLargeChemicalInfuserItem {
         }
         GlStateManager.translate(0, 0, 0);
         MekanismRenderer.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "ChemicalInfuser/ChemicalInfuser.png"));
-        model.render(0, 0.022F, false, Minecraft.getMinecraft().renderEngine, 0, 0, 0);
+        model.render(0, 0.022F, false, Minecraft.getMinecraft().renderEngine, 0, 0, 0,false);
         GlStateManager.popMatrix();
     }
 }

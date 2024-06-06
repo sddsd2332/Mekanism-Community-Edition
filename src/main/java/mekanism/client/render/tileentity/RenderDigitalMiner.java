@@ -27,7 +27,7 @@ public class RenderDigitalMiner extends RenderTileEntityTime<TileEntityDigitalMi
         GlStateManager.translate(0, 0, -1.0F);
 
         GlStateManager.rotate(180, 0, 0, 1);
-        model.render(getTime(), 0.0625F, tileEntity.isActive, rendererDispatcher.renderEngine);
+        model.render(getTime(), 0.0625F, tileEntity.isActive, rendererDispatcher.renderEngine,true);
         GlStateManager.popMatrix();
 
         if (tileEntity.clientRendering) {
