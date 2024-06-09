@@ -1,12 +1,13 @@
 package mekanism.multiblockmachine.client.jei;
 
+import mekanism.client.jei.BaseRecipeCategory;
 import mekanism.client.jei.GuiElementHandler;
 import mekanism.client.jei.MekanismJEI;
+import mekanism.multiblockmachine.client.jei.machine.other.DigitalAssemblyTableRecipeCategory;
 import mekanism.multiblockmachine.common.MultiblockMachineBlocks;
-import mezz.jei.api.IModPlugin;
-import mezz.jei.api.IModRegistry;
-import mezz.jei.api.ISubtypeRegistry;
-import mezz.jei.api.JEIPlugin;
+import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine.*;
+import mezz.jei.api.*;
+import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import net.minecraft.item.Item;
 
 @JEIPlugin
@@ -23,5 +24,19 @@ public class MultiblockMachineJEI implements IModPlugin {
         MultiblockRecipeRegistryHelper.registerLargeSeparator(registry);
         MultiblockRecipeRegistryHelper.registerLargeChemicalInfuser(registry);
         MultiblockRecipeRegistryHelper.registerLargeChemicalWasher(registry);
+        MultiblockRecipeRegistryHelper.registerDigitalAssemblyTable(registry);
     }
+
+    @Override
+    public void registerCategories(IRecipeCategoryRegistration registry) {
+        IGuiHelper guiHelper = registry.getJeiHelpers().getGuiHelper();
+        addRecipeCategory(registry, MultiblockMachineType.DIGITAL_ASSEMBLY_TABLE,new DigitalAssemblyTableRecipeCategory(guiHelper));
+    }
+
+    private void addRecipeCategory(IRecipeCategoryRegistration registry, MultiblockMachineType type, BaseRecipeCategory category){
+        if (type.isEnabled()) {
+            registry.addRecipeCategories(category);
+        }
+    }
+
 }

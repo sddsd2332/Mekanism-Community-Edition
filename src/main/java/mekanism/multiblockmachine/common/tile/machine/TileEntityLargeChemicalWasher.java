@@ -56,6 +56,7 @@ public class TileEntityLargeChemicalWasher extends TileEntityMultiblockBasicMach
     public TileEntityLargeChemicalWasher() {
         super("washer", BlockStateMultiblockMachine.MultiblockMachineType.LARGE_CHEMICAL_WASHER, 1, 4);
         inventory = NonNullListSynchronized.withSize(5, ItemStack.EMPTY);
+        upgradeComponent.setSupported(Upgrade.THREAD);
     }
 
     @Override

@@ -18,7 +18,7 @@ tile.MultiblockMachine.LargeChemicalInfuser.name=大型化学灌注器
 tooltip.LargeChemicalInfuser=一台能够通过注入其它两种气体产生新的气体的大型机器。
 tile.MultiblockMachine.LargeChemicalWasher.name=大型化学清洗机
 tooltip.LargeChemicalWasher=一台能够清理未经处理的浆液，为结晶作准备的终极大型机器。
-
+sound_event.mekanismmultiblockmachine.tile.machine.digitalassemblytable=数字组装机：嗡嗡
 # Creative tab
 itemGroup.tabMekanismMultiblockMachine=通用机械 多方块
 

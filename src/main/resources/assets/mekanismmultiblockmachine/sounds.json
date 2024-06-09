@@ -1,0 +1,10 @@
+{
+      "tile.machine.digitalassemblytable": {
+            "sounds": [{
+                  "stream": false,
+                  "name": "mekanismmultiblockmachine:DigitalAssemblyTable"
+            }],
+            "subtitle": "sound_event.mekanismmultiblockmachine.tile.machine.digitalassemblytable",
+            "category": "block"
+      }
+}

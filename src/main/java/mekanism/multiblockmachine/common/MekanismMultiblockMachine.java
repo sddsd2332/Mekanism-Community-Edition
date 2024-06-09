@@ -14,6 +14,7 @@ import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachin
 import mekanism.multiblockmachine.common.fixers.MultiblockMachineTEFixer;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.datafix.FixTypes;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -123,5 +124,10 @@ public class MekanismMultiblockMachine implements IModule {
         for (MultiblockMachineType type : MultiblockMachineType.values()){
             MekanismAPI.addBoxBlacklist(MultiblockMachineBlocks.MultiblockMachine,type.meta);
         }
+    }
+
+    @SubscribeEvent
+    public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
+        MekanismMultiblockMachineRecipe.addRecipes();
     }
 }

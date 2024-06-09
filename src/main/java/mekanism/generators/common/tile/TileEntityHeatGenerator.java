@@ -347,8 +347,12 @@ public class TileEntityHeatGenerator extends TileEntityGenerator implements IFlu
             if (Mekanism.hooks.Bloom) {
                 new BloomRenderHeatGenerator(this);
             }
-
         }
+    }
+
+    @Override
+    public boolean supportsAsync() {
+        return false;
     }
 
 }
