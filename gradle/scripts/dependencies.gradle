@@ -88,7 +88,7 @@ dependencies {
 
     runtimeOnly 'curse.maven:ftb-library-237167:2985811'
     runtimeOnly 'curse.maven:ftb-utilities-237102:3157548'
-    runtimeOnly 'curse.maven:torch-optimizer-289420:2876934'
+    //runtimeOnly 'curse.maven:torch-optimizer-289420:2876934'
     runtimeOnly 'curse.maven:had-enough-characters-640802:4035773'
     runtimeOnly 'curse.maven:better-advancements-272515:2685984'
     implementation rfg.deobf('curse.maven:ae2-fluid-crafting-rework-623955:5405482')
