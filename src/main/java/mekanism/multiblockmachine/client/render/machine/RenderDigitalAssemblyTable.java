@@ -20,8 +20,9 @@ public class RenderDigitalAssemblyTable extends RenderTileEntityTime<TileEntityD
         GlStateManager.translate((float) x + 0.5F, (float) y + 1.5F, (float) z + 0.5F);
         bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "DigitalAssemblyTable/DigitalAssemblyTable.png"));
         MekanismRenderer.rotate(tileEntity.facing, 0, 180, 90, 270);
+        float actualRate = tileEntity.DoorHeight /  16F;
         GlStateManager.rotate(180, 0, 0, 1);
-        model.render(0.0625F);
+        model.renderWithPiston(Math.max(0, actualRate),0.0625F,true);
         GlStateManager.popMatrix();
     }
 

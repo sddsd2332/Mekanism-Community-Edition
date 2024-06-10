@@ -24,9 +24,9 @@ public class RenderDigitalAssemblyTableItem {
         } else if (transformType != ItemCameraTransforms.TransformType.GUI) {
             GlStateManager.rotate(90, 0, 1, 0);
         }
-        GlStateManager.translate(0, 0, 0);
+        GlStateManager.translate(0, 0.1F, 0);
         MekanismRenderer.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "DigitalAssemblyTable/DigitalAssemblyTable.png"));
-        model.render(0.022F);
+        model.render(0.007F,false);
         GlStateManager.popMatrix();
     }
 }

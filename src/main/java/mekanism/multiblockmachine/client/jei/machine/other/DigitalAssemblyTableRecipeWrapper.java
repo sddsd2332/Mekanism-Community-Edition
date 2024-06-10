@@ -9,6 +9,7 @@ import mekanism.common.util.MekanismUtils;
 import mekanism.multiblockmachine.common.MultiblockMachineItems;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class DigitalAssemblyTableRecipeWrapper <RECIPE extends DigitalAssemblyTa
     public DigitalAssemblyTableRecipeWrapper(RECIPE recipe) {
         super(recipe);
     }
+
 
     @Override
     public void getIngredients(IIngredients ingredients) {
@@ -42,10 +44,12 @@ public class DigitalAssemblyTableRecipeWrapper <RECIPE extends DigitalAssemblyTa
         ingredients.setOutput(MekanismJEI.TYPE_GAS, recipe.recipeOutput.gasOutput);
     }
 
+
+
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
         List<String> tooltip = new ArrayList<>();
-        if (mouseX >= 12 && mouseX < 215 && mouseY >= 78  && mouseY < 6 + 81) {
+        if (mouseX >= 8 && mouseX < 211 && mouseY >= 74 && mouseY < 2 + 81) {
             tooltip.add(LangUtils.localize("gui.using") + ":" + MekanismUtils.getEnergyDisplay(recipe.extraEnergy + MekanismConfig.current().multiblock.DigitalAssemblyTableUsage.val()) + "/t");
         }
         return tooltip;

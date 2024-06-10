@@ -395,5 +395,13 @@
                   "name": "mekanism:etc/Click"
             }],
             "category": "master"
+      },
+      "tile.machine.digitalassemblytable": {
+            "sounds": [{
+                  "stream": false,
+                  "name": "mekanism:DigitalAssemblyTable"
+            }],
+            "subtitle": "sound_event.mekanismmultiblockmachine.tile.machine.digitalassemblytable",
+            "category": "block"
       }
 }

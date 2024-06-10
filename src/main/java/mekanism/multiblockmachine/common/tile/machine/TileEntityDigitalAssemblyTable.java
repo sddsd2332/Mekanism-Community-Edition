@@ -1,15 +1,13 @@
 package mekanism.multiblockmachine.common.tile.machine;
 
 import io.netty.buffer.ByteBuf;
+import mekanism.api.Coord4D;
 import mekanism.api.TileNetworkList;
 import mekanism.api.gas.*;
 import mekanism.common.Mekanism;
 import mekanism.common.MekanismItems;
 import mekanism.common.Upgrade;
-import mekanism.common.base.FluidHandlerWrapper;
-import mekanism.common.base.IFluidHandlerWrapper;
-import mekanism.common.base.ISustainedData;
-import mekanism.common.base.ITankManager;
+import mekanism.common.base.*;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.recipe.RecipeHandler;
@@ -26,7 +24,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -42,7 +43,7 @@ import java.util.Map;
 import java.util.Random;
 
 public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMachine<CompositeInput, CompositeOutput, DigitalAssemblyTableRecipe>
-        implements IGasHandler, IFluidHandlerWrapper, ITankManager, ISustainedData /*, IAdvancedBoundingBlock*/ {
+        implements IGasHandler, IFluidHandlerWrapper, ITankManager, ISustainedData, IAdvancedBoundingBlock {
 
     private static Random Rand = new Random();
     public FluidTank inputFluidTank = new FluidTankSync(FluidTankTier.ULTIMATE.getStorage());
@@ -56,7 +57,7 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
     public int numPowering;
     private int currentRedstoneLevel;
     private boolean rendererInitialized = false;
-
+    public int DoorHeight;
 
     public TileEntityDigitalAssemblyTable() {
         super("digitalassemblytable", BlockStateMultiblockMachine.MultiblockMachineType.DIGITAL_ASSEMBLY_TABLE, 200, 0);
@@ -115,6 +116,15 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
             }
             prevEnergy = getEnergy();
         } else {
+            if (!isActive) {
+                if (DoorHeight < 16) {
+                    DoorHeight++;
+                }
+            } else {
+                if (DoorHeight > 0) {
+                    DoorHeight--;
+                }
+            }
             if (updateDelay > 0) {
                 updateDelay--;
                 if (updateDelay == 0) {
@@ -124,7 +134,7 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
         }
     }
 
-    private boolean isMachiningTools(){
+    private boolean isMachiningTools() {
         return inventory.get(11).getItem() == MultiblockMachineItems.PlasmaCutterNozzles && inventory.get(12).getItem() == MultiblockMachineItems.DrillBit && inventory.get(13).getItem() == MultiblockMachineItems.LaserLenses;
     }
 
@@ -344,19 +354,13 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
 
     @Override
     public int fill(EnumFacing from, @NotNull FluidStack resource, boolean doFill) {
-        return outputFluidTank.fill(resource, doFill);
-    }
-
-    @Nullable
-    @Override
-    public FluidStack drain(EnumFacing from, @NotNull FluidStack resource, boolean doDrain) {
-        return IFluidHandlerWrapper.super.drain(from, resource, doDrain);
+        return inputFluidTank.fill(resource, doFill);
     }
 
     @Nullable
     @Override
     public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
-        return IFluidHandlerWrapper.super.drain(from, maxDrain, doDrain);
+        return outputFluidTank.drain(maxDrain, doDrain);
     }
 
     @Override
@@ -428,13 +432,13 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
         return super.getCapability(capability, side);
     }
 
-    /*
+
     @Override
     public boolean canBoundReceiveEnergy(BlockPos coord, EnumFacing side) {
         EnumFacing back = MekanismUtils.getBack(facing);
         EnumFacing left = MekanismUtils.getLeft(facing);
         EnumFacing right = MekanismUtils.getRight(facing);
-        if (coord.equals(getPos().offset(back,5).offset(left,4).up()) || coord.equals(getPos().offset(back,5).offset(right,4).up()) ) {
+        if (coord.equals(getPos().offset(back, 5).offset(left, 4).up()) || coord.equals(getPos().offset(back, 5).offset(right, 4).up())) {
             return side == EnumFacing.DOWN;
         }
         return false;
@@ -472,12 +476,159 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
 
     @Override
     public void onPlace() {
+        for (int y = 0; y <= 4; y++) {
+            for (int x = -4; x <= 4; x++) {
+                for (int z = -4; z <= 4; z++) {
+                    if (x == 0 && y == 0 && z == 0) {
+                        continue;
+                    }
+                    BlockPos pos1 = getPos().add(x, y, z);
+                    if (y == 1) {
+                        if (facing == EnumFacing.SOUTH || facing == EnumFacing.NORTH) {
+                            if ((z == 4 || z == -4) && (x == 1 || x == 0 || x == -1)) {
+                                MekanismUtils.makeAdvancedBoundingBlock(world, pos1, Coord4D.get(this));
+                            } else {
+                                MekanismUtils.makeBoundingBlock(world, pos1, Coord4D.get(this));
+                            }
+                        } else if (facing == EnumFacing.WEST || facing == EnumFacing.EAST) {
+                            if ((x == 4 || x == -4) && (z == 1 || z == 0 || z == -1)) {
+                                MekanismUtils.makeAdvancedBoundingBlock(world, pos1, Coord4D.get(this));
+                            } else {
+                                MekanismUtils.makeBoundingBlock(world, pos1, Coord4D.get(this));
+                            }
+                        }
+                    } else {
+                        MekanismUtils.makeBoundingBlock(world, pos1, Coord4D.get(this));
+                    }
+                    world.notifyNeighborsOfStateChange(pos1, getBlockType(), true);
+                }
+            }
+        }
+        for (int y = 1; y <= 3; y++) {
+            if (facing == EnumFacing.SOUTH) {
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(5, y, -1), Coord4D.get(this));//GAS
+                world.notifyNeighborsOfStateChange(getPos().add(5, y, -1), getBlockType(), true);//GAS
 
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(-5, y, -1), Coord4D.get(this));//GAS
+                world.notifyNeighborsOfStateChange(getPos().add(-5, y, -1), getBlockType(), true);//GAS
+
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(5, y, -3), Coord4D.get(this));//fluid
+                world.notifyNeighborsOfStateChange(getPos().add(5, y, -3), getBlockType(), true);//fluid
+
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(-5, y, -3), Coord4D.get(this));//fluid
+                world.notifyNeighborsOfStateChange(getPos().add(-5, y, -3), getBlockType(), true);//fluid
+
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(3, y, -5), Coord4D.get(this));//energy
+                world.notifyNeighborsOfStateChange(getPos().add(3, y, -5), getBlockType(), true);//energy
+
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(-3, y, -5), Coord4D.get(this));//energy
+                world.notifyNeighborsOfStateChange(getPos().add(-3, y, -5), getBlockType(), true);//energy
+
+            } else if (facing == EnumFacing.WEST) {
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(1, y, 5), Coord4D.get(this));//GAS
+                world.notifyNeighborsOfStateChange(getPos().add(1, y, 5), getBlockType(), true);//GAS
+
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(1, y, -5), Coord4D.get(this));//GAS
+                world.notifyNeighborsOfStateChange(getPos().add(1, y, -5), getBlockType(), true);//GAS
+
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(3, y, 5), Coord4D.get(this));//fluid
+                world.notifyNeighborsOfStateChange(getPos().add(3, y, 5), getBlockType(), true);//fluid
+
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(3, y, -5), Coord4D.get(this));//fluid
+                world.notifyNeighborsOfStateChange(getPos().add(3, y, -5), getBlockType(), true);//fluid
+
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(5, y, 3), Coord4D.get(this));//energy
+                world.notifyNeighborsOfStateChange(getPos().add(5, y, 3), getBlockType(), true);//energy
+
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(5, y, -3), Coord4D.get(this));//energy
+                world.notifyNeighborsOfStateChange(getPos().add(5, y, -3), getBlockType(), true);//energy
+
+            } else if (facing == EnumFacing.EAST) {
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(-1, y, 5), Coord4D.get(this));//GAS
+                world.notifyNeighborsOfStateChange(getPos().add(-1, y, 5), getBlockType(), true);//GAS
+
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(-1, y, -5), Coord4D.get(this));//GAS
+                world.notifyNeighborsOfStateChange(getPos().add(-1, y, -5), getBlockType(), true);//GAS
+
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(-3, y, 5), Coord4D.get(this));//fluid
+                world.notifyNeighborsOfStateChange(getPos().add(-3, y, 5), getBlockType(), true);//fluid
+
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(-3, y, -5), Coord4D.get(this));//fluid
+                world.notifyNeighborsOfStateChange(getPos().add(-3, y, -5), getBlockType(), true);//fluid
+
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(-5, y, 3), Coord4D.get(this));//energy
+                world.notifyNeighborsOfStateChange(getPos().add(-5, y, 3), getBlockType(), true);//energy
+
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(-5, y, -3), Coord4D.get(this));//energy
+                world.notifyNeighborsOfStateChange(getPos().add(-5, y, -3), getBlockType(), true);//energy
+
+            } else if (facing == EnumFacing.NORTH) {
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(5, y, 1), Coord4D.get(this));//GAS
+                world.notifyNeighborsOfStateChange(getPos().add(5, y, 1), getBlockType(), true);//GAS
+
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(-5, y, 1), Coord4D.get(this));//GAS
+                world.notifyNeighborsOfStateChange(getPos().add(-5, y, 1), getBlockType(), true);//GAS
+
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(5, y, 3), Coord4D.get(this));//fluid
+                world.notifyNeighborsOfStateChange(getPos().add(5, y, 3), getBlockType(), true);//fluid
+
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(-5, y, 3), Coord4D.get(this));//fluid
+                world.notifyNeighborsOfStateChange(getPos().add(-5, y, 3), getBlockType(), true);//fluid
+
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(3, y, 5), Coord4D.get(this));//energy
+                world.notifyNeighborsOfStateChange(getPos().add(3, y, 5), getBlockType(), true);//energy
+
+                MekanismUtils.makeAdvancedBoundingBlock(world, getPos().add(-3, y, 5), Coord4D.get(this));//energy
+                world.notifyNeighborsOfStateChange(getPos().add(-3, y, 5), getBlockType(), true);//energy
+            }
+        }
     }
 
     @Override
     public void onBreak() {
+        for (int y = 0; y <= 4; y++) {
+            for (int x = -4; x <= 4; x++) {
+                for (int z = -4; z <= 4; z++) {
+                    if (x == 0 && y == 0 && z == 0) {
+                        continue;
+                    }
+                    world.setBlockToAir(getPos().add(x, y, z));
+                }
+            }
 
+        }
+        for (int y = 1; y <= 3; y++) {
+            if (facing == EnumFacing.SOUTH) {
+                world.setBlockToAir(getPos().add(5, y, -1));//gas
+                world.setBlockToAir(getPos().add(-5, y, -1));//gas
+                world.setBlockToAir(getPos().add(5, y, -3));//fluid
+                world.setBlockToAir(getPos().add(-5, y, -3));//fluid
+                world.setBlockToAir(getPos().add(3, y, -5));//energy
+                world.setBlockToAir(getPos().add(-3, y, -5));//energy
+            } else if (facing == EnumFacing.WEST) {
+                world.setBlockToAir(getPos().add(1, y, 5));//gas
+                world.setBlockToAir(getPos().add(1, y, -5));//gas
+                world.setBlockToAir(getPos().add(3, y, 5));//fluid
+                world.setBlockToAir(getPos().add(3, y, -5));//fluid
+                world.setBlockToAir(getPos().add(5, y, 3));//energy
+                world.setBlockToAir(getPos().add(5, y, -3));//energy
+            } else if (facing == EnumFacing.EAST) {
+                world.setBlockToAir(getPos().add(-1, y, 5));//gas
+                world.setBlockToAir(getPos().add(-1, y, -5));//gas
+                world.setBlockToAir(getPos().add(-3, y, 5));//fluid
+                world.setBlockToAir(getPos().add(-3, y, -5));//fluid
+                world.setBlockToAir(getPos().add(-5, y, 3));//energy
+                world.setBlockToAir(getPos().add(-5, y, -3));//energy
+            } else if (facing == EnumFacing.NORTH) {
+                world.setBlockToAir(getPos().add(5, y, 1));//gas
+                world.setBlockToAir(getPos().add(-5, y, 1));//gas
+                world.setBlockToAir(getPos().add(5, y, 3));//fluid
+                world.setBlockToAir(getPos().add(-5, y, 3));//fluid
+                world.setBlockToAir(getPos().add(3, y, 5));//energy
+                world.setBlockToAir(getPos().add(-3, y, 5));//energy
+            }
+        }
+        world.setBlockToAir(getPos().add(0, 0, 0));
     }
 
     @Override
@@ -516,7 +667,105 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
 
     @Override
     public boolean isOffsetCapabilityDisabled(@NotNull Capability<?> capability, @Nullable EnumFacing side, @NotNull Vec3i offset) {
-        return IAdvancedBoundingBlock.super.isOffsetCapabilityDisabled(capability, side, offset);
+        if (capability == Capabilities.GAS_HANDLER_CAPABILITY) {
+            if (facing == EnumFacing.SOUTH) {
+                if (offset.equals(new Vec3i(5, 1, -1))) {
+                    return side != EnumFacing.DOWN;
+                }
+                if (offset.equals(new Vec3i(-5, 1, -1))) {
+                    return side != EnumFacing.DOWN;
+                }
+            } else if (facing == EnumFacing.NORTH) {
+                if (offset.equals(new Vec3i(5, 1, 1))) {
+                    return side != EnumFacing.DOWN;
+                }
+                if (offset.equals(new Vec3i(-5, 1, 1))) {
+                    return side != EnumFacing.DOWN;
+                }
+            } else if (facing == EnumFacing.WEST) {
+                if (offset.equals(new Vec3i(1, 1, 5))) {
+                    return side != EnumFacing.DOWN;
+                }
+                if (offset.equals(new Vec3i(1, 1, -5))) {
+                    return side != EnumFacing.DOWN;
+                }
+            } else if (facing == EnumFacing.EAST) {
+                if (offset.equals(new Vec3i(-1, 1, 5))) {
+                    return side != EnumFacing.DOWN;
+                }
+                if (offset.equals(new Vec3i(-1, 1, -5))) {
+                    return side != EnumFacing.DOWN;
+                }
+            }
+            return true;
+        }
+
+
+        if (isStrictEnergy(capability) || capability == CapabilityEnergy.ENERGY || isTesla(capability, side)) {
+            if (facing == EnumFacing.SOUTH) {
+                if (offset.equals(new Vec3i(3, 1, -5))) {
+                    return side != EnumFacing.DOWN;
+                }
+                if (offset.equals(new Vec3i(-3, 1, -5))) {
+                    return side != EnumFacing.DOWN;
+                }
+            } else if (facing == EnumFacing.NORTH) {
+                if (offset.equals(new Vec3i(3, 1, 5))) {
+                    return side != EnumFacing.DOWN;
+                }
+                if (offset.equals(new Vec3i(-3, 1, 5))) {
+                    return side != EnumFacing.DOWN;
+                }
+            } else if (facing == EnumFacing.WEST) {
+                if (offset.equals(new Vec3i(5, 1, 3))) {
+                    return side != EnumFacing.DOWN;
+                }
+                if (offset.equals(new Vec3i(5, 1, -3))) {
+                    return side != EnumFacing.DOWN;
+                }
+            } else if (facing == EnumFacing.EAST) {
+                if (offset.equals(new Vec3i(-5, 1, 3))) {
+                    return side != EnumFacing.DOWN;
+                }
+                if (offset.equals(new Vec3i(-5, 1, -3))) {
+                    return side != EnumFacing.DOWN;
+                }
+            }
+            return true;
+        }
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            if (facing == EnumFacing.SOUTH) {
+                if (offset.equals(new Vec3i(5, 1, -3))) {
+                    return side != EnumFacing.DOWN;
+                }
+                if (offset.equals(new Vec3i(-5, 1, -3))) {
+                    return side != EnumFacing.DOWN;
+                }
+            } else if (facing == EnumFacing.NORTH) {
+                if (offset.equals(new Vec3i(5, 1, 3))) {
+                    return side != EnumFacing.DOWN;
+                }
+                if (offset.equals(new Vec3i(-5, 1, 3))) {
+                    return side != EnumFacing.DOWN;
+                }
+            } else if (facing == EnumFacing.WEST) {
+                if (offset.equals(new Vec3i(3, 1, 5))) {
+                    return side != EnumFacing.DOWN;
+                }
+                if (offset.equals(new Vec3i(3, 1, -5))) {
+                    return side != EnumFacing.DOWN;
+                }
+            } else if (facing == EnumFacing.EAST) {
+                if (offset.equals(new Vec3i(-3, 1, 5))) {
+                    return side != EnumFacing.DOWN;
+                }
+                if (offset.equals(new Vec3i(-3, 1, -5))) {
+                    return side != EnumFacing.DOWN;
+                }
+            }
+            return true;
+        }
+        return false;
     }
-     */
+
 }

@@ -3,6 +3,7 @@ package mekanism.multiblockmachine.client.jei.machine.other;
 import mekanism.api.gas.GasStack;
 import mekanism.client.gui.element.GuiProgress;
 import mekanism.client.gui.element.GuiSlot;
+import mekanism.client.gui.element.bar.GuiBar;
 import mekanism.client.gui.element.gauge.GuiFluidGauge;
 import mekanism.client.gui.element.gauge.GuiGasGauge;
 import mekanism.client.gui.element.gauge.GuiGauge;
@@ -10,6 +11,7 @@ import mekanism.client.jei.BaseRecipeCategory;
 import mekanism.client.jei.MekanismJEI;
 import mekanism.common.recipe.RecipeHandler;
 import mekanism.common.recipe.machines.DigitalAssemblyTableRecipe;
+import mekanism.common.util.MekanismUtils;
 import mekanism.multiblockmachine.common.MultiblockMachineItems;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IGuiFluidStackGroup;
@@ -17,13 +19,14 @@ import mezz.jei.api.gui.IGuiIngredientGroup;
 import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 
 public class DigitalAssemblyTableRecipeCategory<WRAPPER extends DigitalAssemblyTableRecipeWrapper<DigitalAssemblyTableRecipe>> extends BaseRecipeCategory<WRAPPER> {
 
     public DigitalAssemblyTableRecipeCategory(IGuiHelper helper) {
         super(helper, "mekanism:gui/Null.png", RecipeHandler.Recipe.DIGITAL_ASSEMBLY_TABLE.getJEICategory(),
-                "tile.MultiblockMachine.mekanismmultiblockmachine.name", GuiProgress.ProgressBar.MEDIUM, 4, 4, 221, 87);
+                "tile.MultiblockMachine.DigitalAssemblyTable.name", GuiProgress.ProgressBar.MEDIUM, 4, 4, 221, 87);
     }
 
     @Override
@@ -47,7 +50,16 @@ public class DigitalAssemblyTableRecipeCategory<WRAPPER extends DigitalAssemblyT
                 return (float) timer.getValue() / 20F;
             }
         }, progressBar, this, guiLocation, 125, 38));
+        guiElements.add(new GuiBar(this, guiLocation, 11, 77, 206, 6));
     }
+
+    @Override
+    public void drawExtras(Minecraft minecraft) {
+        super.drawExtras(minecraft);
+        minecraft.renderEngine.bindTexture(MekanismUtils.getResource(MekanismUtils.ResourceType.GUI_BAR, "Power_Bar_Horizontal.png"));
+        drawTexturedRect(12 - xOffset, 78 - yOffset, 0, 9, 204, 4);
+    }
+
 
     @Override
     public void setRecipe(IRecipeLayout recipeLayout, WRAPPER recipeWrapper, IIngredients ingredients) {

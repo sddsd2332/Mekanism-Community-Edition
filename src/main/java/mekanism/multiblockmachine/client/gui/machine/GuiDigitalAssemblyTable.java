@@ -64,8 +64,15 @@ public class GuiDigitalAssemblyTable extends GuiMekanismTile<TileEntityDigitalAs
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         fontRenderer.drawString(tileEntity.getName(), (xSize / 2) - (fontRenderer.getStringWidth(tileEntity.getName()) / 2), 4, 0x404040);
         fontRenderer.drawString(LangUtils.localize("container.inventory"), 33, (ySize - 96) + 2, 0x404040);
+        int xAxis = mouseX - guiLeft;
+        int yAxis = mouseY - guiTop;
+        if (xAxis >= 12 && xAxis <= 215 && yAxis >= 78 && yAxis <= 81) {
+            displayTooltip(MekanismUtils.getEnergyDisplay(tileEntity.getEnergy(), tileEntity.getMaxEnergy()), xAxis, yAxis);
+        }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }
+
+
 
     @Override
     protected void drawGuiContainerBackgroundLayer(int xAxis, int yAxis) {
@@ -73,6 +80,8 @@ public class GuiDigitalAssemblyTable extends GuiMekanismTile<TileEntityDigitalAs
         mc.getTextureManager().bindTexture(MekanismUtils.getResource(MekanismUtils.ResourceType.SLOT, "Slot_Icon.png"));
         drawTexturedModalRect(guiLeft + 11, guiTop + 93, 72, 54, 18, 18);
         drawTexturedModalRect(guiLeft + 14, guiTop + 96, tileEntity.getActive() ? 12 : 0, 88, 12, 12);
+        mc.getTextureManager().bindTexture(MekanismUtils.getResource(MekanismUtils.ResourceType.GUI_BAR, "Power_Bar_Horizontal.png"));
+        drawTexturedModalRect(guiLeft + 12, guiTop + 78, 0, 9, tileEntity.getScaledEnergyLevel(204), 4);
     }
 
 }
