@@ -96,10 +96,12 @@ public class TileEntityBioGenerator extends TileEntityGenerator implements IFlui
                 Mekanism.packetHandler.sendUpdatePacket(this);
             }
             needsPacket = false;
-        } else if (updateDelay > 0) {
-            updateDelay--;
-            if (updateDelay == 0) {
-                MekanismUtils.updateBlock(world, getPos());
+        } else {
+            if (updateDelay > 0) {
+                updateDelay--;
+                if (updateDelay == 0) {
+                    MekanismUtils.updateBlock(world, getPos());
+                }
             }
         }
     }

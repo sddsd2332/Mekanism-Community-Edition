@@ -45,6 +45,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -66,7 +67,7 @@ public class MultiblockMachineClientProxy extends MultiblockMachineCommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLargeElectrolyticSeparator.class, new RenderLargeElectrolyticSeparator());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLargeChemicalInfuser.class, new RenderLargeChemicalInfuser());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLargeChemicalWasher.class, new RenderLargeChemicalWasher());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityDigitalAssemblyTable.class,new RenderDigitalAssemblyTable());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityDigitalAssemblyTable.class,RenderDigitalAssemblyTable.INSTANCE);
     }
 
     @Override
@@ -146,6 +147,11 @@ public class MultiblockMachineClientProxy extends MultiblockMachineCommonProxy {
             case 6 -> new GuiDigitalAssemblyTable(player.inventory,(TileEntityDigitalAssemblyTable) tileEntity);
             default -> null;
         };
+    }
+
+    @SubscribeEvent
+    public void onStitch(TextureStitchEvent.Pre event) {
+        RenderDigitalAssemblyTable.resetDisplayInts();
     }
 
 }

@@ -58,6 +58,7 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
     private int currentRedstoneLevel;
     private boolean rendererInitialized = false;
     public int DoorHeight;
+    public double prevEnergyScale;
 
     public TileEntityDigitalAssemblyTable() {
         super("digitalassemblytable", BlockStateMultiblockMachine.MultiblockMachineType.DIGITAL_ASSEMBLY_TABLE, 200, 0);
@@ -115,6 +116,8 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
                 operatingTicks = 0;
             }
             prevEnergy = getEnergy();
+            handleGasTank(outputGasTank, getGasTankside());
+            handleFluidTank(outputFluidTank,getFluidTankside());
         } else {
             if (!isActive) {
                 if (DoorHeight < 16) {
@@ -131,6 +134,10 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
                     MekanismUtils.updateBlock(world, getPos());
                 }
             }
+            double targetEnergyScale =  (getEnergy() != 0 ? getEnergy() : 0) / getMaxEnergy();
+            if (Math.abs(prevEnergyScale - targetEnergyScale) > 0.01) {
+                prevEnergyScale = (9 * prevEnergyScale + targetEnergyScale) / 10;
+            }
         }
     }
 
@@ -138,10 +145,35 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
         return inventory.get(11).getItem() == MultiblockMachineItems.PlasmaCutterNozzles && inventory.get(12).getItem() == MultiblockMachineItems.DrillBit && inventory.get(13).getItem() == MultiblockMachineItems.LaserLenses;
     }
 
-    private void handleTank(GasTank tank, TileEntity tile) {
+    private TileEntity getGasTankside() {
+        BlockPos pos = getPos().offset(MekanismUtils.getLeft(facing),5).up(3).offset(MekanismUtils.getBack(facing));
+        if (world.getTileEntity(pos) != null) {
+            return world.getTileEntity(pos);
+        }
+        return null;
+
+    }
+
+    private TileEntity getFluidTankside() {
+        BlockPos pos = getPos().offset(MekanismUtils.getLeft(facing),5).up().offset(MekanismUtils.getBack(facing),3);
+        if (world.getTileEntity(pos) != null) {
+            return world.getTileEntity(pos);
+        }
+        return null;
+
+    }
+
+    private void handleGasTank(GasTank tank, TileEntity tile) {
         if (tank.getGas() != null) {
             GasStack toSend = new GasStack(tank.getGas().getGas(), Math.min(tank.getStored(), output));
-            tank.draw(GasUtils.emit(toSend, tile, EnumSet.of(EnumFacing.DOWN)), true);
+            tank.draw(GasUtils.emit(toSend, tile, EnumSet.of(EnumFacing.UP)), true);
+        }
+    }
+
+    private void handleFluidTank(FluidTank tank, TileEntity tile) {
+        if (tank.getFluid() != null && tile != null) {
+            FluidStack toSend = new FluidStack(tank.getFluid(), Math.min(tank.getCapacity(), tank.getFluidAmount()));
+            tank.drain(PipeUtils.emit(EnumSet.of(EnumFacing.DOWN), toSend, tile), true);
         }
     }
 
@@ -335,10 +367,7 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
 
     @Override
     public boolean canReceiveGas(EnumFacing side, Gas type) {
-        if (side == EnumFacing.DOWN) {
-            return inputGasTank.canReceive(type) && RecipeHandler.Recipe.DIGITAL_ASSEMBLY_TABLE.containsRecipe(type);
-        }
-        return false;
+            return inputGasTank.canReceive(type) && RecipeHandler.Recipe.DIGITAL_ASSEMBLY_TABLE.containsRecipe(type) && side == EnumFacing.DOWN;
     }
 
     @Override
@@ -599,31 +628,31 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
         }
         for (int y = 1; y <= 3; y++) {
             if (facing == EnumFacing.SOUTH) {
-                world.setBlockToAir(getPos().add(5, y, -1));//gas
-                world.setBlockToAir(getPos().add(-5, y, -1));//gas
-                world.setBlockToAir(getPos().add(5, y, -3));//fluid
-                world.setBlockToAir(getPos().add(-5, y, -3));//fluid
+                world.setBlockToAir(getPos().add(-5, y, -1));//gas in
+                world.setBlockToAir(getPos().add(5, y, -1));//gas out
+                world.setBlockToAir(getPos().add(5, y, -3));//fluid in
+                world.setBlockToAir(getPos().add(-5, y, -3));//fluid out
                 world.setBlockToAir(getPos().add(3, y, -5));//energy
                 world.setBlockToAir(getPos().add(-3, y, -5));//energy
             } else if (facing == EnumFacing.WEST) {
-                world.setBlockToAir(getPos().add(1, y, 5));//gas
-                world.setBlockToAir(getPos().add(1, y, -5));//gas
-                world.setBlockToAir(getPos().add(3, y, 5));//fluid
-                world.setBlockToAir(getPos().add(3, y, -5));//fluid
+                world.setBlockToAir(getPos().add(1, y, 5));//gas in
+                world.setBlockToAir(getPos().add(1, y, -5));//gas out
+                world.setBlockToAir(getPos().add(3, y, 5));//fluid in
+                world.setBlockToAir(getPos().add(3, y, -5));//fluid out
                 world.setBlockToAir(getPos().add(5, y, 3));//energy
                 world.setBlockToAir(getPos().add(5, y, -3));//energy
             } else if (facing == EnumFacing.EAST) {
-                world.setBlockToAir(getPos().add(-1, y, 5));//gas
-                world.setBlockToAir(getPos().add(-1, y, -5));//gas
-                world.setBlockToAir(getPos().add(-3, y, 5));//fluid
-                world.setBlockToAir(getPos().add(-3, y, -5));//fluid
+                world.setBlockToAir(getPos().add(-1, y, -5));//gas in
+                world.setBlockToAir(getPos().add(-1, y, 5));//gas out
+                world.setBlockToAir(getPos().add(-3, y, -5));//fluid in
+                world.setBlockToAir(getPos().add(-3, y, 5));//fluid out
                 world.setBlockToAir(getPos().add(-5, y, 3));//energy
                 world.setBlockToAir(getPos().add(-5, y, -3));//energy
             } else if (facing == EnumFacing.NORTH) {
-                world.setBlockToAir(getPos().add(5, y, 1));//gas
-                world.setBlockToAir(getPos().add(-5, y, 1));//gas
-                world.setBlockToAir(getPos().add(5, y, 3));//fluid
-                world.setBlockToAir(getPos().add(-5, y, 3));//fluid
+                world.setBlockToAir(getPos().add(-5, y, 1));//gas in
+                world.setBlockToAir(getPos().add(5, y, 1));//gas out
+                world.setBlockToAir(getPos().add(5, y, 3));//fluid in
+                world.setBlockToAir(getPos().add(-5, y, 3));//fluid out
                 world.setBlockToAir(getPos().add(3, y, 5));//energy
                 world.setBlockToAir(getPos().add(-3, y, 5));//energy
             }
@@ -669,32 +698,32 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
     public boolean isOffsetCapabilityDisabled(@NotNull Capability<?> capability, @Nullable EnumFacing side, @NotNull Vec3i offset) {
         if (capability == Capabilities.GAS_HANDLER_CAPABILITY) {
             if (facing == EnumFacing.SOUTH) {
-                if (offset.equals(new Vec3i(5, 1, -1))) {
+                if (offset.equals(new Vec3i(-5, 1, -1))) {//gas in
                     return side != EnumFacing.DOWN;
                 }
-                if (offset.equals(new Vec3i(-5, 1, -1))) {
-                    return side != EnumFacing.DOWN;
+                if (offset.equals(new Vec3i(5, 3, -1))) {
+                    return side != EnumFacing.UP;
                 }
             } else if (facing == EnumFacing.NORTH) {
-                if (offset.equals(new Vec3i(5, 1, 1))) {
+                if (offset.equals(new Vec3i(-5, 1, 1))) {//gas in
                     return side != EnumFacing.DOWN;
                 }
-                if (offset.equals(new Vec3i(-5, 1, 1))) {
-                    return side != EnumFacing.DOWN;
+                if (offset.equals(new Vec3i(5, 3, 1))) {
+                    return side != EnumFacing.UP;
                 }
             } else if (facing == EnumFacing.WEST) {
-                if (offset.equals(new Vec3i(1, 1, 5))) {
+                if (offset.equals(new Vec3i(1, 1, 5))) {//gas in
                     return side != EnumFacing.DOWN;
                 }
-                if (offset.equals(new Vec3i(1, 1, -5))) {
-                    return side != EnumFacing.DOWN;
+                if (offset.equals(new Vec3i(1, 3, -5))) {
+                    return side != EnumFacing.UP;
                 }
             } else if (facing == EnumFacing.EAST) {
-                if (offset.equals(new Vec3i(-1, 1, 5))) {
+                if (offset.equals(new Vec3i(-1, 1, -5))) {//gas in
                     return side != EnumFacing.DOWN;
                 }
-                if (offset.equals(new Vec3i(-1, 1, -5))) {
-                    return side != EnumFacing.DOWN;
+                if (offset.equals(new Vec3i(-1, 3, 5))) {
+                    return side != EnumFacing.UP;
                 }
             }
             return true;
@@ -735,31 +764,31 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
         }
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             if (facing == EnumFacing.SOUTH) {
-                if (offset.equals(new Vec3i(5, 1, -3))) {
-                    return side != EnumFacing.DOWN;
+                if (offset.equals(new Vec3i(5, 3, -3))) {//fluid in
+                    return side != EnumFacing.UP;
                 }
                 if (offset.equals(new Vec3i(-5, 1, -3))) {
                     return side != EnumFacing.DOWN;
                 }
             } else if (facing == EnumFacing.NORTH) {
-                if (offset.equals(new Vec3i(5, 1, 3))) {
-                    return side != EnumFacing.DOWN;
+                if (offset.equals(new Vec3i(5, 3, 3))) {//fluid in
+                    return side != EnumFacing.UP;
                 }
                 if (offset.equals(new Vec3i(-5, 1, 3))) {
                     return side != EnumFacing.DOWN;
                 }
             } else if (facing == EnumFacing.WEST) {
-                if (offset.equals(new Vec3i(3, 1, 5))) {
-                    return side != EnumFacing.DOWN;
+                if (offset.equals(new Vec3i(3, 3, 5))) {//fluid in
+                    return side != EnumFacing.UP;
                 }
                 if (offset.equals(new Vec3i(3, 1, -5))) {
                     return side != EnumFacing.DOWN;
                 }
             } else if (facing == EnumFacing.EAST) {
-                if (offset.equals(new Vec3i(-3, 1, 5))) {
-                    return side != EnumFacing.DOWN;
+                if (offset.equals(new Vec3i(-3, 3, -5))) {//fluid in
+                    return side != EnumFacing.UP;
                 }
-                if (offset.equals(new Vec3i(-3, 1, -5))) {
+                if (offset.equals(new Vec3i(-3, 1, 5))) {
                     return side != EnumFacing.DOWN;
                 }
             }
