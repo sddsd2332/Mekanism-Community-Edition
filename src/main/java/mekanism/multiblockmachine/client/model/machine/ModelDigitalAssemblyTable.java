@@ -783,90 +783,90 @@ public class ModelDigitalAssemblyTable extends ModelBase {
         gas_in2.cubeList.add(new ModelBox(gas_in2, 518, 127, -22.9784F, 2.9667F, -2.9784F, 10, 1, 10, 0.0F, false));
 
         fluid = new ModelRenderer(this);
-        fluid.setRotationPoint(84.0F, -60.0F, 65.9784F);
+        fluid.setRotationPoint(80.0F, -60.0F, 61.9784F);
         port.addChild(fluid);
-        setRotationAngle(fluid, 0.0F, -1.5708F, 0.0F);
-        fluid.cubeList.add(new ModelBox(fluid, 544, 84, -13.9784F, 3.1667F, -2.1F, 2, 36, 2, 0.0F, false));
-        fluid.cubeList.add(new ModelBox(fluid, 330, 382, -20.9784F, 3.1667F, 0.9F, 6, 36, 7, 0.0F, false));
-        fluid.cubeList.add(new ModelBox(fluid, 523, 452, -23.9784F, 3.1667F, 8.9F, 2, 36, 2, 0.0F, false));
-        fluid.cubeList.add(new ModelBox(fluid, 376, 313, -13.9784F, 3.1667F, 8.9F, 2, 36, 2, 0.0F, false));
-        fluid.cubeList.add(new ModelBox(fluid, 136, 307, -23.9784F, 3.1667F, -2.1F, 2, 36, 2, 0.0F, false));
-        fluid.cubeList.add(new ModelBox(fluid, 90, 376, -23.9784F, 3.1667F, 10.9F, 12, 36, 3, 0.0F, false));
+        setRotationAngle(fluid, 0.0F, 1.5708F, 3.1416F);
+        fluid.cubeList.add(new ModelBox(fluid, 544, 84, 17.9784F, -36.8333F, -6.1F, 2, 36, 2, 0.0F, false));
+        fluid.cubeList.add(new ModelBox(fluid, 330, 382, 10.9784F, -36.8333F, -3.1F, 6, 36, 7, 0.0F, false));
+        fluid.cubeList.add(new ModelBox(fluid, 523, 452, 7.9784F, -36.8333F, 4.9F, 2, 36, 2, 0.0F, false));
+        fluid.cubeList.add(new ModelBox(fluid, 376, 313, 17.9784F, -36.8333F, 4.9F, 2, 36, 2, 0.0F, false));
+        fluid.cubeList.add(new ModelBox(fluid, 136, 307, 7.9784F, -36.8333F, -6.1F, 2, 36, 2, 0.0F, false));
+        fluid.cubeList.add(new ModelBox(fluid, 90, 376, 7.9784F, -36.8333F, 6.9F, 12, 36, 3, 0.0F, false));
 
         cube_r51 = new ModelRenderer(this);
         cube_r51.setRotationPoint(-17.9784F, 8.1667F, -1.1F);
         fluid.addChild(cube_r51);
         setRotationAngle(cube_r51, -1.5708F, 0.0F, 0.0F);
-        cube_r51.cubeList.add(new ModelBox(cube_r51, 110, 0, -6.0F, -15.0F, -8.0F, 12, 16, 3, 0.0F, false));
+        cube_r51.cubeList.add(new ModelBox(cube_r51, 110, 0, 25.9568F, -10.9999F, -48.0F, 12, 16, 3, 0.0F, false));
 
         cube_r52 = new ModelRenderer(this);
         cube_r52.setRotationPoint(-12.9784F, 47.0667F, 7.9F);
         fluid.addChild(cube_r52);
         setRotationAngle(cube_r52, 0.0F, -1.5708F, -1.5708F);
-        cube_r52.cubeList.add(new ModelBox(cube_r52, 106, 292, -10.0F, -11.0F, -7.9F, 16, 12, 3, 0.0F, false));
+        cube_r52.cubeList.add(new ModelBox(cube_r52, 106, 292, -14.0001F, 20.9569F, -47.8999F, 16, 12, 3, 0.0F, false));
 
         cube_r53 = new ModelRenderer(this);
         cube_r53.setRotationPoint(-17.9784F, 0.1667F, -2.1216F);
         fluid.addChild(cube_r53);
         setRotationAngle(cube_r53, -0.8421F, 0.0F, 0.0F);
-        cube_r53.cubeList.add(new ModelBox(cube_r53, 451, 516, -6.0F, -6.0153F, 0.0153F, 12, 6, 4, 0.0F, false));
+        cube_r53.cubeList.add(new ModelBox(cube_r53, 451, 516, 25.9568F, -29.6671F, -32.49F, 12, 6, 4, 0.0F, false));
 
         cube_r54 = new ModelRenderer(this);
         cube_r54.setRotationPoint(-17.9784F, 2.1667F, 4.375F);
         fluid.addChild(cube_r54);
         setRotationAngle(cube_r54, -1.5708F, 0.0F, 0.0F);
-        cube_r54.cubeList.add(new ModelBox(cube_r54, 402, 549, -6.0F, -10.0F, -6.0F, 12, 12, 4, 0.0F, false));
+        cube_r54.cubeList.add(new ModelBox(cube_r54, 402, 549, 25.9568F, -5.9999F, -46.0F, 12, 12, 4, 0.0F, false));
 
         fluid_in = new ModelRenderer(this);
         fluid_in.setRotationPoint(0.0F, 45.4167F, 6.0216F);
         fluid.addChild(fluid_in);
         setRotationAngle(fluid_in, 3.1416F, 0.0F, 0.0F);
-        fluid_in.cubeList.add(new ModelBox(fluid_in, 68, 25, -20.9784F, 2.4167F, -0.9784F, 6, 1, 6, 0.0F, false));
-        fluid_in.cubeList.add(new ModelBox(fluid_in, 451, 482, -21.9784F, 1.4167F, -1.9784F, 8, 1, 8, 0.0F, false));
-        fluid_in.cubeList.add(new ModelBox(fluid_in, 240, 425, -22.9784F, 2.9667F, -2.9784F, 10, 1, 10, 0.0F, false));
+        fluid_in.cubeList.add(new ModelBox(fluid_in, 68, 25, 10.9784F, 42.4168F, 3.0213F, 6, 1, 6, 0.0F, false));
+        fluid_in.cubeList.add(new ModelBox(fluid_in, 451, 482, 9.9784F, 41.4168F, 2.0213F, 8, 1, 8, 0.0F, false));
+        fluid_in.cubeList.add(new ModelBox(fluid_in, 240, 425, 8.9784F, 42.9668F, 1.0213F, 10, 1, 10, 0.0F, false));
 
         gas2 = new ModelRenderer(this);
-        gas2.setRotationPoint(-88.0F, -60.0F, 29.9784F);
+        gas2.setRotationPoint(-83.5F, -60.0F, 25.9784F);
         port.addChild(gas2);
-        setRotationAngle(gas2, 0.0F, 1.5708F, 0.0F);
-        gas2.cubeList.add(new ModelBox(gas2, 566, 82, 17.9784F, 3.1667F, 1.9F, 2, 36, 2, 0.0F, false));
-        gas2.cubeList.add(new ModelBox(gas2, 518, 84, 10.9784F, 3.1667F, 4.9F, 6, 36, 7, 0.0F, false));
-        gas2.cubeList.add(new ModelBox(gas2, 566, 44, 7.9784F, 3.1667F, 12.9F, 2, 36, 2, 0.0F, false));
-        gas2.cubeList.add(new ModelBox(gas2, 566, 6, 17.9784F, 3.1667F, 12.9F, 2, 36, 2, 0.0F, false));
-        gas2.cubeList.add(new ModelBox(gas2, 560, 149, 7.9784F, 3.1667F, 1.9F, 2, 36, 2, 0.0F, false));
-        gas2.cubeList.add(new ModelBox(gas2, 80, 518, 7.9784F, 3.1667F, 14.9F, 12, 36, 3, 0.0F, false));
+        setRotationAngle(gas2, 0.0F, -1.5708F, 3.1416F);
+        gas2.cubeList.add(new ModelBox(gas2, 566, 82, -5.9784F, -36.8333F, -2.6F, 2, 36, 2, 0.0F, false));
+        gas2.cubeList.add(new ModelBox(gas2, 518, 84, -12.9784F, -36.8333F, 0.4F, 6, 36, 7, 0.0F, false));
+        gas2.cubeList.add(new ModelBox(gas2, 566, 44, -15.9784F, -36.8333F, 8.4F, 2, 36, 2, 0.0F, false));
+        gas2.cubeList.add(new ModelBox(gas2, 566, 6, -5.9784F, -36.8333F, 8.4F, 2, 36, 2, 0.0F, false));
+        gas2.cubeList.add(new ModelBox(gas2, 560, 149, -15.9784F, -36.8333F, -2.6F, 2, 36, 2, 0.0F, false));
+        gas2.cubeList.add(new ModelBox(gas2, 80, 518, -15.9784F, -36.8333F, 10.4F, 12, 36, 3, 0.0F, false));
 
         cube_r55 = new ModelRenderer(this);
         cube_r55.setRotationPoint(9.9784F, 8.1667F, -1.1F);
         gas2.addChild(cube_r55);
         setRotationAngle(cube_r55, -1.5708F, 0.0F, 0.0F);
-        cube_r55.cubeList.add(new ModelBox(cube_r55, 45, 376, -2.0F, -19.0F, -8.0F, 12, 16, 3, 0.0F, false));
+        cube_r55.cubeList.add(new ModelBox(cube_r55, 45, 376, -25.9568F, -14.4998F, -48.0F, 12, 16, 3, 0.0F, false));
 
         cube_r56 = new ModelRenderer(this);
         cube_r56.setRotationPoint(14.9784F, 47.0667F, 7.9F);
         gas2.addChild(cube_r56);
         setRotationAngle(cube_r56, 0.0F, -1.5708F, -1.5708F);
-        cube_r56.cubeList.add(new ModelBox(cube_r56, 540, 392, -6.0F, -7.0F, -7.9F, 16, 12, 3, 0.0F, false));
+        cube_r56.cubeList.add(new ModelBox(cube_r56, 540, 392, -10.5002F, -30.9567F, -47.9001F, 16, 12, 3, 0.0F, false));
 
         cube_r57 = new ModelRenderer(this);
         cube_r57.setRotationPoint(9.9784F, 0.1667F, -2.1216F);
         gas2.addChild(cube_r57);
         setRotationAngle(cube_r57, -0.8421F, 0.0F, 0.0F);
-        cube_r57.cubeList.add(new ModelBox(cube_r57, 355, 535, -2.0F, -8.9995F, 2.6788F, 12, 6, 4, 0.0F, false));
+        cube_r57.cubeList.add(new ModelBox(cube_r57, 355, 535, -25.9568F, -32.2782F, -30.1595F, 12, 6, 4, 0.0F, false));
 
         cube_r58 = new ModelRenderer(this);
         cube_r58.setRotationPoint(9.9784F, 2.1667F, 4.375F);
         gas2.addChild(cube_r58);
         setRotationAngle(cube_r58, -1.5708F, 0.0F, 0.0F);
-        cube_r58.cubeList.add(new ModelBox(cube_r58, 182, 554, -2.0F, -14.0F, -6.0F, 12, 12, 4, 0.0F, false));
+        cube_r58.cubeList.add(new ModelBox(cube_r58, 182, 554, -25.9568F, -9.4998F, -46.0F, 12, 12, 4, 0.0F, false));
 
         gas_in3 = new ModelRenderer(this);
         gas_in3.setRotationPoint(0.0F, 45.4167F, 6.0216F);
         gas2.addChild(gas_in3);
         setRotationAngle(gas_in3, 3.1416F, 0.0F, 0.0F);
-        gas_in3.cubeList.add(new ModelBox(gas_in3, 0, 146, 10.9784F, 2.4167F, -4.9784F, 6, 1, 6, 0.0F, false));
-        gas_in3.cubeList.add(new ModelBox(gas_in3, 463, 532, 9.9784F, 1.4167F, -5.9784F, 8, 1, 8, 0.0F, false));
-        gas_in3.cubeList.add(new ModelBox(gas_in3, 391, 536, 8.9784F, 2.9667F, -6.9784F, 10, 1, 10, 0.0F, false));
+        gas_in3.cubeList.add(new ModelBox(gas_in3, 0, 146, -12.9784F, 42.4167F, -0.4787F, 6, 1, 6, 0.0F, false));
+        gas_in3.cubeList.add(new ModelBox(gas_in3, 463, 532, -13.9784F, 41.4167F, -1.4787F, 8, 1, 8, 0.0F, false));
+        gas_in3.cubeList.add(new ModelBox(gas_in3, 391, 536, -14.9784F, 42.9667F, -2.4787F, 10, 1, 10, 0.0F, false));
 
         fluid2 = new ModelRenderer(this);
         fluid2.setRotationPoint(-88.0F, -60.0F, 61.9784F);
@@ -930,23 +930,23 @@ public class ModelDigitalAssemblyTable extends ModelBase {
         glass2.setRotationPoint(196.0F, 0.0F, -196.5F);
         glass.addChild(glass2);
         setRotationAngle(glass2, 0.0F, -1.5708F, 0.0F);
-        glass2.cubeList.add(new ModelBox(glass2, 60, 534, 43.0F, -56.8333F, 111.9F, 1, 36, 9, 0.0F, false));
+        glass2.cubeList.add(new ModelBox(glass2, 60, 534, 43.0004F, -59.1667F, 111.8999F, 1, 36, 9, 0.0F, false));
         glass2.cubeList.add(new ModelBox(glass2, 40, 534, 21.0F, -56.8333F, 111.9F, 1, 36, 9, 0.0F, false));
         glass2.cubeList.add(new ModelBox(glass2, 20, 534, 11.0F, -56.8333F, 111.9F, 1, 36, 9, 0.0F, false));
-        glass2.cubeList.add(new ModelBox(glass2, 0, 534, 53.0F, -56.8333F, 111.9F, 1, 36, 9, 0.0F, false));
-        glass2.cubeList.add(new ModelBox(glass2, 248, 452, 44.5F, -56.8333F, 110.4F, 8, 36, 1, 0.0F, false));
+        glass2.cubeList.add(new ModelBox(glass2, 0, 534, 53.0004F, -59.1667F, 111.8998F, 1, 36, 9, 0.0F, false));
+        glass2.cubeList.add(new ModelBox(glass2, 248, 452, 44.5004F, -59.1667F, 110.3998F, 8, 36, 1, 0.0F, false));
         glass2.cubeList.add(new ModelBox(glass2, 248, 452, 12.5F, -56.8333F, 110.4F, 8, 36, 1, 0.0F, false));
 
         glass3 = new ModelRenderer(this);
         glass3.setRotationPoint(-196.0F, 0.0F, -104.0F);
         glass.addChild(glass3);
         setRotationAngle(glass3, 0.0F, 1.5708F, 0.0F);
-        glass3.cubeList.add(new ModelBox(glass3, 506, 532, 70.5F, -56.8333F, 111.9F, 1, 36, 9, 0.0F, false));
+        glass3.cubeList.add(new ModelBox(glass3, 506, 532, 70.4996F, -59.1667F, 111.9003F, 1, 36, 9, 0.0F, false));
         glass3.cubeList.add(new ModelBox(glass3, 248, 452, 40.0F, -56.8333F, 110.4F, 8, 36, 1, 0.0F, false));
         glass3.cubeList.add(new ModelBox(glass3, 486, 532, 48.5F, -56.8333F, 111.9F, 1, 36, 9, 0.0F, false));
         glass3.cubeList.add(new ModelBox(glass3, 520, 194, 38.5F, -56.8333F, 111.9F, 1, 36, 9, 0.0F, false));
-        glass3.cubeList.add(new ModelBox(glass3, 520, 149, 80.5F, -56.8333F, 111.9F, 1, 36, 9, 0.0F, false));
-        glass3.cubeList.add(new ModelBox(glass3, 102, 442, 72.0F, -56.8333F, 110.4F, 8, 36, 1, 0.0F, false));
+        glass3.cubeList.add(new ModelBox(glass3, 520, 149, 80.4996F, -59.1667F, 111.9003F, 1, 36, 9, 0.0F, false));
+        glass3.cubeList.add(new ModelBox(glass3, 102, 442, 71.9996F, -59.1667F, 110.4003F, 8, 36, 1, 0.0F, false));
 
         glass4 = new ModelRenderer(this);
         glass4.setRotationPoint(0.0F, 24.0F, 0.0F);

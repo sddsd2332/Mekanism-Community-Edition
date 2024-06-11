@@ -343,7 +343,7 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
 
     @Override
     public boolean canDrawGas(EnumFacing side, Gas type) {
-        return outputGasTank.canDraw(type) && side == EnumFacing.DOWN;
+        return outputGasTank.canDraw(type) && side == EnumFacing.UP;
     }
 
     @NotNull
@@ -365,12 +365,12 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
 
     @Override
     public boolean canFill(EnumFacing from, @NotNull FluidStack fluid) {
-        return RecipeHandler.Recipe.DIGITAL_ASSEMBLY_TABLE.containsRecipe(fluid.getFluid()) && from == EnumFacing.DOWN;
+        return RecipeHandler.Recipe.DIGITAL_ASSEMBLY_TABLE.containsRecipe(fluid.getFluid()) && from == EnumFacing.UP;
     }
 
     @Override
     public boolean canDrain(EnumFacing from, @Nullable FluidStack fluid) {
-        return outputFluidTank.getFluidAmount() > 0 && FluidContainerUtils.canDrain(outputFluidTank.getFluid(), fluid);
+        return outputFluidTank.getFluidAmount() > 0 && FluidContainerUtils.canDrain(outputFluidTank.getFluid(), fluid) && from == EnumFacing.DOWN;
     }
 
     @Override
