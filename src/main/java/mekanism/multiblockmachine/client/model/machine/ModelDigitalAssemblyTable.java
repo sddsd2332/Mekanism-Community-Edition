@@ -979,31 +979,38 @@ public class ModelDigitalAssemblyTable extends ModelBase {
         ornament.cubeList.add(new ModelBox(ornament, 110, 19, -41.0F, -12.0F, -29.0F, 13, 2, 2, 0.0F, false));
     }
 
-    public void renderWithPiston(float piston, float size,boolean isEnableGlow) {
+    public void renderWithPiston(float piston, float size) {
         door1.rotationPointY = 24 - (piston * 16);
         door2.rotationPointY = 40 - (piston * 16 * 2);
         door3.rotationPointY = 56 - (piston * 16 * 3);
-        render(size,isEnableGlow);
-
-    }
-
-    public void render(float size,boolean isEnableGlow) {
         GlStateManager.pushMatrix();
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
         doRender(size);
-        if (isEnableGlow) {
-            GlStateManager.shadeModel(GL11.GL_SMOOTH);
-            GlStateManager.disableAlpha();
-            GlStateManager.enableBlend();
-            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            glass.render(size);
-            glass4.render(size);
-            GlStateManager.disableBlend();
-            GlStateManager.enableAlpha();
-        }else {
-            glass.render(size);
-            glass4.render(size);
-        }
+        GlStateManager.popMatrix();
+
+    }
+
+    public void renderItem(float size) {
+        GlStateManager.pushMatrix();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        doRender(size);
+        glass.render(size);
+        glass4.render(size);
+        GlStateManager.popMatrix();
+
+    }
+
+
+    public void renderGlass(float size) {
+        GlStateManager.pushMatrix();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        GlStateManager.disableAlpha();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        glass.render(size);
+        glass4.render(size);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
         GlStateManager.popMatrix();
     }
 

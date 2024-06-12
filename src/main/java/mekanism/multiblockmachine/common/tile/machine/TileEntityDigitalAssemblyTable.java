@@ -33,6 +33,8 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,10 +57,10 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
     public int updateDelay;
     public boolean needsPacket;
     public int numPowering;
-    private int currentRedstoneLevel;
-    private boolean rendererInitialized = false;
     public int DoorHeight;
     public double prevEnergyScale;
+    private int currentRedstoneLevel;
+    private boolean rendererInitialized = false;
 
     public TileEntityDigitalAssemblyTable() {
         super("digitalassemblytable", BlockStateMultiblockMachine.MultiblockMachineType.DIGITAL_ASSEMBLY_TABLE, 200, 0);
@@ -117,7 +119,7 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
             }
             prevEnergy = getEnergy();
             handleGasTank(outputGasTank, getGasTankside());
-            handleFluidTank(outputFluidTank,getFluidTankside());
+            handleFluidTank(outputFluidTank, getFluidTankside());
         } else {
             if (!isActive) {
                 if (DoorHeight < 16) {
@@ -134,7 +136,7 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
                     MekanismUtils.updateBlock(world, getPos());
                 }
             }
-            double targetEnergyScale =  (getEnergy() != 0 ? getEnergy() : 0) / getMaxEnergy();
+            double targetEnergyScale = getEnergy() / getMaxEnergy();
             if (Math.abs(prevEnergyScale - targetEnergyScale) > 0.01) {
                 prevEnergyScale = (9 * prevEnergyScale + targetEnergyScale) / 10;
             }
@@ -146,7 +148,7 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
     }
 
     private TileEntity getGasTankside() {
-        BlockPos pos = getPos().offset(MekanismUtils.getLeft(facing),5).up(3).offset(MekanismUtils.getBack(facing));
+        BlockPos pos = getPos().offset(MekanismUtils.getLeft(facing), 5).up(3).offset(MekanismUtils.getBack(facing));
         if (world.getTileEntity(pos) != null) {
             return world.getTileEntity(pos);
         }
@@ -155,7 +157,7 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
     }
 
     private TileEntity getFluidTankside() {
-        BlockPos pos = getPos().offset(MekanismUtils.getLeft(facing),5).up().offset(MekanismUtils.getBack(facing),3);
+        BlockPos pos = getPos().offset(MekanismUtils.getLeft(facing), 5).up().offset(MekanismUtils.getBack(facing), 3);
         if (world.getTileEntity(pos) != null) {
             return world.getTileEntity(pos);
         }
@@ -306,6 +308,7 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
     public void handlePacketData(ByteBuf dataStream) {
         super.handlePacketData(dataStream);
         if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
+            prevEnergyScale = dataStream.readDouble();
             TileUtils.readTankData(dataStream, inputFluidTank);
             TileUtils.readTankData(dataStream, inputGasTank);
             TileUtils.readTankData(dataStream, outputFluidTank);
@@ -367,7 +370,7 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
 
     @Override
     public boolean canReceiveGas(EnumFacing side, Gas type) {
-            return inputGasTank.canReceive(type) && RecipeHandler.Recipe.DIGITAL_ASSEMBLY_TABLE.containsRecipe(type) && side == EnumFacing.DOWN;
+        return inputGasTank.canReceive(type) && RecipeHandler.Recipe.DIGITAL_ASSEMBLY_TABLE.containsRecipe(type) && side == EnumFacing.DOWN;
     }
 
     @Override
@@ -795,6 +798,11 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
             return true;
         }
         return false;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public double getMaxRenderDistanceSquared() {
+        return 16384.0D;
     }
 
 }

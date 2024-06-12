@@ -24,15 +24,14 @@ import java.util.Map;
 @SideOnly(Side.CLIENT)
 public class RenderDigitalAssemblyTable extends RenderTileEntityTime<TileEntityDigitalAssemblyTable> {
     public static final RenderDigitalAssemblyTable INSTANCE = new RenderDigitalAssemblyTable();
-    private ModelDigitalAssemblyTable model = new ModelDigitalAssemblyTable();
-
+    private static final int stages = 3600;
     private static GasRenderMap<DisplayInteger[]> cachedCenterInputGas = new GasRenderMap<>();
     private static GasRenderMap<DisplayInteger[]> cachedCenterOutputGas = new GasRenderMap<>();
     private static Map<EnumFacing, DisplayInteger[]> energyDisplays1 = new EnumMap<>(EnumFacing.class);
     private static Map<EnumFacing, DisplayInteger[]> energyDisplays2 = new EnumMap<>(EnumFacing.class);
     private static FluidRenderMap<DisplayInteger[]> cachedCenterInputFluids = new FluidRenderMap<>();
     private static FluidRenderMap<DisplayInteger[]> cachedCenterOutputFluids = new FluidRenderMap<>();
-    private static final int stages = 3600;
+    private ModelDigitalAssemblyTable model = new ModelDigitalAssemblyTable();
 
     public static void resetDisplayInts() {
         cachedCenterInputGas.clear();
@@ -45,9 +44,19 @@ public class RenderDigitalAssemblyTable extends RenderTileEntityTime<TileEntityD
 
     @Override
     public void render(TileEntityDigitalAssemblyTable tileEntity, double x, double y, double z, float partialTick, int destroyStage, float alpha) {
+        GlStateManager.pushMatrix();
+        GlStateManager.translate((float) x + 0.5F, (float) y + 1.5F, (float) z + 0.5F);
+        bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "DigitalAssemblyTable/DigitalAssemblyTable.png"));
+        MekanismRenderer.rotate(tileEntity.facing, 0, 180, 90, 270);
+        float actualRate = tileEntity.DoorHeight / 16F;
+        GlStateManager.rotate(180, 0, 0, 1);
+        model.renderWithPiston(Math.max(0, actualRate), 0.0625F); // 先渲染本体
+        GlStateManager.popMatrix();
+
         if (tileEntity.getEnergy() > 0) {
             GlStateManager.pushMatrix();
             GlStateManager.enableCull();
+            GlStateManager.disableAlpha();
             GlStateManager.enableBlend();
             GlStateManager.disableLighting();
             GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
@@ -55,24 +64,27 @@ public class RenderDigitalAssemblyTable extends RenderTileEntityTime<TileEntityD
             GlStateManager.translate((float) x, (float) y, (float) z);
             bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             DisplayInteger[] displayEnergyList1 = getEnergy1DisplayList(tileEntity.facing);
-            displayEnergyList1[Math.min(stages - 1, (int) (tileEntity.prevEnergyScale * ((float) stages - 1)))].render();
+            displayEnergyList1[tileEntity.getScaledEnergyLevel(stages - 1)].render();
             DisplayInteger[] displayEnergyList2 = getEnergy2DisplayList(tileEntity.facing);
-            displayEnergyList2[Math.min(stages - 1, (int) (tileEntity.prevEnergyScale * ((float) stages - 1)))].render();
+            displayEnergyList2[tileEntity.getScaledEnergyLevel(stages - 1)].render();
             MekanismRenderer.disableGlow(glowInfo);
             GlStateManager.enableLighting();
             GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
             GlStateManager.disableCull();
             GlStateManager.popMatrix();
         }
+
         GlStateManager.pushMatrix();
         GlStateManager.translate((float) x + 0.5F, (float) y + 1.5F, (float) z + 0.5F);
         bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "DigitalAssemblyTable/DigitalAssemblyTable.png"));
         MekanismRenderer.rotate(tileEntity.facing, 0, 180, 90, 270);
-        float actualRate = tileEntity.DoorHeight / 16F;
         GlStateManager.rotate(180, 0, 0, 1);
-        model.renderWithPiston(Math.max(0, actualRate), 0.0625F, true);
+        model.renderGlass(0.0625F);// 最后渲染玻璃
         GlStateManager.popMatrix();
+
     }
+
 
     private DisplayInteger[] getInputGasListAndRender(GasStack gasStack, EnumFacing side) {
         if (cachedCenterInputGas.containsKey(gasStack)) {
@@ -307,4 +319,10 @@ public class RenderDigitalAssemblyTable extends RenderTileEntityTime<TileEntityD
         }
         return displays;
     }
+
+    @Override
+    public boolean isGlobalRenderer(TileEntityDigitalAssemblyTable te) {
+        return true;
+    }
+
 }

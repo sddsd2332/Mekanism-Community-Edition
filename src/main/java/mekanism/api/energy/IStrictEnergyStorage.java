@@ -27,4 +27,8 @@ public interface IStrictEnergyStorage {
      * @return maximum energy
      */
     double getMaxEnergy();
+
+    default double getNeedEnergy() {
+        return getMaxEnergy() - getEnergy();
+    }
 }

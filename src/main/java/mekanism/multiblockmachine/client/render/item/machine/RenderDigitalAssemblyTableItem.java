@@ -26,7 +26,7 @@ public class RenderDigitalAssemblyTableItem {
         }
         GlStateManager.translate(0, 0.1F, 0);
         MekanismRenderer.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "DigitalAssemblyTable/DigitalAssemblyTable.png"));
-        model.render(0.007F,false);
+        model.renderItem(0.007F);
         GlStateManager.popMatrix();
     }
 }
