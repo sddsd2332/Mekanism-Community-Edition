@@ -21,7 +21,7 @@ public class RenderLargeHeatGenerator extends RenderTileEntityTime<TileEntityLar
         bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER, "HeatGenerator/LargeHeatGenerator.png"));
         MekanismRenderer.rotate(tileEntity.facing, 180, 0, 270, 90);
         GlStateManager.rotate(180, 0, 0, 1);
-        model.render(getTime(), 0.0625F, tileEntity.getActive(), rendererDispatcher.renderEngine);
+        model.render(getTime(), 0.0625F, tileEntity.getActive(), rendererDispatcher.renderEngine,true);
         GlStateManager.popMatrix();
     }
 

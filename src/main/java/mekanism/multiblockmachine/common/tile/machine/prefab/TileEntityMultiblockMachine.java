@@ -40,7 +40,6 @@ public abstract class TileEntityMultiblockMachine extends TileEntityEffectsBlock
         energyPerTick = BASE_ENERGY_PER_TICK = type.getUsage();
         upgradeComponent = new TileComponentUpgrade(this,slot ,false);
         upgradeComponent.setSupported(Upgrade.MUFFLING);
-        upgradeComponent.setSupported(Upgrade.THREAD);
     }
 
     public int Thread(){

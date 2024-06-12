@@ -18,7 +18,9 @@ tile.MultiblockMachine.LargeChemicalInfuser.name=Large Chemical Infuser
 tooltip.LargeChemicalInfuser=A large machine that produces a new gas by infusing two others.
 tile.MultiblockMachine.LargeChemicalWasher.name=Large Chemical Washer
 tooltip.LargeChemicalWasher=An large ultimate machine that cleans unprocessed slurry and prepares it for crystallization.
-
+sound_event.mekanismmultiblockmachine.tile.machine.digitalassemblytable=Digital Assembly Table hums
+tile.MultiblockMachine.DigitalAssemblyTable.name=Digital Assembly Table
+tooltip.DigitalAssemblyTable=A range of machines can be assembled
 # Creative tab
 itemGroup.tabMekanismMultiblockMachine=Mekanism Multiblock Machine
 

@@ -2,7 +2,10 @@ package mekanism.client.render.tileentity;
 
 import mekanism.api.gas.GasStack;
 import mekanism.client.model.ModelChemicalDissolutionChamber;
+import mekanism.client.render.GasRenderMap;
 import mekanism.client.render.MekanismRenderer;
+import mekanism.client.render.MekanismRenderer.DisplayInteger;
+import mekanism.client.render.MekanismRenderer.Model3D;
 import mekanism.common.tile.machine.TileEntityChemicalDissolutionChamber;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
@@ -10,20 +13,24 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 @SideOnly(Side.CLIENT)
 public class RenderChemicalDissolutionChamber extends TileEntitySpecialRenderer<TileEntityChemicalDissolutionChamber> {
 
-    private static final int stages = 10000;
+    public static final RenderChemicalDissolutionChamber INSTANCE = new RenderChemicalDissolutionChamber();
+
+    private static GasRenderMap<DisplayInteger[]> cachedCenterGas = new GasRenderMap<>();
+
+    private static final int stages = 500;
+
     private ModelChemicalDissolutionChamber model = new ModelChemicalDissolutionChamber();
-    private Map<EnumFacing, MekanismRenderer.DisplayInteger[]> energyDisplays = new EnumMap<>(EnumFacing.class);
+
+    public static void resetDisplayInts() {
+        cachedCenterGas.clear();
+    }
 
     @Override
     public void render(TileEntityChemicalDissolutionChamber tileEntity, double x, double y, double z, float partialTick, int destroyStage, float alpha) {
@@ -38,8 +45,9 @@ public class RenderChemicalDissolutionChamber extends TileEntitySpecialRenderer<
             bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             GlStateManager.translate((float) x, (float) y, (float) z);
             MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
+            DisplayInteger[] displayList = getListAndRender(tileEntity.outputTank.getGas());
             MekanismRenderer.color(tileEntity.outputTank.getGas());
-            getDisplayList(tileEntity.facing, tileEntity.outputTank.getGas())[tileEntity.getScaledFuelLevel(stages - 1)].render();
+            displayList[Math.min(stages - 1, (int) (tileEntity.prevScale * ((float) stages - 1)))].render();
             MekanismRenderer.resetColor();
             MekanismRenderer.disableGlow(glowInfo);
             GlStateManager.disableBlend();
@@ -54,35 +62,35 @@ public class RenderChemicalDissolutionChamber extends TileEntitySpecialRenderer<
         bindTexture(MekanismUtils.getResource(ResourceType.RENDER, "ChemicalDissolutionChamber.png"));
         MekanismRenderer.rotate(tileEntity.facing, 0, 180, 90, 270);
         GlStateManager.rotate(180, 0, 0, 1);
-        model.render(0.0625F);
+        model.render(0.0625F,true);
         GlStateManager.popMatrix();
         MekanismRenderer.machineRenderer().render(tileEntity, x, y, z, partialTick, destroyStage, alpha);
     }
 
     @SuppressWarnings("incomplete-switch")
-    private MekanismRenderer.DisplayInteger[] getDisplayList(EnumFacing side, GasStack gasStack) {
-        if (energyDisplays.containsKey(side)) {
-            return energyDisplays.get(side);
+    private DisplayInteger[] getListAndRender(GasStack gasStack) {
+        if (cachedCenterGas.containsKey(gasStack)) {
+            return cachedCenterGas.get(gasStack);
         }
 
-        MekanismRenderer.DisplayInteger[] displays = new MekanismRenderer.DisplayInteger[stages];
-        MekanismRenderer.Model3D model3D = new MekanismRenderer.Model3D();
-        model3D.baseBlock = Blocks.WATER;
-        model3D.setTexture(gasStack.getGas().getSprite());
+        Model3D toReturn = new Model3D();
+        toReturn.baseBlock = Blocks.WATER;
+        toReturn.setTexture(gasStack.getGas().getSprite());
+        DisplayInteger[] displays = new DisplayInteger[stages];
+        cachedCenterGas.put(gasStack, displays);
+
         for (int i = 0; i < stages; i++) {
-            displays[i] = MekanismRenderer.DisplayInteger.createAndStart();
-            model3D.minZ = 0.125;
-            model3D.maxZ = 0.875;
-            model3D.minX = 0.125;
-            model3D.maxX = 0.875;
-            model3D.minY = 0.4375 + 0.001;  //prevent z fighting at low fuel levels
-            model3D.maxY = 0.4375 + ((float) i / stages) * 0.3125 + 0.001;
+            displays[i] = DisplayInteger.createAndStart();
+            toReturn.minZ = 0.125 + .01;
+            toReturn.maxZ = 0.875 - .01;
+            toReturn.minX = 0.125 + .01;
+            toReturn.maxX = 0.875 - .01;
+            toReturn.minY = 0.4375 + .01;
+            toReturn.maxY = 0.4375 + ((float) i / stages) * 0.3125 - .01;
 
-            MekanismRenderer.renderObject(model3D);
-            MekanismRenderer.DisplayInteger.endList();
+            MekanismRenderer.renderObject(toReturn);
+            DisplayInteger.endList();
         }
-
-        energyDisplays.put(side, displays);
         return displays;
     }
 }

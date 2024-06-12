@@ -1916,24 +1916,27 @@ public class ModelLargeWindGenerator extends ModelBase {
     }
 
 
-    public void render(double tick,float size, double angle, boolean on, TextureManager manager) {
+    public void render(double tick,float size, double angle, boolean on, TextureManager manager,boolean isEnableGlow) {
         GlStateManager.pushMatrix();
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        GlStateManager.disableAlpha();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         doRender(size, angle);
-        if (!Mekanism.hooks.Bloom) {
+        GlStateManager.popMatrix();
+        if (isEnableGlow) {
+            GlStateManager.pushMatrix();
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            GlStateManager.disableAlpha();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
             manager.bindTexture(on ? MekanismMultiblockMachineUtils.getResource(ResourceType.RENDER, "WindGenerator/LargeWindGenerator_ON_" + getTick(tick) + ".png") : OVERLAY_OFF);
             GlStateManager.scale(1.001F, 1.001F, 1.001F);
             GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
             MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
             doRender(size, angle);
             MekanismRenderer.disableGlow(glowInfo);
+            GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
+            GlStateManager.popMatrix();
         }
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.popMatrix();
     }
 
     public void renderBloom(double tick,float size,  double angle,boolean on, TextureManager manager) {
@@ -1943,8 +1946,8 @@ public class ModelLargeWindGenerator extends ModelBase {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         manager.bindTexture(on ? MekanismMultiblockMachineUtils.getResource(ResourceType.RENDER, "WindGenerator/LargeWindGenerator_ON_" + getTick(tick) + ".png") : OVERLAY_OFF);
-        GlStateManager.scale(1.001F, 1.001F, 1.001F);
-        GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
+        GlStateManager.scale(1.0011F, 1.0011F, 1.0011F);
+        GlStateManager.translate(-0.0012F, -0.0012F, -0.0012F);
         MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
         doRender(size, angle);
         MekanismRenderer.disableGlow(glowInfo);

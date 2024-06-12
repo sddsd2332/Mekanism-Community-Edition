@@ -5,6 +5,7 @@ import mekanism.client.render.item.ItemLayerWrapper;
 import mekanism.multiblockmachine.client.gui.generator.GuiLargeGasGenerator;
 import mekanism.multiblockmachine.client.gui.generator.GuiLargeHeatGenerator;
 import mekanism.multiblockmachine.client.gui.generator.GuiLargeWindGenerator;
+import mekanism.multiblockmachine.client.gui.machine.GuiDigitalAssemblyTable;
 import mekanism.multiblockmachine.client.gui.machine.GuiLargeChemicalInfuser;
 import mekanism.multiblockmachine.client.gui.machine.GuiLargeChemicalWasher;
 import mekanism.multiblockmachine.client.gui.machine.GuiLargeElectrolyticSeparator;
@@ -13,12 +14,14 @@ import mekanism.multiblockmachine.client.render.generator.RenderLargeHeatGenerat
 import mekanism.multiblockmachine.client.render.generator.RenderLargeWindGenerator;
 import mekanism.multiblockmachine.client.render.item.generator.RenderMultiblockGeneratorItem;
 import mekanism.multiblockmachine.client.render.item.machine.RenderMultiblockMachineItem;
+import mekanism.multiblockmachine.client.render.machine.RenderDigitalAssemblyTable;
 import mekanism.multiblockmachine.client.render.machine.RenderLargeChemicalInfuser;
 import mekanism.multiblockmachine.client.render.machine.RenderLargeChemicalWasher;
 import mekanism.multiblockmachine.client.render.machine.RenderLargeElectrolyticSeparator;
 import mekanism.multiblockmachine.common.MekanismMultiblockMachine;
 import mekanism.multiblockmachine.common.MultiblockMachineBlocks;
 import mekanism.multiblockmachine.common.MultiblockMachineCommonProxy;
+import mekanism.multiblockmachine.common.MultiblockMachineItems;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine.MultiblockMachineBlockStateMapper;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine.MultiblockMachineType;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachineGenerator.MultiblockMachineGeneratorBlockStateMapper;
@@ -26,6 +29,7 @@ import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachin
 import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeGasGenerator;
 import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeHeatGenerator;
 import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeWindGenerator;
+import mekanism.multiblockmachine.common.tile.machine.TileEntityDigitalAssemblyTable;
 import mekanism.multiblockmachine.common.tile.machine.TileEntityLargeChemicalInfuser;
 import mekanism.multiblockmachine.common.tile.machine.TileEntityLargeChemicalWasher;
 import mekanism.multiblockmachine.common.tile.machine.TileEntityLargeElectrolyticSeparator;
@@ -41,6 +45,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -62,12 +67,15 @@ public class MultiblockMachineClientProxy extends MultiblockMachineCommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLargeElectrolyticSeparator.class, new RenderLargeElectrolyticSeparator());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLargeChemicalInfuser.class, new RenderLargeChemicalInfuser());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLargeChemicalWasher.class, new RenderLargeChemicalWasher());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityDigitalAssemblyTable.class,RenderDigitalAssemblyTable.INSTANCE);
     }
 
     @Override
     public void registerItemRenders() {
+        registerItemRender(MultiblockMachineItems.PlasmaCutterNozzles);
+        registerItemRender(MultiblockMachineItems.DrillBit);
+        registerItemRender(MultiblockMachineItems.LaserLenses);
         Item.getItemFromBlock(MultiblockMachineBlocks.MultiblockGenerator).setTileEntityItemStackRenderer(new RenderMultiblockGeneratorItem());
-
         Item.getItemFromBlock(MultiblockMachineBlocks.MultiblockMachine).setTileEntityItemStackRenderer(new RenderMultiblockMachineItem());
     }
 
@@ -103,6 +111,7 @@ public class MultiblockMachineClientProxy extends MultiblockMachineCommonProxy {
         machineModelBake(modelRegistry, "large_electrolytic_separator", MultiblockMachineType.LARGE_ELECTROLYTIC_SEPARATOR);
         machineModelBake(modelRegistry, "large_chemical_infuser", MultiblockMachineType.LARGE_CHEMICAL_INFUSER);
         machineModelBake(modelRegistry, "large_chemical_washer", MultiblockMachineType.LARGE_CHEMICAL_WASHER);
+        machineModelBake(modelRegistry,"digital_assembly_table",MultiblockMachineType.DIGITAL_ASSEMBLY_TABLE);
     }
 
 
@@ -135,8 +144,14 @@ public class MultiblockMachineClientProxy extends MultiblockMachineCommonProxy {
             case 3 -> new GuiLargeElectrolyticSeparator(player.inventory, (TileEntityLargeElectrolyticSeparator) tileEntity);
             case 4 -> new GuiLargeChemicalInfuser(player.inventory, (TileEntityLargeChemicalInfuser) tileEntity);
             case 5 -> new GuiLargeChemicalWasher(player.inventory, (TileEntityLargeChemicalWasher) tileEntity);
+            case 6 -> new GuiDigitalAssemblyTable(player.inventory,(TileEntityDigitalAssemblyTable) tileEntity);
             default -> null;
         };
+    }
+
+    @SubscribeEvent
+    public void onStitch(TextureStitchEvent.Pre event) {
+        RenderDigitalAssemblyTable.resetDisplayInts();
     }
 
 }

@@ -8,8 +8,7 @@ import mekanism.api.infuse.InfuseRegistry;
 import mekanism.api.infuse.InfuseType;
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.client.render.obj.TransmitterModel;
-import mekanism.client.render.tileentity.RenderConfigurableMachine;
-import mekanism.client.render.tileentity.RenderFluidTank;
+import mekanism.client.render.tileentity.*;
 import mekanism.client.render.transmitter.RenderLogisticalTransporter;
 import mekanism.client.render.transmitter.RenderMechanicalPipe;
 import mekanism.common.Mekanism;
@@ -386,6 +385,10 @@ public class MekanismRenderer {
 
         FluidRenderer.resetDisplayInts();
         RenderFluidTank.resetDisplayInts();
+        RenderNutritionalLiquifier.resetDisplayInts();
+        RenderIsotopicCentrifuge.resetDisplayInts();
+        RenderChemicalCrystallizer.resetDisplayInts();
+        RenderChemicalDissolutionChamber.resetDisplayInts();
     }
 
     @SubscribeEvent

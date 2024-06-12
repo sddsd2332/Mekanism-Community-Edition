@@ -437,24 +437,28 @@ public class ModelDigitalMiner extends ModelBase {
         return MekanismUtils.getResource(ResourceType.RENDER, "DigitalMiner_OverlayOn_" + getTick(tick) + ".png");
     }
 
-    public void render(double tick, float size, boolean on, TextureManager manager) {
+    public void render(double tick, float size, boolean on, TextureManager manager,boolean isEnableGlow) {
         GlStateManager.pushMatrix();
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        GlStateManager.disableAlpha();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         doRender(size);
-        if (!Mekanism.hooks.Bloom) {
+        GlStateManager.popMatrix();
+        if (isEnableGlow) {
+            GlStateManager.pushMatrix();
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            GlStateManager.disableAlpha();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
             manager.bindTexture(on ? isON(tick) : OVERLAY_OFF);
             GlStateManager.scale(1.001F, 1.001F, 1.001F);
-            GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
+            GlStateManager.translate(-0.0012F, -0.0012F, -0.0012F);
             GlowInfo glowInfo = MekanismRenderer.enableGlow();
             doRender(size);
             MekanismRenderer.disableGlow(glowInfo);
+            GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
+            GlStateManager.popMatrix();
         }
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.popMatrix();
+
     }
 
     public void renderBloom(double tick, float size, boolean on, TextureManager manager) {
@@ -464,7 +468,7 @@ public class ModelDigitalMiner extends ModelBase {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
         manager.bindTexture(on ? isON(tick) : OVERLAY_OFF);
-        GlStateManager.scale(1.001F, 1.001F, 1.001F);
+        GlStateManager.scale(1.0011F, 1.0011F, 1.0011F);
         GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
         GlowInfo glowInfo = MekanismRenderer.enableGlow();
         doRender(size);

@@ -229,12 +229,28 @@ public class ModelChemicalDissolutionChamber extends ModelBase {
         setRotation(portToggle2, 0F, 0F, 0F);
     }
 
-    public void render(float size) {
-        GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        GlStateManager.disableAlpha();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+    public void render(float size, boolean isEnableGlow) {
 
+        GlStateManager.pushMatrix();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        doRender(size);
+        if (!isEnableGlow){
+            glass.render(size);
+        }
+        GlStateManager.popMatrix();
+
+        if (isEnableGlow) {
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            GlStateManager.disableAlpha();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+            glass.render(size);
+            GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
+        }
+    }
+
+    private void doRender(float size) {
         support2.render(size);
         vat5.render(size);
         top2.render(size);
@@ -262,12 +278,9 @@ public class ModelChemicalDissolutionChamber extends ModelBase {
         nozzle3.render(size);
         nozzle2.render(size);
         nozzle1.render(size);
-        glass.render(size);
+
         portToggle1.render(size);
         portToggle2.render(size);
-
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
     }
 
     private void setRotation(ModelRenderer model, float x, float y, float z) {

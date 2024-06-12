@@ -243,8 +243,8 @@ public final class RecipeHandler {
     }
 
     public static void addAmbientGas(int dimensionID, GasStack outputGas, double chance) {
-        addRecipe(Recipe.AMBIENT_ACCUMULATOR, new AmbientGasRecipe(dimensionID, outputGas,chance));
-        addRecipe(Recipe.AMBIENT_ACCUMULATOR_ENERGY, new AmbientGasRecipe(dimensionID, outputGas,chance));
+        addRecipe(Recipe.AMBIENT_ACCUMULATOR, new AmbientGasRecipe(dimensionID, outputGas, chance));
+        addRecipe(Recipe.AMBIENT_ACCUMULATOR_ENERGY, new AmbientGasRecipe(dimensionID, outputGas, chance));
     }
 
 
@@ -326,6 +326,12 @@ public final class RecipeHandler {
 
     public static void addFusionCoolingRecipe(FluidStack inputFluid, FluidStack outputFluid) {
         addRecipe(Recipe.FUSION_COOLING, new FusionCoolingRecipe(inputFluid, outputFluid));
+    }
+
+    public static void addDigitalAssemblyTableRecipe(
+            ItemStack input, ItemStack input2, ItemStack input3, ItemStack input4, ItemStack input5, ItemStack input6, ItemStack input7, ItemStack input8, ItemStack input9, FluidStack inputFluid, GasStack inputGas,
+            ItemStack outputItem, FluidStack outputFluid, GasStack outputGas, double extraEnergy, int ticks) {
+        addRecipe(Recipe.DIGITAL_ASSEMBLY_TABLE, new DigitalAssemblyTableRecipe(input, input2, input3, input4, input5, input6, input7, input8, input9, inputFluid, inputGas, outputItem, outputFluid, outputGas, extraEnergy, ticks));
     }
 
     /**
@@ -509,6 +515,11 @@ public final class RecipeHandler {
     }
 
     @Nullable
+    public static DigitalAssemblyTableRecipe getDigitalAssemblyTableRecipe(@Nonnull CompositeInput input) {
+        return getRecipe(input, Recipe.DIGITAL_ASSEMBLY_TABLE);
+    }
+
+    @Nullable
     public static <RECIPE extends Chance2MachineRecipe<RECIPE>> RECIPE getChance2Recipe(@Nonnull ItemStackInput input, @Nonnull Map<ItemStackInput, RECIPE> recipes) {
         return getRecipe(input, recipes);
     }
@@ -556,6 +567,26 @@ public final class RecipeHandler {
         }
         return false;
     }
+
+    public static boolean isInDigitalAssemblyRecipe(@Nonnull ItemStack stack) {
+        if (!stack.isEmpty()) {
+            for (CompositeInput key : Recipe.DIGITAL_ASSEMBLY_TABLE.get().keySet()) {
+                if (key.containsType(stack, key.itemInput) ||
+                        key.containsType(stack, key.itemInput2) ||
+                        key.containsType(stack, key.itemInput3) ||
+                        key.containsType(stack, key.itemInput4) ||
+                        key.containsType(stack, key.itemInput5) ||
+                        key.containsType(stack, key.itemInput6) ||
+                        key.containsType(stack, key.itemInput7) ||
+                        key.containsType(stack, key.itemInput8) ||
+                        key.containsType(stack, key.itemInput9) ){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     public static class Recipe<INPUT extends MachineInput<INPUT>, OUTPUT extends MachineOutput<OUTPUT>, RECIPE extends MachineRecipe<INPUT, OUTPUT, RECIPE>> {
 
@@ -665,6 +696,10 @@ public final class RecipeHandler {
 
         public static final Recipe<FluidInput, FluidOutput, FusionCoolingRecipe> FUSION_COOLING = new Recipe<>(
                 "FusionCooling", FluidInput.class, FluidOutput.class, FusionCoolingRecipe.class);
+
+        public static final Recipe<CompositeInput, CompositeOutput, DigitalAssemblyTableRecipe> DIGITAL_ASSEMBLY_TABLE = new Recipe<>(
+                "DigitalAssemblyTable", CompositeInput.class, CompositeOutput.class, DigitalAssemblyTableRecipe.class);
+
         /**
          * ADD END
          */
@@ -774,6 +809,10 @@ public final class RecipeHandler {
                     if (((FluidInput) entry.getKey()).ingredient.getFluid() == input) {
                         return true;
                     }
+                } else if (entry.getKey() instanceof CompositeInput compositeInput) {
+                    if (compositeInput.fluidInput.getFluid() == input) {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -787,8 +826,10 @@ public final class RecipeHandler {
                     toCheck = ((GasInput) entry.getKey()).ingredient.getGas();
                 } else if (entry.getKey() instanceof AdvancedMachineInput) {
                     toCheck = ((AdvancedMachineInput) entry.getKey()).gasType;
-                }else if (entry.getKey() instanceof  PressurizedInput){
-                    toCheck = ((PressurizedInput)entry.getKey()).getGas().getGas();
+                } else if (entry.getKey() instanceof PressurizedInput) {
+                    toCheck = ((PressurizedInput) entry.getKey()).getGas().getGas();
+                } else if (entry.getKey() instanceof CompositeInput compositeInput) {
+                    toCheck = compositeInput.gasInput.getGas();
                 }
                 if (toCheck == input) {
                     return true;

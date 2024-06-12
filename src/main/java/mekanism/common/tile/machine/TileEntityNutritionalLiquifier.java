@@ -4,11 +4,13 @@ import io.netty.buffer.ByteBuf;
 import mekanism.api.TileNetworkList;
 import mekanism.api.gas.*;
 import mekanism.api.transmitters.TransmissionType;
+import mekanism.common.Mekanism;
 import mekanism.common.SideData;
 import mekanism.common.base.ISustainedData;
 import mekanism.common.base.ITankManager;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.capabilities.Capabilities;
+import mekanism.common.config.MekanismConfig;
 import mekanism.common.recipe.RecipeHandler;
 import mekanism.common.recipe.inputs.ItemStackInput;
 import mekanism.common.recipe.machines.NutritionalRecipe;
@@ -28,10 +30,12 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 
 public class TileEntityNutritionalLiquifier extends TileEntityBasicMachine<ItemStackInput, GasOutput,NutritionalRecipe> implements ISustainedData, ITankManager, IGasHandler {
-
     public static final int MAX_GAS = 10000;
     public GasTank gasTank = new GasTank(MAX_GAS);
     public NutritionalRecipe cachedRecipe;
+    public float prevScale;
+    public int updateDelay;
+    public boolean needsPacket;
 
     public TileEntityNutritionalLiquifier() {
         super("oxidizer", MachineType.NUTRITIONAL_LIQUIFIER, 3, 100);
@@ -60,6 +64,12 @@ public class TileEntityNutritionalLiquifier extends TileEntityBasicMachine<ItemS
     public void onUpdate() {
         super.onUpdate();
         if (!world.isRemote) {
+            if (updateDelay > 0) {
+                updateDelay--;
+                if (updateDelay == 0) {
+                    needsPacket = true;
+                }
+            }
             ChargeUtils.discharge(1, this);
             TileUtils.drawGas(inventory.get(2), gasTank);
             NutritionalRecipe recipe = getRecipe();
@@ -77,6 +87,21 @@ public class TileEntityNutritionalLiquifier extends TileEntityBasicMachine<ItemS
                 setActive(false);
             }
             prevEnergy = getEnergy();
+            if (needsPacket) {
+                Mekanism.packetHandler.sendUpdatePacket(this);
+            }
+            needsPacket = false;
+        }else {
+            if (updateDelay > 0) {
+                updateDelay--;
+                if (updateDelay == 0) {
+                    MekanismUtils.updateBlock(world, getPos());
+                }
+            }
+            float targetScale = (float) (gasTank.getGas() != null ? gasTank.getGas().amount : 0) / gasTank.getMaxGas();
+            if (Math.abs(prevScale - targetScale) > 0.01) {
+                prevScale = (9 * prevScale + targetScale) / 10;
+            }
         }
     }
 
@@ -130,6 +155,10 @@ public class TileEntityNutritionalLiquifier extends TileEntityBasicMachine<ItemS
         super.handlePacketData(dataStream);
         if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             TileUtils.readTankData(dataStream, gasTank);
+            if (updateDelay == 0) {
+                updateDelay = MekanismConfig.current().general.UPDATE_DELAY.val();
+                MekanismUtils.updateBlock(world, getPos());
+            }
         }
     }
 
@@ -220,11 +249,6 @@ public class TileEntityNutritionalLiquifier extends TileEntityBasicMachine<ItemS
         return new GasTankInfo[]{gasTank};
     }
 
-
-    public int getScaledFuelLevel(int i) {
-        return gasTank.getStored() * i / gasTank.getMaxGas();
-    }
-
     @Override
     public String[] getMethods() {
         return new String[0];
@@ -234,4 +258,14 @@ public class TileEntityNutritionalLiquifier extends TileEntityBasicMachine<ItemS
     public Object[] invoke(int method, Object[] args) throws NoSuchMethodException {
         return new Object[0];
     }
+
+    @Override
+    public void setActive(boolean active) {
+        super.setActive(active);
+        if (updateDelay == 0) {
+            Mekanism.packetHandler.sendUpdatePacket(this);
+            updateDelay = 10;
+        }
+    }
+
 }

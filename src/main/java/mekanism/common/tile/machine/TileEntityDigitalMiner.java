@@ -3,7 +3,6 @@ package mekanism.common.tile.machine;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import mekanism.api.Chunk3D;
 import mekanism.api.Coord4D;
@@ -76,7 +75,7 @@ public class TileEntityDigitalMiner extends TileEntityElectricBlock implements I
 
     private static final int[] INV_SLOTS = IntStream.range(0, 28).toArray();
 
-    public Map<Chunk3D, BitSet> oresToMine = new Object2ObjectOpenHashMap<>();
+    public Map<Chunk3D, BitSet> oresToMine = new HashMap<>();
     public Int2ObjectMap<MinerFilter> replaceMap = new Int2ObjectOpenHashMap<>();
     public HashList<MinerFilter> filters = new HashList<>();
     public ThreadMinerSearch searcher = new ThreadMinerSearch(this);

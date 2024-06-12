@@ -126,14 +126,19 @@ public class ModelLargeChemicalWasher extends ModelBase {
         bb_main.cubeList.add(new ModelBox(bb_main, 84, 170, 11.0F, -45.0F, 13.0F, 3, 2, 3, 0.0F, false));
     }
 
-    public void render(double tick, float size, boolean on, TextureManager manager) {
+    public void render(double tick, float size, boolean on, TextureManager manager,boolean isEnableGlow) {
+
         GlStateManager.pushMatrix();
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        GlStateManager.disableAlpha();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        doRender(size); //渲染本体
-        if (!Mekanism.hooks.Bloom) {
+        doRender(size);
+        GlStateManager.popMatrix();
+
+        if (isEnableGlow) {
+            GlStateManager.pushMatrix();
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            GlStateManager.disableAlpha();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
             manager.bindTexture(on ? OVERLAY_ON : OVERLAY_OFF);
             GlStateManager.scale(1.001F, 1.001F, 1.001F);
             GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
@@ -144,10 +149,10 @@ public class ModelLargeChemicalWasher extends ModelBase {
                 doRender(size);
             }
             MekanismRenderer.disableGlow(glowInfo);
+            GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
+            GlStateManager.popMatrix();
         }
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.popMatrix();
     }
 
     public void renderBloom(double tick, float size, boolean on, TextureManager manager) {
@@ -157,8 +162,8 @@ public class ModelLargeChemicalWasher extends ModelBase {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         manager.bindTexture(on ? OVERLAY_ON : OVERLAY_OFF);
-        GlStateManager.scale(1.001F, 1.001F, 1.001F);
-        GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
+        GlStateManager.scale(1.0011F, 1.0011F, 1.0011F);
+        GlStateManager.translate(-0.0012F, -0.0012F, -0.0012F);
         MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
         doRender(size);
         if (on) {

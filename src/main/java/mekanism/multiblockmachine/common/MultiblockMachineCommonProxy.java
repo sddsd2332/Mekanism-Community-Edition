@@ -6,12 +6,14 @@ import mekanism.common.config.MekanismConfig;
 import mekanism.multiblockmachine.common.inventory.container.generator.ContainerLargeGasGenerator;
 import mekanism.multiblockmachine.common.inventory.container.generator.ContainerLargeHeatGenerator;
 import mekanism.multiblockmachine.common.inventory.container.generator.ContainerLargeWindGenerator;
+import mekanism.multiblockmachine.common.inventory.container.machine.ContainerDigitalAssemblyTable;
 import mekanism.multiblockmachine.common.inventory.container.machine.ContainerLargeChemicalInfuser;
 import mekanism.multiblockmachine.common.inventory.container.machine.ContainerLargeChemicalWasher;
 import mekanism.multiblockmachine.common.inventory.container.machine.ContainerLargeElectrolyticSeparator;
 import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeGasGenerator;
 import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeHeatGenerator;
 import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeWindGenerator;
+import mekanism.multiblockmachine.common.tile.machine.TileEntityDigitalAssemblyTable;
 import mekanism.multiblockmachine.common.tile.machine.TileEntityLargeChemicalInfuser;
 import mekanism.multiblockmachine.common.tile.machine.TileEntityLargeChemicalWasher;
 import mekanism.multiblockmachine.common.tile.machine.TileEntityLargeElectrolyticSeparator;
@@ -37,7 +39,8 @@ public class MultiblockMachineCommonProxy implements IGuiProvider {
         registerTileEntity(TileEntityLargeGasGenerator.class, "large_gas_Generator");
         registerTileEntity(TileEntityLargeElectrolyticSeparator.class, "large_electrolytic_separator");
         registerTileEntity(TileEntityLargeChemicalInfuser.class, "large_chemical_infuser");
-        registerTileEntity(TileEntityLargeChemicalWasher.class,"large_chemical_washer");
+        registerTileEntity(TileEntityLargeChemicalWasher.class, "large_chemical_washer");
+        registerTileEntity(TileEntityDigitalAssemblyTable.class, "digital_assembly_table");
     }
 
     public void registerTESRs() {
@@ -74,6 +77,7 @@ public class MultiblockMachineCommonProxy implements IGuiProvider {
             case 3 -> new ContainerLargeElectrolyticSeparator(player.inventory, (TileEntityLargeElectrolyticSeparator) tileEntity);
             case 4 -> new ContainerLargeChemicalInfuser(player.inventory, (TileEntityLargeChemicalInfuser) tileEntity);
             case 5 -> new ContainerLargeChemicalWasher(player.inventory, (TileEntityLargeChemicalWasher) tileEntity);
+            case 6 -> new ContainerDigitalAssemblyTable(player.inventory, (TileEntityDigitalAssemblyTable) tileEntity);
             default -> null;
         };
     }

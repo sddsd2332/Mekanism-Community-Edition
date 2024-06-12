@@ -75,6 +75,7 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
     public TileEntityLargeElectrolyticSeparator() {
         super("electrolyticseparator", BlockStateMultiblockMachine.MultiblockMachineType.LARGE_ELECTROLYTIC_SEPARATOR, 1, 4);
         inventory = NonNullListSynchronized.withSize(5, ItemStack.EMPTY);
+        upgradeComponent.setSupported(Upgrade.THREAD);
     }
 
     @Override

@@ -5,6 +5,7 @@ import mekanism.api.Coord4D;
 import mekanism.api.TileNetworkList;
 import mekanism.api.gas.*;
 import mekanism.api.transmitters.TransmissionType;
+import mekanism.common.Mekanism;
 import mekanism.common.SideData;
 import mekanism.common.Upgrade;
 import mekanism.common.Upgrade.IUpgradeInfoHandler;
@@ -40,6 +41,9 @@ public class TileEntityIsotopicCentrifuge extends TileEntityBasicMachine<GasInpu
     public IsotopicRecipe cachedRecipe;
     public double clientEnergyUsed;
     private int currentRedstoneLevel;
+    public float prevScale;
+    public int updateDelay;
+    public boolean needsPacket;
 
     public TileEntityIsotopicCentrifuge() {
         super("washer", BlockStateMachine.MachineType.ISOTOPIC_CENTRIFUGE, 3, 1);
@@ -73,6 +77,12 @@ public class TileEntityIsotopicCentrifuge extends TileEntityBasicMachine<GasInpu
     public void onUpdate() {
         super.onUpdate();
         if (!world.isRemote) {
+            if (updateDelay > 0) {
+                updateDelay--;
+                if (updateDelay == 0) {
+                    needsPacket = true;
+                }
+            }
             ChargeUtils.discharge(2, this);
             if (!inventory.get(0).isEmpty() && inventory.get(0).getItem() instanceof IGasItem && ((IGasItem) inventory.get(0).getItem()).getGas(inventory.get(0)) != null && RecipeHandler.Recipe.ISOTOPIC_CENTRIFUGE.containsRecipe(((IGasItem) inventory.get(0).getItem()).getGas(inventory.get(0)).getGas())) {
                 TileUtils.receiveGasItem(inventory.get(0), inputTank);
@@ -97,6 +107,21 @@ public class TileEntityIsotopicCentrifuge extends TileEntityBasicMachine<GasInpu
             if (newRedstoneLevel != currentRedstoneLevel) {
                 updateComparatorOutputLevelSync();
                 currentRedstoneLevel = newRedstoneLevel;
+            }
+            if (needsPacket) {
+                Mekanism.packetHandler.sendUpdatePacket(this);
+            }
+            needsPacket = false;
+        }else {
+            if (updateDelay > 0) {
+                updateDelay--;
+                if (updateDelay == 0) {
+                    MekanismUtils.updateBlock(world, getPos());
+                }
+            }
+            float targetScale = (float) (outputTank.getGas() != null ? outputTank.getGas().amount : 0) / outputTank.getMaxGas();
+            if (Math.abs(prevScale - targetScale) > 0.01) {
+                prevScale = (9 * prevScale + targetScale) / 10;
             }
         }
     }
@@ -145,6 +170,10 @@ public class TileEntityIsotopicCentrifuge extends TileEntityBasicMachine<GasInpu
             clientEnergyUsed = dataStream.readDouble();
             TileUtils.readTankData(dataStream, inputTank);
             TileUtils.readTankData(dataStream, outputTank);
+            if (updateDelay == 0) {
+                updateDelay = MekanismConfig.current().general.UPDATE_DELAY.val();
+                MekanismUtils.updateBlock(world, getPos());
+            }
         }
     }
 
@@ -286,10 +315,6 @@ public class TileEntityIsotopicCentrifuge extends TileEntityBasicMachine<GasInpu
         world.setBlockToAir(getPos());
     }
 
-    public int getScaledFuelLevel(int i) {
-        return outputTank.getStored() * i / outputTank.getMaxGas();
-    }
-
     @Override
     public String[] getMethods() {
         return new String[0];
@@ -298,5 +323,14 @@ public class TileEntityIsotopicCentrifuge extends TileEntityBasicMachine<GasInpu
     @Override
     public Object[] invoke(int method, Object[] args) throws NoSuchMethodException {
         return new Object[0];
+    }
+
+    @Override
+    public void setActive(boolean active) {
+        super.setActive(active);
+        if (updateDelay == 0) {
+            Mekanism.packetHandler.sendUpdatePacket(this);
+            updateDelay = 10;
+        }
     }
 }

@@ -78,7 +78,8 @@ public class GuiSlot extends GuiElement {
         NORMAL_LARGE(26, 26, 90, 26),
         OUTPUT_WIDE(42, 26, 116, 0),
         OUTPUT_LARGE_WIDE(36, 54, 116, 26),
-        STATE_HOLDER(16, 16, 0, 72);
+        STATE_HOLDER(16, 16, 0, 72),
+        WORD(18,18,72,54);
 
         public final int width;
         public final int height;

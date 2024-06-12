@@ -109,10 +109,11 @@ public final class MekanismHooks {
             FluxNetworksIntegration.preInit();
             Mekanism.logger.info("Hooked into Flux Networks successfully.");
         }
+
     }
 
     public enum Mods {
-        GTCeU(GTCEU_MOD_ID){
+        GTCeU(GTCEU_MOD_ID) {
             private boolean initialized = false;
             private boolean detected = false;
 
@@ -142,7 +143,7 @@ public final class MekanismHooks {
             this.loaded = Loader.isModLoaded(this.modid);
         }
 
-        public String modName(){
+        public String modName() {
             return modid;
         }
 
@@ -150,7 +151,6 @@ public final class MekanismHooks {
             return loaded;
         }
     }
-
 
 
     public void hookInit() {

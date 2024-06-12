@@ -54,7 +54,7 @@ public class RenderLargeWindGeneratorItem {
         } else {
             angle = 0;
         }
-        windGenerator.render(0,0.002F, angle,false,Minecraft.getMinecraft().renderEngine);
+        windGenerator.render(0,0.002F, angle,false,Minecraft.getMinecraft().renderEngine,false);
         GlStateManager.popMatrix();
     }
 }

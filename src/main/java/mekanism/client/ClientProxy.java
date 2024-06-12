@@ -145,8 +145,8 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBin.class, new RenderBin());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBoilerCasing.class, new RenderThermoelectricBoiler());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBoilerValve.class, new RenderThermoelectricBoiler());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChemicalCrystallizer.class, new RenderChemicalCrystallizer());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChemicalDissolutionChamber.class, new RenderChemicalDissolutionChamber());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChemicalCrystallizer.class, RenderChemicalCrystallizer.INSTANCE);
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChemicalDissolutionChamber.class, RenderChemicalDissolutionChamber.INSTANCE);
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChemicalInjectionChamber.class, new RenderConfigurableMachine<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCombiner.class, new RenderConfigurableMachine<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCrusher.class, new RenderConfigurableMachine<>());
@@ -185,8 +185,8 @@ public class ClientProxy extends CommonProxy {
         /**
          * ADD Start
          */
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityIsotopicCentrifuge.class, new RenderIsotopicCentrifuge());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityNutritionalLiquifier.class, new RenderNutritionalLiquifier());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityIsotopicCentrifuge.class, RenderIsotopicCentrifuge.INSTANCE);
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityNutritionalLiquifier.class,  RenderNutritionalLiquifier.INSTANCE);
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRotaryCondensentrator.class, new RenderConfigurableMachine<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChemicalOxidizer.class, new RenderConfigurableMachine<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChemicalInfuser.class, new RenderConfigurableMachine<>());
