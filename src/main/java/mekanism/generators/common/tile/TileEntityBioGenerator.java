@@ -11,10 +11,14 @@ import mekanism.common.base.IFluidHandlerWrapper;
 import mekanism.common.base.ISustainedData;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.util.*;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -34,7 +38,7 @@ public class TileEntityBioGenerator extends TileEntityGenerator implements IFlui
      * The FluidSlot biofuel instance for this generator.
      */
     public FluidSlot bioFuelSlot = new FluidSlot(24000, -1);
-
+    private int lastBioFuelAmount;
     private int currentRedstoneLevel;
     public int updateDelay;
     public boolean needsPacket;
@@ -96,6 +100,16 @@ public class TileEntityBioGenerator extends TileEntityGenerator implements IFlui
                 Mekanism.packetHandler.sendUpdatePacket(this);
             }
             needsPacket = false;
+            if (lastBioFuelAmount != bioFuelSlot.fluidStored) {
+                SPacketUpdateTileEntity packet = this.getUpdatePacket();
+                PlayerChunkMapEntry trackingEntry = ((WorldServer) this.world).getPlayerChunkMap().getEntry(this.pos.getX() >> 4, this.pos.getZ() >> 4);
+                if (trackingEntry != null) {
+                    for (EntityPlayerMP player : trackingEntry.getWatchingPlayers()) {
+                        player.connection.sendPacket(packet);
+                    }
+                }
+            }
+            lastBioFuelAmount = bioFuelSlot.fluidStored;
         } else {
             if (updateDelay > 0) {
                 updateDelay--;

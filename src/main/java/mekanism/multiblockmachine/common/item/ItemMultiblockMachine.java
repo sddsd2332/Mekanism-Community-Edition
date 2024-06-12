@@ -11,7 +11,7 @@ import net.minecraft.world.World;
 public class ItemMultiblockMachine extends Item {
 
     public static int MaxDamage;
-
+    public static int MaxStackSize;
     public ItemMultiblockMachine() {
         super();
         setCreativeTab(MekanismMultiblockMachine.tabMekanismMultiblockMachine);
@@ -56,4 +56,5 @@ public class ItemMultiblockMachine extends Item {
     public void setDamage(ItemStack stack, int damage) {
         ItemDataUtils.setInt(stack, "graphDmg", damage);
     }
+
 }

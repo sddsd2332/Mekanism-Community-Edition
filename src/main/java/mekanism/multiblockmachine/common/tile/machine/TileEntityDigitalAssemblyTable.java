@@ -20,12 +20,16 @@ import mekanism.common.util.*;
 import mekanism.multiblockmachine.common.MultiblockMachineItems;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine;
 import mekanism.multiblockmachine.common.tile.machine.prefab.TileEntityMultiblockBasicMachine;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidStack;
@@ -52,15 +56,21 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
     public FluidTank outputFluidTank = new FluidTankSync(FluidTankTier.ULTIMATE.getStorage());
     public GasTank inputGasTank = new GasTank(GasTankTier.ULTIMATE.getStorage());
     public GasTank outputGasTank = new GasTank(GasTankTier.ULTIMATE.getStorage());
-    public int output = 512;
     public DigitalAssemblyTableRecipe cachedRecipe;
     public int updateDelay;
     public boolean needsPacket;
     public int numPowering;
     public int DoorHeight;
-    public double prevEnergyScale;
     private int currentRedstoneLevel;
     private boolean rendererInitialized = false;
+    public float inputGasScale;
+    public float outputGasScale;
+    public float inputFluidScale;
+    public float outputFluidScale;
+    public int lastInputGas;
+    public int lastInputFluid;
+    public int lastOutputGas;
+    public int lastOutputFluid;
 
     public TileEntityDigitalAssemblyTable() {
         super("digitalassemblytable", BlockStateMultiblockMachine.MultiblockMachineType.DIGITAL_ASSEMBLY_TABLE, 200, 0);
@@ -99,15 +109,6 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
                     operatingTicks = 0;
                     electricityStored.addAndGet(-MekanismUtils.getEnergyPerTick(this, BASE_ENERGY_PER_TICK + recipe.extraEnergy));
                 }
-                int newRedstoneLevel = getRedstoneLevel();
-                if (newRedstoneLevel != currentRedstoneLevel) {
-                    world.updateComparatorOutputLevel(pos, getBlockType());
-                    currentRedstoneLevel = newRedstoneLevel;
-                }
-                if (needsPacket) {
-                    Mekanism.packetHandler.sendUpdatePacket(this);
-                }
-                needsPacket = false;
             } else {
                 BASE_TICKS_REQUIRED = 100;
                 if (prevEnergy >= getEnergy()) {
@@ -117,9 +118,31 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
             if (!canOperate(recipe)) {
                 operatingTicks = 0;
             }
-            prevEnergy = getEnergy();
             handleGasTank(outputGasTank, getGasTankside());
             handleFluidTank(outputFluidTank, getFluidTankside());
+            if (prevEnergy != getEnergy() || lastInputFluid != inputFluidTank.getFluidAmount() || lastInputGas != inputGasTank.getStored() || lastOutputGas != outputGasTank.getStored() || lastOutputFluid != outputFluidTank.getFluidAmount()) {
+                SPacketUpdateTileEntity packet = this.getUpdatePacket();
+                PlayerChunkMapEntry trackingEntry = ((WorldServer) this.world).getPlayerChunkMap().getEntry(this.pos.getX() >> 4, this.pos.getZ() >> 4);
+                if (trackingEntry != null) {
+                    for (EntityPlayerMP player : trackingEntry.getWatchingPlayers()) {
+                        player.connection.sendPacket(packet);
+                    }
+                }
+            }
+            prevEnergy = getEnergy();
+            lastInputGas = inputGasTank.getStored();
+            lastInputFluid = inputFluidTank.getFluidAmount();
+            lastOutputGas = outputGasTank.getStored();
+            lastOutputFluid = outputFluidTank.getFluidAmount();
+            int newRedstoneLevel = getRedstoneLevel();
+            if (newRedstoneLevel != currentRedstoneLevel) {
+                world.updateComparatorOutputLevel(pos, getBlockType());
+                currentRedstoneLevel = newRedstoneLevel;
+            }
+            if (needsPacket) {
+                Mekanism.packetHandler.sendUpdatePacket(this);
+            }
+            needsPacket = false;
         } else {
             if (!isActive) {
                 if (DoorHeight < 16) {
@@ -130,15 +153,31 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
                     DoorHeight--;
                 }
             }
+
+            float targetInputGasScale = (float) (inputGasTank.getGas() != null ? inputGasTank.getGas().amount : 0) / inputGasTank.getMaxGas();
+            if (Math.abs(inputGasScale - targetInputGasScale) > 0.01) {
+                inputGasScale = (9 * inputGasScale + targetInputGasScale) / 10;
+            }
+            float targetOutputGasScale = (float) (outputGasTank.getGas() != null ? outputGasTank.getGas().amount : 0) / outputGasTank.getMaxGas();
+            if (Math.abs(outputGasScale - targetOutputGasScale) > 0.01) {
+                outputGasScale = (9 * outputGasScale + targetOutputGasScale) / 10;
+            }
+
+            float targetInputFluidScale = (float) (inputFluidTank.getFluid() != null ? inputFluidTank.getFluid().amount : 0) / inputFluidTank.getCapacity();
+            if (Math.abs(inputFluidScale - targetInputFluidScale) > 0.01) {
+                inputFluidScale = (9 * inputFluidScale + targetInputFluidScale) / 10;
+            }
+
+            float targetOutputFluidScale = (float) (outputFluidTank.getFluid() != null ? outputFluidTank.getFluid().amount : 0) / outputFluidTank.getCapacity();
+            if (Math.abs(outputFluidScale - targetOutputFluidScale) > 0.01) {
+                outputFluidScale = (9 * outputFluidScale + targetOutputFluidScale) / 10;
+            }
+
             if (updateDelay > 0) {
                 updateDelay--;
                 if (updateDelay == 0) {
                     MekanismUtils.updateBlock(world, getPos());
                 }
-            }
-            double targetEnergyScale = getEnergy() / getMaxEnergy();
-            if (Math.abs(prevEnergyScale - targetEnergyScale) > 0.01) {
-                prevEnergyScale = (9 * prevEnergyScale + targetEnergyScale) / 10;
             }
         }
     }
@@ -167,7 +206,7 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
 
     private void handleGasTank(GasTank tank, TileEntity tile) {
         if (tank.getGas() != null) {
-            GasStack toSend = new GasStack(tank.getGas().getGas(), Math.min(tank.getStored(), output));
+            GasStack toSend = new GasStack(tank.getGas().getGas(), Math.min(tank.getStored(), tank.getMaxGas()));
             tank.draw(GasUtils.emit(toSend, tile, EnumSet.of(EnumFacing.UP)), true);
         }
     }
@@ -308,7 +347,6 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
     public void handlePacketData(ByteBuf dataStream) {
         super.handlePacketData(dataStream);
         if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
-            prevEnergyScale = dataStream.readDouble();
             TileUtils.readTankData(dataStream, inputFluidTank);
             TileUtils.readTankData(dataStream, inputGasTank);
             TileUtils.readTankData(dataStream, outputFluidTank);
@@ -631,31 +669,31 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
         }
         for (int y = 1; y <= 3; y++) {
             if (facing == EnumFacing.SOUTH) {
-                world.setBlockToAir(getPos().add(-5, y, -1));//gas in
-                world.setBlockToAir(getPos().add(5, y, -1));//gas out
-                world.setBlockToAir(getPos().add(5, y, -3));//fluid in
+                world.setBlockToAir(getPos().add(5, y, -1));//gas in ok
+                world.setBlockToAir(getPos().add(-5, y, -1));//gas out
+                world.setBlockToAir(getPos().add(5, y, -3));//fluid in ok
                 world.setBlockToAir(getPos().add(-5, y, -3));//fluid out
                 world.setBlockToAir(getPos().add(3, y, -5));//energy
                 world.setBlockToAir(getPos().add(-3, y, -5));//energy
             } else if (facing == EnumFacing.WEST) {
-                world.setBlockToAir(getPos().add(1, y, 5));//gas in
-                world.setBlockToAir(getPos().add(1, y, -5));//gas out
+                world.setBlockToAir(getPos().add(1, y, 5));//gas in ok
+                world.setBlockToAir(getPos().add(1, y, -5));//gas out ok
                 world.setBlockToAir(getPos().add(3, y, 5));//fluid in
                 world.setBlockToAir(getPos().add(3, y, -5));//fluid out
                 world.setBlockToAir(getPos().add(5, y, 3));//energy
                 world.setBlockToAir(getPos().add(5, y, -3));//energy
             } else if (facing == EnumFacing.EAST) {
-                world.setBlockToAir(getPos().add(-1, y, -5));//gas in
-                world.setBlockToAir(getPos().add(-1, y, 5));//gas out
+                world.setBlockToAir(getPos().add(-1, y, -5));//gas in ok
+                world.setBlockToAir(getPos().add(-1, y, 5));//gas out ok
                 world.setBlockToAir(getPos().add(-3, y, -5));//fluid in
                 world.setBlockToAir(getPos().add(-3, y, 5));//fluid out
                 world.setBlockToAir(getPos().add(-5, y, 3));//energy
                 world.setBlockToAir(getPos().add(-5, y, -3));//energy
             } else if (facing == EnumFacing.NORTH) {
-                world.setBlockToAir(getPos().add(-5, y, 1));//gas in
-                world.setBlockToAir(getPos().add(5, y, 1));//gas out
-                world.setBlockToAir(getPos().add(5, y, 3));//fluid in
-                world.setBlockToAir(getPos().add(-5, y, 3));//fluid out
+                world.setBlockToAir(getPos().add(-5, y, 1));//gas in ok
+                world.setBlockToAir(getPos().add(5, y, 1));//gas out ok
+                world.setBlockToAir(getPos().add(-5, y, 3));//fluid in
+                world.setBlockToAir(getPos().add(5, y, 3));//fluid out
                 world.setBlockToAir(getPos().add(3, y, 5));//energy
                 world.setBlockToAir(getPos().add(-3, y, 5));//energy
             }
@@ -701,10 +739,10 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
     public boolean isOffsetCapabilityDisabled(@NotNull Capability<?> capability, @Nullable EnumFacing side, @NotNull Vec3i offset) {
         if (capability == Capabilities.GAS_HANDLER_CAPABILITY) {
             if (facing == EnumFacing.SOUTH) {
-                if (offset.equals(new Vec3i(-5, 1, -1))) {//gas in
+                if (offset.equals(new Vec3i(5, 1, -1))) {//gas in
                     return side != EnumFacing.DOWN;
                 }
-                if (offset.equals(new Vec3i(5, 3, -1))) {
+                if (offset.equals(new Vec3i(-5, 3, -1))) {
                     return side != EnumFacing.UP;
                 }
             } else if (facing == EnumFacing.NORTH) {
@@ -774,10 +812,10 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
                     return side != EnumFacing.DOWN;
                 }
             } else if (facing == EnumFacing.NORTH) {
-                if (offset.equals(new Vec3i(5, 3, 3))) {//fluid in
+                if (offset.equals(new Vec3i(-5, 3, 3))) {//fluid in
                     return side != EnumFacing.UP;
                 }
-                if (offset.equals(new Vec3i(-5, 1, 3))) {
+                if (offset.equals(new Vec3i(5, 1, 3))) {
                     return side != EnumFacing.DOWN;
                 }
             } else if (facing == EnumFacing.WEST) {

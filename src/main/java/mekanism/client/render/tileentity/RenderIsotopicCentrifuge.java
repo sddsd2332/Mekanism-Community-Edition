@@ -66,8 +66,6 @@ public class RenderIsotopicCentrifuge extends TileEntitySpecialRenderer<TileEnti
         MekanismRenderer.machineRenderer().render(tileEntity, x, y, z, partialTick, destroyStage, alpha);
     }
 
-
-    @SuppressWarnings("incomplete-switch")
     private DisplayInteger[] getListAndRender(GasStack gasStack) {
         if (cachedCenterGas.containsKey(gasStack)) {
             return cachedCenterGas.get(gasStack);
