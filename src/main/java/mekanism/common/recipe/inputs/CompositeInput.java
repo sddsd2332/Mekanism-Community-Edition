@@ -170,15 +170,15 @@ public class CompositeInput extends MachineInput<CompositeInput> implements IWil
     }
 
     public boolean getItem(CompositeInput input){
-        return StackUtils.equalsWildcard(input.itemInput, itemInput) &&
-                StackUtils.equalsWildcard(input.itemInput2, itemInput2)&&
-                StackUtils.equalsWildcard(input.itemInput3, itemInput3)&&
-                StackUtils.equalsWildcard(input.itemInput4, itemInput4)&&
-                StackUtils.equalsWildcard(input.itemInput5, itemInput5)&&
-                StackUtils.equalsWildcard(input.itemInput6, itemInput6)&&
-                StackUtils.equalsWildcard(input.itemInput7, itemInput7)&&
-                StackUtils.equalsWildcard(input.itemInput8, itemInput8)&&
-                StackUtils.equalsWildcard(input.itemInput9, itemInput9);
+        return StackUtils.equalsWildcardWithNBT(input.itemInput, itemInput) &&
+                StackUtils.equalsWildcardWithNBT(input.itemInput2, itemInput2)&&
+                StackUtils.equalsWildcardWithNBT(input.itemInput3, itemInput3)&&
+                StackUtils.equalsWildcardWithNBT(input.itemInput4, itemInput4)&&
+                StackUtils.equalsWildcardWithNBT(input.itemInput5, itemInput5)&&
+                StackUtils.equalsWildcardWithNBT(input.itemInput6, itemInput6)&&
+                StackUtils.equalsWildcardWithNBT(input.itemInput7, itemInput7)&&
+                StackUtils.equalsWildcardWithNBT(input.itemInput8, itemInput8)&&
+                StackUtils.equalsWildcardWithNBT(input.itemInput9, itemInput9);
     }
 
     @Override

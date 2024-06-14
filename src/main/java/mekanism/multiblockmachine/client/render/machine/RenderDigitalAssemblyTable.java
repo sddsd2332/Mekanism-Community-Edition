@@ -8,11 +8,17 @@ import mekanism.client.render.MekanismRenderer;
 import mekanism.client.render.MekanismRenderer.DisplayInteger;
 import mekanism.client.render.MekanismRenderer.Model3D;
 import mekanism.multiblockmachine.client.model.machine.ModelDigitalAssemblyTable;
+import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachineGenerator;
 import mekanism.multiblockmachine.common.tile.machine.TileEntityDigitalAssemblyTable;
 import mekanism.multiblockmachine.common.util.MekanismMultiblockMachineUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
@@ -21,6 +27,9 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.EnumMap;
 import java.util.Map;
+
+import static mekanism.multiblockmachine.common.MultiblockMachineBlocks.MultiblockGenerator;
+import static mekanism.multiblockmachine.common.MultiblockMachineBlocks.MultiblockMachine;
 
 @SideOnly(Side.CLIENT)
 public class RenderDigitalAssemblyTable extends RenderTileEntityTime<TileEntityDigitalAssemblyTable> {
@@ -165,6 +174,31 @@ public class RenderDigitalAssemblyTable extends RenderTileEntityTime<TileEntityD
             GlStateManager.enableAlpha();
             GlStateManager.enableLighting();
             GlStateManager.disableCull();
+            GlStateManager.popMatrix();
+        }
+
+        ItemStack stack = tileEntity.getStackInSlot(14);
+        if (!stack.isEmpty()) {
+            GlStateManager.pushMatrix();
+            if (stack.getItem() == Item.getItemFromBlock(MultiblockMachine)) {
+                GlStateManager.translate((float) x + 0.5F, (float) y + 2.5F, (float) z + 0.5F);
+                GlStateManager.scale(2.8375F, 2.8375F, 2.8375F);
+            } else if (stack.getItem() == Item.getItemFromBlock(MultiblockGenerator) && !stack.isItemEqual(BlockStateMultiblockMachineGenerator.MultiblockMachineGeneratorType.LARGE_WIND_GENERATOR.getStack())) {
+                GlStateManager.translate((float) x + 0.5F, (float) y + 2.5F, (float) z + 0.5F);
+                GlStateManager.scale(3.125F, 3.125F, 3.125F);
+            } else {
+                GlStateManager.translate((float) x + 0.5F, (float) y + 1.5F, (float) z + 0.5F);
+                GlStateManager.scale(1.0F, 1.0F, 1.0F);
+            }
+            MekanismRenderer.rotate(tileEntity.facing, 270, 90, 0, 180);
+            GlStateManager.disableLighting();
+            GlStateManager.pushAttrib();
+            RenderHelper.enableStandardItemLighting();
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            Minecraft.getMinecraft().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.FIXED);
+            RenderHelper.disableStandardItemLighting();
+            GlStateManager.popAttrib();
+            GlStateManager.enableLighting();
             GlStateManager.popMatrix();
         }
 
