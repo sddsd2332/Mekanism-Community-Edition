@@ -200,8 +200,6 @@ public class TileEntityChemicalInfuser extends TileEntityBasicMachine<ChemicalPa
     public boolean canReceiveGas(EnumFacing side, Gas type) {
         if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1)) {
             return leftTank.canReceive(type) || rightTank.canReceive(type);
-        } else if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1, 2)) {
-            return leftTank.canReceive(type) || rightTank.canReceive(type);
         }
         return getTank(side) != null && getTank(side) != centerTank && getTank(side).canReceive(type);
     }
@@ -210,15 +208,6 @@ public class TileEntityChemicalInfuser extends TileEntityBasicMachine<ChemicalPa
     public int receiveGas(EnumFacing side, GasStack stack, boolean doTransfer) {
         if (canReceiveGas(side, stack != null ? stack.getGas() : null)) {
             if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1)) {
-                if (stack != null) {
-                    if (leftTank.canReceive(stack.getGas()) && rightTank.getGasType() != stack.getGas()) {
-                        return leftTank.receive(stack, doTransfer);
-                    }
-                    if (rightTank.canReceive(stack.getGas()) && leftTank.getGasType() != stack.getGas()) {
-                        return rightTank.receive(stack, doTransfer);
-                    }
-                }
-            } else if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1, 2)) {
                 if (stack != null) {
                     if (leftTank.canReceive(stack.getGas()) && rightTank.getGasType() != stack.getGas()) {
                         return leftTank.receive(stack, doTransfer);
@@ -244,12 +233,6 @@ public class TileEntityChemicalInfuser extends TileEntityBasicMachine<ChemicalPa
 
     @Override
     public boolean canDrawGas(EnumFacing side, Gas type) {
-        // return getTank(side) != null && getTank(side) == centerTank && getTank(side).canDraw(type);
-        if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(0, 1, 2)){
-            if (type != null && getTank(side) == centerTank) {
-                return centerTank.canDraw(type);
-            }
-        }
         return configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(2) && centerTank.canDraw(type);
     }
 
