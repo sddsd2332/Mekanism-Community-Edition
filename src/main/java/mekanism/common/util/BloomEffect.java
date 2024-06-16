@@ -9,6 +9,7 @@ import mekanism.common.tile.prefab.TileEntityBasicBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +27,7 @@ public abstract class BloomEffect<T extends TileEntityBasicBlock> implements IBl
         this.south = south;
         this.west = west;
         this.east = east;
-        Bloom(tile, this, this);;
+        Bloom(tile, this, this);
     }
 
     @Override
@@ -54,6 +55,7 @@ public abstract class BloomEffect<T extends TileEntityBasicBlock> implements IBl
             MekanismRenderer.rotate(tile.facing, north, south, west, east);
             GlStateManager.rotate(180, 0, 0, 1);
             RenderModelBloom();
+            Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             GlStateManager.popMatrix();
         }
     }
