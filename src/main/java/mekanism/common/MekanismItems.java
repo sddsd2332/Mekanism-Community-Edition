@@ -2,6 +2,7 @@ package mekanism.common;
 
 import mekanism.common.item.*;
 import mekanism.common.tier.AlloyTier;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
@@ -86,6 +87,10 @@ public class MekanismItems {
     public static final Item EmptyCrystals = new ItemMekanism();
     public static final Item FluoriteClump = new ItemMekanism();
     public static final ItemFreeRunners ArmoredFreeRunners = new ItemFreeRunners();
+    public static final ItemMekAsuitArmor MekAsuitHelmet = new ItemMekAsuitArmor(EntityEquipmentSlot.HEAD);
+    public static final ItemMekAsuitArmor MekAsuitChestplate = new ItemMekAsuitArmor(EntityEquipmentSlot.CHEST);
+    public static final ItemMekAsuitArmor MekAsuitLeggings = new ItemMekAsuitArmor(EntityEquipmentSlot.LEGS);
+    public static final ItemMekAsuitArmor MekAsuitBoots = new ItemMekAsuitArmor(EntityEquipmentSlot.FEET);
     /**
      * ADD END
      */
@@ -170,6 +175,10 @@ public class MekanismItems {
         registry.register(init(PoloniumPellet, "PoloniumPellet"));
         registry.register(init(ArmoredFreeRunners, "ArmoredFreeRunners"));
         registry.register(init(MekTool, "MekTool"));
+        registry.register(init(MekAsuitHelmet,"MekAsuitHelmet"));
+        registry.register(init(MekAsuitChestplate,"MekAsuitChestplate"));
+        registry.register(init(MekAsuitLeggings,"MekAsuitLeggings"));
+        registry.register(init(MekAsuitBoots,"MekAsuitBoots"));
         /**
          * ADD END
          */
