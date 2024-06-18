@@ -13,6 +13,7 @@ public class ItemMekAsuitArmour extends ItemArmor {
 
     public ItemMekAsuitArmour(EntityEquipmentSlot slot) {
         super(EnumHelper.addArmorMaterial("MEKASUIT", "mekasuit", 0, new int[]{0, 0, 0, 0}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 0), 3, slot);
+        setMaxStackSize(1);
         setCreativeTab(Mekanism.tabMekanism);
     }
 

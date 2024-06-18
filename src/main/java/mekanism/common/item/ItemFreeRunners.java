@@ -230,8 +230,7 @@ public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpeci
         if (this == MekanismItems.FreeRunners) {
             properties = new ArmorProperties(0, 0, 0);
         } else if (this == MekanismItems.ArmoredFreeRunners) {
-            properties = new ArmorProperties(1, MekanismConfig.current().general.armoredFreeRunnersRatio.val(),
-                    MekanismConfig.current().general.armoredFreeRunnersDamageMax.val());
+            properties = new ArmorProperties(1, MekanismConfig.current().general.armoredFreeRunnersRatio.val(), MekanismConfig.current().general.armoredFreeRunnersDamageMax.val());
             properties.Toughness = 2;
         }
         return properties;

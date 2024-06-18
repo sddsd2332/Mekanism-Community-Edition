@@ -91,6 +91,8 @@ public class MekanismItems {
     public static final ItemMekAsuitBodyArmour MekAsuitChestplate = new ItemMekAsuitBodyArmour();
     public static final ItemMekAsuitLegsArmour MekAsuitLeggings = new ItemMekAsuitLegsArmour();
     public static final ItemMekAsuitFeetArmour MekAsuitBoots = new ItemMekAsuitFeetArmour();
+    public static final Item ModuleBase = new ItemMekanism();
+    public static final Item ModuleUpgrade = new ItemModuleUpgrade();
     /**
      * ADD END
      */
@@ -179,6 +181,8 @@ public class MekanismItems {
         registry.register(init(MekAsuitChestplate, "MekAsuitChestplate"));
         registry.register(init(MekAsuitLeggings, "MekAsuitLeggings"));
         registry.register(init(MekAsuitBoots, "MekAsuitBoots"));
+        registry.register(init(ModuleBase,"ModuleBase"));
+        registry.register(init(ModuleUpgrade,"ModuleUpgrade"));
         /**
          * ADD END
          */
