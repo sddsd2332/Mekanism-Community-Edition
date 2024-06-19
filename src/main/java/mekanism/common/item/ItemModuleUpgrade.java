@@ -2,6 +2,7 @@ package mekanism.common.item;
 
 import mekanism.api.EnumColor;
 import mekanism.common.base.IMetaItem;
+import mekanism.common.base.IModuleUpgradeItem;
 import mekanism.common.moduleUpgrade;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
@@ -18,7 +19,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Locale;
 
-public class ItemModuleUpgrade extends ItemMekanism implements IMetaItem {
+public class ItemModuleUpgrade extends ItemMekanism implements IMetaItem, IModuleUpgradeItem {
 
     public ItemModuleUpgrade() {
         super();
@@ -59,5 +60,10 @@ public class ItemModuleUpgrade extends ItemMekanism implements IMetaItem {
     @Override
     public String getTranslationKey(ItemStack item) {
         return "item.module." + moduleUpgrade.values()[item.getItemDamage()].getName().toLowerCase(Locale.ROOT);
+    }
+
+    @Override
+    public moduleUpgrade getmoduleUpgrade(ItemStack stack) {
+        return moduleUpgrade.values()[stack.getItemDamage()];
     }
 }

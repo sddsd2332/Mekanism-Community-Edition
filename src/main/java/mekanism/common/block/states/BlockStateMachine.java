@@ -212,7 +212,8 @@ public class BlockStateMachine extends ExtendedBlockState {
         }
 
         public boolean isValidMachine() {
-            return true;
+            return this != MODIFICATION_STATION;
+            // return true;
         }
 
         public TileEntity create() {
@@ -322,7 +323,7 @@ public class BlockStateMachine extends ExtendedBlockState {
                 case RECYCLER -> MekanismConfig.current().storage.recycler.val();
                 case INDUSTRIAL_ALARM -> 0;
                 case AMBIENT_ACCUMULATOR_ENERGY -> MekanismConfig.current().storage.AmbientAccumulatorEnergy.val();
-                case HYBRID_STORAGE ->  MekanismConfig.current().storage.HybridStorageEnergy.val();
+                case HYBRID_STORAGE -> MekanismConfig.current().storage.HybridStorageEnergy.val();
                 case MODIFICATION_STATION -> MekanismConfig.current().storage.modificationStation.val();
                 default -> 400 * getUsage();
             };

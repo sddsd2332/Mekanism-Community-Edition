@@ -368,6 +368,12 @@ public final class MekanismUtils {
         return def * Math.pow(MekanismConfig.current().general.maxUpgradeMultiplier.val(), numUpgrades / (float) Upgrade.ENERGY.getMax());
     }
 
+    public static double getModuleMaxEnergy(ItemStack itemStack, double def) {
+        Map<moduleUpgrade, Integer> module = moduleUpgrade.buildMap(ItemDataUtils.getDataMap(itemStack));
+        float numUpgrades = module.get(moduleUpgrade.EnergyUnit) == null ? 0 : (float) module.get(moduleUpgrade.EnergyUnit);
+        return def * Math.pow(2, numUpgrades);
+    }
+
     /**
      * Better version of the World.getRedstonePowerFromNeighbors() method that doesn't load chunks.
      *
@@ -710,7 +716,7 @@ public final class MekanismUtils {
             case RF -> UnitDisplayUtils.getDisplayShort(RFIntegration.toRFAsDouble(energy), ElectricUnit.REDSTONE_FLUX);
             case EU -> UnitDisplayUtils.getDisplayShort(IC2Integration.toEU(energy), ElectricUnit.ELECTRICAL_UNITS);
             case T -> UnitDisplayUtils.getDisplayShort(TeslaIntegration.toTeslaAsDouble(energy), ElectricUnit.TESLA);
-            case FE -> UnitDisplayUtils.getDisplayShort(FEIntegration.tofeAsDouble(energy),ElectricUnit.FORGE_ENERGY);
+            case FE -> UnitDisplayUtils.getDisplayShort(FEIntegration.tofeAsDouble(energy), ElectricUnit.FORGE_ENERGY);
         };
     }
 

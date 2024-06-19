@@ -284,6 +284,7 @@ public class CommonProxy implements IGuiProvider {
             case 72 -> new ContainerChanceMachine2(player.inventory, (TileEntityChanceMachine2) tileEntity);
             case 73 -> new ContainerAmbientAccumulatorEnergy(player.inventory, (TileEntityAmbientAccumulatorEnergy) tileEntity);
             case 74 -> new ContainerHybridStorage(player.inventory,(TileEntityHybridStorage) tileEntity);
+            case 75 -> new ContainerModificationStation(player.inventory,(TileEntityModificationStation) tileEntity);
             default -> null;
         };
     }

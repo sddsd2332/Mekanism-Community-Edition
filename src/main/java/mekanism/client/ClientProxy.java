@@ -765,6 +765,7 @@ public class ClientProxy extends CommonProxy {
             case 72 -> new GuiRecycler(player.inventory, (TileEntityRecycler) tileEntity);
             case 73 -> new GuiAmbientAccumulatorEnergy(player.inventory, (TileEntityAmbientAccumulatorEnergy) tileEntity);
             case 74 -> new GuiHybridStorage(player.inventory,(TileEntityHybridStorage) tileEntity);
+            case 75 -> new GuiModificationStation(player.inventory,(TileEntityModificationStation) tileEntity);
             default -> null;
         };
     }
