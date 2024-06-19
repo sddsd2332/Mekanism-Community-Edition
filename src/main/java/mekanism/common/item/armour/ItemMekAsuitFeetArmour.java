@@ -5,7 +5,6 @@ import mekanism.api.EnumColor;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitBoot;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
-import mekanism.common.item.ItemFreeRunners;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import net.minecraft.client.Minecraft;

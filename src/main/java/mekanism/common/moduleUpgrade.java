@@ -25,6 +25,7 @@ public enum moduleUpgrade {
         maxStack = max;
         color = c;
     }
+
     public String getName() {
         return name;
     }
@@ -56,9 +57,10 @@ public enum moduleUpgrade {
         return modules;
     }
 
+
     public static void saveMap(Map<moduleUpgrade, Integer> module, NBTTagCompound nbtTags) {
         NBTTagList list = new NBTTagList();
-        for (Entry<moduleUpgrade, Integer> entry :module.entrySet()){
+        for (Entry<moduleUpgrade, Integer> entry : module.entrySet()) {
             list.appendTag(getTagFor(entry.getKey(), entry.getValue()));
         }
         nbtTags.setTag("module", list);
@@ -66,7 +68,7 @@ public enum moduleUpgrade {
 
     public static NBTTagCompound getTagFor(moduleUpgrade module, int amount) {
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger("type",module.ordinal());
+        compound.setInteger("type", module.ordinal());
         compound.setInteger("amount", amount);
         return compound;
     }

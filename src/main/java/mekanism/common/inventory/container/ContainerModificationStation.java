@@ -49,15 +49,20 @@ public class ContainerModificationStation extends ContainerMekanism<TileEntityMo
     }
 
     @Override
+    protected int getInventorYOffset() {
+        return 139;
+    }
+
+    @Override
     protected void addSlots() {
-        addSlotToContainer(new SlotEnergy.SlotDischarge(tileEntity, 1, 56, 53));
-        addSlotToContainer(new Slot(tileEntity, 2, 116, 35) {
+        addSlotToContainer(new SlotEnergy.SlotDischarge(tileEntity, 1, 149, 21));
+        addSlotToContainer(new Slot(tileEntity, 2, 35, 118) {
             @Override
             public boolean isItemValid(ItemStack itemstack) {
                 return itemstack.getItem() == MekanismItems.ModuleUpgrade;
             }
         });
-        addSlotToContainer(new Slot(tileEntity, 3, 132, 35) {
+        addSlotToContainer(new Slot(tileEntity, 3, 125, 118) {
             @Override
             public boolean isItemValid(ItemStack itemstack) {
                 return itemstack.getItem() == MekanismItems.MekAsuitBoots || itemstack.getItem() == MekanismItems.MekAsuitLeggings || itemstack.getItem() == MekanismItems.MekAsuitChestplate || itemstack.getItem() == MekanismItems.MekAsuitHelmet;
