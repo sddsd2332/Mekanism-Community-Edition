@@ -1,10 +1,13 @@
 package mekanism.common.item.armour;
 
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitHead;
+import mekanism.client.model.mekasuitarmour.ModuleSolarHelmet;
 import mekanism.common.MekanismFluids;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
@@ -20,18 +23,19 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasItem {
@@ -53,6 +57,13 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
         if (render instanceof RenderPlayer) {
             armorModel.setModelAttributes(_default);
         }
+        //   if (){
+        ModuleSolarHelmet Solar = new ModuleSolarHelmet();
+        armorModel.helmet_armor.childModels.remove(armorModel.hide);
+        armorModel.bipedHead.addChild(Solar.solar_helmet);
+        //     }
+
+
         return armorModel;
     }
 
@@ -88,18 +99,6 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
     public void damageArmor(EntityLivingBase entity, @NotNull ItemStack stack, DamageSource source, int damage, int slot) {
     }
 
-
-    @SubscribeEvent
-    public void onEntityAttacked(LivingAttackEvent event) {
-        EntityLivingBase base = event.getEntityLiving();
-        ItemStack stack = base.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-        if (!stack.isEmpty() && stack.getItem() instanceof ItemMekAsuitHeadArmour item) {
-            if (item.getEnergy(stack) > 0 && event.getSource() == DamageSource.MAGIC) {
-                item.setEnergy(stack, item.getEnergy(stack) - 40000);
-                event.setCanceled(true);
-            }
-        }
-    }
 
     @Override
     public int getRate(ItemStack itemstack) {
@@ -177,10 +176,12 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
         return new GasStack(type, gasToUse);
     }
 
+
     @Override
-    public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
-        if (entity instanceof EntityPlayer player && !world.isRemote) {
+    public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
+        if (!world.isRemote) {
             ItemStack headStack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+            PotionEffect nv = player.getActivePotionEffect(MobEffects.NIGHT_VISION);
             if (headStack.getItem() instanceof ItemMekAsuitHeadArmour item) {
                 if (player.canEat(false)) {
                     int needed = Math.min(20 - player.getFoodStats().getFoodLevel(), item.getStored(headStack) / 50);
@@ -192,12 +193,46 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
                         player.getFoodStats().addStats(needed, 0.8F);
                     }
                 }
+
                 if (player.isEntityAlive() && player.isInsideOfMaterial(Material.WATER)) {
                     if (!player.canBreatheUnderwater() && !player.capabilities.disableDamage) {
                         player.setAir(300);
                         item.setEnergy(headStack, item.getEnergy(headStack) - MekanismConfig.current().general.FROM_H2.val() * 2);
                     }
                 }
+
+                List<PotionEffect> effects = Lists.newArrayList(player.getActivePotionEffects());
+                for (PotionEffect potion : Collections2.filter(effects, potion -> potion.getPotion().isBadEffect())) {
+                    item.setEnergy(headStack, item.getEnergy(headStack) - 40000);
+                    player.removePotionEffect(potion.getPotion());
+                }
+
+
+                if (!player.getEntityWorld().isDaytime() && !player.getEntityWorld().provider.isNether()) {
+                    if (nv == null) {
+                        player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false));
+                    } else {
+                        nv.duration = Integer.MAX_VALUE;
+                    }
+                    item.setEnergy(headStack, item.getEnergy(headStack) - 200);
+                } else if (nv != null) {
+                    nv.duration = 0;
+                }
+
+                if (player.getEntityWorld().isDaytime() && player.getEntityWorld().canSeeSky(player.getPosition())) {
+                    Biome b = player.getEntityWorld().provider.getBiomeForCoords(player.getPosition());
+                    float tempEff = 0.3f * (0.8f - b.getTemperature(player.getPosition()));
+                    float humidityEff = -0.3f * (b.canRain() ? b.getRainfall() : 0.0f);
+                    boolean needsRainCheck = b.canRain();
+                    double peakOutput = 500 * (1.0f + tempEff + humidityEff);
+                    float brightness = player.getEntityWorld().getSunBrightnessFactor(1.0f);
+                    double production = peakOutput * brightness;
+                    if (needsRainCheck && (world.isRaining() || world.isThundering())) {
+                        production *= 0.2;
+                    }
+                    item.setEnergy(headStack, item.getEnergy(headStack) + production * 8);
+                }
+
             }
         }
     }
