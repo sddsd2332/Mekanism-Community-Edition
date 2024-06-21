@@ -11,6 +11,7 @@ import mekanism.client.model.mekasuitarmour.ModuleSolarHelmet;
 import mekanism.common.MekanismFluids;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.moduleUpgrade;
 import mekanism.common.util.ItemDataUtils;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -42,6 +43,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
 
     public ItemMekAsuitHeadArmour() {
         super(EntityEquipmentSlot.HEAD);
+        setSupported(moduleUpgrade.SolarRechargingUnit);
     }
 
     @Override
@@ -58,22 +60,21 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
         if (render instanceof RenderPlayer) {
             armorModel.setModelAttributes(_default);
         }
-        //   if () {
-        //   if (armorModel.helmet_armor.childModels.contains(armorModel.hide)) {
-        armorModel.helmet_armor.childModels.remove(armorModel.hide);
-        //    }
-        //     if (!armorModel.helmet_armor.childModels.contains(Solar.solar_helmet)) {
-        armorModel.bipedHead.addChild(Solar.solar_helmet);
-        //    }
-        /* } else {
+        if (isUpgradeInstalled(itemStack, moduleUpgrade.SolarRechargingUnit)) {
+            if (armorModel.helmet_armor.childModels.contains(armorModel.hide)) {
+                armorModel.helmet_armor.childModels.remove(armorModel.hide);
+            }
+            if (!armorModel.helmet_armor.childModels.contains(Solar.solar_helmet)) {
+                armorModel.bipedHead.addChild(Solar.solar_helmet);
+            }
+        } else {
             if (armorModel.helmet_armor.childModels.contains(Solar.solar_helmet)) {
                 armorModel.helmet_armor.childModels.remove(Solar.solar_helmet);
             }
             if (!armorModel.helmet_armor.childModels.contains(armorModel.hide)) {
                 armorModel.helmet_armor.childModels.add(armorModel.hide);
             }
-        } */
-
+        }
         return armorModel;
     }
 
@@ -240,23 +241,23 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
                 } else if (nv != null) {
                     nv.duration = 0;
                 }
-               //if()
-
                 //if()
-                if (player.getEntityWorld().isDaytime() && player.getEntityWorld().canSeeSky(player.getPosition())) {
-                    Biome b = player.getEntityWorld().provider.getBiomeForCoords(player.getPosition());
-                    float tempEff = 0.3f * (0.8f - b.getTemperature(player.getPosition()));
-                    float humidityEff = -0.3f * (b.canRain() ? b.getRainfall() : 0.0f);
-                    boolean needsRainCheck = b.canRain();
-                    double peakOutput = 500 * (1.0f + tempEff + humidityEff);
-                    float brightness = player.getEntityWorld().getSunBrightnessFactor(1.0f);
-                    double production = peakOutput * brightness;
-                    if (needsRainCheck && (world.isRaining() || world.isThundering())) {
-                        production *= 0.2;
-                    }
-                    item.setEnergy(headStack, item.getEnergy(headStack) + production * 8);
-                }
 
+                if (isUpgradeInstalled(headStack, moduleUpgrade.SolarRechargingUnit)) {
+                    if (player.getEntityWorld().isDaytime() && player.getEntityWorld().canSeeSky(player.getPosition())) {
+                        Biome b = player.getEntityWorld().provider.getBiomeForCoords(player.getPosition());
+                        float tempEff = 0.3f * (0.8f - b.getTemperature(player.getPosition()));
+                        float humidityEff = -0.3f * (b.canRain() ? b.getRainfall() : 0.0f);
+                        boolean needsRainCheck = b.canRain();
+                        double peakOutput = 500 * (1.0f + tempEff + humidityEff);
+                        float brightness = player.getEntityWorld().getSunBrightnessFactor(1.0f);
+                        double production = peakOutput * brightness;
+                        if (needsRainCheck && (world.isRaining() || world.isThundering())) {
+                            production *= 0.2;
+                        }
+                        item.setEnergy(headStack, item.getEnergy(headStack) + production * getUpgrades(moduleUpgrade.SolarRechargingUnit));
+                    }
+                }
             }
         }
     }

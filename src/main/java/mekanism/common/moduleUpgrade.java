@@ -1,6 +1,5 @@
 package mekanism.common;
 
-import mekanism.api.EnumColor;
 import mekanism.common.util.LangUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -14,32 +13,16 @@ import java.util.Map.Entry;
 public enum moduleUpgrade {
 
     //  EMPTY("base",1,),
-    EnergyUnit("EnergyUnit", 8, EnumColor.GREY);
+    EnergyUnit("EnergyUnit", 8),
+    SolarRechargingUnit("SolarRechargingUnit", 8);
 
     private String name;
     private int maxStack;
-    private EnumColor color;
 
-    moduleUpgrade(String s, int max, EnumColor c) {
+
+    moduleUpgrade(String s, int max) {
         name = s;
         maxStack = max;
-        color = c;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return LangUtils.localize("module." + name + ".desc");
-    }
-
-    public int getMax() {
-        return maxStack;
-    }
-
-    public EnumColor getColor() {
-        return color;
     }
 
     public static Map<moduleUpgrade, Integer> buildMap(@Nullable NBTTagCompound nbtTags) {
@@ -57,7 +40,6 @@ public enum moduleUpgrade {
         return modules;
     }
 
-
     public static void saveMap(Map<moduleUpgrade, Integer> module, NBTTagCompound nbtTags) {
         NBTTagList list = new NBTTagList();
         for (Entry<moduleUpgrade, Integer> entry : module.entrySet()) {
@@ -71,6 +53,18 @@ public enum moduleUpgrade {
         compound.setInteger("type", module.ordinal());
         compound.setInteger("amount", amount);
         return compound;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return LangUtils.localize("module." + name + ".desc");
+    }
+
+    public int getMax() {
+        return maxStack;
     }
 
 }

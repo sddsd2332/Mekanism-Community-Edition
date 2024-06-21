@@ -12,7 +12,9 @@ import mekanism.common.integration.forgeenergy.ForgeEnergyItemWrapper;
 import mekanism.common.integration.ic2.IC2ItemManager;
 import mekanism.common.integration.redstoneflux.RFIntegration;
 import mekanism.common.integration.tesla.TeslaItemWrapper;
+import mekanism.common.moduleUpgrade;
 import mekanism.common.util.ItemDataUtils;
+import mekanism.common.util.MekanismUtils;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.SoundEvents;
@@ -28,6 +30,10 @@ import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.Optional;
 
 import javax.annotation.Nonnull;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Set;
 
 @Optional.InterfaceList({
         @Optional.Interface(iface = "ic2.api.item.ISpecialElectricItem", modid = MekanismHooks.IC2_MOD_ID),
@@ -36,17 +42,20 @@ import javax.annotation.Nonnull;
 })
 public abstract class ItemMekAsuitArmour extends ItemArmor implements IEnergizedItem, ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor {
 
+    public Map<moduleUpgrade, Integer> upgrades = new EnumMap<>(moduleUpgrade.class);
+    public Set<moduleUpgrade> supported = EnumSet.noneOf(moduleUpgrade.class);
+
     public ItemMekAsuitArmour(EntityEquipmentSlot slot) {
         super(EnumHelper.addArmorMaterial("MEKASUIT", "mekasuit", 0, new int[]{0, 0, 0, 0}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 0), 3, slot);
         setMaxStackSize(1);
         setCreativeTab(Mekanism.tabMekanism);
+        setSupported(moduleUpgrade.EnergyUnit);
     }
 
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
         return "mekanism:render/MekAsuit.png";
     }
-
 
     @Override
     public double getEnergy(ItemStack itemStack) {
@@ -68,8 +77,8 @@ public abstract class ItemMekAsuitArmour extends ItemArmor implements IEnergized
 
     @Override
     public double getMaxEnergy(ItemStack itemStack) {
-        return 4096000000D;
-        // return ItemDataUtils.hasData(itemStack, "module") ? MekanismUtils.getModuleMaxEnergy(itemStack, 16000000D) : 16000000D;
+        //  return 4096000000D;
+        return ItemDataUtils.hasData(itemStack, "module") ? MekanismUtils.getModuleMaxEnergy(itemStack, 16000000D) : 16000000D;
     }
 
     @Override
@@ -163,6 +172,55 @@ public abstract class ItemMekAsuitArmour extends ItemArmor implements IEnergized
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
         return new ItemCapabilityWrapper(stack, new TeslaItemWrapper(), new ForgeEnergyItemWrapper());
+    }
+
+
+    public int getUpgrades(moduleUpgrade upgrade) {
+        return upgrades.getOrDefault(upgrade, 0);
+    }
+
+
+    public void removeUpgrade(moduleUpgrade upgrade, boolean removeAll) {
+        int installed = getUpgrades(upgrade);
+        if (installed > 0) {
+            int toRemove = removeAll ? installed : 1;
+            upgrades.put(upgrade, Math.max(0, getUpgrades(upgrade) - toRemove));
+        }
+        if (upgrades.get(upgrade) == 0) {
+            upgrades.remove(upgrade);
+        }
+    }
+
+    public void setSupported(moduleUpgrade upgrade) {
+        setSupported(upgrade, true);
+    }
+
+    public void setSupported(moduleUpgrade upgrade, boolean isSupported) {
+        if (isSupported) {
+            supported.add(upgrade);
+        } else {
+            supported.remove(upgrade);
+        }
+    }
+
+    public void clearSupportedTypes() {
+        supported.clear();
+    }
+
+    public boolean supports(moduleUpgrade upgrade) {
+        return supported.contains(upgrade);
+    }
+
+    public Set<moduleUpgrade> getSupportedTypes() {
+        return supported;
+    }
+
+    public boolean isUpgradeInstalled(ItemStack stack, moduleUpgrade upgrade) {
+        if (ItemDataUtils.hasData(stack, "module")) {
+            Map<moduleUpgrade, Integer> module = moduleUpgrade.buildMap(ItemDataUtils.getDataMap(stack));
+                return module.containsKey(upgrade);
+            }
+        return false;
     }
 
 }
