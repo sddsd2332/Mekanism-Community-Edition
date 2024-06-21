@@ -53,16 +53,26 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
     @SideOnly(Side.CLIENT)
     public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped _default) {
         ModelMekAsuitHead armorModel = new ModelMekAsuitHead();
+        ModuleSolarHelmet Solar = new ModuleSolarHelmet();
         Render<AbstractClientPlayer> render = Minecraft.getMinecraft().getRenderManager().getEntityRenderObject(entityLiving);
         if (render instanceof RenderPlayer) {
             armorModel.setModelAttributes(_default);
         }
-        //   if (){
-        ModuleSolarHelmet Solar = new ModuleSolarHelmet();
+        //   if () {
+        //   if (armorModel.helmet_armor.childModels.contains(armorModel.hide)) {
         armorModel.helmet_armor.childModels.remove(armorModel.hide);
+        //    }
+        //     if (!armorModel.helmet_armor.childModels.contains(Solar.solar_helmet)) {
         armorModel.bipedHead.addChild(Solar.solar_helmet);
-        //     }
-
+        //    }
+        /* } else {
+            if (armorModel.helmet_armor.childModels.contains(Solar.solar_helmet)) {
+                armorModel.helmet_armor.childModels.remove(Solar.solar_helmet);
+            }
+            if (!armorModel.helmet_armor.childModels.contains(armorModel.hide)) {
+                armorModel.helmet_armor.childModels.add(armorModel.hide);
+            }
+        } */
 
         return armorModel;
     }
@@ -183,10 +193,12 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
             ItemStack headStack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
             PotionEffect nv = player.getActivePotionEffect(MobEffects.NIGHT_VISION);
             if (headStack.getItem() instanceof ItemMekAsuitHeadArmour item) {
-                if (player.canEat(false)) {
+
+                //if ()
+                if (player.canEat(false) && item.getGas(headStack) != null) {
                     int needed = Math.min(20 - player.getFoodStats().getFoodLevel(), item.getStored(headStack) / 50);
                     int toFeed = Math.min(20000, needed);
-                    if (toFeed > 0) {
+                    if (toFeed > 0 && item.getGas(headStack).amount > needed) {
                         item.setEnergy(headStack, item.getEnergy(headStack) - toFeed);
                         item.useGas(headStack);
                         item.useGas(headStack, needed * 50);
@@ -194,6 +206,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
                     }
                 }
 
+                //if()
                 if (player.isEntityAlive() && player.isInsideOfMaterial(Material.WATER)) {
                     if (!player.canBreatheUnderwater() && !player.capabilities.disableDamage) {
                         player.setAir(300);
@@ -201,13 +214,22 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
                     }
                 }
 
+                //if()
                 List<PotionEffect> effects = Lists.newArrayList(player.getActivePotionEffects());
+                //if ()
                 for (PotionEffect potion : Collections2.filter(effects, potion -> potion.getPotion().isBadEffect())) {
                     item.setEnergy(headStack, item.getEnergy(headStack) - 40000);
                     player.removePotionEffect(potion.getPotion());
                 }
+                /*if ()
+                for (PotionEffect potion : Collections2.filter(effects, potion -> !potion.getPotion().isBadEffect())) {
+                    item.setEnergy(headStack, item.getEnergy(headStack) - 40000);
+                    player.removePotionEffect(potion.getPotion());
+                }
+                 */
 
 
+                //if()
                 if (!player.getEntityWorld().isDaytime() && !player.getEntityWorld().provider.isNether()) {
                     if (nv == null) {
                         player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false));
@@ -218,7 +240,9 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
                 } else if (nv != null) {
                     nv.duration = 0;
                 }
+               //if()
 
+                //if()
                 if (player.getEntityWorld().isDaytime() && player.getEntityWorld().canSeeSky(player.getPosition())) {
                     Biome b = player.getEntityWorld().provider.getBiomeForCoords(player.getPosition());
                     float tempEff = 0.3f * (0.8f - b.getTemperature(player.getPosition()));
