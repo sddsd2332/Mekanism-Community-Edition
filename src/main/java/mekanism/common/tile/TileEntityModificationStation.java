@@ -25,6 +25,10 @@ public class TileEntityModificationStation extends TileEntityOperationalMachine 
     public TileEntityModificationStation() {
         super("null", MachineType.MODIFICATION_STATION, 0, 40);
         inventory = NonNullListSynchronized.withSize(4, ItemStack.EMPTY);
+        upgradeComponent.setSupported(Upgrade.MUFFLING,false);
+        upgradeComponent.setSupported(Upgrade.SPEED,false);
+        upgradeComponent.setSupported(Upgrade.ENERGY,false);
+
     }
 
     @Override
@@ -69,7 +73,6 @@ public class TileEntityModificationStation extends TileEntityOperationalMachine 
                 if (moduleStack.getItem() instanceof IModuleUpgradeItem item) {
                     setActive(armour.supports(item.getmoduleUpgrade(moduleStack)));
                 }
-                setActive(false);
             } else if (prevEnergy >= getEnergy()) {
                 setActive(false);
             }

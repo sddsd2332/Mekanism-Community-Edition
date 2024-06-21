@@ -44,6 +44,10 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
     public ItemMekAsuitHeadArmour() {
         super(EntityEquipmentSlot.HEAD);
         setSupported(moduleUpgrade.SolarRechargingUnit);
+        setSupported(moduleUpgrade.ElectrolyticBreathingUnit);
+        setSupported(moduleUpgrade.VisionEnhancementUnit);
+        setSupported(moduleUpgrade.InhalationPurificationUnit);
+        setSupported(moduleUpgrade.NutritionalInjectionUnit);
     }
 
     @Override
@@ -195,53 +199,55 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
             PotionEffect nv = player.getActivePotionEffect(MobEffects.NIGHT_VISION);
             if (headStack.getItem() instanceof ItemMekAsuitHeadArmour item) {
 
-                //if ()
-                if (player.canEat(false) && item.getGas(headStack) != null) {
-                    int needed = Math.min(20 - player.getFoodStats().getFoodLevel(), item.getStored(headStack) / 50);
-                    int toFeed = Math.min(20000, needed);
-                    if (toFeed > 0 && item.getGas(headStack).amount > needed) {
-                        item.setEnergy(headStack, item.getEnergy(headStack) - toFeed);
-                        item.useGas(headStack);
-                        item.useGas(headStack, needed * 50);
-                        player.getFoodStats().addStats(needed, 0.8F);
+                if (isUpgradeInstalled(itemStack, moduleUpgrade.NutritionalInjectionUnit)) {
+                    if (player.canEat(false) && item.getGas(headStack) != null) {
+                        int needed = Math.min(20 - player.getFoodStats().getFoodLevel(), item.getStored(headStack) / 50);
+                        int toFeed = Math.min(20000, needed);
+                        if (toFeed > 0 && item.getGas(headStack).amount > needed) {
+                            item.setEnergy(headStack, item.getEnergy(headStack) - toFeed);
+                            item.useGas(headStack);
+                            item.useGas(headStack, needed * 50);
+                            player.getFoodStats().addStats(needed, 0.8F);
+                        }
                     }
                 }
 
-                //if()
-                if (player.isEntityAlive() && player.isInsideOfMaterial(Material.WATER)) {
-                    if (!player.canBreatheUnderwater() && !player.capabilities.disableDamage) {
-                        player.setAir(300);
-                        item.setEnergy(headStack, item.getEnergy(headStack) - MekanismConfig.current().general.FROM_H2.val() * 2);
+                if (isUpgradeInstalled(itemStack, moduleUpgrade.ElectrolyticBreathingUnit)) {
+                    if (player.isEntityAlive() && player.isInsideOfMaterial(Material.WATER)) {
+                        if (!player.canBreatheUnderwater() && !player.capabilities.disableDamage) {
+                            player.setAir(300);
+                            item.setEnergy(headStack, item.getEnergy(headStack) - MekanismConfig.current().general.FROM_H2.val() * 2);
+                        }
                     }
                 }
 
-                //if()
-                List<PotionEffect> effects = Lists.newArrayList(player.getActivePotionEffects());
-                //if ()
-                for (PotionEffect potion : Collections2.filter(effects, potion -> potion.getPotion().isBadEffect())) {
-                    item.setEnergy(headStack, item.getEnergy(headStack) - 40000);
-                    player.removePotionEffect(potion.getPotion());
-                }
+                if (isUpgradeInstalled(itemStack, moduleUpgrade.InhalationPurificationUnit)) {
+                    List<PotionEffect> effects = Lists.newArrayList(player.getActivePotionEffects());
+                    //if ()
+                    for (PotionEffect potion : Collections2.filter(effects, potion -> potion.getPotion().isBadEffect())) {
+                        item.setEnergy(headStack, item.getEnergy(headStack) - 40000);
+                        player.removePotionEffect(potion.getPotion());
+                    }
                 /*if ()
                 for (PotionEffect potion : Collections2.filter(effects, potion -> !potion.getPotion().isBadEffect())) {
                     item.setEnergy(headStack, item.getEnergy(headStack) - 40000);
                     player.removePotionEffect(potion.getPotion());
                 }
                  */
-
-
-                //if()
-                if (!player.getEntityWorld().isDaytime() && !player.getEntityWorld().provider.isNether()) {
-                    if (nv == null) {
-                        player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false));
-                    } else {
-                        nv.duration = Integer.MAX_VALUE;
-                    }
-                    item.setEnergy(headStack, item.getEnergy(headStack) - 200);
-                } else if (nv != null) {
-                    nv.duration = 0;
                 }
-                //if()
+
+                if (isUpgradeInstalled(itemStack, moduleUpgrade.VisionEnhancementUnit)) {
+                    if (!player.getEntityWorld().isDaytime() && !player.getEntityWorld().provider.isNether()) {
+                        if (nv == null) {
+                            player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false));
+                        } else {
+                            nv.duration = Integer.MAX_VALUE;
+                        }
+                        item.setEnergy(headStack, item.getEnergy(headStack) - 200);
+                    } else if (nv != null) {
+                        nv.duration = 0;
+                    }
+                }  
 
                 if (isUpgradeInstalled(headStack, moduleUpgrade.SolarRechargingUnit)) {
                     if (player.getEntityWorld().isDaytime() && player.getEntityWorld().canSeeSky(player.getPosition())) {

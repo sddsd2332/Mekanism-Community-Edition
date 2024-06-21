@@ -14,7 +14,13 @@ public enum moduleUpgrade {
 
     //  EMPTY("base",1,),
     EnergyUnit("EnergyUnit", 8),
-    SolarRechargingUnit("SolarRechargingUnit", 8);
+    //head
+    SolarRechargingUnit("SolarRechargingUnit", 8),
+    ElectrolyticBreathingUnit("ElectrolyticBreathingUnit",4),
+    VisionEnhancementUnit("VisionEnhancementUnit",1),
+    InhalationPurificationUnit("InhalationPurificationUnit",1),
+    NutritionalInjectionUnit("NutritionalInjectionUnit",1);
+
 
     private String name;
     private int maxStack;
