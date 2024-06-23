@@ -227,7 +227,7 @@ public class ItemBlockBasic extends ItemBlock implements IEnergizedItem, ITierIt
             NBTTagCompound dataMap = ItemDataUtils.getDataMap(itemStack);
             dataMap.removeTag("energyStored");
             if (dataMap.isEmpty()) {
-                itemStack.setTagCompound(null);
+                itemStack.getTagCompound().removeTag(ItemDataUtils.DATA_ID);
             }
         } else {
             ItemDataUtils.setDouble(itemStack, "energyStored", Math.max(Math.min(amount, getMaxEnergy(itemStack)), 0));
