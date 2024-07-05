@@ -281,9 +281,9 @@ public class ItemBlockMultiblockGenerator extends ItemBlock implements IEnergize
        if (amount == 0) {
             NBTTagCompound dataMap = ItemDataUtils.getDataMap(itemStack);
             dataMap.removeTag("energyStored");
-            if (dataMap.isEmpty()) {
-                itemStack.setTagCompound(null);
-            }
+           if (dataMap.isEmpty() && itemStack.getTagCompound()!=null) {
+               itemStack.getTagCompound().removeTag(ItemDataUtils.DATA_ID);
+           }
         } else {
             ItemDataUtils.setDouble(itemStack, "energyStored", Math.max(Math.min(amount, getMaxEnergy(itemStack)), 0));
         }
