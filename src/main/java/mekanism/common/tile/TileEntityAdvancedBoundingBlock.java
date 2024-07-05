@@ -39,9 +39,10 @@ public class TileEntityAdvancedBoundingBlock extends TileEntityBoundingBlock imp
 
     @Override
     public void update() {
+        ticker++;
         if (!world.isRemote) {
             final TileEntity tile = getMainTile();
-            if (!(tile instanceof IAdvancedBoundingBlock)) {
+            if (ticker % 200 == 0 && !(tile instanceof IAdvancedBoundingBlock)) {
                 if (MekanismConfig.current().mekce.VirtualErrors.val()) {
                     Mekanism.logger.error("Found tile {} instead of an IAdvancedBoundingBlock, at {}. Multiblock cannot function, Blocks to be removed {}", tile, getMainPos(), getPos());
                 }
