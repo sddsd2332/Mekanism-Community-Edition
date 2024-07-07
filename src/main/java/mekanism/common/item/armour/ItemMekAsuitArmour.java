@@ -6,6 +6,7 @@ import ic2.api.item.IElectricItemManager;
 import ic2.api.item.ISpecialElectricItem;
 import mekanism.api.energy.IEnergizedItem;
 import mekanism.common.Mekanism;
+import mekanism.common.base.IModuleUpgrade;
 import mekanism.common.capabilities.ItemCapabilityWrapper;
 import mekanism.common.integration.MekanismHooks;
 import mekanism.common.integration.forgeenergy.ForgeEnergyItemWrapper;
@@ -40,10 +41,7 @@ import java.util.Set;
         @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyContainerItem", modid = MekanismHooks.REDSTONEFLUX_MOD_ID),
         @Optional.Interface(iface = "ic2.api.item.ISpecialElectricItem", modid = MekanismHooks.IC2_MOD_ID)
 })
-public abstract class ItemMekAsuitArmour extends ItemArmor implements IEnergizedItem, ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor {
-
-    public Map<moduleUpgrade, Integer> upgrades = new EnumMap<>(moduleUpgrade.class);
-    public Set<moduleUpgrade> supported = EnumSet.noneOf(moduleUpgrade.class);
+public abstract class ItemMekAsuitArmour extends ItemArmor implements IEnergizedItem, ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor, IModuleUpgrade {
 
     public ItemMekAsuitArmour(EntityEquipmentSlot slot) {
         super(EnumHelper.addArmorMaterial("MEKASUIT", "mekasuit", 0, new int[]{0, 0, 0, 0}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 0), 3, slot);
@@ -175,52 +173,5 @@ public abstract class ItemMekAsuitArmour extends ItemArmor implements IEnergized
     }
 
 
-    public int getUpgrades(moduleUpgrade upgrade) {
-        return upgrades.getOrDefault(upgrade, 0);
-    }
-
-
-    public void removeUpgrade(moduleUpgrade upgrade, boolean removeAll) {
-        int installed = getUpgrades(upgrade);
-        if (installed > 0) {
-            int toRemove = removeAll ? installed : 1;
-            upgrades.put(upgrade, Math.max(0, getUpgrades(upgrade) - toRemove));
-        }
-        if (upgrades.get(upgrade) == 0) {
-            upgrades.remove(upgrade);
-        }
-    }
-
-    public void setSupported(moduleUpgrade upgrade) {
-        setSupported(upgrade, true);
-    }
-
-    public void setSupported(moduleUpgrade upgrade, boolean isSupported) {
-        if (isSupported) {
-            supported.add(upgrade);
-        } else {
-            supported.remove(upgrade);
-        }
-    }
-
-    public void clearSupportedTypes() {
-        supported.clear();
-    }
-
-    public boolean supports(moduleUpgrade upgrade) {
-        return supported.contains(upgrade);
-    }
-
-    public Set<moduleUpgrade> getSupportedTypes() {
-        return supported;
-    }
-
-    public boolean isUpgradeInstalled(ItemStack stack, moduleUpgrade upgrade) {
-        if (ItemDataUtils.hasData(stack, "module")) {
-            Map<moduleUpgrade, Integer> module = moduleUpgrade.buildMap(ItemDataUtils.getDataMap(stack));
-                return module.containsKey(upgrade);
-            }
-        return false;
-    }
 
 }

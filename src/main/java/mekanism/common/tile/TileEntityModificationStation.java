@@ -3,6 +3,7 @@ package mekanism.common.tile;
 import mekanism.api.Coord4D;
 import mekanism.common.Upgrade;
 import mekanism.common.base.IBoundingBlock;
+import mekanism.common.base.IModuleUpgrade;
 import mekanism.common.base.IModuleUpgradeItem;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.item.armour.ItemMekAsuitArmour;
@@ -20,7 +21,7 @@ import java.util.Map;
 
 public class TileEntityModificationStation extends TileEntityOperationalMachine implements IBoundingBlock {
 
-    public ItemMekAsuitArmour armour;
+    public IModuleUpgrade upgrades;
 
     public TileEntityModificationStation() {
         super("null", MachineType.MODIFICATION_STATION, 0, 40);
@@ -36,42 +37,42 @@ public class TileEntityModificationStation extends TileEntityOperationalMachine 
         super.onUpdate();
         if (!world.isRemote) {
             ChargeUtils.discharge(1, this);
-            ItemStack armourStack = inventory.get(3);
+            ItemStack UpgradeStack = inventory.get(3);
             ItemStack moduleStack = inventory.get(2);
-            if (armourStack.getItem() instanceof ItemMekAsuitArmour itemMekAsuitArmour) {
-                armour = itemMekAsuitArmour;
+            if (UpgradeStack.getItem() instanceof IModuleUpgrade moduleUpgrade) {
+                upgrades = moduleUpgrade;
             }
-            if (!armourStack.isEmpty() && armourStack.getItem() instanceof ItemMekAsuitArmour && armour != null) {
-                if (ItemDataUtils.hasData(armourStack, "module")) {
-                    Map<moduleUpgrade, Integer> upgrade = moduleUpgrade.buildMap(ItemDataUtils.getDataMap(armourStack));
-                    armour.upgrades.putAll(upgrade);
+            if (!UpgradeStack.isEmpty() && UpgradeStack.getItem() instanceof IModuleUpgrade && upgrades != null) {
+                if (ItemDataUtils.hasData(UpgradeStack, "module")) {
+                    Map<moduleUpgrade, Integer> upgrade = moduleUpgrade.buildMap(ItemDataUtils.getDataMap(UpgradeStack));
+                    upgrades.upgrades.putAll(upgrade);
                 } else {
-                    armour.upgrades.clear();
+                    upgrades.upgrades.clear();
                 }
             }
 
             if (moduleStack.getItem() instanceof IModuleUpgradeItem item) {
-                if (!armourStack.isEmpty() && ItemDataUtils.hasData(armourStack, "module") && armour != null) {
-                    if (armour.upgrades.containsKey(item.getmoduleUpgrade(moduleStack))) {
-                        if (armour.upgrades.get(item.getmoduleUpgrade(moduleStack)) >= item.getmoduleUpgrade(moduleStack).getMax()) {
+                if (!UpgradeStack.isEmpty() && ItemDataUtils.hasData(UpgradeStack, "module") && upgrades != null) {
+                    if (upgrades.upgrades.containsKey(item.getmoduleUpgrade(moduleStack))) {
+                        if (upgrades.upgrades.get(item.getmoduleUpgrade(moduleStack)) >= item.getmoduleUpgrade(moduleStack).getMax()) {
                             return;
                         }
                     }
                 }
-                if (getActive() && armour != null) {
+                if (getActive() && upgrades != null) {
                     electricityStored.addAndGet(-energyPerTick);
                     if ((operatingTicks + 1) < ticksRequired) {
                         operatingTicks++;
                     } else if ((operatingTicks + 1) >= ticksRequired) {
                         operatingTicks = 0;
                         addUpgrades(item.getmoduleUpgrade(moduleStack), moduleStack.getCount());
-                        moduleUpgrade.saveMap(armour.upgrades, ItemDataUtils.getDataMap(armourStack));
+                        moduleUpgrade.saveMap(upgrades.upgrades, ItemDataUtils.getDataMap(UpgradeStack));
                     }
                 }
             }
-            if (MekanismUtils.canFunction(this) && getEnergy() >= energyPerTick && !moduleStack.isEmpty() && !armourStack.isEmpty() && armour != null) {
+            if (MekanismUtils.canFunction(this) && getEnergy() >= energyPerTick && !moduleStack.isEmpty() && !UpgradeStack.isEmpty() && upgrades != null) {
                 if (moduleStack.getItem() instanceof IModuleUpgradeItem item) {
-                    setActive(armour.supports(item.getmoduleUpgrade(moduleStack)));
+                    setActive(upgrades.supports(item.getmoduleUpgrade(moduleStack)));
                 }
             } else if (prevEnergy >= getEnergy()) {
                 setActive(false);
@@ -124,11 +125,11 @@ public class TileEntityModificationStation extends TileEntityOperationalMachine 
     }
 
     public void addUpgrades(moduleUpgrade upgrade, int maxAvailable) {
-        int installed = armour.getUpgrades(upgrade);
+        int installed = upgrades.getUpgrades(upgrade);
         if (installed < upgrade.getMax()) {
             int toAdd = Math.min(upgrade.getMax() - installed, maxAvailable);
             if (toAdd > 0) {
-                armour.upgrades.put(upgrade, installed + toAdd);
+                upgrades.upgrades.put(upgrade, installed + toAdd);
                 inventory.get(2).shrink(toAdd);
             }
         }
