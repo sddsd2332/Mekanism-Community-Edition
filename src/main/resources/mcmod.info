@@ -73,19 +73,37 @@
     "description": "Multiblock Machine module for Mekanism",
     "version": "${mod_version}",
     "mcversion": "1.12.2",
-    "authorList":[sddsd2332, WI_8614_ice],
-  "credits": "sddsd2332, WI_8614_ice",
+    "authorList": [sddsd2332, WI_8614_ice],
+    "credits": "sddsd2332, WI_8614_ice",
+    "url": "${mod_url}",
+    "updateJSON": "${mod_update_json}",
+    "logoFile": "${mod_logo_path}",
+    "useDependencyInformation": true,
+    "dependencies": [
+      "mekanism@[${mod_version}]",
+      "mekanismgenerators@[${mod_version}]"
+    ],
+    "requiredMods": [
+      "mekanism@[${mod_version}]",
+      "mekanismgenerators@[${mod_version}]"
+    ]
+  },  {
+  "modid": "mekaweapons",
+  "name": "${mod_name}: Weapons",
+  "description": "Weapons for Mekanism.",
+  "version": "${mod_version}",
+  "mcversion": "1.12.2",
+  "authorList": [sddsd2332,oMeranha],
+  "credits": "sddsd2332, oMeranha",
   "url": "${mod_url}",
   "updateJSON": "${mod_update_json}",
   "logoFile": "${mod_logo_path}",
   "useDependencyInformation": true,
   "dependencies": [
-  "mekanism@[${mod_version}]",
-  "mekanismgenerators@[${mod_version}]"
-    ],
+    "mekanism@[${mod_version}]"
+  ],
   "requiredMods": [
-  "mekanism@[${mod_version}]",
-  "mekanismgenerators@[${mod_version}]"
-    ]
-  }
+    "mekanism@[${mod_version}]"
+  ]
+}
 ]

@@ -14,12 +14,18 @@ public enum moduleUpgrade {
 
     //  EMPTY("base",1,),
     EnergyUnit("EnergyUnit", 8),
+    ATTACK_AMPLIFICATION_UNIT("attack_damage",4),
     //head
     SolarRechargingUnit("SolarRechargingUnit", 8),
     ElectrolyticBreathingUnit("ElectrolyticBreathingUnit",4),
     VisionEnhancementUnit("VisionEnhancementUnit",1),
     InhalationPurificationUnit("InhalationPurificationUnit",1),
-    NutritionalInjectionUnit("NutritionalInjectionUnit",1);
+    NutritionalInjectionUnit("NutritionalInjectionUnit",1),
+
+    //mekaBow
+    ARROWENERGY_UNIT("arrowenergy_unit",1),
+
+    ;
 
 
     private String name;
