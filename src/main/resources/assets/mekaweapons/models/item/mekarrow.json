@@ -1,0 +1,79 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"1": "mekaweapons:items/mekabow/bow_body",
+		"11": "mekaweapons:items/mekabow/arrow_side",
+		"12": "mekaweapons:items/mekabow/arrow_back"
+	},
+	"elements": [
+		{
+			"name": "Arrow 1",
+			"from": [0.4, 10.8, 7.2],
+			"to": [14.4, 13.8, 7.2],
+			"faces": {
+				"north": {"uv": [0, 0, 16, 5], "rotation": 180, "texture": "#11"},
+				"east": {"uv": [0, 0, 0, 3], "texture": "#1"},
+				"south": {"uv": [0, 0, 16, 5], "texture": "#11"},
+				"west": {"uv": [0, 0, 0, 3], "texture": "#1"},
+				"up": {"uv": [0, 0, 14, 0], "texture": "#1"},
+				"down": {"uv": [0, 0, 14, 0], "texture": "#1"}
+			}
+		},
+		{
+			"name": "Arrow 2",
+			"from": [0.4, 12.2, 5.7],
+			"to": [14.4, 12.2, 8.7],
+			"faces": {
+				"north": {"uv": [0, 0, 16, 5], "texture": "#1"},
+				"east": {"uv": [0, 0, 3, 0], "texture": "#1"},
+				"south": {"uv": [0, 0, 16, 5], "texture": "#1"},
+				"west": {"uv": [0, 0, 3, 0], "texture": "#1"},
+				"up": {"uv": [0, 0, 16, 5], "texture": "#11"},
+				"down": {"uv": [0, 0, 16, 5], "texture": "#11"}
+			}
+		},
+		{
+			"name": "Arrow 3",
+			"from": [2.2, 10.8, 5.7],
+			"to": [2.2, 13.8, 8.7],
+			"faces": {
+				"north": {"uv": [0, 0, 16, 5], "texture": "#1"},
+				"east": {"uv": [0, 0, 5, 5], "texture": "#12"},
+				"south": {"uv": [0, 0, 16, 5], "texture": "#1"},
+				"west": {"uv": [0, 0, 5, 5], "texture": "#12"},
+				"up": {"uv": [0, 0, 16, 5], "texture": "#1"},
+				"down": {"uv": [0, 0, 16, 5], "texture": "#1"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [0, 90, 0],
+			"translation": [0, -3.25, 3]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [0, -90, 0],
+			"translation": [0, -3.25, 3]
+		},
+		"firstperson_righthand": {
+			"rotation": [-155, 78.5, 173],
+			"translation": [2.75, -1.75, -4.5],
+			"scale": [1, 0.75, 1]
+		},
+		"firstperson_lefthand": {
+			"rotation": [-155, -78.5, 173],
+			"translation": [2.75, -1.75, -4.5],
+			"scale": [1, 0.75, 1]
+		},
+		"gui": {
+			"rotation": [22, 20, 45],
+			"translation": [4.5, -2.75, 0],
+			"scale": [1.23, 1.23, 1.23]
+		},
+		"fixed": {
+			"rotation": [22, 20, 45],
+			"translation": [4.5, -2.75, -1.75],
+			"scale": [1.23, 1.23, 1.23]
+		}
+	}
+}

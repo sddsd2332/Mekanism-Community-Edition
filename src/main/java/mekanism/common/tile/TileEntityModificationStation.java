@@ -6,7 +6,6 @@ import mekanism.common.base.IBoundingBlock;
 import mekanism.common.base.IModuleUpgrade;
 import mekanism.common.base.IModuleUpgradeItem;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
-import mekanism.common.item.armour.ItemMekAsuitArmour;
 import mekanism.common.moduleUpgrade;
 import mekanism.common.tile.prefab.TileEntityOperationalMachine;
 import mekanism.common.util.ChargeUtils;
@@ -26,9 +25,9 @@ public class TileEntityModificationStation extends TileEntityOperationalMachine 
     public TileEntityModificationStation() {
         super("null", MachineType.MODIFICATION_STATION, 0, 40);
         inventory = NonNullListSynchronized.withSize(4, ItemStack.EMPTY);
-        upgradeComponent.setSupported(Upgrade.MUFFLING,false);
-        upgradeComponent.setSupported(Upgrade.SPEED,false);
-        upgradeComponent.setSupported(Upgrade.ENERGY,false);
+        upgradeComponent.setSupported(Upgrade.MUFFLING, false);
+        upgradeComponent.setSupported(Upgrade.SPEED, false);
+        upgradeComponent.setSupported(Upgrade.ENERGY, false);
 
     }
 
@@ -59,6 +58,7 @@ public class TileEntityModificationStation extends TileEntityOperationalMachine 
                         }
                     }
                 }
+
                 if (getActive() && upgrades != null) {
                     electricityStored.addAndGet(-energyPerTick);
                     if ((operatingTicks + 1) < ticksRequired) {
@@ -71,8 +71,8 @@ public class TileEntityModificationStation extends TileEntityOperationalMachine 
                 }
             }
             if (MekanismUtils.canFunction(this) && getEnergy() >= energyPerTick && !moduleStack.isEmpty() && !UpgradeStack.isEmpty() && upgrades != null) {
-                if (moduleStack.getItem() instanceof IModuleUpgradeItem item) {
-                    setActive(upgrades.supports(item.getmoduleUpgrade(moduleStack)));
+                if (moduleStack.getItem() instanceof IModuleUpgradeItem item && UpgradeStack.getItem() instanceof IModuleUpgrade upgrade) {
+                    setActive(upgrade.getValidModule(UpgradeStack).contains(item.getmoduleUpgrade(moduleStack)));
                 }
             } else if (prevEnergy >= getEnergy()) {
                 setActive(false);

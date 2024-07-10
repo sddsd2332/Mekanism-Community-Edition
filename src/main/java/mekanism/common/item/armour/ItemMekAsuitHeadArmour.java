@@ -43,11 +43,6 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
 
     public ItemMekAsuitHeadArmour() {
         super(EntityEquipmentSlot.HEAD);
-        setSupported(moduleUpgrade.SolarRechargingUnit);
-        setSupported(moduleUpgrade.ElectrolyticBreathingUnit);
-        setSupported(moduleUpgrade.VisionEnhancementUnit);
-        setSupported(moduleUpgrade.InhalationPurificationUnit);
-        setSupported(moduleUpgrade.NutritionalInjectionUnit);
     }
 
     @Override
@@ -266,6 +261,17 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
                 }
             }
         }
+    }
+
+    @Override
+    public List<moduleUpgrade> getValidModule(ItemStack stack) {
+        List<moduleUpgrade> list = super.getValidModule(stack);
+        list.add(moduleUpgrade.SolarRechargingUnit);
+        list.add(moduleUpgrade.ElectrolyticBreathingUnit);
+        list.add(moduleUpgrade.VisionEnhancementUnit);
+        list.add(moduleUpgrade.InhalationPurificationUnit);
+        list.add(moduleUpgrade.NutritionalInjectionUnit);
+        return list;
     }
 
 }

@@ -4,6 +4,7 @@ import com.google.common.collect.Multimap;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitLeg;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.moduleUpgrade;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBiped;
@@ -21,6 +22,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ItemMekAsuitLegsArmour extends ItemMekAsuitArmour {
@@ -77,5 +79,12 @@ public class ItemMekAsuitLegsArmour extends ItemMekAsuitArmour {
     @Override
     public void damageArmor(EntityLivingBase entity, @NotNull ItemStack stack, DamageSource source, int damage, int slot) {
 
+    }
+
+    @Override
+    public List<moduleUpgrade> getValidModule(ItemStack stack) {
+        List<moduleUpgrade> list = super.getValidModule(stack);
+
+        return list;
     }
 }

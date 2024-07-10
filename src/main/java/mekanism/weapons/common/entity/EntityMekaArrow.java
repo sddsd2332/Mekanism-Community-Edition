@@ -1,5 +1,6 @@
 package mekanism.weapons.common.entity;
 
+import mekanism.weapons.common.MekanismWeaponsItems;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
@@ -19,6 +20,6 @@ public class EntityMekaArrow extends EntityArrow{
 
     @Override
     protected ItemStack getArrowStack() {
-        return new ItemStack(Items.ARROW);
+        return new ItemStack(MekanismWeaponsItems.mekArrow);
     }
 }

@@ -5,10 +5,7 @@ import mekanism.common.moduleUpgrade;
 import mekanism.common.util.ItemDataUtils;
 import net.minecraft.item.ItemStack;
 
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public interface IModuleUpgrade {
 
@@ -18,7 +15,7 @@ public interface IModuleUpgrade {
         return upgrades.getOrDefault(upgrade, 0);
     }
 
-     Set<moduleUpgrade> supported = EnumSet.noneOf(moduleUpgrade.class);
+    List<moduleUpgrade> getValidModule(ItemStack stack);
 
      default void removeUpgrade(moduleUpgrade upgrade, boolean removeAll) {
         int installed = getUpgrades(upgrade);
@@ -31,29 +28,7 @@ public interface IModuleUpgrade {
         }
     }
 
-     default void setSupported(moduleUpgrade upgrade) {
-        setSupported(upgrade, true);
-    }
 
-     default void setSupported(moduleUpgrade upgrade, boolean isSupported) {
-        if (isSupported) {
-            supported.add(upgrade);
-        } else {
-            supported.remove(upgrade);
-        }
-    }
-
-     default void clearSupportedTypes() {
-        supported.clear();
-    }
-
-     default boolean supports(moduleUpgrade upgrade) {
-        return supported.contains(upgrade);
-    }
-
-     default Set<moduleUpgrade> getSupportedTypes() {
-        return supported;
-    }
 
      default boolean isUpgradeInstalled(ItemStack stack, moduleUpgrade upgrade) {
         if (ItemDataUtils.hasData(stack, "module")) {

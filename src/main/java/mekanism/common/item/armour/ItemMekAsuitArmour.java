@@ -31,10 +31,8 @@ import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.Optional;
 
 import javax.annotation.Nonnull;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Optional.InterfaceList({
         @Optional.Interface(iface = "ic2.api.item.ISpecialElectricItem", modid = MekanismHooks.IC2_MOD_ID),
@@ -47,7 +45,6 @@ public abstract class ItemMekAsuitArmour extends ItemArmor implements IEnergized
         super(EnumHelper.addArmorMaterial("MEKASUIT", "mekasuit", 0, new int[]{0, 0, 0, 0}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 0), 3, slot);
         setMaxStackSize(1);
         setCreativeTab(Mekanism.tabMekanism);
-        setSupported(moduleUpgrade.EnergyUnit);
     }
 
     @Override
@@ -172,6 +169,12 @@ public abstract class ItemMekAsuitArmour extends ItemArmor implements IEnergized
         return new ItemCapabilityWrapper(stack, new TeslaItemWrapper(), new ForgeEnergyItemWrapper());
     }
 
+    @Override
+    public List<moduleUpgrade> getValidModule(ItemStack stack) {
+        return new ArrayList<>() {{
+            add(moduleUpgrade.EnergyUnit);
+        }};
+    }
 
 
 }

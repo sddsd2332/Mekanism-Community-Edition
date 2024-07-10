@@ -374,6 +374,10 @@ public final class MekanismUtils {
         return def * Math.pow(2, numUpgrades);
     }
 
+    public static int getModule(ItemStack itemStack,moduleUpgrade upgrade) {
+        Map<moduleUpgrade, Integer> module = moduleUpgrade.buildMap(ItemDataUtils.getDataMap(itemStack));
+        return module.get(upgrade) == null ? 0 : module.get(upgrade);
+    }
     /**
      * Better version of the World.getRedstonePowerFromNeighbors() method that doesn't load chunks.
      *

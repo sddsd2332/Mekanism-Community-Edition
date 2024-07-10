@@ -32,6 +32,8 @@ public class MekanismWeapons implements IModule {
     @SidedProxy(clientSide = "mekanism.weapons.client.MekanismWeaponsClientProxy",serverSide = "mekanism.weapons.common.MekanismWeaponsCommonProxy")
     public static  MekanismWeaponsCommonProxy proxy;
 
+    public static CreativeTabMekanismWeapons tabMekanismWeapons = new CreativeTabMekanismWeapons();
+
     @Mod.Instance(MODID)
     public static MekanismWeapons instance;
 
@@ -53,7 +55,7 @@ public class MekanismWeapons implements IModule {
 
     @SubscribeEvent
     public static void registerEntities(RegistryEvent.Register<EntityEntry> event) {
-        EntityRegistry.registerModEntity(new ResourceLocation(MODID, "meka_arrow"), EntityMekaArrow.class, "meka_arrow",0 ,MekanismWeapons.instance, 4, 20,true);
+        EntityRegistry.registerModEntity(new ResourceLocation(MODID, "meka_arrow"), EntityMekaArrow.class, "meka_arrow",0 ,MekanismWeapons.instance, 128, 1,true);
     }
 
     @Mod.EventHandler

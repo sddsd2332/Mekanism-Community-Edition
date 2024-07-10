@@ -5,6 +5,7 @@ import mekanism.api.EnumColor;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitBoot;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.moduleUpgrade;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import net.minecraft.client.Minecraft;
@@ -26,6 +27,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ItemMekAsuitFeetArmour extends ItemMekAsuitArmour {
@@ -129,5 +131,11 @@ public class ItemMekAsuitFeetArmour extends ItemMekAsuitArmour {
         }
     }
 
+    @Override
+    public List<moduleUpgrade> getValidModule(ItemStack stack) {
+        List<moduleUpgrade> list = super.getValidModule(stack);
+
+        return list;
+    }
 
 }
