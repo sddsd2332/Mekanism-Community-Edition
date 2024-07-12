@@ -18,6 +18,7 @@ public class MekanismWeaponsClientProxy extends MekanismWeaponsCommonProxy {
     public void registerItemRenders() {
         registerItemRender(MekanismWeaponsItems.mekaBow);
         registerItemRender(MekanismWeaponsItems.mekArrow);
+        registerItemRender(MekanismWeaponsItems.mekaTana);
     }
 
     public void registerItemRender(Item item) {

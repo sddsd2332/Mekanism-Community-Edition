@@ -7,10 +7,10 @@ import mekanism.common.config.options.IntOption;
 public class WeaponsConfig  extends BaseConfig {
 
     public final IntOption mekaTanaBaseDamage = new IntOption(this,"mekatana","baseDamage",50,"Base damage of the Meka-Tana, multiply it with Attack Amplification Units.");
-    public final FloatOption mekaTanaAttackSpeed = new FloatOption(this,"mekatana","attackSpeed",2.4F,"Attack speed of the Meka-Tana.",1,100);
+    public final FloatOption mekaTanaAttackSpeed = new FloatOption(this,"mekatana","attackSpeed",-2.4F,"Attack speed of the Meka-Tana.",-4,100);
     public final DoubleOption mekaTanaEnergyUsage = new DoubleOption(this,"mekatana","energyUsage",625000D,"Cost in Joules of using the Meka-Tana to deal damage.");
-    public final DoubleOption mekaTanaTeleportUsage = new DoubleOption(this,"mekatana","teleportEnergyUsage",5000D,"Cost in Joules of using the Meka-Tana to teleport 10 blocks.");
-    public final IntOption mekaTanaMaxTeleportReach= new IntOption(this,"mekatana","maxTeleportReach",100,"Maximum distance a player can teleport with the Meka-Tana.",3,1024);
+    //public final DoubleOption mekaTanaTeleportUsage = new DoubleOption(this,"mekatana","teleportEnergyUsage",5000D,"Cost in Joules of using the Meka-Tana to teleport 10 blocks.");
+   // public final IntOption mekaTanaMaxTeleportReach= new IntOption(this,"mekatana","maxTeleportReach",100,"Maximum distance a player can teleport with the Meka-Tana.",3,1024);
     public final DoubleOption mekaTanaBaseEnergyCapacity = new DoubleOption(this,"mekatana","baseEnergyCapacity",16000000D,"Base energy capacity of the Meka-Tana.");
     public final DoubleOption mekaTanaBaseChargeRate = new DoubleOption(this,"mekatana","baseChargeRate",350000D,"Base charge rate of the Meka-Tana.");
 

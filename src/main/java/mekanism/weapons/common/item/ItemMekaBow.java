@@ -284,6 +284,7 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
             upgrades.put(upgrade, upgrade.getMax());
             moduleUpgrade.saveMap(upgrades, ItemDataUtils.getDataMap(fullupgrade));
         }
+        upgrades.clear();
         setEnergy(fullupgrade, ((IEnergizedItem) fullupgrade.getItem()).getMaxEnergy(fullupgrade));
         list.add(fullupgrade);
 
@@ -292,6 +293,7 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
             upgrades.put(upgrade, upgrade.getMax());
             moduleUpgrade.saveMap(upgrades, ItemDataUtils.getDataMap(full));
         }
+        upgrades.clear();
         setEnergy(full, ((IEnergizedItem) full.getItem()).getMaxEnergy(full));
         full.addEnchantment(Enchantments.POWER,5);
         full.addEnchantment(Enchantments.PUNCH,2);
