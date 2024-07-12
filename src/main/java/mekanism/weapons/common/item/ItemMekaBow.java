@@ -37,6 +37,7 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -95,8 +96,13 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
         list.add(EnumColor.AQUA + LangUtils.localize("tooltip.storedEnergy") + ": " + EnumColor.GREY + MekanismUtils.getEnergyDisplay(getEnergy(itemstack), getMaxEnergy(itemstack)));
         if (ItemDataUtils.hasData(itemstack, "module")) {
             Map<moduleUpgrade, Integer> module = moduleUpgrade.buildMap(ItemDataUtils.getDataMap(itemstack));
-            for (Entry<moduleUpgrade, Integer> entry : module.entrySet()) {
-                list.add(entry.getKey().getName() + (entry.getKey().canMultiply() ? ": " + EnumColor.GREY + "x" + entry.getValue() : ""));
+            if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+                list.add(LangUtils.localize("tooltip.hold") + " " + EnumColor.AQUA + "shift" + EnumColor.GREY + " " + LangUtils.localize("tooltip.forDetails"));
+            } else {
+                list.add(EnumColor.ORANGE + LangUtils.localize("tooltip.hold_for_modules") + ": ");
+                for (Entry<moduleUpgrade, Integer> entry : module.entrySet()) {
+                    list.add("- " + entry.getKey().getLangName() + (entry.getKey().canMultiply() ? ": " + EnumColor.GREY + "x" + entry.getValue() : ""));
+                }
             }
         }
     }
@@ -147,7 +153,7 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
                         if (fire) {
                             entityarrow.setFire(100);
                         }
-                        if (noConsume || ArrowAmount > 0) {
+                        if (noConsume) {
                             entityarrow.pickupStatus = EntityArrow.PickupStatus.CREATIVE_ONLY;
                         }
                         world.spawnEntity(entityarrow);
@@ -177,7 +183,7 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
                 itemStack.setTagCompound(null);
             }
         }
-        return clamp(quantity, 0, 10);
+        return clamp(quantity * 2, 0, 10);
     }
 
     public int getSpeed(ItemStack itemStack) {
@@ -268,10 +274,30 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
         }
         ItemStack discharged = new ItemStack(this);
         list.add(discharged);
+
         ItemStack charged = new ItemStack(this);
         setEnergy(charged, ((IEnergizedItem) charged.getItem()).getMaxEnergy(charged));
         list.add(charged);
+
+        ItemStack fullupgrade = new ItemStack(this);
+        for (moduleUpgrade upgrade : getValidModule(fullupgrade)) {
+            upgrades.put(upgrade, upgrade.getMax());
+            moduleUpgrade.saveMap(upgrades, ItemDataUtils.getDataMap(fullupgrade));
+        }
+        setEnergy(fullupgrade, ((IEnergizedItem) fullupgrade.getItem()).getMaxEnergy(fullupgrade));
+        list.add(fullupgrade);
+
+        ItemStack full = new ItemStack(this);
+        for (moduleUpgrade upgrade : getValidModule(full)) {
+            upgrades.put(upgrade, upgrade.getMax());
+            moduleUpgrade.saveMap(upgrades, ItemDataUtils.getDataMap(full));
+        }
+        setEnergy(full, ((IEnergizedItem) full.getItem()).getMaxEnergy(full));
+        full.addEnchantment(Enchantments.POWER,5);
+        full.addEnchantment(Enchantments.PUNCH,2);
+        list.add(full);
     }
+
 
     @Override
     public int getItemEnchantability() {

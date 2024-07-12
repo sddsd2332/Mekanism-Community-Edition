@@ -24,7 +24,10 @@ public enum moduleUpgrade {
 
     //mekaBow
     ARROWENERGY_UNIT("arrowenergy_unit",1),
-
+    ARROWVELOCITY_UNIT("arrowvelocity_unit",8),
+    AUTOFIRE_UNIT("autofire_unit",1),
+    DRAWSPEED_UNIT("drawspeed_unit",3),
+    MultipleArrowsUnit("MultiplearrowsUnit",4),
     ;
 
 
@@ -70,6 +73,9 @@ public enum moduleUpgrade {
     public String getName() {
         return name;
     }
+    public String getLangName() {
+        return LangUtils.localize("item.module." + name + ".name");
+    }
 
     public String getDescription() {
         return LangUtils.localize("module." + name + ".desc");
@@ -79,4 +85,7 @@ public enum moduleUpgrade {
         return maxStack;
     }
 
+    public boolean canMultiply() {
+        return getMax() > 1;
+    }
 }
