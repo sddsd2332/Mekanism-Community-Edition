@@ -1,4 +1,4 @@
-package mekanism.common.tile.machine;
+package mekanism.common.tile;
 
 import io.netty.buffer.ByteBuf;
 import mekanism.api.Coord4D;
