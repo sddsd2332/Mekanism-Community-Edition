@@ -4,6 +4,7 @@ package mekanism.common.item.armour;
 import cofh.redstoneflux.api.IEnergyContainerItem;
 import ic2.api.item.IElectricItemManager;
 import ic2.api.item.ISpecialElectricItem;
+import mekanism.api.EnumColor;
 import mekanism.api.energy.IEnergizedItem;
 import mekanism.common.Mekanism;
 import mekanism.common.base.IModuleUpgrade;
@@ -15,7 +16,9 @@ import mekanism.common.integration.redstoneflux.RFIntegration;
 import mekanism.common.integration.tesla.TeslaItemWrapper;
 import mekanism.common.moduleUpgrade;
 import mekanism.common.util.ItemDataUtils;
+import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.SoundEvents;
@@ -25,14 +28,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Optional.InterfaceList({
         @Optional.Interface(iface = "ic2.api.item.ISpecialElectricItem", modid = MekanismHooks.IC2_MOD_ID),
@@ -50,6 +58,24 @@ public abstract class ItemMekAsuitArmour extends ItemArmor implements IEnergized
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
         return "mekanism:render/MekAsuit.png";
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack itemstack, World world, List<String> list, ITooltipFlag flag) {
+        super.addInformation(itemstack, world, list, flag);
+        list.add(EnumColor.AQUA + LangUtils.localize("tooltip.storedEnergy") + ": " + EnumColor.GREY + MekanismUtils.getEnergyDisplay(getEnergy(itemstack), getMaxEnergy(itemstack)));
+        if (ItemDataUtils.hasData(itemstack, "module")) {
+            Map<moduleUpgrade, Integer> module = moduleUpgrade.buildMap(ItemDataUtils.getDataMap(itemstack));
+            if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+                list.add(LangUtils.localize("tooltip.hold") + " " + EnumColor.AQUA + "shift" + EnumColor.GREY + " " + LangUtils.localize("tooltip.forDetails"));
+            } else {
+                list.add(EnumColor.ORANGE + LangUtils.localize("tooltip.hold_for_modules") + ": ");
+                for (Map.Entry<moduleUpgrade, Integer> entry : module.entrySet()) {
+                    list.add("- " + entry.getKey().getLangName() + (entry.getKey().canMultiply() ? ": " + EnumColor.GREY + "x" + entry.getValue() : ""));
+                }
+            }
+        }
     }
 
     @Override
@@ -86,6 +112,16 @@ public abstract class ItemMekAsuitArmour extends ItemArmor implements IEnergized
         ItemStack charged = new ItemStack(this);
         setEnergy(charged, ((IEnergizedItem) charged.getItem()).getMaxEnergy(charged));
         list.add(charged);
+
+        ItemStack fullUpgrade = new ItemStack(this);
+        for (moduleUpgrade upgrade : getValidModule(fullUpgrade)) {
+            upgrades.put(upgrade, upgrade.getMax());
+            moduleUpgrade.saveMap(upgrades, ItemDataUtils.getDataMap(fullUpgrade));
+        }
+        upgrades.clear();
+        setEnergy(fullUpgrade, ((IEnergizedItem) fullUpgrade.getItem()).getMaxEnergy(fullUpgrade));
+        list.add(fullUpgrade);
+
     }
 
     @Override

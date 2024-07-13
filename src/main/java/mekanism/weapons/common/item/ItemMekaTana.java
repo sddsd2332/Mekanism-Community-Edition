@@ -20,7 +20,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -73,16 +72,21 @@ public class ItemMekaTana extends ItemMekaEnergyBase implements IModuleUpgrade {
     public boolean hitEntity(ItemStack itemstack, EntityLivingBase target, EntityLivingBase attacker) {
         double energy = getEnergy(itemstack);
         double energyCost = MekanismConfig.current().weapons.mekaTanaEnergyUsage.val();
-        float damage = getAttackDamage(itemstack);
+       /* float damage = getAttackDamage(itemstack);
+
         if (attacker instanceof EntityPlayer) {
             target.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) attacker), damage);
         } else {
             target.attackEntityFrom(DamageSource.causeMobDamage(attacker), damage);
         }
-        if (energy > 0) {
-            setEnergy(itemstack, energy - energyCost);
+
+       */
+        if (attacker instanceof EntityPlayer player) {
+            if (energy > 0 && !player.capabilities.isCreativeMode) {
+                setEnergy(itemstack, energy - energyCost);
+            }
         }
-        return false;
+        return true;
     }
 
     public int getAttackDamage(ItemStack itemStack) {
@@ -117,7 +121,7 @@ public class ItemMekaTana extends ItemMekaEnergyBase implements IModuleUpgrade {
     public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
         Multimap<String, AttributeModifier> multiMap = super.getAttributeModifiers(slot, stack);
         if (slot == EntityEquipmentSlot.MAINHAND) {
-            // multiMap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", getAttackDamage(stack), 0));
+            multiMap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", getAttackDamage(stack), 0));
             multiMap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", MekanismConfig.current().weapons.mekaTanaAttackSpeed.val(), 0));
         }
         return multiMap;

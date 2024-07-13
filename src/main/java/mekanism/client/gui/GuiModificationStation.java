@@ -15,28 +15,29 @@ public class GuiModificationStation extends GuiMekanismTile<TileEntityModificati
     public GuiModificationStation(InventoryPlayer inventory, TileEntityModificationStation tile) {
         super(tile, new ContainerModificationStation(inventory, tile));
         ResourceLocation resource = getGuiLocation();
-        addGuiElement(new GuiPowerBar(this, tileEntity, resource, 154, 40));
+        addGuiElement(new GuiPowerBar(this, tileEntity, resource, 164, 15));
         addGuiElement(new GuiEnergyInfo(() -> {
             String multiplier = MekanismUtils.getEnergyDisplay(tileEntity.energyPerTick);
             return Arrays.asList(LangUtils.localize("gui.using") + ": " + multiplier + "/t",
                     LangUtils.localize("gui.needed") + ": " + MekanismUtils.getEnergyDisplay(tileEntity.getMaxEnergy() - tileEntity.getEnergy()));
         }, this, resource));
-        addGuiElement(new GuiSlot(GuiSlot.SlotType.INPUT, this, resource, 34, 117));
-        addGuiElement(new GuiSlot(GuiSlot.SlotType.POWER, this, resource, 148, 20).with(GuiSlot.SlotOverlay.POWER));
-        addGuiElement(new GuiSlot(GuiSlot.SlotType.OUTPUT, this, resource, 124, 117));
+        addGuiElement(new GuiSlot(GuiSlot.SlotType.INPUT, this, resource, 25, 33));
+        addGuiElement(new GuiSlot(GuiSlot.SlotType.POWER, this, resource, 140, 33).with(GuiSlot.SlotOverlay.POWER));
+        addGuiElement(new GuiSlot(GuiSlot.SlotType.OUTPUT, this, resource, 115, 33));
         addGuiElement(new GuiProgress(new GuiProgress.IProgressInfoHandler() {
             @Override
             public double getProgress() {
                 return tileEntity.getScaledProgress();
             }
-        }, GuiProgress.ProgressBar.LARGE_RIGHT, this, resource,  65, 123));
-        addGuiElement(new GuiPlayerSlot(this, resource,7,138));
-        ySize += 64;
+        }, GuiProgress.ProgressBar.LARGE_RIGHT, this, resource, 53, 37));
+        addGuiElement(new GuiPlayerSlot(this, resource));
     }
+
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         fontRenderer.drawString(tileEntity.getName(), (xSize / 2) - (fontRenderer.getStringWidth(tileEntity.getName()) / 2), 4, 0x404040);
         fontRenderer.drawString(LangUtils.localize("container.inventory"), 8, (ySize - 96) + 2, 0x404040);
+        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }
 }

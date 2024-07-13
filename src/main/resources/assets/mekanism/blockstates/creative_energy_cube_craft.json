@@ -1,8 +1,0 @@
-{
-      "forge_marker": 1,
-      "defaults": {"model": "mekanism:creative_energy_cube_craft"},
-      "variants": {
-            "normal": [{}],
-            "inventory": [{}]
-      }
-}

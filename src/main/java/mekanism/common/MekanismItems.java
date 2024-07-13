@@ -80,7 +80,6 @@ public class MekanismItems {
     public static final Item ReprocessedFissileFragment = new ItemMekanism();
     public static final Item YellowCakeUranium = new ItemMekanism();
     public static final Item PoloniumPellet = new ItemMekanism();
-    public static final Item EnergyTabletCraft = new ItemMekanism();
     public static final Item CosmicMatter = new ItemMekanism();
     public static final Item Scrap = new ItemMekanism();
     public static final Item ScrapBox = new ItemMekanism();
@@ -164,7 +163,6 @@ public class MekanismItems {
          * ADD START
          */
 
-        registry.register(init(EnergyTabletCraft, "EnergyTabletCraft"));
         registry.register(init(CosmicMatter, "CosmicMatter"));
         registry.register(init(Scrap, "Scrap"));
         registry.register(init(ScrapBox, "ScrapBox"));

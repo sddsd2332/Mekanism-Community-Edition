@@ -50,20 +50,15 @@ public class ContainerModificationStation extends ContainerMekanism<TileEntityMo
     }
 
     @Override
-    protected int getInventorYOffset() {
-        return 139;
-    }
-
-    @Override
     protected void addSlots() {
-        addSlotToContainer(new SlotEnergy.SlotDischarge(tileEntity, 1, 149, 21));
-        addSlotToContainer(new Slot(tileEntity, 2, 35, 118) {
+        addSlotToContainer(new SlotEnergy.SlotDischarge(tileEntity, 1, 141, 34));
+        addSlotToContainer(new Slot(tileEntity, 2, 26, 34) {
             @Override
             public boolean isItemValid(ItemStack itemstack) {
                 return itemstack.getItem() instanceof IModuleUpgradeItem;
             }
         });
-        addSlotToContainer(new Slot(tileEntity, 3, 125, 118) {
+        addSlotToContainer(new Slot(tileEntity, 3, 116, 34) {
             @Override
             public boolean isItemValid(ItemStack itemstack) {
                 return itemstack.getItem() instanceof IModuleUpgrade;

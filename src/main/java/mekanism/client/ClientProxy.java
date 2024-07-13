@@ -273,7 +273,6 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.YellowCakeUranium);
         registerItemRender(MekanismItems.PoloniumPellet);
 
-        registerItemRender(MekanismItems.EnergyTabletCraft);
         registerItemRender(MekanismItems.CosmicMatter);
         registerItemRender(MekanismItems.Scrap);
         registerItemRender(MekanismItems.ScrapBox);

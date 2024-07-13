@@ -1693,19 +1693,20 @@ holiday.mekanism.new_year.3=new and exciting year of %s
 
 
 tooltip.hold_for_modules=hold for modules
-item.module.EnergyUnit.name=Energy Unit
+item.ModuleBase.name=Module Base
+item.module.energyunit.name=Energy Unit
 module.EnergyUnit.desc=Increases maximum energy capacity.
 item.module.attack_damage.name=Attack Amplification Unit
 module.attack_damage.desc=Bonus Attack Damage
-item.module.SolarRechargingUnit.name=Solar Recharging Unit
+item.module.solarrechargingunit.name=Solar Recharging Unit
 module.SolarRechargingUnit.desc=Harnesses the power of the sun to charge your MekaSuit.
-item.module.ElectrolyticBreathingUnit.name=Electrolytic Breathing Unit
+item.module.electrolyticbreathingunit.name=Electrolytic Breathing Unit
 module.ElectrolyticBreathingUnit.desc=Uses electrolysis to create breathable oxygen from water.
-item.module.VisionEnhancementUnit.name=Vision Enhancement Unit
+item.module.visionenhancementunit.name=Vision Enhancement Unit
 module.VisionEnhancementUnit.desc=Brightens the surrounding environment, allowing the user to see through darkness.
-item.module.InhalationPurificationUnit.name=Inhalation Purification Unit
+item.module.inhalationpurificationunit.name=Inhalation Purification Unit
 module.InhalationPurificationUnit.desc=Applies a miniature electromagnetic field around the breathing apparatus, preventing selected potion effect types.
-item.module.NutritionalInjectionUnit.name=Nutritional Injection Unit
+item.module.nutritionalinjectionunit.name=Nutritional Injection Unit
 module.NutritionalInjectionUnit.desc=Automatically feeds the player Nutritional Paste when hungry.
 item.module.arrowenergy_unit.name=Energy Arrows Unit
 module.arrowenergy_unit.desc=Fire arrows made of pure energy. Removes the need for ammunition.
@@ -1715,6 +1716,6 @@ item.module.autofire_unit.name=Auto Fire Unit
 module.autofire_unit.desc=Fires automatically when the Meka-Bow is fully charged.
 item.module.drawspeed_unit.name=Draw Speed Unit
 module.drawspeed_unit.desc=Increases the draw speed of the Meka-Bow.
-item.module.MultiplearrowsUnit.name=Compound arrow unit
+item.module.multiplearrowsunit.name=Compound arrow unit
 module.MultiplearrowsUnit.desc=More arrows are fired with each shot
 
