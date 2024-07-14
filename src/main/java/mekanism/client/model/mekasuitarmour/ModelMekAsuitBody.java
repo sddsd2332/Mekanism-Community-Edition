@@ -3,12 +3,11 @@ package mekanism.client.model.mekasuitarmour;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.util.EnumHandSide;
 
 public class ModelMekAsuitBody extends ModelBiped {
 
     ModelRenderer legs_chest_exo;
-    ModelRenderer chest_armor;
+    public final ModelRenderer chest_armor;
     ModelRenderer chest_body_plate5_r1;
     ModelRenderer chest_body_plate3_r1;
     ModelRenderer chest_body_plate2_r1;

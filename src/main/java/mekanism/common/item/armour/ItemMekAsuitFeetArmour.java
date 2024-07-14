@@ -13,14 +13,20 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -53,7 +59,7 @@ public class ItemMekAsuitFeetArmour extends ItemMekAsuitArmour {
     }
 
     @Override
-    public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack){
+    public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
         Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot, stack);
         UUID uuid = new UUID((getTranslationKey(stack) + slot).hashCode(), 0);
         if (slot == EntityEquipmentSlot.FEET) {
@@ -65,7 +71,7 @@ public class ItemMekAsuitFeetArmour extends ItemMekAsuitArmour {
     @Override
     public ArmorProperties getProperties(EntityLivingBase player, @NotNull ItemStack armor, DamageSource source, double damage, int slot) {
         ArmorProperties properties = new ArmorProperties(0, 0, 0);
-        if (this == MekanismItems.MekAsuitBoots){
+        if (this == MekanismItems.MekAsuitBoots) {
             properties = new ArmorProperties(1, MekanismConfig.current().general.MekaSuitBootsDamageRatio.val(), MekanismConfig.current().general.MekaSuitBootsDamageMax.val());
             properties.Toughness = 3.0F;
         }
@@ -134,8 +140,44 @@ public class ItemMekAsuitFeetArmour extends ItemMekAsuitArmour {
     @Override
     public List<moduleUpgrade> getValidModule(ItemStack stack) {
         List<moduleUpgrade> list = super.getValidModule(stack);
-
+        list.add(moduleUpgrade.HYDRAULIC_PROPULSION_UNIT);
+        list.add(moduleUpgrade.MAGNETIC_ATTRACTION_UNIT);
+        list.add(moduleUpgrade.FROST_WALKER_UNIT);
         return list;
+    }
+
+
+    @Override
+    public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
+        super.onArmorTick(world, player, itemStack);
+        if (!world.isRemote) {
+            ItemStack feetStack = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
+            if (feetStack.getItem() instanceof ItemMekAsuitFeetArmour armour) {
+                if (isUpgradeInstalled(feetStack, moduleUpgrade.FROST_WALKER_UNIT)) {
+                    if (armour.getEnergy(feetStack) > 500D) {
+                        if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FROST_WALKER, feetStack) == 0) {
+                            feetStack.addEnchantment(Enchantments.FROST_WALKER, armour.getUpgrades(moduleUpgrade.FROST_WALKER_UNIT));
+                            hasEffect(feetStack);
+                            armour.setEnergy(feetStack, armour.getEnergy(feetStack) - 500D);
+                        }
+                    } else {
+                        removeEnchantment(feetStack);
+                    }
+                }
+            }
+        }
+    }
+
+    public void removeEnchantment(ItemStack stack) {
+        NBTTagList list = stack.getEnchantmentTagList();
+        for (int i = 0; i < list.tagCount(); i++) {
+            NBTTagCompound compound = list.getCompoundTagAt(i);
+            int id = compound.getShort("id");
+            Enchantment e = Enchantment.getEnchantmentByID(id);
+            if (e == Enchantments.FROST_WALKER) {
+                list.removeTag(i);
+            }
+        }
     }
 
 }

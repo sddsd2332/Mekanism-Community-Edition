@@ -14,20 +14,31 @@ public enum moduleUpgrade {
 
     //  EMPTY("base",1,),
     EnergyUnit("EnergyUnit", 8),
-    ATTACK_AMPLIFICATION_UNIT("attack_damage",4),
+    ATTACK_AMPLIFICATION_UNIT("attack_damage", 4),
     //head
     SolarRechargingUnit("SolarRechargingUnit", 8),
-    ElectrolyticBreathingUnit("ElectrolyticBreathingUnit",4),
-    VisionEnhancementUnit("VisionEnhancementUnit",1),
-    InhalationPurificationUnit("InhalationPurificationUnit",1),
-    NutritionalInjectionUnit("NutritionalInjectionUnit",1),
+    ElectrolyticBreathingUnit("ElectrolyticBreathingUnit", 4),
+    VisionEnhancementUnit("VisionEnhancementUnit", 1),
+    InhalationPurificationUnit("InhalationPurificationUnit", 1),
+    NutritionalInjectionUnit("NutritionalInjectionUnit", 1),
+    //Body
+    JETPACK_UNIT("jetpack_unit", 1),
+    CHARGE_DISTRIBUTION_UNIT("charge_distribution_unit", 1),
+    //legs
+    GYROSCOPIC_STABILIZATION_UNIT("gyroscopic_stabilization_unit", 1),
+    GEOTHERMAL_GENERATOR_UNIT("geothermal_generator_unit", 8),
+    HYDROSTATIC_REPULSOR_UNIT("hydrostatic_repulsor_unit", 4),
+    //feet
+    HYDRAULIC_PROPULSION_UNIT("hydraulic_propulsion_unit", 4),
+    MAGNETIC_ATTRACTION_UNIT("magnetic_attraction_unit", 4),
+    FROST_WALKER_UNIT("frost_walker_unit", 2),
 
     //mekaBow
-    ARROWENERGY_UNIT("arrowenergy_unit",1),
-    ARROWVELOCITY_UNIT("arrowvelocity_unit",8),
-    AUTOFIRE_UNIT("autofire_unit",1),
-    DRAWSPEED_UNIT("drawspeed_unit",3),
-    MultipleArrowsUnit("MultiplearrowsUnit",4),
+    ARROWENERGY_UNIT("arrowenergy_unit", 1),
+    ARROWVELOCITY_UNIT("arrowvelocity_unit", 8),
+    AUTOFIRE_UNIT("autofire_unit", 1),
+    DRAWSPEED_UNIT("drawspeed_unit", 3),
+    MultipleArrowsUnit("MultiplearrowsUnit", 4),
     ;
 
 
@@ -73,6 +84,7 @@ public enum moduleUpgrade {
     public String getName() {
         return name;
     }
+
     public String getLangName() {
         return LangUtils.localize("item.module." + name + ".name");
     }

@@ -20,7 +20,6 @@ import java.util.Map;
 
 public class TileEntityModificationStation extends TileEntityOperationalMachine implements IBoundingBlock {
 
-    public IModuleUpgrade upgrades;
 
     public TileEntityModificationStation() {
         super("null", MachineType.MODIFICATION_STATION, 0, 40);
@@ -38,39 +37,36 @@ public class TileEntityModificationStation extends TileEntityOperationalMachine 
             ChargeUtils.discharge(1, this);
             ItemStack UpgradeStack = inventory.get(3);
             ItemStack moduleStack = inventory.get(2);
-            if (UpgradeStack.getItem() instanceof IModuleUpgrade moduleUpgrade) {
-                upgrades = moduleUpgrade;
-            }
-            if (!UpgradeStack.isEmpty() && UpgradeStack.getItem() instanceof IModuleUpgrade && upgrades != null) {
+            if (!UpgradeStack.isEmpty() && UpgradeStack.getItem() instanceof IModuleUpgrade module) {
                 if (ItemDataUtils.hasData(UpgradeStack, "module")) {
                     Map<moduleUpgrade, Integer> upgrade = moduleUpgrade.buildMap(ItemDataUtils.getDataMap(UpgradeStack));
-                    upgrades.upgrades.putAll(upgrade);
+                    module.upgrades.putAll(upgrade);
                 } else {
-                    upgrades.upgrades.clear();
+                    module.upgrades.clear();
                 }
             }
 
             if (moduleStack.getItem() instanceof IModuleUpgradeItem item) {
-                if (!UpgradeStack.isEmpty() && ItemDataUtils.hasData(UpgradeStack, "module") && upgrades != null) {
-                    if (upgrades.upgrades.containsKey(item.getmoduleUpgrade(moduleStack))) {
-                        if (upgrades.upgrades.get(item.getmoduleUpgrade(moduleStack)) >= item.getmoduleUpgrade(moduleStack).getMax()) {
+                if (!UpgradeStack.isEmpty() && UpgradeStack.getItem() instanceof IModuleUpgrade module && ItemDataUtils.hasData(UpgradeStack, "module")) {
+                    if (module.upgrades.containsKey(item.getmoduleUpgrade(moduleStack))) {
+                        if (module.upgrades.get(item.getmoduleUpgrade(moduleStack)) >= item.getmoduleUpgrade(moduleStack).getMax()) {
                             return;
                         }
                     }
                 }
 
-                if (getActive() && upgrades != null) {
+                if (getActive() && !UpgradeStack.isEmpty() && UpgradeStack.getItem() instanceof IModuleUpgrade module) {
                     electricityStored.addAndGet(-energyPerTick);
                     if ((operatingTicks + 1) < ticksRequired) {
                         operatingTicks++;
                     } else if ((operatingTicks + 1) >= ticksRequired) {
                         operatingTicks = 0;
-                        addUpgrades(item.getmoduleUpgrade(moduleStack), moduleStack.getCount());
-                        moduleUpgrade.saveMap(upgrades.upgrades, ItemDataUtils.getDataMap(UpgradeStack));
+                        addUpgrades(item.getmoduleUpgrade(moduleStack), moduleStack.getCount(), module);
+                        moduleUpgrade.saveMap(module.upgrades, ItemDataUtils.getDataMap(UpgradeStack));
                     }
                 }
             }
-            if (MekanismUtils.canFunction(this) && getEnergy() >= energyPerTick && !moduleStack.isEmpty() && !UpgradeStack.isEmpty() && upgrades != null) {
+            if (MekanismUtils.canFunction(this) && getEnergy() >= energyPerTick && !moduleStack.isEmpty() && !UpgradeStack.isEmpty()) {
                 if (moduleStack.getItem() instanceof IModuleUpgradeItem item && UpgradeStack.getItem() instanceof IModuleUpgrade upgrade) {
                     setActive(upgrade.getValidModule(UpgradeStack).contains(item.getmoduleUpgrade(moduleStack)));
                 }
@@ -124,12 +120,12 @@ public class TileEntityModificationStation extends TileEntityOperationalMachine 
         world.setBlockToAir(getPos());
     }
 
-    public void addUpgrades(moduleUpgrade upgrade, int maxAvailable) {
-        int installed = upgrades.getUpgrades(upgrade);
+    public void addUpgrades(moduleUpgrade upgrade, int maxAvailable, IModuleUpgrade stack) {
+        int installed = stack.getUpgrades(upgrade);
         if (installed < upgrade.getMax()) {
             int toAdd = Math.min(upgrade.getMax() - installed, maxAvailable);
             if (toAdd > 0) {
-                upgrades.upgrades.put(upgrade, installed + toAdd);
+                stack.upgrades.put(upgrade, installed + toAdd);
                 inventory.get(2).shrink(toAdd);
             }
         }

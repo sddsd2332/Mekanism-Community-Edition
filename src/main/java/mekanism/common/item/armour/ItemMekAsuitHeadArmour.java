@@ -67,7 +67,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
                 armorModel.bipedHead.addChild(Solar.solar_helmet);
             }
         } else {
-            if (armorModel.helmet_armor.childModels.contains(Solar.solar_helmet)) {
+            if (armorModel.bipedHead.childModels.contains(Solar.solar_helmet)) {
                 armorModel.helmet_armor.childModels.remove(Solar.solar_helmet);
             }
             if (!armorModel.helmet_armor.childModels.contains(armorModel.hide)) {
@@ -189,11 +189,12 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
 
     @Override
     public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
+        super.onArmorTick(world, player, itemStack);
         if (!world.isRemote) {
             ItemStack headStack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+            ItemStack chestStack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
             PotionEffect nv = player.getActivePotionEffect(MobEffects.NIGHT_VISION);
             if (headStack.getItem() instanceof ItemMekAsuitHeadArmour item) {
-
                 if (isUpgradeInstalled(itemStack, moduleUpgrade.NutritionalInjectionUnit)) {
                     if (player.canEat(false) && item.getGas(headStack) != null) {
                         int needed = Math.min(20 - player.getFoodStats().getFoodLevel(), item.getStored(headStack) / 50);
@@ -212,6 +213,14 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
                         if (!player.canBreatheUnderwater() && !player.capabilities.disableDamage) {
                             player.setAir(300);
                             item.setEnergy(headStack, item.getEnergy(headStack) - MekanismConfig.current().general.FROM_H2.val() * 2);
+                        }
+                        if (chestStack.getItem() instanceof ItemMekAsuitBodyArmour armour && armour.isUpgradeInstalled(chestStack, moduleUpgrade.JETPACK_UNIT)) {
+                            int productionRate = (int) Math.pow(2, getUpgrades(moduleUpgrade.ElectrolyticBreathingUnit));
+                            GasStack stack = new GasStack(MekanismFluids.Hydrogen, productionRate * 2);
+                            if (armour.getStored(chestStack) < armour.getMaxGas(chestStack)){
+                                armour.addGas(chestStack,stack);
+                                item.setEnergy(headStack, item.getEnergy(headStack) - MekanismConfig.current().general.FROM_H2.val() * 2);
+                            }
                         }
                     }
                 }
@@ -242,7 +251,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
                     } else if (nv != null) {
                         nv.duration = 0;
                     }
-                }  
+                }
 
                 if (isUpgradeInstalled(headStack, moduleUpgrade.SolarRechargingUnit)) {
                     if (player.getEntityWorld().isDaytime() && player.getEntityWorld().canSeeSky(player.getPosition())) {
@@ -273,5 +282,6 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
         list.add(moduleUpgrade.NutritionalInjectionUnit);
         return list;
     }
+
 
 }

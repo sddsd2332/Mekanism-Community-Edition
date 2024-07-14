@@ -627,7 +627,6 @@ public class ModelDigitalAssemblyTable extends ModelBase {
         Roboticarm4.cubeList.add(new ModelBox(Roboticarm4, 467, 224, -52.5F, -36.0F, -40.5F, 11, 1, 11, 0.0F, false));
         Roboticarm4.cubeList.add(new ModelBox(Roboticarm4, 0, 0, -46.0F, -60.0F, -60.0F, 5, 8, 24, 0.0F, false));
         Roboticarm4.cubeList.add(new ModelBox(Roboticarm4, 34, 292, -54.0F, -60.0F, -60.0F, 8, 10, 8, 0.0F, false));
-        Roboticarm4.cubeList.add(new ModelBox(Roboticarm4, 0, 394, -43.0F, -58.0F, -60.0F, 8, 8, 8, 0.0F, false));
         Roboticarm4.cubeList.add(new ModelBox(Roboticarm4, 146, 442, -56.0F, -50.0F, -60.0F, 12, 2, 8, 0.0F, false));
         Roboticarm4.cubeList.add(new ModelBox(Roboticarm4, 42, 42, -46.0F, -48.0F, -60.0F, 2, 3, 8, 0.0F, false));
         Roboticarm4.cubeList.add(new ModelBox(Roboticarm4, 40, 10, -56.0F, -48.0F, -60.0F, 2, 3, 8, 0.0F, false));
