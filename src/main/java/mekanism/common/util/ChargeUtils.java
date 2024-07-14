@@ -26,11 +26,11 @@ import net.minecraftforge.energy.IEnergyStorage;
 public final class ChargeUtils {
 
     public static boolean isIC2Chargeable(ItemStack itemStack) {
-        return ElectricItem.manager.charge(itemStack, Integer.MAX_VALUE, 4, true, true) > 0;
+        return ElectricItem.manager.getMaxCharge(itemStack) > 0 && ElectricItem.manager.charge(itemStack, Integer.MAX_VALUE, 4, true, true) > 0;
     }
 
     public static boolean isIC2Dischargeable(ItemStack itemStack) {
-        return ElectricItem.manager.discharge(itemStack, Integer.MAX_VALUE, 4, true, true, true) > 0;
+        return ElectricItem.manager.getMaxCharge(itemStack) > 0 && ElectricItem.manager.discharge(itemStack, Integer.MAX_VALUE, 4, true, true, true) > 0;
     }
 
     /**
@@ -119,36 +119,38 @@ public final class ChargeUtils {
      * @return if the ItemStack can be discharged
      */
     public static boolean canBeDischarged(ItemStack itemstack) {
-        if (itemstack.getItem() instanceof IEnergizedItem) {
-            if (((IEnergizedItem) itemstack.getItem()).canSend(itemstack)) {
-                if (((IEnergizedItem) itemstack.getItem()).getEnergy(itemstack) > 0) {
+        if (itemstack.getItem() instanceof IEnergizedItem item && item.getMaxEnergy(itemstack) > 0) {
+            if (item.canSend(itemstack)) {
+                if (item.getEnergy(itemstack) > 0) {
                     return true;
                 }
             }
         }
         if (MekanismUtils.useTesla()) {
             if (itemstack.hasCapability(Capabilities.TESLA_PRODUCER_CAPABILITY, null)) {
-                if (itemstack.getCapability(Capabilities.TESLA_PRODUCER_CAPABILITY, null).takePower(1, true) > 0) {
-                    return true;
+                if ((itemstack.hasCapability(Capabilities.TESLA_HOLDER_CAPABILITY, null) && itemstack.getCapability(Capabilities.TESLA_HOLDER_CAPABILITY, null).getCapacity() > 0)) {
+                    if (itemstack.getCapability(Capabilities.TESLA_PRODUCER_CAPABILITY, null).takePower(1, true) > 0) {
+                        return true;
+                    }
                 }
             }
         }
         if (MekanismUtils.useForge()) {
-            if (itemstack.hasCapability(CapabilityEnergy.ENERGY, null)) {
+            if (itemstack.hasCapability(CapabilityEnergy.ENERGY, null)  && itemstack.getCapability(CapabilityEnergy.ENERGY, null).getMaxEnergyStored() > 0) {
                 if (itemstack.getCapability(CapabilityEnergy.ENERGY, null).extractEnergy(1, true) > 0) {
                     return true;
                 }
             }
         }
         if (MekanismUtils.useRF()) {
-            if (itemstack.getItem() instanceof IEnergyContainerItem) {
-                if (((IEnergyContainerItem) itemstack.getItem()).extractEnergy(itemstack, 1, true) != 0) {
+            if (itemstack.getItem() instanceof IEnergyContainerItem item && item.getMaxEnergyStored(itemstack) > 0 ) {
+                if (item.extractEnergy(itemstack, 1, true) != 0) {
                     return true;
                 }
             }
         }
         if (MekanismUtils.useIC2()) {
-            if (ElectricItem.manager.discharge(itemstack, 1, 0, true, true, true) > 0) {
+            if (ElectricItem.manager.getMaxCharge(itemstack) > 0 &&  ElectricItem.manager.discharge(itemstack, 1, 0, true, true, true) > 0) {
                 return true;
             }
         }
@@ -162,7 +164,7 @@ public final class ChargeUtils {
      * @return if the ItemStack can be discharged
      */
     public static boolean canBeCharged(ItemStack itemstack) {
-        if (itemstack.getItem() instanceof IEnergizedItem energizedItem) {
+        if (itemstack.getItem() instanceof IEnergizedItem energizedItem && energizedItem.getMaxEnergy(itemstack) > 0) {
             if (energizedItem.canReceive(itemstack)) {
                 if (energizedItem.getMaxEnergy(itemstack) < energizedItem.getEnergy(itemstack)) {
                     return true;
@@ -171,21 +173,24 @@ public final class ChargeUtils {
         }
         if (MekanismUtils.useTesla()) {
             if (itemstack.hasCapability(Capabilities.TESLA_CONSUMER_CAPABILITY, null)) {
-                if (itemstack.getCapability(Capabilities.TESLA_CONSUMER_CAPABILITY, null).givePower(1, true) > 0) {
-                    return true;
+                if ((itemstack.hasCapability(Capabilities.TESLA_HOLDER_CAPABILITY, null) && itemstack.getCapability(Capabilities.TESLA_HOLDER_CAPABILITY, null).getCapacity() > 0)) {
+                    if (itemstack.getCapability(Capabilities.TESLA_CONSUMER_CAPABILITY, null).givePower(1, true) > 0) {
+                        return true;
+                    }
                 }
             }
+
         }
         if (MekanismUtils.useForge()) {
-            if (itemstack.hasCapability(CapabilityEnergy.ENERGY, null)) {
+            if (itemstack.hasCapability(CapabilityEnergy.ENERGY, null) && itemstack.getCapability(CapabilityEnergy.ENERGY, null).getMaxEnergyStored() > 0) {
                 if (itemstack.getCapability(CapabilityEnergy.ENERGY, null).receiveEnergy(1, true) > 0) {
                     return true;
                 }
             }
         }
         if (MekanismUtils.useRF()) {
-            if (itemstack.getItem() instanceof IEnergyContainerItem) {
-                if (((IEnergyContainerItem) itemstack.getItem()).receiveEnergy(itemstack, 1, true) > 0) {
+            if (itemstack.getItem() instanceof IEnergyContainerItem item && item.getMaxEnergyStored(itemstack) > 0) {
+                if (item.receiveEnergy(itemstack, 1, true) > 0) {
                     return true;
                 }
             }

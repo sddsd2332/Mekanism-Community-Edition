@@ -273,7 +273,6 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.YellowCakeUranium);
         registerItemRender(MekanismItems.PoloniumPellet);
 
-        registerItemRender(MekanismItems.EnergyTabletCraft);
         registerItemRender(MekanismItems.CosmicMatter);
         registerItemRender(MekanismItems.Scrap);
         registerItemRender(MekanismItems.ScrapBox);
@@ -281,6 +280,12 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.FluoriteClump);
         registerItemRender(MekanismItems.ArmoredFreeRunners);
         registerItemRender(MekanismItems.MekTool);
+        registerItemRender(MekanismItems.MekAsuitHelmet);
+        registerItemRender(MekanismItems.MekAsuitChestplate);
+        registerItemRender(MekanismItems.MekAsuitLeggings);
+        registerItemRender(MekanismItems.MekAsuitBoots);
+        registerItemRender(MekanismItems.ModuleBase);
+        registerItemRender(MekanismItems.ModuleUpgrade);
         /**
          * ADD END
          */
@@ -759,6 +764,7 @@ public class ClientProxy extends CommonProxy {
             case 72 -> new GuiRecycler(player.inventory, (TileEntityRecycler) tileEntity);
             case 73 -> new GuiAmbientAccumulatorEnergy(player.inventory, (TileEntityAmbientAccumulatorEnergy) tileEntity);
             case 74 -> new GuiHybridStorage(player.inventory,(TileEntityHybridStorage) tileEntity);
+            case 75 -> new GuiModificationStation(player.inventory,(TileEntityModificationStation) tileEntity);
             default -> null;
         };
     }

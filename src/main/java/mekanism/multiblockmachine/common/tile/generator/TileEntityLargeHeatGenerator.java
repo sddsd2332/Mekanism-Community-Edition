@@ -49,7 +49,7 @@ public class TileEntityLargeHeatGenerator extends TileEntityMultiblockGenerator 
     private boolean rendererInitialized = false;
 
     public TileEntityLargeHeatGenerator() {
-        super("heat", "LargeHeatGenerator", MekanismConfig.current().multiblock.largeHeatGeneratorStorage.val(), MekanismConfig.current().multiblock.largeHeatGeneratorStorage.val(), 2);
+        super("heat", "LargeHeatGenerator", MekanismConfig.current().multiblock.largeHeatGeneratorStorage.val(), MekanismConfig.current().multiblock.largeHeatGeneratorOut.val(), 2);
         inventory = NonNullListSynchronized.withSize(3, ItemStack.EMPTY);
     }
 

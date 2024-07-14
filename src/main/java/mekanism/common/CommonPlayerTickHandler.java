@@ -4,9 +4,11 @@ import mekanism.api.gas.GasStack;
 import mekanism.common.entity.EntityFlame;
 import mekanism.common.item.*;
 import mekanism.common.item.ItemJetpack.JetpackMode;
+import mekanism.common.item.armour.ItemMekAsuitHeadArmour;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
@@ -123,6 +125,8 @@ public class CommonPlayerTickHandler {
                 }
             }
         }
+
+        isMekAsuitArmor(player);
     }
 
     public boolean isJetpackOn(EntityPlayer player) {
@@ -147,5 +151,29 @@ public class CommonPlayerTickHandler {
             }
         }
         return false;
+    }
+
+    boolean isHeadItem = false;
+
+    public void isMekAsuitArmor(EntityPlayer player) {
+        ItemStack head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+        ItemStack chest = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+        ItemStack legs = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
+        PotionEffect nv = player.getActivePotionEffect(MobEffects.NIGHT_VISION);
+        if (!head.isEmpty()) {
+            if (head.getItem() instanceof ItemMekAsuitHeadArmour headArmour) {
+                //if()
+
+
+                isHeadItem = true;
+            }else {
+                isHeadItem = false;
+            }
+        }
+
+        if (nv != null && isHeadItem){
+            nv.duration = 0;
+        }
+
     }
 }

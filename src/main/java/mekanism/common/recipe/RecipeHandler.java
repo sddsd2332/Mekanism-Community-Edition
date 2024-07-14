@@ -334,6 +334,7 @@ public final class RecipeHandler {
         addRecipe(Recipe.DIGITAL_ASSEMBLY_TABLE, new DigitalAssemblyTableRecipe(input, input2, input3, input4, input5, input6, input7, input8, input9, inputFluid, inputGas, outputItem, outputFluid, outputGas, extraEnergy, ticks));
     }
 
+
     /**
      * Add End
      */
@@ -579,7 +580,7 @@ public final class RecipeHandler {
                         key.containsType(stack, key.itemInput6) ||
                         key.containsType(stack, key.itemInput7) ||
                         key.containsType(stack, key.itemInput8) ||
-                        key.containsType(stack, key.itemInput9) ){
+                        key.containsType(stack, key.itemInput9)) {
                     return true;
                 }
             }

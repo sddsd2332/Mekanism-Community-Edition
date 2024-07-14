@@ -14,8 +14,13 @@ public class MultiblockMachineConfig extends BaseConfig {
     public final DoubleOption largewindGeneratorStorage = new DoubleOption(this, "multiblock",
             "MultiblockWindGeneratorStorage", 58800000D, "Energy capable of being stored");
 
+    public final DoubleOption largewindGeneratorOut = new DoubleOption(this, "multiblock",
+            "MultiblockWindGeneratorOut", 58800000D, "Large wind turbine output");
+
     public final DoubleOption largewindGenerationMax = new DoubleOption(this, "multiblock", "LargeWindGeneratorMax", 294000D,
             "Maximum base generation value of the Large Wind Generator.");
+
+
 
     public final DoubleOption largewindGenerationMin = new DoubleOption(this, "multiblock", "LargeWindGeneratorMin", 60D,
             "Minimum base generation value of the Large Wind Generator.");
@@ -38,6 +43,9 @@ public class MultiblockMachineConfig extends BaseConfig {
 
     public final DoubleOption largeHeatGeneratorStorage = new DoubleOption(this, "multiblock",
             "MultiblockHeatGeneratorStorage", 4320000D, "Energy capable of being stored");
+
+    public final DoubleOption largeHeatGeneratorOut = new DoubleOption(this, "multiblock",
+            "largeHeatGeneratorOut", 4320000D, "Large thermal generator output");
 
     public final DoubleOption largeHeatGeneration = new DoubleOption(this, "multiblock", "largeHeatGeneration", 4050D,
             "Amount of energy in Joules the Heat Generator produces per tick. (heatGenerationLava * heatGenerationLava) + heatGenerationNether");
@@ -63,6 +71,9 @@ public class MultiblockMachineConfig extends BaseConfig {
 
     public final DoubleOption LargeGasGeneratorStorage = new DoubleOption(this, "multiblock", "LargeGasGeneratorStorage", 80000D * 27,
             "Base energy storage (Joules).");
+
+    public final DoubleOption LargeGasGeneratorOut = new DoubleOption(this, "multiblock", "LargeGasGeneratorOut", 80000D * 27,
+            "Large gas generator output.");
 
     public final DoubleOption LargeChemicalWasherUsage = new DoubleOption(this, "multiblock", "LargeChemicalWasherUsage", 200D,
             "Energy per operation tick (Joules).");

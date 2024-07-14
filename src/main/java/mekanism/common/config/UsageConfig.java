@@ -128,4 +128,7 @@ public class UsageConfig extends BaseConfig {
     public final DoubleOption AmbientAccumulatorEnergy = new DoubleOption(this, "usage", "AmbientAccumulatorEnergyUsage", 200D,
             "Energy per operation tick (Joules).");
 
+    public final DoubleOption modificationStation = new DoubleOption(this, "usage", "modificationStationUsage", 100D,
+            "Energy per operation tick (Joules).");
+
 }

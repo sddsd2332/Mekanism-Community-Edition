@@ -96,17 +96,7 @@ public class BlockStateBasic extends ExtendedBlockState {
         SPS_CASING(BasicBlock.BASIC_BLOCK_3, 0, "SpsCasing", null, false, BlockStateUtils.NO_ROTATION, false, false, false),
         FISSION_REACHER_CASING(BasicBlock.BASIC_BLOCK_3, 1, "FissionReacherCasing", null, false, BlockStateUtils.NO_ROTATION, false, false, false),
         CONTROL_ROD_ASSEMBLY(BasicBlock.BASIC_BLOCK_3, 2, "ControlRodAssembly"),
-        FISSION_FUEL_ASSEMBLY(BasicBlock.BASIC_BLOCK_3, 3, "FissionFuelAssembly"),
-        BASIC_ENERGY_CUBE_CRAFT(BasicBlock.BASIC_BLOCK_3, 4, "BasicEnergyCubeCraft"),
-        ADVANCED_ENERGY_CUBE_CRAFT(BasicBlock.BASIC_BLOCK_3, 5, "AdvancedEnergyCubeCraft"),
-        ELITE_ENERGY_CUBE_CRAFT(BasicBlock.BASIC_BLOCK_3, 6, "EliteEnergyCubeCraft"),
-        ULTIMATE_ENERGY_CUBE_CRAFT(BasicBlock.BASIC_BLOCK_3, 7, "UltimateEnergyCubeCraft"),
-        CREATIVE_ENERGY_CUBE_CRAFT(BasicBlock.BASIC_BLOCK_3, 8, "CreativeEnergyCubeCraft"),
-        BASIC_ENERGY_CUBE_FRAME(BasicBlock.BASIC_BLOCK_3, 9, "BasicEnergyCubeFrame"),
-        ADVANCED_ENERGY_CUBE_FRAME(BasicBlock.BASIC_BLOCK_3, 10, "AdvancedEnergyCubeFrame"),
-        ELITE_ENERGY_CUBE_FRAME(BasicBlock.BASIC_BLOCK_3, 11, "EliteEnergyCubeFrame"),
-        ULTIMATE_ENERGY_CUBE_FRAME(BasicBlock.BASIC_BLOCK_3, 12, "UltimateEnergyCubeFrame"),
-        CREATIVE_ENERGY_CUBE_FRAME(BasicBlock.BASIC_BLOCK_3, 13, "CreativeEnergyCubeFrame");
+        FISSION_FUEL_ASSEMBLY(BasicBlock.BASIC_BLOCK_3, 3, "FissionFuelAssembly");
 
         @Nonnull
         public BasicBlock blockType;

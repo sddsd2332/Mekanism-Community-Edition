@@ -1,0 +1,14 @@
+{
+      "forge_marker": 1,
+      "defaults": {"model": "mekanism:modification_station"},
+      "variants": {
+            "normal": [{}],
+            "facing": {
+                  "east": {"y": 90},
+                  "south": {"y": 180},
+                  "north": {},
+                  "west": {"y": -90}
+            },
+            "inventory": [{}]
+      }
+}

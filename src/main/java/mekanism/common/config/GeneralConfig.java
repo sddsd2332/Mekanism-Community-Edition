@@ -246,100 +246,86 @@ public class GeneralConfig extends BaseConfig {
 
     public final BooleanOption blacklistForge = new BooleanOption(this, "general", "BlacklistForgePower", false,
             "Disables Forge Energy (FE,IF,uF,CF) power integration. Requires world restart (server-side option in SMP).");
-
-    public EnumOption<EnergyType> energyUnit = new EnumOption<>(this, "general", "EnergyType", EnergyType.RF,
-            "Displayed energy type in Mekanism GUIs.");
-
-    public EnumOption<TempType> tempUnit = new EnumOption<>(this, "general", "TemperatureUnits", TempType.K,
-            "Displayed temperature unit in Mekanism GUIs.");
-
     public final IntOption laserRange = new IntOption(this, "general", "LaserRange", 64,
             "How far (in blocks) a laser can travel.");
-
     public final IntOption laserEnergyNeededPerHardness = new IntOption(this, "general", "LaserDiggingEnergy", 100000,
             "Energy needed to destroy or attract blocks with a Laser (per block hardness level).");
-
     public final BooleanOption destroyDisabledBlocks = new BooleanOption(this, "general", "DestroyDisabledBlocks", true,
             "If machine is disabled in config, do we set its block to air if it is found in world?");
-
     public final BooleanOption voidInvalidGases = new BooleanOption(this, "general", "VoidInvalidGases", true,
             "Should machines void the gas inside of them on load if there is no recipe using that gas.");
-
     public final IntOption digitalMinerMaxRadius = new IntOption(this, "general", "digitalMinerMaxRadius", 32,
             "Maximum radius in blocks that the Digital Miner can reach. (Increasing this may have negative effects on stability and/or performance. "
                     + "We strongly recommend you leave it at the default value.)", 1, Integer.MAX_VALUE);
-
     public final DoubleOption sawdustChancePlank = new DoubleOption(this, "general", "SawdustChancePlank", 0.25D,
             "Chance of producing sawdust per operation in the precision sawmill when turning planks into sticks.").setRequiresGameRestart(true);
-
     public final DoubleOption sawdustChanceLog = new DoubleOption(this, "general", "SawdustChanceLog", 1D,
             "Chance of producing sawdust per operation in the precision sawmill when turning logs into planks.").setRequiresGameRestart(true);
-
-
     /**
      * ADD START
      */
 
     public final DoubleOption armoredFreeRunnersRatio = new DoubleOption(this, "general", "ArmoredFreeRunnersDamageRatio", 0.3,
             "Damage absorb ratio of the Armored FreeRunners");
-
     public final IntOption armoredFreeRunnersDamageMax = new IntOption(this, "general", "ArmoredFreeRunnersDamageMax", 43,
             "Max damage the Armored Free Runners can absorb.");
-
     public final IntOption maxCanteen = new IntOption(this, "general", "MaxCanteenGas", 64000,
             "Canteen Gas Tank capacity in mB.");
-
     public final IntOption fluoritePerChunk = new IntOption(this, "general", "FluoritePerChunk", 16,
             "Chance that fluorite generates in a chunk. (0 to Disable)", 0, Integer.MAX_VALUE);
-
     public final IntOption fluoriteMaxVeinSize = new IntOption(this, "general", "FluoriteVeinSize", 8,
             "Max number of blocks in a fluorite vein.", 1, Integer.MAX_VALUE);
-
     public final IntOption leadPerChunk = new IntOption(this, "general", "LeadPerChunk", 16,
             "Chance that lead generates in a chunk. (0 to Disable)", 0, Integer.MAX_VALUE);
-
     public final IntOption leadMaxVeinSize = new IntOption(this, "general", "LeadVeinSize", 8,
             "Max number of blocks in a lead vein.", 1, Integer.MAX_VALUE);
-
     public final IntOption uraniumPerChunk = new IntOption(this, "general", "UraniumPerChunk", 16,
             "Chance that uranium generates in a chunk. (0 to Disable)", 0, Integer.MAX_VALUE);
-
     public final IntOption uraniumMaxVeinSize = new IntOption(this, "general", "UraniumVeinSize", 8,
             "Max number of blocks in a uranium vein.", 1, Integer.MAX_VALUE);
-
     public final DoubleOption toolBatteryCapacity = new DoubleOption(this, "general", "toolBatteryCapacity", 10000000,
             "Maximum amount (joules) of energy the Atomic Disassembler can contain", 0, Double.MAX_VALUE).setRequiresGameRestart(true);
-
     public final IntOption toolEnergyUsageWeapon = new IntOption(this, "general", "toolEnergyUsageWeapon", 2000,
             "Cost in Joules of using the mektool as a weapon.");
-
     public final IntOption toolDamageMin = new IntOption(this, "general", "toolDamageMin", 20,
             "The amount of damage the mektool does when it is out of power. (Value is in number of half hearts)");
-
     public final IntOption toolDamageMax = new IntOption(this, "general", "toolDamageMax", 256,
             "The amount of damage the mektool does when it has at least DisassemblerEnergyUsageWeapon power stored. (Value is in number of half hearts)");
-
     public final IntOption toolMiningRange = new IntOption(this, "general", "toolMiningRange", 20,
             "The Range of the mektool Extended Vein Mining.");
-
     public final IntOption toolEnergyUsageHoe = new IntOption(this, "general", "toolEnergyUsageHoe", 10,
             "Cost in Joules of using the mektool as a hoe.");
-
     public final IntOption toolEnergyUsage = new IntOption(this, "general", "toolEnergyUsage", 10,
             "Base Energy (Joules) usage of the mektool. (Gets multiplied by speed factor)");
-
     public final BooleanOption toolVeryFastMode = new BooleanOption(this, "general", "toolveryFastMode", true,
             "Enable the 'Fast' mode for the Atomic Disassembler.");
-
     public final IntOption toolMiningCount = new IntOption(this, "general", "toolMiningCount", 256,
             "The max Atomic Disassembler Vein Mining Block Count.");
     public final BooleanOption blacklistFlux = new BooleanOption(this, "general", "BlacklistFluxPower", false,
             "Disables Flux Networks power integration. Requires world restart (server-side option in SMP).");
-
-    int maxVolume = 18 * 18 * 18;
-    public final IntOption dynamicTankFluidPerTank = new IntOption(this,"general","DynamicTankFluidPerTank",300_000,"Amount of fluid (mB) that each block of the dynamic tank contributes to the volume. Max = volume * fluidPerTank",1,Integer.MAX_VALUE / maxVolume);
+    public final DoubleOption MekaSuitHelmetDamageRatio = new DoubleOption(this, "general", "MekaSuitHelmetDamageRatio", 0.15F,
+            "Damage absorb ratio of the MekaSuit Helmet.");
+    public final IntOption MekaSuitHelmetDamageMax = new IntOption(this, "general", "MekaSuitHelmetDamageMax", 115,
+            "Max damage the MekaSuit Helmet can absorb.");
+    public final DoubleOption MekaSuitBodyarmorDamageRatio = new DoubleOption(this, "general", "MekaSuitBodyarmorDamageRatio", 0.4F,
+            "Damage absorb ratio of the MekaSuit Bodyarmor.");
+    public final IntOption MekaSuitBodyarmorDamageMax = new IntOption(this, "general", "MekaSuitBodyarmorDamageMax", 115,
+            "Max damage the  MekaSuit Bodyarmor can absorb.");
+    public final DoubleOption MekaSuitPantsDamageRatio = new DoubleOption(this, "general", "MekaSuitPantsDamageRatio", 0.3F,
+            "Damage absorb ratio of the MekaSuit Pants.");
+    public final IntOption MekaSuitPantsDamageMax = new IntOption(this, "general", "MekaSuitPantsDamageMax", 115,
+            "Max damage the  MekaSuit Pants can absorb.");
+    public final DoubleOption MekaSuitBootsDamageRatio = new DoubleOption(this, "general", "MekaSuitBootsDamageRatio", 0.15F,
+            "Damage absorb ratio of the MekaSuit Boots.");
+    public final IntOption MekaSuitBootsDamageMax = new IntOption(this, "general", "MekaSuitBootsDamageMax", 115,
+            "Max damage the  MekaSuit Boots can absorb.");
 
     public final TypeConfigManager<MachineType> machinesManager = new TypeConfigManager<>(this, "machines", MachineType.class, MachineType::getValidMachines, MachineType::getBlockName);
-
     public final EnumMap<BaseTier, TierConfig> tiers = TierConfig.create(this);
+    public EnumOption<EnergyType> energyUnit = new EnumOption<>(this, "general", "EnergyType", EnergyType.RF,
+            "Displayed energy type in Mekanism GUIs.");
+    public EnumOption<TempType> tempUnit = new EnumOption<>(this, "general", "TemperatureUnits", TempType.K,
+            "Displayed temperature unit in Mekanism GUIs.");
+    int maxVolume = 18 * 18 * 18;
+    public final IntOption dynamicTankFluidPerTank = new IntOption(this, "general", "DynamicTankFluidPerTank", 300_000, "Amount of fluid (mB) that each block of the dynamic tank contributes to the volume. Max = volume * fluidPerTank", 1, Integer.MAX_VALUE / maxVolume);
 }

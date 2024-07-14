@@ -16,11 +16,17 @@ import mekanism.common.item.ItemConfigurator.ConfiguratorMode;
 import mekanism.common.item.ItemFlamethrower.FlamethrowerMode;
 import mekanism.common.item.ItemJetpack.JetpackMode;
 import mekanism.common.item.ItemMekTool.MekToolMode;
+import mekanism.common.item.armour.ItemMekAsuitBodyArmour;
+import mekanism.common.item.armour.ItemMekAsuitHeadArmour;
+import mekanism.common.item.armour.ItemMekAsuitLegsArmour;
 import mekanism.common.network.PacketFreeRunnerData;
 import mekanism.common.network.PacketItemStack.ItemStackMessage;
 import mekanism.common.network.PacketPortableTeleporter.PortableTeleporterMessage;
 import mekanism.common.network.PacketPortableTeleporter.PortableTeleporterPacketType;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -127,6 +133,58 @@ public class ClientTickHandler {
             Mekanism.packetHandler.sendToServer(new PortableTeleporterMessage(PortableTeleporterPacketType.TELEPORT, hand, freq));
         } else {
             portableTeleports.put(player, new TeleportData(hand, freq, mc.world.getWorldTime() + delay));
+        }
+    }
+
+    public void isMekAsuitArmor(EntityPlayer player) { //When the player has Meka armor equipped, the corresponding model is hidden
+        Render<AbstractClientPlayer> render = Minecraft.getMinecraft().getRenderManager().getEntityRenderObject(player);
+        ItemStack itemstackhead = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+        ItemStack itemstackchest = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+        ItemStack itemstacklegs = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
+        if (render instanceof RenderPlayer renderPlayer) {
+            if (itemstackhead.getItem() instanceof ItemMekAsuitHeadArmour) {
+                renderPlayer.getMainModel().bipedHead.isHidden = true;
+                renderPlayer.getMainModel().bipedHeadwear.isHidden = true;
+                renderPlayer.getMainModel().bipedHead.showModel = false;
+                renderPlayer.getMainModel().bipedHeadwear.showModel = false;
+            } else {
+                renderPlayer.getMainModel().bipedHead.isHidden = false;
+                renderPlayer.getMainModel().bipedHeadwear.isHidden = false;
+                renderPlayer.getMainModel().bipedHead.showModel = true;
+                renderPlayer.getMainModel().bipedHeadwear.showModel = true;
+            }
+
+            if (itemstackchest.getItem() instanceof ItemMekAsuitBodyArmour) {
+                renderPlayer.getMainModel().bipedLeftArmwear.showModel = false;
+                renderPlayer.getMainModel().bipedRightArmwear.showModel = false;
+                renderPlayer.getMainModel().bipedBodyWear.showModel = false;
+                renderPlayer.getMainModel().bipedLeftArmwear.isHidden = true;
+                renderPlayer.getMainModel().bipedRightArmwear.isHidden = true;
+                renderPlayer.getMainModel().bipedBodyWear.isHidden = true;
+            } else {
+                renderPlayer.getMainModel().bipedLeftArmwear.showModel = true;
+                renderPlayer.getMainModel().bipedRightArmwear.showModel = true;
+                renderPlayer.getMainModel().bipedBodyWear.showModel = true;
+                renderPlayer.getMainModel().bipedLeftArmwear.isHidden = false;
+                renderPlayer.getMainModel().bipedRightArmwear.isHidden = false;
+                renderPlayer.getMainModel().bipedBodyWear.isHidden = false;
+
+            }
+            if (itemstacklegs.getItem() instanceof ItemMekAsuitLegsArmour) {
+                renderPlayer.getMainModel().bipedLeftLegwear.isHidden = true;
+                renderPlayer.getMainModel().bipedRightLegwear.isHidden = true;
+                renderPlayer.getMainModel().bipedLeftLegwear.showModel = false;
+                renderPlayer.getMainModel().bipedRightLegwear.showModel = false;
+                renderPlayer.getMainModel().bipedBodyWear.isHidden = true;
+                renderPlayer.getMainModel().bipedBodyWear.showModel = false;
+            } else {
+                renderPlayer.getMainModel().bipedLeftLegwear.isHidden = false;
+                renderPlayer.getMainModel().bipedRightLegwear.isHidden = false;
+                renderPlayer.getMainModel().bipedLeftLegwear.showModel = true;
+                renderPlayer.getMainModel().bipedRightLegwear.showModel = true;
+                renderPlayer.getMainModel().bipedBodyWear.isHidden = false;
+                renderPlayer.getMainModel().bipedBodyWear.showModel = true;
+            }
         }
     }
 
@@ -263,6 +321,8 @@ public class ClientTickHandler {
                     }
                 }
             }
+
+            isMekAsuitArmor(mc.player);
         }
     }
 
@@ -325,7 +385,7 @@ public class ClientTickHandler {
                     event.setCanceled(true);
                 }
             }
-            if (MekanismConfig.current().client.allowMekToolModeScroll.val()){
+            if (MekanismConfig.current().client.allowMekToolModeScroll.val()) {
                 if (stack.getItem() instanceof ItemMekTool MekTool && delta != 0) {
                     RenderTickHandler.modeSwitchTimer = 100;
                     wheelStatus += Mouse.getEventDWheel();
@@ -337,12 +397,12 @@ public class ClientTickHandler {
                     } else if (newVal < 0) {
                         newVal = MekToolMode.values().length + newVal;
                     }
-                    MekTool.setMode(stack,MekToolMode.values()[newVal]);
+                    MekTool.setMode(stack, MekToolMode.values()[newVal]);
                     Mekanism.packetHandler.sendToServer(new ItemStackMessage(EnumHand.MAIN_HAND, Collections.singletonList(newVal)));
                     event.setCanceled(true);
                 }
             }
-            if (stack.getItem() instanceof ItemElectricBow Bow && delta !=0){
+            if (stack.getItem() instanceof ItemElectricBow Bow && delta != 0) {
                 RenderTickHandler.modeSwitchTimer = 100;
                 wheelStatus += Mouse.getEventDWheel();
                 int scaledDelta = wheelStatus / 120;

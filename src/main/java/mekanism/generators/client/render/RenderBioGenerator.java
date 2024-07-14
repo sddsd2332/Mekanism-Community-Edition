@@ -40,37 +40,40 @@ public class RenderBioGenerator extends TileEntitySpecialRenderer<TileEntityBioG
     }
     @Override
     public void render(TileEntityBioGenerator tileEntity, double x, double y, double z, float partialTick, int destroyStage, float alpha) {
+        GlStateManager.pushMatrix();
+        GlStateManager.translate((float) x + 0.5F, (float) y + 1.5F, (float) z + 0.5F);
+        bindTexture(MekanismGeneratorUtils.getResource(ResourceType.RENDER, "BioGenerator.png"));
+        MekanismRenderer.rotate(tileEntity.facing, 180, 0, 270, 90);
+        GlStateManager.rotate(180, 0, 0, 1);
+        model.render(0.0625F);
+        GlStateManager.popMatrix();
         if (tileEntity.bioFuelSlot.fluidStored > 0) {
             GlStateManager.pushMatrix();
             GlStateManager.enableCull();
-            GlStateManager.disableLighting();
-            GlStateManager.shadeModel(GL11.GL_SMOOTH);
             GlStateManager.disableAlpha();
             GlStateManager.enableBlend();
+            GlStateManager.disableLighting();
             GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-            bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+            MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
             GlStateManager.translate((float) x, (float) y, (float) z);
-            GlowInfo glowInfo = MekanismRenderer.enableGlow();
+            bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             MekanismRenderer.color(MekanismFluids.Biofuel);
             DisplayInteger[] displayList = getDisplayList(tileEntity.facing);
             displayList[tileEntity.getScaledFuelLevel(stages - 1)].render();
             MekanismRenderer.resetColor();
             MekanismRenderer.disableGlow(glowInfo);
+            GlStateManager.enableLighting();
             GlStateManager.disableBlend();
             GlStateManager.enableAlpha();
-            GlStateManager.enableLighting();
             GlStateManager.disableCull();
             GlStateManager.popMatrix();
         }
-
         GlStateManager.pushMatrix();
         GlStateManager.translate((float) x + 0.5F, (float) y + 1.5F, (float) z + 0.5F);
         bindTexture(MekanismGeneratorUtils.getResource(ResourceType.RENDER, "BioGenerator.png"));
-
         MekanismRenderer.rotate(tileEntity.facing, 180, 0, 270, 90);
-
         GlStateManager.rotate(180, 0, 0, 1);
-        model.render(0.0625F,true);
+        model.renderGlass(0.0625F);
         GlStateManager.popMatrix();
     }
 
@@ -82,13 +85,10 @@ public class RenderBioGenerator extends TileEntitySpecialRenderer<TileEntityBioG
         Model3D model3D = new Model3D();
         model3D.baseBlock = Blocks.WATER;
         model3D.setTexture(MekanismFluids.Biofuel.getSprite());
-
         DisplayInteger[] displays = new DisplayInteger[stages];
         energyDisplays.put(side,displays);
-
         for (int i = 0; i < stages; i++) {
             displays[i] = DisplayInteger.createAndStart();
-
             switch (side) {
                 case NORTH:
                     model3D.minZ = 0.5;
@@ -119,10 +119,8 @@ public class RenderBioGenerator extends TileEntitySpecialRenderer<TileEntityBioG
                     model3D.maxZ = 0.8215;
                     break;
             }
-
             model3D.minY = 0.4375 + 0.001;  //prevent z fighting at low fuel levels
             model3D.maxY = 0.4375 + ((float) i / stages) * 0.4375 + 0.001;
-
             MekanismRenderer.renderObject(model3D);
             DisplayInteger.endList();
         }

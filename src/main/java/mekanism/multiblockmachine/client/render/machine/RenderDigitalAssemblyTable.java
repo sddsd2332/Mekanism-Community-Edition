@@ -8,29 +8,39 @@ import mekanism.client.render.MekanismRenderer;
 import mekanism.client.render.MekanismRenderer.DisplayInteger;
 import mekanism.client.render.MekanismRenderer.Model3D;
 import mekanism.multiblockmachine.client.model.machine.ModelDigitalAssemblyTable;
+import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachineGenerator;
 import mekanism.multiblockmachine.common.tile.machine.TileEntityDigitalAssemblyTable;
 import mekanism.multiblockmachine.common.util.MekanismMultiblockMachineUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 import java.util.EnumMap;
 import java.util.Map;
+
+import static mekanism.multiblockmachine.common.MultiblockMachineBlocks.MultiblockGenerator;
+import static mekanism.multiblockmachine.common.MultiblockMachineBlocks.MultiblockMachine;
 
 @SideOnly(Side.CLIENT)
 public class RenderDigitalAssemblyTable extends RenderTileEntityTime<TileEntityDigitalAssemblyTable> {
     public static final RenderDigitalAssemblyTable INSTANCE = new RenderDigitalAssemblyTable();
     private static final int stages = 3600;
-    private static GasRenderMap<DisplayInteger[]> cachedCenterInputGas = new GasRenderMap<>();
-    private static GasRenderMap<DisplayInteger[]> cachedCenterOutputGas = new GasRenderMap<>();
+    private static Map<EnumFacing, GasRenderMap<DisplayInteger[]>> cachedCenterInputGas = new EnumMap<>(EnumFacing.class);
+    private static Map<EnumFacing, GasRenderMap<DisplayInteger[]>> cachedCenterOutputGas = new EnumMap<>(EnumFacing.class);
     private static Map<EnumFacing, DisplayInteger[]> energyDisplays1 = new EnumMap<>(EnumFacing.class);
     private static Map<EnumFacing, DisplayInteger[]> energyDisplays2 = new EnumMap<>(EnumFacing.class);
-    private static FluidRenderMap<DisplayInteger[]> cachedCenterInputFluids = new FluidRenderMap<>();
-    private static FluidRenderMap<DisplayInteger[]> cachedCenterOutputFluids = new FluidRenderMap<>();
+    private static Map<EnumFacing, FluidRenderMap<DisplayInteger[]>> cachedCenterInputFluids = new EnumMap<>(EnumFacing.class);
+    private static Map<EnumFacing, FluidRenderMap<DisplayInteger[]>> cachedCenterOutputFluids = new EnumMap<>(EnumFacing.class);
     private ModelDigitalAssemblyTable model = new ModelDigitalAssemblyTable();
 
     public static void resetDisplayInts() {
@@ -75,6 +85,124 @@ public class RenderDigitalAssemblyTable extends RenderTileEntityTime<TileEntityD
             GlStateManager.popMatrix();
         }
 
+        if (tileEntity.inputGasTank.getStored() > 0) {
+            GlStateManager.pushMatrix();
+            GlStateManager.enableCull();
+            GlStateManager.disableLighting();
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            GlStateManager.disableAlpha();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+            GlStateManager.translate((float) x, (float) y, (float) z);
+            MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
+            DisplayInteger[] displayList = getInputGasListAndRender(tileEntity.inputGasTank.getGas(), tileEntity.facing);
+            MekanismRenderer.color(tileEntity.inputGasTank.getGas());
+            displayList[Math.min(stages - 1, (int) (tileEntity.inputGasScale * ((float) stages - 1)))].render();
+            MekanismRenderer.resetColor();
+            MekanismRenderer.disableGlow(glowInfo);
+            GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
+            GlStateManager.enableLighting();
+            GlStateManager.disableCull();
+            GlStateManager.popMatrix();
+        }
+
+        if (tileEntity.outputGasTank.getStored() > 0) {
+            GlStateManager.pushMatrix();
+            GlStateManager.enableCull();
+            GlStateManager.disableLighting();
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            GlStateManager.disableAlpha();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+            GlStateManager.translate((float) x, (float) y, (float) z);
+            MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
+            DisplayInteger[] displayList = getOutputGasListAndRender(tileEntity.outputGasTank.getGas(), tileEntity.facing);
+            MekanismRenderer.color(tileEntity.outputGasTank.getGas());
+            displayList[Math.min(stages - 1, (int) (tileEntity.outputGasScale * ((float) stages - 1)))].render();
+            MekanismRenderer.resetColor();
+            MekanismRenderer.disableGlow(glowInfo);
+            GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
+            GlStateManager.enableLighting();
+            GlStateManager.disableCull();
+            GlStateManager.popMatrix();
+        }
+
+        if (tileEntity.inputFluidTank.getFluidAmount() > 0) {
+            GlStateManager.pushMatrix();
+            GlStateManager.enableCull();
+            GlStateManager.disableLighting();
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            GlStateManager.disableAlpha();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            GlStateManager.translate((float) x, (float) y, (float) z);
+            bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+            MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow(tileEntity.inputFluidTank.getFluid());
+            DisplayInteger[] displayList = getInputFluidRender(tileEntity.inputFluidTank.getFluid(), tileEntity.facing);
+            MekanismRenderer.color(tileEntity.inputFluidTank.getFluid());
+            displayList[Math.min(stages - 1, (int) (tileEntity.inputFluidScale * ((float) stages - 1)))].render();
+            MekanismRenderer.resetColor();
+            MekanismRenderer.disableGlow(glowInfo);
+            GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
+            GlStateManager.enableLighting();
+            GlStateManager.disableCull();
+            GlStateManager.popMatrix();
+        }
+
+        if (tileEntity.outputFluidTank.getFluidAmount() > 0) {
+            GlStateManager.pushMatrix();
+            GlStateManager.enableCull();
+            GlStateManager.disableLighting();
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            GlStateManager.disableAlpha();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            GlStateManager.translate((float) x, (float) y, (float) z);
+            bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+            MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow(tileEntity.outputFluidTank.getFluid());
+            DisplayInteger[] displayList = getOutputFluidRender(tileEntity.outputFluidTank.getFluid(), tileEntity.facing);
+            MekanismRenderer.color(tileEntity.outputFluidTank.getFluid());
+            displayList[Math.min(stages - 1, (int) (tileEntity.outputFluidScale * ((float) stages - 1)))].render();
+            MekanismRenderer.resetColor();
+            MekanismRenderer.disableGlow(glowInfo);
+            GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
+            GlStateManager.enableLighting();
+            GlStateManager.disableCull();
+            GlStateManager.popMatrix();
+        }
+
+        ItemStack stack = tileEntity.getStackInSlot(14);
+        if (!stack.isEmpty()) {
+            GlStateManager.pushMatrix();
+            if (stack.getItem() == Item.getItemFromBlock(MultiblockMachine)) {
+                GlStateManager.translate((float) x + 0.5F, (float) y + 2.5F, (float) z + 0.5F);
+                GlStateManager.scale(2.8375F, 2.8375F, 2.8375F);
+            } else if (stack.getItem() == Item.getItemFromBlock(MultiblockGenerator) && !stack.isItemEqual(BlockStateMultiblockMachineGenerator.MultiblockMachineGeneratorType.LARGE_WIND_GENERATOR.getStack())) {
+                GlStateManager.translate((float) x + 0.5F, (float) y + 2.5F, (float) z + 0.5F);
+                GlStateManager.scale(3.125F, 3.125F, 3.125F);
+            } else {
+                GlStateManager.translate((float) x + 0.5F, (float) y + 1.5F, (float) z + 0.5F);
+                GlStateManager.scale(1.0F, 1.0F, 1.0F);
+            }
+            MekanismRenderer.rotate(tileEntity.facing, 270, 90, 0, 180);
+            GlStateManager.disableLighting();
+            GlStateManager.pushAttrib();
+            RenderHelper.enableStandardItemLighting();
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            Minecraft.getMinecraft().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.FIXED);
+            RenderHelper.disableStandardItemLighting();
+            GlStateManager.popAttrib();
+            GlStateManager.enableLighting();
+            GlStateManager.popMatrix();
+        }
+
+
         GlStateManager.pushMatrix();
         GlStateManager.translate((float) x + 0.5F, (float) y + 1.5F, (float) z + 0.5F);
         bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "DigitalAssemblyTable/DigitalAssemblyTable.png"));
@@ -87,143 +215,211 @@ public class RenderDigitalAssemblyTable extends RenderTileEntityTime<TileEntityD
 
 
     private DisplayInteger[] getInputGasListAndRender(GasStack gasStack, EnumFacing side) {
-        if (cachedCenterInputGas.containsKey(gasStack)) {
-            return cachedCenterInputGas.get(gasStack);
+        if (cachedCenterInputGas.containsKey(side) && cachedCenterInputGas.get(side).containsKey(gasStack)) {
+            return cachedCenterInputGas.get(side).get(gasStack);
         }
-
         MekanismRenderer.Model3D toReturn = new MekanismRenderer.Model3D();
         toReturn.baseBlock = Blocks.WATER;
         toReturn.setTexture(gasStack.getGas().getSprite());
         DisplayInteger[] displays = new DisplayInteger[stages];
-        cachedCenterInputGas.put(gasStack, displays);
         for (int i = 0; i < stages; i++) {
             displays[i] = MekanismRenderer.DisplayInteger.createAndStart();
             switch (side) {
                 case NORTH:
+                    toReturn.minZ = 1.22;
+                    toReturn.maxZ = 1.78;
+                    toReturn.minX = -4.775;
+                    toReturn.maxX = -4.15;
                     break;
                 case SOUTH:
+                    toReturn.minZ = -0.78;
+                    toReturn.maxZ = -0.22;
+                    toReturn.maxX = 5.775;
+                    toReturn.minX = 5.15;
                     break;
                 case WEST:
+                    toReturn.minX = 1.22;
+                    toReturn.maxX = 1.78;
+                    toReturn.maxZ = 5.775;
+                    toReturn.minZ = 5.15;
                     break;
                 case EAST:
+                    toReturn.minX = -0.78;
+                    toReturn.maxX = -0.22;
+                    toReturn.minZ = -4.775;
+                    toReturn.maxZ = -4.15;
                     break;
             }
-            toReturn.minZ = 20.825 + .01;
-            toReturn.maxZ = 0.7375 - .01;
-            toReturn.minX = 0.325 + .01;
-            toReturn.maxX = 0.7375 - .01;
             toReturn.minY = 1.3015625;
             toReturn.maxY = 1.3015625 + ((float) i / stages) * 2.25 - 0.001;
             MekanismRenderer.renderObject(toReturn);
             MekanismRenderer.DisplayInteger.endList();
-
+        }
+        if (cachedCenterInputGas.containsKey(side)) {
+            cachedCenterInputGas.get(side).put(gasStack, displays);
+        } else {
+            GasRenderMap<DisplayInteger[]> map = new GasRenderMap<>();
+            map.put(gasStack, displays);
+            cachedCenterInputGas.put(side, map);
         }
         return displays;
     }
 
     private DisplayInteger[] getOutputGasListAndRender(GasStack gasStack, EnumFacing side) {
-        if (cachedCenterOutputGas.containsKey(gasStack)) {
-            return cachedCenterOutputGas.get(gasStack);
+        if (cachedCenterOutputGas.containsKey(side) && cachedCenterOutputGas.get(side).containsKey(gasStack)) {
+            return cachedCenterOutputGas.get(side).get(gasStack);
         }
         MekanismRenderer.Model3D toReturn = new MekanismRenderer.Model3D();
         toReturn.baseBlock = Blocks.WATER;
         toReturn.setTexture(gasStack.getGas().getSprite());
         DisplayInteger[] displays = new DisplayInteger[stages];
-        cachedCenterOutputGas.put(gasStack, displays);
         for (int i = 0; i < stages; i++) {
             displays[i] = MekanismRenderer.DisplayInteger.createAndStart();
             switch (side) {
                 case NORTH:
+                    toReturn.minZ = 1.22;
+                    toReturn.maxZ = 1.78;
+                    toReturn.maxX = 5.775;
+                    toReturn.minX = 5.15;
                     break;
                 case SOUTH:
+                    toReturn.minZ = -0.78;
+                    toReturn.maxZ = -0.22;
+                    toReturn.minX = -4.775;
+                    toReturn.maxX = -4.15;
                     break;
                 case WEST:
+                    toReturn.minX = 1.22;
+                    toReturn.maxX = 1.78;
+                    toReturn.minZ = -4.775;
+                    toReturn.maxZ = -4.15;
                     break;
                 case EAST:
+                    toReturn.minX = -0.78;
+                    toReturn.maxX = -0.22;
+                    toReturn.maxZ = 5.775;
+                    toReturn.minZ = 5.15;
                     break;
             }
-            toReturn.minZ = 0.325 + .01;
-            toReturn.maxZ = 0.7375 - .01;
-            toReturn.minX = 0.325 + .01;
-            toReturn.maxX = 0.7375 - .01;
-            toReturn.minY = 1.3015625;
-            toReturn.maxY = 1.3015625 + ((float) i / stages) * 2.25 - 0.001;
+            toReturn.minY = 1.4375;
+            toReturn.maxY = 1.4375 + ((float) i / stages) * 2.25 - 0.001;
             MekanismRenderer.renderObject(toReturn);
             MekanismRenderer.DisplayInteger.endList();
+        }
+        if (cachedCenterOutputGas.containsKey(side)) {
+            cachedCenterOutputGas.get(side).put(gasStack, displays);
+        } else {
+            GasRenderMap<DisplayInteger[]> map = new GasRenderMap<>();
+            map.put(gasStack, displays);
+            cachedCenterOutputGas.put(side, map);
         }
         return displays;
     }
 
 
     private DisplayInteger[] getInputFluidRender(FluidStack fluid, EnumFacing side) {
-        if (cachedCenterInputFluids.containsKey(fluid)) {
-            return cachedCenterInputFluids.get(fluid);
+        if (cachedCenterInputFluids.containsKey(side) && cachedCenterInputFluids.get(side).containsKey(fluid)) {
+            return cachedCenterInputFluids.get(side).get(fluid);
         }
         Model3D toReturn = new Model3D();
         toReturn.baseBlock = Blocks.WATER;
         MekanismRenderer.prepFlowing(toReturn, fluid);
         DisplayInteger[] displays = new DisplayInteger[stages];
-        cachedCenterInputFluids.put(fluid, displays);
         for (int i = 0; i < stages; i++) {
             displays[i] = DisplayInteger.createAndStart();
             if (fluid.getFluid().getStill(fluid) != null) {
                 switch (side) {
                     case NORTH:
+                        toReturn.minZ = 3.22;
+                        toReturn.maxZ = 3.78;
+                        toReturn.minX = -4.775;
+                        toReturn.maxX = -4.15;
                         break;
                     case SOUTH:
+                        toReturn.minZ = -2.78;
+                        toReturn.maxZ = -2.22;
+                        toReturn.maxX = 5.775;
+                        toReturn.minX = 5.15;
                         break;
                     case WEST:
+                        toReturn.minX = 3.22;
+                        toReturn.maxX = 3.78;
+                        toReturn.maxZ = 5.775;
+                        toReturn.minZ = 5.15;
                         break;
                     case EAST:
+                        toReturn.minX = -2.78;
+                        toReturn.maxX = -2.22;
+                        toReturn.minZ = -4.775;
+                        toReturn.maxZ = -4.15;
                         break;
                 }
-                toReturn.minX = 0.3125 + .01;
-                toReturn.minZ = 0.3125 + .01;
-                toReturn.maxX = 0.6875 - .01;
-                toReturn.maxZ = 0.6875 - .01;
-                toReturn.minY = 1.3015625;
-                toReturn.maxY = 1.3015625 + ((float) i / stages) * 2.25 - 0.001;
+                toReturn.minY = 1.4375;
+                toReturn.maxY = 1.4375 + ((float) i / stages) * 2.25 - 0.001;
                 MekanismRenderer.renderObject(toReturn);
             }
             DisplayInteger.endList();
         }
-
+        if (cachedCenterInputFluids.containsKey(side)) {
+            cachedCenterInputFluids.get(side).put(fluid, displays);
+        } else {
+            FluidRenderMap<DisplayInteger[]> map = new FluidRenderMap<>();
+            map.put(fluid, displays);
+            cachedCenterInputFluids.put(side, map);
+        }
         return displays;
     }
 
     private DisplayInteger[] getOutputFluidRender(FluidStack fluid, EnumFacing side) {
-        if (cachedCenterOutputFluids.containsKey(fluid)) {
-            return cachedCenterOutputFluids.get(fluid);
+        if (cachedCenterOutputFluids.containsKey(side) && cachedCenterOutputFluids.get(side).containsKey(fluid)) {
+            return cachedCenterOutputFluids.get(side).get(fluid);
         }
         Model3D toReturn = new Model3D();
         toReturn.baseBlock = Blocks.WATER;
         MekanismRenderer.prepFlowing(toReturn, fluid);
         DisplayInteger[] displays = new DisplayInteger[stages];
-        cachedCenterOutputFluids.put(fluid, displays);
         for (int i = 0; i < stages; i++) {
             displays[i] = DisplayInteger.createAndStart();
             if (fluid.getFluid().getStill(fluid) != null) {
                 switch (side) {
                     case NORTH:
+                        toReturn.minZ = 3.22;
+                        toReturn.maxZ = 3.78;
+                        toReturn.maxX = 5.775;
+                        toReturn.minX = 5.15;
                         break;
                     case SOUTH:
+                        toReturn.minZ = -2.78;
+                        toReturn.maxZ = -2.22;
+                        toReturn.minX = -4.775;
+                        toReturn.maxX = -4.15;
                         break;
                     case WEST:
+                        toReturn.minX = 3.22;
+                        toReturn.maxX = 3.78;
+                        toReturn.minZ = -4.775;
+                        toReturn.maxZ = -4.15;
                         break;
                     case EAST:
+                        toReturn.minX = -2.78;
+                        toReturn.maxX = -2.22;
+                        toReturn.maxZ = 5.775;
+                        toReturn.minZ = 5.15;
                         break;
                 }
-                toReturn.minX = 0.3125 + .01;
-                toReturn.minZ = 0.3125 + .01;
-                toReturn.maxX = 0.6875 - .01;
-                toReturn.maxZ = 0.6875 - .01;
                 toReturn.minY = 1.3015625;
                 toReturn.maxY = 1.3015625 + ((float) i / stages) * 2.25 - 0.001;
                 MekanismRenderer.renderObject(toReturn);
             }
             DisplayInteger.endList();
         }
-
+        if (cachedCenterOutputFluids.containsKey(side)) {
+            cachedCenterOutputFluids.get(side).put(fluid, displays);
+        } else {
+            FluidRenderMap<DisplayInteger[]> map = new FluidRenderMap<>();
+            map.put(fluid, displays);
+            cachedCenterOutputFluids.put(side, map);
+        }
         return displays;
     }
 

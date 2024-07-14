@@ -9,9 +9,9 @@ import net.minecraftforge.registries.IForgeRegistry;
 @GameRegistry.ObjectHolder(MekanismMultiblockMachine.MODID)
 public class MultiblockMachineItems {
 
-    public static final Item PlasmaCutterNozzles = new ItemMultiblockMachine().setItemMaxDamage(100000);
-    public static final Item DrillBit = new ItemMultiblockMachine().setItemMaxDamage(100000);
-    public static final Item LaserLenses = new ItemMultiblockMachine().setItemMaxDamage(100000);
+    public static final Item PlasmaCutterNozzles = new ItemMultiblockMachine().setItemMaxDamage(100000).setMaxStackSize(1);
+    public static final Item DrillBit = new ItemMultiblockMachine().setItemMaxDamage(100000).setMaxStackSize(1);
+    public static final Item LaserLenses = new ItemMultiblockMachine().setItemMaxDamage(100000).setMaxStackSize(1);
 
     public static void registerItems(IForgeRegistry<Item> registry) {
         registry.register(init(PlasmaCutterNozzles, "PlasmaCutterNozzles"));

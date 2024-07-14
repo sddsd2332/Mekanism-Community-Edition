@@ -68,24 +68,31 @@ public class ModelBioGenerator extends ModelBase {
         back.render(size);
         bar.render(size);
     }
-
-    public void render(float size,boolean isEnableGlow) {
+    public void renderItem(float size) {
         GlStateManager.pushMatrix();
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
         doRender(size);
-        if (!isEnableGlow){
-            glass.render(size);
-        }
+        glass.render(size);
         GlStateManager.popMatrix();
-        if (isEnableGlow) {
-            GlStateManager.shadeModel(GL11.GL_SMOOTH);
-            GlStateManager.disableAlpha();
-            GlStateManager.enableBlend();
-            GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-            glass.render(size);
-            GlStateManager.disableBlend();
-            GlStateManager.enableAlpha();
-        }
+    }
+
+    public void render(float size) {
+        GlStateManager.pushMatrix();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        doRender(size);
+        GlStateManager.popMatrix();
+    }
+
+    public void renderGlass(float size) {
+        GlStateManager.pushMatrix();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        GlStateManager.disableAlpha();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        glass.render(size);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.popMatrix();
     }
 
     private void setRotation(ModelRenderer model, float x, float y, float z) {

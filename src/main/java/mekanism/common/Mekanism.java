@@ -140,6 +140,7 @@ public class Mekanism {
     public static Configuration configurationtools;
 
     public static Configuration configurationMultiblockMachine;
+    public static Configuration configurationmekaweapons;
     /**
      * Mekanism version number
      */
@@ -351,6 +352,7 @@ public class Mekanism {
         registerTileEntity(TileEntityIndustrialAlarm.class, "industrial_alarm");
         registerTileEntity(TileEntityAmbientAccumulatorEnergy.class, "ambient_accumulator_energy");
         registerTileEntity(TileEntityHybridStorage.class, "Hybrid_storage");
+        registerTileEntity(TileEntityModificationStation.class, "Modification_Station");
         /**
          * End of adding machine
          */
@@ -412,7 +414,7 @@ public class Mekanism {
         configurationgenerators = new Configuration(new File("config/mekanism/MekanismGenerators.cfg"));
         configurationtools = new Configuration(new File("config/mekanism/MekanismTools.cfg"));
         configurationMultiblockMachine = new Configuration(new File("config/mekanism/MekanismMultiblockMachine"));
-
+        configurationmekaweapons = new Configuration(new File("config/mekanism/MekanismWeapons"));
         //Load configuration
         proxy.loadConfiguration();
         proxy.onConfigSync(false);

@@ -299,7 +299,7 @@ public class MekanismRecipe {
             RecipeHandler.addPRCRecipe(new ItemStack(MekanismItems.OtherDust, 1, 7), new FluidStack(FluidRegistry.WATER, 10000), new GasStack(MekanismFluids.Polonium, 1000),
                     new ItemStack(MekanismItems.PoloniumPellet, 1), new GasStack(MekanismFluids.SpentNuclearWaste, 1000), 100000, 2000);
             RecipeHandler.addPRCRecipe(new ItemStack(MekanismItems.CosmicMatter, 64), FluidRegistry.getFluidStack("liquidsuperheatedsodium", 10000), new GasStack(MekanismFluids.UnstableDimensional, 10000),
-                    null, new GasStack(MekanismFluids.Antimatter, 100), 100000, 24000);
+                    ItemStack.EMPTY, new GasStack(MekanismFluids.Antimatter, 100), 100000, 24000);
             RecipeHandler.addPRCRecipe(new ItemStack(MekanismItems.ScrapBox, 64), FluidRegistry.getFluidStack("liquidfusionfuel", 10000), new GasStack(MekanismFluids.UnstableDimensional, 10000),
                     new ItemStack(MekanismItems.EmptyCrystals, 1), new GasStack(MekanismFluids.SpentNuclearWaste,1000), 100000, 10000);
         }

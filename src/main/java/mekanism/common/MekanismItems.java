@@ -1,6 +1,7 @@
 package mekanism.common;
 
 import mekanism.common.item.*;
+import mekanism.common.item.armour.*;
 import mekanism.common.tier.AlloyTier;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -79,13 +80,18 @@ public class MekanismItems {
     public static final Item ReprocessedFissileFragment = new ItemMekanism();
     public static final Item YellowCakeUranium = new ItemMekanism();
     public static final Item PoloniumPellet = new ItemMekanism();
-    public static final Item EnergyTabletCraft = new ItemMekanism();
     public static final Item CosmicMatter = new ItemMekanism();
     public static final Item Scrap = new ItemMekanism();
     public static final Item ScrapBox = new ItemMekanism();
     public static final Item EmptyCrystals = new ItemMekanism();
     public static final Item FluoriteClump = new ItemMekanism();
     public static final ItemFreeRunners ArmoredFreeRunners = new ItemFreeRunners();
+    public static final ItemMekAsuitHeadArmour MekAsuitHelmet = new ItemMekAsuitHeadArmour();
+    public static final ItemMekAsuitBodyArmour MekAsuitChestplate = new ItemMekAsuitBodyArmour();
+    public static final ItemMekAsuitLegsArmour MekAsuitLeggings = new ItemMekAsuitLegsArmour();
+    public static final ItemMekAsuitFeetArmour MekAsuitBoots = new ItemMekAsuitFeetArmour();
+    public static final Item ModuleBase = new ItemMekanism();
+    public static final Item ModuleUpgrade = new ItemModuleUpgrade();
     /**
      * ADD END
      */
@@ -157,7 +163,6 @@ public class MekanismItems {
          * ADD START
          */
 
-        registry.register(init(EnergyTabletCraft, "EnergyTabletCraft"));
         registry.register(init(CosmicMatter, "CosmicMatter"));
         registry.register(init(Scrap, "Scrap"));
         registry.register(init(ScrapBox, "ScrapBox"));
@@ -170,6 +175,12 @@ public class MekanismItems {
         registry.register(init(PoloniumPellet, "PoloniumPellet"));
         registry.register(init(ArmoredFreeRunners, "ArmoredFreeRunners"));
         registry.register(init(MekTool, "MekTool"));
+        registry.register(init(MekAsuitHelmet, "MekAsuitHelmet"));
+        registry.register(init(MekAsuitChestplate, "MekAsuitChestplate"));
+        registry.register(init(MekAsuitLeggings, "MekAsuitLeggings"));
+        registry.register(init(MekAsuitBoots, "MekAsuitBoots"));
+        registry.register(init(ModuleBase,"ModuleBase"));
+        registry.register(init(ModuleUpgrade,"ModuleUpgrade"));
         /**
          * ADD END
          */

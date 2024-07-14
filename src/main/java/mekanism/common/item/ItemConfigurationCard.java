@@ -89,14 +89,14 @@ public class ItemConfigurationCard extends ItemMekanism {
                 } else {
                     SecurityUtils.displayNoAccess(player);
                 }
-            }
-        }else {
-            ItemStack stack = player.getHeldItem(hand);
-            if (player.isSneaking()) {
-                if (stack.getTagCompound() != null) {
-                    stack.getTagCompound().removeTag(ItemDataUtils.DATA_ID);
+            }else {
+                ItemStack stack = player.getHeldItem(hand);
+                if (player.isSneaking()) {
+                    if (stack.getTagCompound() != null) {
+                        stack.getTagCompound().removeTag(ItemDataUtils.DATA_ID);
+                    }
+                    return EnumActionResult.SUCCESS;
                 }
-                return EnumActionResult.SUCCESS;
             }
         }
         return EnumActionResult.PASS;

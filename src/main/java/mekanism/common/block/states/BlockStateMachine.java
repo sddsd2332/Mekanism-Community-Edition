@@ -135,7 +135,8 @@ public class BlockStateMachine extends ExtendedBlockState {
         CELL_SEPARATOR(MachineBlock.MACHINE_BLOCK_4, 7, "CellSeparator", 71, TileEntityCellSeparator::new, true, false, true, Plane.HORIZONTAL, true),
         RECYCLER(MachineBlock.MACHINE_BLOCK_4, 8, "Recycler", 72, TileEntityRecycler::new, true, false, true, Plane.HORIZONTAL, true),
         INDUSTRIAL_ALARM(MachineBlock.MACHINE_BLOCK_4, 9, "IndustrialAlarm", -1, TileEntityIndustrialAlarm::new, false, true, false, BlockStateUtils.ALL_FACINGS, false),
-        HYBRID_STORAGE(MachineBlock.MACHINE_BLOCK_4,10,"Hybrid_Storage",74,TileEntityHybridStorage::new,true,false,false,BlockStateUtils.ALL_FACINGS, false);
+        HYBRID_STORAGE(MachineBlock.MACHINE_BLOCK_4,10,"Hybrid_Storage",74,TileEntityHybridStorage::new,true,false,false,BlockStateUtils.ALL_FACINGS, false),
+        MODIFICATION_STATION(MachineBlock.MACHINE_BLOCK_4,11,"Modification_Station",75,TileEntityModificationStation::new,true, true, true, Plane.HORIZONTAL, false);
 
         public MachineBlock typeBlock;
         public int meta;
@@ -211,7 +212,8 @@ public class BlockStateMachine extends ExtendedBlockState {
         }
 
         public boolean isValidMachine() {
-            return true;
+          //  return this != MODIFICATION_STATION;
+             return true;
         }
 
         public TileEntity create() {
@@ -272,6 +274,7 @@ public class BlockStateMachine extends ExtendedBlockState {
                 case INDUSTRIAL_ALARM -> 0;
                 case AMBIENT_ACCUMULATOR_ENERGY -> MekanismConfig.current().usage.AmbientAccumulatorEnergy.val();
                 case HYBRID_STORAGE -> 0;
+                case MODIFICATION_STATION -> MekanismConfig.current().usage.modificationStation.val();
                 default -> 0;
             };
         }
@@ -320,7 +323,8 @@ public class BlockStateMachine extends ExtendedBlockState {
                 case RECYCLER -> MekanismConfig.current().storage.recycler.val();
                 case INDUSTRIAL_ALARM -> 0;
                 case AMBIENT_ACCUMULATOR_ENERGY -> MekanismConfig.current().storage.AmbientAccumulatorEnergy.val();
-                case HYBRID_STORAGE ->  MekanismConfig.current().storage.HybridStorageEnergy.val();
+                case HYBRID_STORAGE -> MekanismConfig.current().storage.HybridStorageEnergy.val();
+                case MODIFICATION_STATION -> MekanismConfig.current().storage.modificationStation.val();
                 default -> 400 * getUsage();
             };
         }

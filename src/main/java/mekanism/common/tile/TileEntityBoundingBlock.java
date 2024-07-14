@@ -32,12 +32,14 @@ public class TileEntityBoundingBlock extends TileEntity implements ITileNetwork,
 
     public int prevPower;
 
+    public int ticker;
 
     @Override
     public void update() {
+        ticker++;
         if (!world.isRemote) {
             final TileEntity tile = getMainTile();
-            if (!(tile instanceof IBoundingBlock)) {
+            if (ticker % 200 == 0 && !(tile instanceof IBoundingBlock)) {
                 if (MekanismConfig.current().mekce.VirtualErrors.val()) {
                     Mekanism.logger.error("Found tile {} instead of an IBoundingBlock, at {}. Multiblock cannot function, Blocks to be removed {}", tile, getMainPos(), getPos());
                 }

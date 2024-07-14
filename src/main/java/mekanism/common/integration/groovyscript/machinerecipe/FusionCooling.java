@@ -8,7 +8,9 @@ import mekanism.common.integration.groovyscript.GrSMekanismAdd;
 import mekanism.common.recipe.RecipeHandler;
 import mekanism.common.recipe.inputs.FluidInput;
 import mekanism.common.recipe.machines.FusionCoolingRecipe;
+import mekanism.generators.common.MekanismGenerators;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Loader;
 import org.jetbrains.annotations.Nullable;
 
 public class FusionCooling extends VirtualizedMekanismRegistry<FusionCoolingRecipe> {
@@ -67,4 +69,10 @@ public class FusionCooling extends VirtualizedMekanismRegistry<FusionCoolingReci
             return recipe;
         }
     }
+
+    @Override
+    public boolean isEnabled() {
+        return Loader.isModLoaded(MekanismGenerators.MODID);
+    }
+
 }

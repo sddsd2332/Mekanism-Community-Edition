@@ -216,8 +216,7 @@ public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpeci
         EntityLivingBase base = event.getEntityLiving();
         ItemStack stack = base.getItemStackFromSlot(EntityEquipmentSlot.FEET);
         if (!stack.isEmpty() && stack.getItem() instanceof ItemFreeRunners boots) {
-            if (boots.getMode(stack) != FreeRunnerMode.DISABLED && boots.getEnergy(stack) > 0
-                    && event.getSource() == DamageSource.FALL) {
+            if (boots.getMode(stack) != FreeRunnerMode.DISABLED && boots.getEnergy(stack) > 0 && event.getSource() == DamageSource.FALL) {
                 boots.setEnergy(stack, boots.getEnergy(stack) - event.getAmount() * 50);
                 event.setCanceled(true);
             }
@@ -230,8 +229,7 @@ public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpeci
         if (this == MekanismItems.FreeRunners) {
             properties = new ArmorProperties(0, 0, 0);
         } else if (this == MekanismItems.ArmoredFreeRunners) {
-            properties = new ArmorProperties(1, MekanismConfig.current().general.armoredFreeRunnersRatio.val(),
-                    MekanismConfig.current().general.armoredFreeRunnersDamageMax.val());
+            properties = new ArmorProperties(1, MekanismConfig.current().general.armoredFreeRunnersRatio.val(), MekanismConfig.current().general.armoredFreeRunnersDamageMax.val());
             properties.Toughness = 2;
         }
         return properties;

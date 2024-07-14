@@ -51,7 +51,7 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
     private boolean rendererInitialized = false;
 
     public TileEntityLargeWindGenerator() {
-        super("wind", "LargeWindGenerator", MekanismConfig.current().multiblock.largewindGeneratorStorage.val(), MekanismConfig.current().multiblock.largewindGenerationMax.val() * 2, 1);
+        super("wind", "LargeWindGenerator", MekanismConfig.current().multiblock.largewindGeneratorStorage.val(), MekanismConfig.current().multiblock.largewindGeneratorOut.val(), 1);
         inventory = NonNullListSynchronized.withSize(SLOTS.length + 1, ItemStack.EMPTY);
         upgradeComponent.setSupported(Upgrade.ENERGY);
     }

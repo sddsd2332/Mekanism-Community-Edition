@@ -1,8 +1,0 @@
-{
-      "forge_marker": 1,
-      "defaults": {"model": "mekanism:advanced_energy_cube_frame"},
-      "variants": {
-            "normal": [{}],
-            "inventory": [{}]
-      }
-}
