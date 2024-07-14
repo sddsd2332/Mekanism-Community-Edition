@@ -40,6 +40,7 @@ import org.lwjgl.input.Keyboard;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @Optional.InterfaceList({
@@ -72,7 +73,7 @@ public abstract class ItemMekAsuitArmour extends ItemArmor implements IEnergized
             } else {
                 list.add(EnumColor.ORANGE + LangUtils.localize("tooltip.hold_for_modules") + ": ");
                 for (Map.Entry<moduleUpgrade, Integer> entry : module.entrySet()) {
-                    list.add("- " + entry.getKey().getLangName() + (entry.getKey().canMultiply() ? ": " + EnumColor.GREY + "x" + entry.getValue() : ""));
+                    list.add("- " + entry.getKey().getLangName().toLowerCase(Locale.ROOT) + (entry.getKey().canMultiply() ? ": " + EnumColor.GREY + "x" + entry.getValue() : ""));
                 }
             }
         }

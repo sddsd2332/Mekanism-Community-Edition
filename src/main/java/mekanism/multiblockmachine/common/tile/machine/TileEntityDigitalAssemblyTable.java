@@ -118,8 +118,6 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
             if (!canOperate(recipe)) {
                 operatingTicks = 0;
             }
-            handleGasTank(outputGasTank, getGasTankside());
-            handleFluidTank(outputFluidTank, getFluidTankside());
             if (prevEnergy != getEnergy() || lastInputFluid != inputFluidTank.getFluidAmount() || lastInputGas != inputGasTank.getStored() || lastOutputGas != outputGasTank.getStored() || lastOutputFluid != outputFluidTank.getFluidAmount()) {
                 SPacketUpdateTileEntity packet = this.getUpdatePacket();
                 PlayerChunkMapEntry trackingEntry = ((WorldServer) this.world).getPlayerChunkMap().getEntry(this.pos.getX() >> 4, this.pos.getZ() >> 4);
@@ -134,15 +132,20 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
             lastInputFluid = inputFluidTank.getFluidAmount();
             lastOutputGas = outputGasTank.getStored();
             lastOutputFluid = outputFluidTank.getFluidAmount();
-            int newRedstoneLevel = getRedstoneLevel();
-            if (newRedstoneLevel != currentRedstoneLevel) {
-                world.updateComparatorOutputLevel(pos, getBlockType());
-                currentRedstoneLevel = newRedstoneLevel;
-            }
             if (needsPacket) {
                 Mekanism.packetHandler.sendUpdatePacket(this);
             }
             needsPacket = false;
+
+            Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
+                handleGasTank(outputGasTank, getGasTankside());
+                handleFluidTank(outputFluidTank, getFluidTankside());
+                int newRedstoneLevel = getRedstoneLevel();
+                if (newRedstoneLevel != currentRedstoneLevel) {
+                    world.updateComparatorOutputLevel(pos, getBlockType());
+                    currentRedstoneLevel = newRedstoneLevel;
+                }
+            });
         } else {
             if (!isActive) {
                 if (DoorHeight < 16) {

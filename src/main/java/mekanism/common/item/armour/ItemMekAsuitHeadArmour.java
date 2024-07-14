@@ -82,7 +82,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasIt
         Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot, stack);
         UUID uuid = new UUID((getTranslationKey(stack) + slot).hashCode(), 0);
         if (slot == EntityEquipmentSlot.HEAD) {
-            multimap.put(SharedMonsterAttributes.KNOCKBACK_RESISTANCE.getName(), new AttributeModifier(uuid, "Terrasteel modifier " + EntityEquipmentSlot.HEAD, 1D, 0));
+            multimap.put(SharedMonsterAttributes.KNOCKBACK_RESISTANCE.getName(), new AttributeModifier(uuid, "Terrasteel modifier " + EntityEquipmentSlot.HEAD, 1.5D, 0));
         }
         return multimap;
     }

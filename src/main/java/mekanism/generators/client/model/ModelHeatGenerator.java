@@ -2,7 +2,6 @@ package mekanism.generators.client.model;
 
 import mekanism.client.render.MekanismRenderer;
 import mekanism.client.render.MekanismRenderer.GlowInfo;
-import mekanism.common.Mekanism;
 import mekanism.generators.common.util.MekanismGeneratorUtils;
 import mekanism.generators.common.util.MekanismGeneratorUtils.ResourceType;
 import net.minecraft.client.model.ModelBase;

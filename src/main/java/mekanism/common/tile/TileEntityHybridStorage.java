@@ -6,6 +6,7 @@ import mekanism.api.IConfigCardAccess;
 import mekanism.api.TileNetworkList;
 import mekanism.api.gas.*;
 import mekanism.api.transmitters.TransmissionType;
+import mekanism.common.Mekanism;
 import mekanism.common.SideData;
 import mekanism.common.base.*;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
@@ -97,9 +98,11 @@ public class TileEntityHybridStorage extends TileEntityElectricBlock implements 
             manageInventory();
             ChargeUtils.charge(126, this);
             ChargeUtils.discharge(127, this);
-            energyOupt();
-            handleGasTank(gasTank1, configComponent.getSidesForData(TransmissionType.GAS, facing, 4), true);
-            handleGasTank(gasTank2, configComponent.getSidesForData(TransmissionType.GAS, facing, 5), true);
+            Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
+                energyOupt();
+                handleGasTank(gasTank1, configComponent.getSidesForData(TransmissionType.GAS, facing, 4), true);
+                handleGasTank(gasTank2, configComponent.getSidesForData(TransmissionType.GAS, facing, 5), true);
+            });
             if (fluidTank.getFluid() != null && fluidTank.getFluidAmount() == 0) {
                 fluidTank.setFluid(null);
             }

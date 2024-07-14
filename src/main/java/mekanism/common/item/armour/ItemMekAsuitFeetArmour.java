@@ -57,7 +57,7 @@ public class ItemMekAsuitFeetArmour extends ItemMekAsuitArmour {
         Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot, stack);
         UUID uuid = new UUID((getTranslationKey(stack) + slot).hashCode(), 0);
         if (slot == EntityEquipmentSlot.FEET) {
-            multimap.put(SharedMonsterAttributes.KNOCKBACK_RESISTANCE.getName(), new AttributeModifier(uuid, "Terrasteel modifier " + EntityEquipmentSlot.FEET, 1D, 0));
+            multimap.put(SharedMonsterAttributes.KNOCKBACK_RESISTANCE.getName(), new AttributeModifier(uuid, "Terrasteel modifier " + EntityEquipmentSlot.FEET, 1.5D, 0));
         }
         return multimap;
     }
