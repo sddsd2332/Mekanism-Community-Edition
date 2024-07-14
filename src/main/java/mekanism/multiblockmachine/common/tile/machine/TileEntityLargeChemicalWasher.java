@@ -89,17 +89,19 @@ public class TileEntityLargeChemicalWasher extends TileEntityMultiblockBasicMach
                 setActive(false);
             }
             prevEnergy = getEnergy();
-            handleTank(outputTank, getRightTankSide(), facing);
-            handleTank(outputTank, getRightTankSide(), MekanismUtils.getRight(facing));
-            int newRedstoneLevel = getRedstoneLevel();
-            if (newRedstoneLevel != currentRedstoneLevel) {
-                updateComparatorOutputLevelSync();
-                currentRedstoneLevel = newRedstoneLevel;
-            }
             if (needsPacket) {
                 Mekanism.packetHandler.sendUpdatePacket(this);
             }
             needsPacket = false;
+            Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
+                handleTank(outputTank, getRightTankSide(), facing);
+                handleTank(outputTank, getRightTankSide(), MekanismUtils.getRight(facing));
+                int newRedstoneLevel = getRedstoneLevel();
+                if (newRedstoneLevel != currentRedstoneLevel) {
+                    updateComparatorOutputLevelSync();
+                    currentRedstoneLevel = newRedstoneLevel;
+                }
+            });
         } else if (updateDelay > 0) {
             updateDelay--;
             if (updateDelay == 0) {

@@ -91,17 +91,19 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
                 setActive(false);
             }
             prevEnergy = getEnergy();
-            handleTank(centerTank, getLeftTankside());
-            handleTank(centerTank, getRightTankside());
-            int newRedstoneLevel = getRedstoneLevel();
-            if (newRedstoneLevel != currentRedstoneLevel) {
-                world.updateComparatorOutputLevel(pos, getBlockType());
-                currentRedstoneLevel = newRedstoneLevel;
-            }
             if (needsPacket) {
                 Mekanism.packetHandler.sendUpdatePacket(this);
             }
             needsPacket = false;
+            Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
+                handleTank(centerTank, getLeftTankside());
+                handleTank(centerTank, getRightTankside());
+                int newRedstoneLevel = getRedstoneLevel();
+                if (newRedstoneLevel != currentRedstoneLevel) {
+                    world.updateComparatorOutputLevel(pos, getBlockType());
+                    currentRedstoneLevel = newRedstoneLevel;
+                }
+            });
         } else if (updateDelay > 0) {
             updateDelay--;
             if (updateDelay == 0) {

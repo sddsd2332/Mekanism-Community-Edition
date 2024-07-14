@@ -1,6 +1,7 @@
 package mekanism.multiblockmachine.client.model.generator;
 
 import mekanism.client.render.MekanismRenderer;
+import mekanism.common.Mekanism;
 import mekanism.multiblockmachine.common.util.MekanismMultiblockMachineUtils;
 import mekanism.multiblockmachine.common.util.MekanismMultiblockMachineUtils.ResourceType;
 import net.minecraft.client.model.ModelBase;

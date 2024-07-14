@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mekanism.api.Coord4D;
 import mekanism.api.TileNetworkList;
 import mekanism.api.gas.*;
+import mekanism.api.transmitters.TransmissionType;
 import mekanism.common.Mekanism;
 import mekanism.common.MekanismFluids;
 import mekanism.common.Upgrade;
@@ -131,20 +132,21 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
             } else if (prevEnergy >= getEnergy()) {
                 setActive(false);
             }
-            int dumpAmount = 8 * Math.min((int) Math.pow(2, upgradeComponent.getUpgrades(Upgrade.SPEED)), MekanismConfig.current().mekce.MAXspeedmachines.val());
-            handleTank(leftTank, dumpLeft, getLeftTankside(), dumpAmount);
-            handleTank(rightTank, dumpRight, getRightTankside(), dumpAmount);
             prevEnergy = getEnergy();
-
-            int newRedstoneLevel = getRedstoneLevel();
-            if (newRedstoneLevel != currentRedstoneLevel) {
-                world.updateComparatorOutputLevel(pos, getBlockType());
-                currentRedstoneLevel = newRedstoneLevel;
-            }
             if (needsPacket) {
                 Mekanism.packetHandler.sendUpdatePacket(this);
             }
             needsPacket = false;
+            int dumpAmount = 8 * Math.min((int) Math.pow(2, upgradeComponent.getUpgrades(Upgrade.SPEED)), MekanismConfig.current().mekce.MAXspeedmachines.val());
+            Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
+                handleTank(leftTank, dumpLeft, getLeftTankside(), dumpAmount);
+                handleTank(rightTank, dumpRight, getRightTankside(), dumpAmount);
+                int newRedstoneLevel = getRedstoneLevel();
+                if (newRedstoneLevel != currentRedstoneLevel) {
+                    world.updateComparatorOutputLevel(pos, getBlockType());
+                    currentRedstoneLevel = newRedstoneLevel;
+                }
+            });
         } else if (updateDelay > 0) {
             updateDelay--;
             if (updateDelay == 0) {
