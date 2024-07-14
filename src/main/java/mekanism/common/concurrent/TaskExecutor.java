@@ -11,6 +11,7 @@ import mekanism.common.util.concurrent.*;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.thread.SidedThreadGroups;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.Queue;
@@ -28,7 +29,7 @@ public class TaskExecutor {
     public static final ThreadPoolExecutor THREAD_POOL = new ThreadPoolExecutor(4, THREAD_COUNT,
             5000, TimeUnit.MILLISECONDS,
             new PriorityBlockingQueue<>(),
-            new CustomThreadFactory("MEK-TaskExecutor-%s"));
+            new CustomThreadFactory("MEK-TaskExecutor-%s", SidedThreadGroups.SERVER));
 
     public static final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool(THREAD_COUNT,
             new CustomForkJoinWorkerThreadFactory("MEK-ForkJoinPool-worker-%s"),
