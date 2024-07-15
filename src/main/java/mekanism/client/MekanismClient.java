@@ -34,6 +34,16 @@ public class MekanismClient extends Mekanism {
         }
     }
 
+    public static void updateKey(boolean pressed, int type) {
+        if (Minecraft.getMinecraft().player != null) {
+            boolean down =  Minecraft.getMinecraft().currentScreen == null && pressed;
+            if (down != Mekanism.keyMap.has(Minecraft.getMinecraft().player, type)) {
+                Mekanism.packetHandler.sendToServer(new KeyMessage(type, down));
+                keyMap.update(Minecraft.getMinecraft().player, type, down);
+            }
+        }
+    }
+
     public static void reset() {
         clientSecurityMap.clear();
         clientUUIDMap.clear();

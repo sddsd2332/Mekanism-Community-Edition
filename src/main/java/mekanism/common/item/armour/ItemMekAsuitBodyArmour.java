@@ -1,7 +1,6 @@
 package mekanism.common.item.armour;
 
 import com.google.common.collect.Multimap;
-import mekanism.api.EnumColor;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
@@ -10,9 +9,9 @@ import mekanism.client.model.mekasuitarmour.ModuleJetpack;
 import mekanism.common.MekanismFluids;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.moduleUpgrade;
 import mekanism.common.util.ItemDataUtils;
-import mekanism.common.util.LangUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBiped;
@@ -35,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-public class ItemMekAsuitBodyArmour extends ItemMekAsuitArmour implements IGasItem {
+public class ItemMekAsuitBodyArmour extends ItemMekAsuitArmour implements IGasItem , IJetpackItem {
 
     public ItemMekAsuitBodyArmour() {
         super(EntityEquipmentSlot.CHEST);
@@ -68,9 +67,6 @@ public class ItemMekAsuitBodyArmour extends ItemMekAsuitArmour implements IGasIt
         return armorModel;
     }
 
-    public void incrementMode(ItemStack stack) {
-        setMode(stack, getMode(stack).increment());
-    }
 
     @Override
     public ArmorProperties getProperties(EntityLivingBase player, @NotNull ItemStack armor, DamageSource source, double damage, int slot) {
@@ -163,13 +159,27 @@ public class ItemMekAsuitBodyArmour extends ItemMekAsuitArmour implements IGasIt
         }
     }
 
-    public JetpackMode getMode(ItemStack stack) {
-        return JetpackMode.values()[ItemDataUtils.getInt(stack, "mode")];
+    @Override
+    public boolean canUseJetpack(ItemStack stack) {
+        if (isUpgradeInstalled(stack, moduleUpgrade.JETPACK_UNIT)){
+            return getStored(stack) > 0;
+        }
+        return false;
     }
 
-    public void setMode(ItemStack stack, JetpackMode mode) {
-        ItemDataUtils.setInt(stack, "mode", mode.ordinal());
+    @Override
+    public boolean canRendered(ItemStack stack) {
+        return isUpgradeInstalled(stack, moduleUpgrade.JETPACK_UNIT);
     }
+
+    @Override
+    public void useJetpackFuel(ItemStack stack) {
+        GasStack gas = getGas(stack);
+        if (gas != null) {
+            setGas(stack, new GasStack(gas.getGas(), gas.amount - 1));
+        }
+    }
+
 
     @Override
     public int getRate(ItemStack itemstack) {
@@ -225,31 +235,11 @@ public class ItemMekAsuitBodyArmour extends ItemMekAsuitArmour implements IGasIt
         return 48000;
     }
 
+    @Override
     public int getStored(ItemStack itemstack) {
         return getGas(itemstack) != null ? getGas(itemstack).amount : 0;
     }
 
-    public enum JetpackMode {
-        NORMAL("tooltip.jetpack.regular", EnumColor.DARK_GREEN),
-        HOVER("tooltip.jetpack.hover", EnumColor.DARK_AQUA),
-        DISABLED("tooltip.jetpack.disabled", EnumColor.DARK_RED);
-
-        private String unlocalized;
-        private EnumColor color;
-
-        JetpackMode(String s, EnumColor c) {
-            unlocalized = s;
-            color = c;
-        }
-
-        public JetpackMode increment() {
-            return ordinal() < values().length - 1 ? values()[ordinal() + 1] : values()[0];
-        }
-
-        public String getName() {
-            return color + LangUtils.localize(unlocalized);
-        }
-    }
 
     @Override
     public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {

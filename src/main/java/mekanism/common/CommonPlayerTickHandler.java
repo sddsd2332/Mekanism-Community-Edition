@@ -2,9 +2,13 @@ package mekanism.common;
 
 import mekanism.api.gas.GasStack;
 import mekanism.common.entity.EntityFlame;
-import mekanism.common.item.*;
-import mekanism.common.item.ItemJetpack.JetpackMode;
+import mekanism.common.item.ItemFlamethrower;
+import mekanism.common.item.ItemFreeRunners;
+import mekanism.common.item.ItemGasMask;
+import mekanism.common.item.ItemScubaTank;
 import mekanism.common.item.armour.ItemMekAsuitHeadArmour;
+import mekanism.common.item.interfaces.IJetpackItem;
+import mekanism.common.item.interfaces.IJetpackItem.JetpackMode;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -21,6 +25,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 public class CommonPlayerTickHandler {
+
+    boolean isHeadItem = false;
 
     public static boolean isOnGround(EntityPlayer player) {
         int x = MathHelper.floor(player.posX);
@@ -78,35 +84,24 @@ public class CommonPlayerTickHandler {
             }
         }
 
-        if (isJetpackOn(player)) {
-            ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-            ItemJetpack jetpack = (ItemJetpack) stack.getItem();
-            JetpackMode mode = jetpack.getMode(stack);
-            if (mode == JetpackMode.NORMAL) {
-                player.motionY = Math.min(player.motionY + 0.15D, 0.5D);
-            } else if (mode == JetpackMode.HOVER) {
-                boolean ascending = Mekanism.keyMap.has(player, KeySync.ASCEND);
-                boolean descending = Mekanism.keyMap.has(player, KeySync.DESCEND);
-                if ((!ascending && !descending) || (ascending && descending)) {
-                    if (player.motionY > 0) {
-                        player.motionY = Math.max(player.motionY - 0.15D, 0);
-                    } else if (player.motionY < 0) {
-                        if (!isOnGround(player)) {
-                            player.motionY = Math.min(player.motionY + 0.15D, 0);
+        ItemStack jetpack = IJetpackItem.getActiveJetpack(player);
+        if (!jetpack.isEmpty()) {
+            ItemStack primaryJetpack = IJetpackItem.getPrimaryJetpack(player);
+            if (!primaryJetpack.isEmpty()) {
+                JetpackMode primaryMode = ((IJetpackItem) primaryJetpack.getItem()).getJetpackMode(primaryJetpack);
+                JetpackMode mode = IJetpackItem.getPlayerJetpackMode(player, primaryMode, () -> Mekanism.keyMap.has(player, KeySync.ASCEND));
+                if (mode != JetpackMode.DISABLED) {
+                    if (IJetpackItem.handleJetpackMotion(player, mode, () -> Mekanism.keyMap.has(player, KeySync.ASCEND))) {
+                        player.fallDistance = 0.0F;
+                        if (player instanceof EntityPlayerMP serverPlayer) {
+                            serverPlayer.connection.floatingTickCount = 0;
                         }
                     }
-                } else if (ascending) {
-                    player.motionY = Math.min(player.motionY + 0.15D, 0.2D);
-                } else if (!isOnGround(player)) {
-                    player.motionY = Math.max(player.motionY - 0.15D, -0.2D);
+                    ((IJetpackItem) jetpack.getItem()).useJetpackFuel(jetpack);
                 }
             }
-            player.fallDistance = 0.0F;
-            if (player instanceof EntityPlayerMP) {
-                ((EntityPlayerMP) player).connection.floatingTickCount = 0;
-            }
-            jetpack.useGas(stack);
         }
+
 
         if (isGasMaskOn(player)) {
             ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
@@ -129,32 +124,6 @@ public class CommonPlayerTickHandler {
         isMekAsuitArmor(player);
     }
 
-    public boolean isJetpackOn(EntityPlayer player) {
-        if (!player.isCreative() && !player.isSpectator()) {
-            ItemStack chest = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-            if (!chest.isEmpty() && chest.getItem() instanceof ItemJetpack jetpack) {
-                if (jetpack.getGas(chest) != null) {
-                    JetpackMode mode = jetpack.getMode(chest);
-                    if (mode == JetpackMode.NORMAL) {
-                        return Mekanism.keyMap.has(player, KeySync.ASCEND);
-                    } else if (mode == JetpackMode.HOVER) {
-                        boolean ascending = Mekanism.keyMap.has(player, KeySync.ASCEND);
-                        boolean descending = Mekanism.keyMap.has(player, KeySync.DESCEND);
-                        //if ((!ascending && !descending) || (ascending && descending) || descending)
-                        //Simplifies to
-                        if (!ascending || descending) {
-                            return !isOnGround(player);
-                        }
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    boolean isHeadItem = false;
-
     public void isMekAsuitArmor(EntityPlayer player) {
         ItemStack head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
         ItemStack chest = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
@@ -166,12 +135,12 @@ public class CommonPlayerTickHandler {
 
 
                 isHeadItem = true;
-            }else {
+            } else {
                 isHeadItem = false;
             }
         }
 
-        if (nv != null && isHeadItem){
+        if (nv != null && isHeadItem) {
             nv.duration = 0;
         }
 

@@ -11,6 +11,7 @@ import mekanism.common.Mekanism;
 import mekanism.common.MekanismFluids;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import net.minecraft.client.model.ModelBiped;
@@ -36,7 +37,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor {
+public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, IJetpackItem {
 
     public int TRANSFER_RATE = 16;
 
@@ -102,16 +103,8 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor {
         return model;
     }
 
-    public void incrementMode(ItemStack stack) {
-        setMode(stack, getMode(stack).increment());
-    }
 
-    public void useGas(ItemStack stack) {
-        GasStack gas = getGas(stack);
-        if (gas != null) {
-            setGas(stack, new GasStack(gas.getGas(), gas.amount - 1));
-        }
-    }
+
 
     @Override
     public int getMaxGas(ItemStack itemstack) {
@@ -141,6 +134,7 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor {
         return null;
     }
 
+    @Override
     public int getStored(ItemStack itemstack) {
         return getGas(itemstack) != null ? getGas(itemstack).amount : 0;
     }
@@ -155,13 +149,19 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor {
         return false;
     }
 
-    public JetpackMode getMode(ItemStack stack) {
-        return JetpackMode.values()[ItemDataUtils.getInt(stack, "mode")];
+    @Override
+    public boolean canUseJetpack(ItemStack stack) {
+        return getStored(stack) > 0;
     }
 
-    public void setMode(ItemStack stack, JetpackMode mode) {
-        ItemDataUtils.setInt(stack, "mode", mode.ordinal());
+    @Override
+    public void useJetpackFuel(ItemStack stack) {
+        GasStack gas = getGas(stack);
+        if (gas != null) {
+            setGas(stack, new GasStack(gas.getGas(), gas.amount - 1));
+        }
     }
+
 
     @Override
     public GasStack getGas(ItemStack itemstack) {
@@ -179,11 +179,6 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor {
         }
     }
 
-    public ItemStack getEmptyItem() {
-        ItemStack empty = new ItemStack(this);
-        setGas(empty, null);
-        return empty;
-    }
 
     @Override
     public void getSubItems(@Nonnull CreativeTabs tabs, @Nonnull NonNullList<ItemStack> list) {
@@ -225,25 +220,4 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor {
     public void damageArmor(EntityLivingBase entity, @Nonnull ItemStack stack, DamageSource source, int damage, int slot) {
     }
 
-    public enum JetpackMode {
-        NORMAL("tooltip.jetpack.regular", EnumColor.DARK_GREEN),
-        HOVER("tooltip.jetpack.hover", EnumColor.DARK_AQUA),
-        DISABLED("tooltip.jetpack.disabled", EnumColor.DARK_RED);
-
-        private String unlocalized;
-        private EnumColor color;
-
-        JetpackMode(String s, EnumColor c) {
-            unlocalized = s;
-            color = c;
-        }
-
-        public JetpackMode increment() {
-            return ordinal() < values().length - 1 ? values()[ordinal() + 1] : values()[0];
-        }
-
-        public String getName() {
-            return color + LangUtils.localize(unlocalized);
-        }
-    }
 }

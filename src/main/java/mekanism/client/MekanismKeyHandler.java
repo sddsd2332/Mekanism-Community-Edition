@@ -7,7 +7,8 @@ import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.item.*;
 import mekanism.common.item.ItemConfigurator.ConfiguratorMode;
-import mekanism.common.item.ItemJetpack.JetpackMode;
+import mekanism.common.item.interfaces.IJetpackItem;
+import mekanism.common.item.interfaces.IJetpackItem.JetpackMode;
 import mekanism.common.network.PacketFlamethrowerData.FlamethrowerDataMessage;
 import mekanism.common.network.PacketFreeRunnerData;
 import mekanism.common.network.PacketFreeRunnerData.FreeRunnerDataMessage;
@@ -122,13 +123,12 @@ public class MekanismKeyHandler extends MekKeyHandler {
             ItemStack chestStack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
             Item chestItem = chestStack.getItem();
 
-            if (chestItem instanceof ItemJetpack jetpack) {
+            if (chestItem instanceof IJetpackItem jetpack) {
                 if (player.isSneaking()) {
                     jetpack.setMode(chestStack, JetpackMode.DISABLED);
                 } else {
                     jetpack.incrementMode(chestStack);
                 }
-
                 Mekanism.packetHandler.sendToServer(JetpackDataMessage.MODE_CHANGE(player.isSneaking()));
                 SoundHandler.playSound(MekanismSounds.HYDRAULIC);
             } else if (chestItem instanceof ItemScubaTank scubaTank) {

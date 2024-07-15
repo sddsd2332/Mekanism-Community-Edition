@@ -13,6 +13,7 @@ import mekanism.common.Mekanism;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.item.*;
 import mekanism.common.item.ItemConfigurator.ConfiguratorMode;
+import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.block.Block;
@@ -119,7 +120,7 @@ public class RenderTickHandler {
                         y -= 18;
                     }
 
-                    if (cheststack.getItem() instanceof ItemJetpack jetpack) {
+                    if (cheststack.getItem() instanceof IJetpackItem jetpack && jetpack.canRendered(cheststack)) {
                         drawString(scaledresolution, LangUtils.localize("tooltip.jetpack.mode") + " " + jetpack.getMode(cheststack).getName(), alignLeft, y - 20, 0xc8c8c8);
                         drawString(scaledresolution, LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + jetpack.getStored(cheststack), alignLeft, y - 11, 0xc8c8c8);
                         y -= 18;

@@ -14,11 +14,12 @@ import mekanism.common.item.*;
 import mekanism.common.item.ItemAtomicDisassembler.Mode;
 import mekanism.common.item.ItemConfigurator.ConfiguratorMode;
 import mekanism.common.item.ItemFlamethrower.FlamethrowerMode;
-import mekanism.common.item.ItemJetpack.JetpackMode;
 import mekanism.common.item.ItemMekTool.MekToolMode;
 import mekanism.common.item.armour.ItemMekAsuitBodyArmour;
 import mekanism.common.item.armour.ItemMekAsuitHeadArmour;
 import mekanism.common.item.armour.ItemMekAsuitLegsArmour;
+import mekanism.common.item.interfaces.IJetpackItem;
+import mekanism.common.item.interfaces.IJetpackItem.JetpackMode;
 import mekanism.common.network.PacketFreeRunnerData;
 import mekanism.common.network.PacketItemStack.ItemStackMessage;
 import mekanism.common.network.PacketPortableTeleporter.PortableTeleporterMessage;
@@ -65,28 +66,23 @@ public class ClientTickHandler {
         tickingSet.removeIf(iClientTicker -> !iClientTicker.needsTicks());
     }
 
-    public static boolean isJetpackActive(EntityPlayer player) {
+    public static boolean isJetpackInUse(EntityPlayer player, ItemStack jetpack) {
         if (player != mc.player) {
             return Mekanism.playerState.isJetpackOn(player);
         }
-        if (!player.isCreative() && !player.isSpectator()) {
-            ItemStack chest = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-            if (!chest.isEmpty() && chest.getItem() instanceof ItemJetpack jetpack) {
-                if (jetpack.getGas(chest) != null) {
-                    JetpackMode mode = jetpack.getMode(chest);
-                    if (mode == JetpackMode.NORMAL) {
-                        return mc.currentScreen == null && mc.gameSettings.keyBindJump.isKeyDown();
-                    } else if (mode == JetpackMode.HOVER) {
-                        boolean ascending = mc.gameSettings.keyBindJump.isKeyDown();
-                        boolean descending = mc.gameSettings.keyBindSneak.isKeyDown();
-                        //if ((!ascending && !descending) || (ascending && descending) || mc.currentScreen != null || (descending && mc.currentScreen == null))
-                        //Simplifies to
-                        if (!ascending || descending || mc.currentScreen != null) {
-                            return !CommonPlayerTickHandler.isOnGround(player);
-                        }
-                        return true;
-                    }
+        if (!player.isSpectator() && !jetpack.isEmpty()) {
+            JetpackMode mode = ((IJetpackItem) jetpack.getItem()).getJetpackMode(jetpack);
+            boolean guiOpen = mc.currentScreen != null;
+            boolean ascending = mc.player.movementInput.jump;
+            boolean rising = ascending && !guiOpen;
+            if (mode == JetpackMode.NORMAL) {
+                return rising;
+            } else if (mode == JetpackMode.HOVER) {
+                boolean descending = mc.player.movementInput.sneak;
+                if (!rising || descending) {
+                    return !CommonPlayerTickHandler.isOnGround(player);
                 }
+                return true;
             }
         }
         return false;
@@ -243,7 +239,9 @@ public class ClientTickHandler {
 
             // Update player's state for various items; this also automatically notifies server if something changed and
             // kicks off sounds as necessary
-            Mekanism.playerState.setJetpackState(playerUUID, isJetpackActive(mc.player), true);
+            ItemStack jetpack = IJetpackItem.getActiveJetpack(mc.player);
+            boolean jetpackInUse = isJetpackInUse(mc.player, jetpack);
+            Mekanism.playerState.setJetpackState(playerUUID, isJetpackInUse(mc.player,jetpack), true);
             Mekanism.playerState.setGasmaskState(playerUUID, isGasMaskOn(mc.player), true);
             Mekanism.playerState.setFlamethrowerState(playerUUID, hasFlamethrower(mc.player), isFlamethrowerOn(mc.player), true);
 
@@ -265,11 +263,6 @@ public class ClientTickHandler {
 
             ItemStack chestStack = mc.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 
-            if (!chestStack.isEmpty() && chestStack.getItem() instanceof ItemJetpack) {
-                MekanismClient.updateKey(mc.gameSettings.keyBindJump, KeySync.ASCEND);
-                MekanismClient.updateKey(mc.gameSettings.keyBindSneak, KeySync.DESCEND);
-            }
-
             if (!mc.player.isCreative() && !mc.player.isSpectator()) {
                 if (isFlamethrowerOn(mc.player)) {
                     ItemFlamethrower flamethrower = (ItemFlamethrower) mc.player.inventory.getCurrentItem().getItem();
@@ -277,31 +270,17 @@ public class ClientTickHandler {
                 }
             }
 
-            if (isJetpackActive(mc.player)) {
-                ItemJetpack jetpack = (ItemJetpack) chestStack.getItem();
-                JetpackMode mode = jetpack.getMode(chestStack);
-                if (mode == JetpackMode.NORMAL) {
-                    mc.player.motionY = Math.min(mc.player.motionY + 0.15D, 0.5D);
-                    mc.player.fallDistance = 0.0F;
-                } else if (mode == JetpackMode.HOVER) {
-                    boolean ascending = mc.gameSettings.keyBindJump.isKeyDown();
-                    boolean descending = mc.gameSettings.keyBindSneak.isKeyDown();
-                    if ((!ascending && !descending) || (ascending && descending) || mc.currentScreen != null) {
-                        if (mc.player.motionY > 0) {
-                            mc.player.motionY = Math.max(mc.player.motionY - 0.15D, 0);
-                        } else if (mc.player.motionY < 0) {
-                            if (!CommonPlayerTickHandler.isOnGround(mc.player)) {
-                                mc.player.motionY = Math.min(mc.player.motionY + 0.15D, 0);
-                            }
-                        }
-                    } else if (ascending) {
-                        mc.player.motionY = Math.min(mc.player.motionY + 0.15D, 0.2D);
-                    } else if (!CommonPlayerTickHandler.isOnGround(mc.player)) {
-                        mc.player.motionY = Math.max(mc.player.motionY - 0.15D, -0.2D);
+            if (!jetpack.isEmpty()) {
+                ItemStack primaryJetpack = IJetpackItem.getPrimaryJetpack(mc.player);
+                if (!primaryJetpack.isEmpty()) {
+                    JetpackMode primaryMode = ((IJetpackItem) primaryJetpack.getItem()).getJetpackMode(primaryJetpack);
+                    JetpackMode mode = IJetpackItem.getPlayerJetpackMode(mc.player, primaryMode, () -> mc.player.movementInput.jump);
+                    MekanismClient.updateKey(mc.player.movementInput.jump, KeySync.ASCEND);
+                    MekanismClient.updateKey(mc.player.movementInput.sneak, KeySync.DESCEND);
+                    if (jetpackInUse && IJetpackItem.handleJetpackMotion(mc.player, mode, () -> mc.player.movementInput.jump)) {
+                        mc.player.fallDistance = 0.0F;
                     }
-                    mc.player.fallDistance = 0.0F;
                 }
-                jetpack.useGas(chestStack);
             }
 
             if (isGasMaskOn(mc.player)) {

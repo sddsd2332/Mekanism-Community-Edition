@@ -3,8 +3,8 @@ package mekanism.common.network;
 import io.netty.buffer.ByteBuf;
 import mekanism.common.Mekanism;
 import mekanism.common.PacketHandler;
-import mekanism.common.item.ItemJetpack;
-import mekanism.common.item.ItemJetpack.JetpackMode;
+import mekanism.common.item.interfaces.IJetpackItem;
+import mekanism.common.item.interfaces.IJetpackItem.JetpackMode;
 import mekanism.common.network.PacketJetpackData.JetpackDataMessage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -36,11 +36,11 @@ public class PacketJetpackData implements IMessageHandler<JetpackDataMessage, IM
             } else if (message.packetType == JetpackPacket.MODE) {
                 // Use has changed the mode of their jetpack; update it
                 ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-                if (!stack.isEmpty() && stack.getItem() instanceof ItemJetpack) {
+                if (!stack.isEmpty() && stack.getItem() instanceof IJetpackItem) {
                     if (!message.value) {
-                        ((ItemJetpack) stack.getItem()).incrementMode(stack);
+                        ((IJetpackItem) stack.getItem()).incrementMode(stack);
                     } else {
-                        ((ItemJetpack) stack.getItem()).setMode(stack, JetpackMode.DISABLED);
+                        ((IJetpackItem) stack.getItem()).setMode(stack, JetpackMode.DISABLED);
                     }
                 }
             } else if (message.packetType == JetpackPacket.FULL) {
