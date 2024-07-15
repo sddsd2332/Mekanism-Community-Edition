@@ -167,10 +167,6 @@ public class ItemMekAsuitBodyArmour extends ItemMekAsuitArmour implements IGasIt
         return false;
     }
 
-    @Override
-    public boolean canRendered(ItemStack stack) {
-        return isUpgradeInstalled(stack, moduleUpgrade.JETPACK_UNIT);
-    }
 
     @Override
     public void useJetpackFuel(ItemStack stack) {

@@ -10,6 +10,7 @@ import mekanism.common.Mekanism;
 import mekanism.common.OreDictCache;
 import mekanism.common.base.IItemNetwork;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import net.minecraft.block.Block;
@@ -45,7 +46,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
-public class ItemAtomicDisassembler extends ItemEnergized implements IItemNetwork {
+public class ItemAtomicDisassembler extends ItemEnergized implements IItemNetwork, IItemHUDProvider {
 
     public ItemAtomicDisassembler() {
         super(MekanismConfig.current().general.disassemblerBatteryCapacity.val());
@@ -309,6 +310,12 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemNetwor
             int state = dataStream.readInt();
             setMode(stack, Mode.values()[state]);
         }
+    }
+
+    @Override
+    public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
+        list.add(LangUtils.localize("tooltip.mode") + ": " + EnumColor.INDIGO + getMode(stack).getModeName());
+        list.add(LangUtils.localize("tooltip.efficiency") + ": " + EnumColor.INDIGO + getMode(stack).getEfficiency());
     }
 
     public enum Mode {

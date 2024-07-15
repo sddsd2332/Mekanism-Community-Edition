@@ -3,6 +3,7 @@ package mekanism.common.item;
 import io.netty.buffer.ByteBuf;
 import mekanism.api.EnumColor;
 import mekanism.common.base.IItemNetwork;
+import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import net.minecraft.client.util.ITooltipFlag;
@@ -13,6 +14,7 @@ import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemArrow;
@@ -29,7 +31,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemElectricBow extends ItemEnergized implements IItemNetwork {
+public class ItemElectricBow extends ItemEnergized implements IItemNetwork, IItemHUDProvider {
 
     public ItemElectricBow() {
         super(120000);
@@ -180,5 +182,10 @@ public class ItemElectricBow extends ItemEnergized implements IItemNetwork {
             boolean state = dataStream.readBoolean();
             setFireState(stack, state);
         }
+    }
+
+    @Override
+    public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
+        list.add(EnumColor.PINK + LangUtils.localizeWithFormat("mekanism.tooltip.fireMode", LangUtils.transOnOff(getFireState(stack))));
     }
 }

@@ -11,6 +11,7 @@ import mekanism.common.Mekanism;
 import mekanism.common.MekanismFluids;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
@@ -37,7 +38,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, IJetpackItem {
+public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, IJetpackItem, IItemHUDProvider {
 
     public int TRANSFER_RATE = 16;
 
@@ -220,4 +221,17 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
     public void damageArmor(EntityLivingBase entity, @Nonnull ItemStack stack, DamageSource source, int damage, int slot) {
     }
 
+    @Override
+    public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
+        if (slotType == getEquipmentSlot()) {
+            list.add(LangUtils.localize("tooltip.jetpack.mode") + " " + getMode(stack).getName());
+            if (getStored(stack) > 0) {
+                list.add( LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + getStored(stack));
+            }else {
+                list.add( LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + LangUtils.localize("tooltip.noGas"));
+            }
+
+        }
+
+    }
 }

@@ -1,7 +1,6 @@
 package mekanism.client.render;
 
 import mekanism.api.Coord4D;
-import mekanism.api.EnumColor;
 import mekanism.api.MekanismAPI;
 import mekanism.api.Pos3D;
 import mekanism.client.ClientTickHandler;
@@ -11,16 +10,17 @@ import mekanism.client.render.particle.EntityScubaBubbleFX;
 import mekanism.common.ColourRGBA;
 import mekanism.common.Mekanism;
 import mekanism.common.config.MekanismConfig;
-import mekanism.common.item.*;
+import mekanism.common.item.ItemConfigurator;
 import mekanism.common.item.ItemConfigurator.ConfiguratorMode;
-import mekanism.common.item.interfaces.IJetpackItem;
-import mekanism.common.util.LangUtils;
+import mekanism.common.item.ItemFlamethrower;
+import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.particle.Particle;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -33,8 +33,11 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 @SideOnly(Side.CLIENT)
 public class RenderTickHandler {
@@ -42,6 +45,8 @@ public class RenderTickHandler {
     public static int modeSwitchTimer = 0;
     public Random rand = new Random();
     public Minecraft mc = Minecraft.getMinecraft();
+    private static final EntityEquipmentSlot[] EQUIPMENT_ORDER = {EntityEquipmentSlot.OFFHAND, EntityEquipmentSlot.MAINHAND, EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS,
+            EntityEquipmentSlot.FEET};
 
     @SubscribeEvent
     public void tickEnd(RenderTickEvent event) {
@@ -96,76 +101,37 @@ public class RenderTickHandler {
                     ClientTickHandler.wheelStatus = 0;
                 }
 
-                if (mc.currentScreen == null && !mc.gameSettings.hideGUI && !player.isSpectator() &&
-                        (!player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).isEmpty() ||
-                                !player.getItemStackFromSlot(EntityEquipmentSlot.FEET).isEmpty() ||
-                                !player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND).isEmpty() ||
-                                !player.getItemStackFromSlot(EntityEquipmentSlot.OFFHAND).isEmpty()) &&
-                        MekanismConfig.current().client.enableHUD.val()
-                ) {
-
-                    ItemStack cheststack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-                    ItemStack feetstack = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-                    ItemStack mainhandstack = player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
-                    ItemStack offhandstack = player.getItemStackFromSlot(EntityEquipmentSlot.OFFHAND);
-
+                if (mc.currentScreen == null && !mc.gameSettings.hideGUI && !player.isSpectator() && MekanismConfig.current().client.enableHUD.val()) {
                     ScaledResolution scaledresolution = new ScaledResolution(mc);
-
-                    int y = scaledresolution.getScaledHeight();
-                    boolean alignLeft = MekanismConfig.current().client.alignHUDLeft.val();
-
-                    if (feetstack.getItem() instanceof ItemFreeRunners FreeRunners) {
-                        drawString(scaledresolution, LangUtils.localize("tooltip.free_runners.mode") + " " + FreeRunners.getMode(feetstack).getName(), alignLeft, y - 20, 0xc8c8c8);
-                        drawString(scaledresolution, LangUtils.localize("tooltip.free_runners.stored") + " " + MekanismUtils.getEnergyDisplay(FreeRunners.getEnergy(feetstack)), alignLeft, y - 11, 0xc8c8c8);
-                        y -= 18;
+                    int count = 0;
+                    List<List<String>> renderStrings = new ArrayList<>();
+                    for (EntityEquipmentSlot slotType : EQUIPMENT_ORDER) {
+                        ItemStack stack = player.getItemStackFromSlot(slotType);
+                        if (stack.getItem() instanceof IItemHUDProvider hudProvider) {
+                            count += makeComponent(list -> hudProvider.addHUDStrings(list, player, stack, slotType), renderStrings);
+                        }
                     }
-
-                    if (cheststack.getItem() instanceof IJetpackItem jetpack && jetpack.canRendered(cheststack)) {
-                        drawString(scaledresolution, LangUtils.localize("tooltip.jetpack.mode") + " " + jetpack.getMode(cheststack).getName(), alignLeft, y - 20, 0xc8c8c8);
-                        drawString(scaledresolution, LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + jetpack.getStored(cheststack), alignLeft, y - 11, 0xc8c8c8);
-                        y -= 18;
-                    } else if (cheststack.getItem() instanceof ItemScubaTank scubaTank) {
-                        String state = scubaTank.getFlowing(cheststack) ? EnumColor.DARK_GREEN + LangUtils.localize("gui.on") : EnumColor.DARK_RED + LangUtils.localize("gui.off");
-                        drawString(scaledresolution, LangUtils.localize("tooltip.scuba_tank.mode") + " " + state, alignLeft, y - 20, 0xc8c8c8);
-                        drawString(scaledresolution, scubaTank.getStored(cheststack) == 0 ? (LangUtils.localize("tooltip.noGas") + ".") : (scubaTank.getGas(cheststack).getGas().getLocalizedName() + ": " + scubaTank.getStored(cheststack)), alignLeft, y - 11, 0xc8c8c8);
-                        y -= 18;
-                    }
-
-                    if (mainhandstack.getItem() instanceof ItemElectricBow) {
-                        ItemElectricBow ElectricBow = (ItemElectricBow) mainhandstack.getItem();
-                        drawString(scaledresolution, EnumColor.PINK + LangUtils.localizeWithFormat("mekanism.tooltip.fireMode", LangUtils.transOnOff(ElectricBow.getFireState(mainhandstack))), alignLeft, y - 11, 0xc8c8c8);
-                        y -= 9;
-                    } else if (mainhandstack.getItem() instanceof ItemFlamethrower Flamethrower) {
-                        drawString(scaledresolution, LangUtils.localize("tooltip.flamethrower.mode") + " " + Flamethrower.getMode(mainhandstack).getName(), alignLeft, y - 20, 0xc8c8c8);
-                        drawString(scaledresolution, LangUtils.localize("tooltip.flamethrower.stored") + " " + EnumColor.ORANGE + Flamethrower.getStored(mainhandstack), alignLeft, y - 11, 0xc8c8c8);
-                        y -= 18;
-                    } else if (mainhandstack.getItem() instanceof ItemAtomicDisassembler AtomicDisassembler) {
-                        drawString(scaledresolution, LangUtils.localize("tooltip.mode") + ": " + EnumColor.INDIGO + AtomicDisassembler.getMode(mainhandstack).getModeName(), alignLeft, y - 20, 0xc8c8c8);
-                        drawString(scaledresolution, LangUtils.localize("tooltip.efficiency") + ": " + EnumColor.INDIGO + AtomicDisassembler.getMode(mainhandstack).getEfficiency(), alignLeft, y - 11, 0xc8c8c8);
-                        y -= 18;
-                    }  else if (mainhandstack.getItem() instanceof ItemMekTool MekTool) {
-                        drawString(scaledresolution, LangUtils.localize("tooltip.mode") + ": " + EnumColor.INDIGO + MekTool.getMode(mainhandstack).getModeName(), alignLeft, y - 20, 0xc8c8c8);
-                        drawString(scaledresolution, LangUtils.localize("tooltip.efficiency") + ": " + EnumColor.INDIGO + MekTool.getMode(mainhandstack).getEfficiency(), alignLeft, y - 11, 0xc8c8c8);
-                        y -= 18;
-                    } else if (mainhandstack.getItem() instanceof ItemConfigurator Configurator) {
-                        drawString(scaledresolution, EnumColor.PINK + LangUtils.localize("tooltip.mode") + ": " + Configurator.getColor(Configurator.getState(mainhandstack)) + Configurator.getStateDisplay(Configurator.getState(mainhandstack)), alignLeft, y - 11, 0xc8c8c8);
-                        y -= 9;
-                    }
-
-                    if (offhandstack.getItem() instanceof ItemElectricBow) {
-                        ItemElectricBow ElectricBow = (ItemElectricBow) offhandstack.getItem();
-                        drawString(scaledresolution, EnumColor.PINK + LangUtils.localizeWithFormat("mekanism.tooltip.fireMode", LangUtils.transOnOff(ElectricBow.getFireState(offhandstack))), alignLeft, y - 11, 0xc8c8c8);
-                    } else if (offhandstack.getItem() instanceof ItemFlamethrower Flamethrower) {
-                        drawString(scaledresolution, LangUtils.localize("tooltip.flamethrower.mode") + " " + Flamethrower.getMode(offhandstack).getName(), alignLeft, y - 20, 0xc8c8c8);
-                        drawString(scaledresolution, LangUtils.localize("tooltip.flamethrower.stored") + " " + EnumColor.ORANGE + Flamethrower.getStored(offhandstack), alignLeft, y - 11, 0xc8c8c8);
-                    } else if (offhandstack.getItem() instanceof ItemAtomicDisassembler AtomicDisassembler) {
-                        drawString(scaledresolution, LangUtils.localize("tooltip.mode") + ": " + EnumColor.INDIGO + AtomicDisassembler.getMode(offhandstack).getModeName(), alignLeft, y - 20, 0xc8c8c8);
-                        drawString(scaledresolution, LangUtils.localize("tooltip.efficiency") + ": " + EnumColor.INDIGO + AtomicDisassembler.getMode(offhandstack).getEfficiency(), alignLeft, y - 11, 0xc8c8c8);
-                    } else if (offhandstack.getItem() instanceof ItemMekTool MekTool) {
-                        drawString(scaledresolution, LangUtils.localize("tooltip.mode") + ": " + EnumColor.INDIGO + MekTool.getMode(offhandstack).getModeName(), alignLeft, y - 20, 0xc8c8c8);
-                        drawString(scaledresolution, LangUtils.localize("tooltip.efficiency") + ": " + EnumColor.INDIGO + MekTool.getMode(offhandstack).getEfficiency(), alignLeft, y - 11, 0xc8c8c8);
-                    } else if (offhandstack.getItem() instanceof ItemConfigurator Configurator) {
-                        drawString(scaledresolution, EnumColor.PINK + LangUtils.localize("tooltip.mode") + ": " + Configurator.getColor(Configurator.getState(offhandstack)) + Configurator.getStateDisplay(Configurator.getState(offhandstack)), alignLeft, y - 11, 0xc8c8c8);
+                    boolean reverseHud = !MekanismConfig.current().client.alignHUDLeft.val();
+                    if (count > 0) {
+                        float hudScale = MekanismConfig.current().client.hudScale.val();
+                        int xScale = (int) (scaledresolution.getScaledWidth() / hudScale);
+                        int yScale = (int) (scaledresolution.getScaledHeight() / hudScale);
+                        int start = (renderStrings.size() * 2) + (count * 9);
+                        int y = yScale - start;
+                        GlStateManager.pushMatrix();
+                        GlStateManager.scale(hudScale, hudScale, hudScale);
+                        for (List<String> group : renderStrings) {
+                            for (String text : group) {
+                                int textWidth = font.getStringWidth(text);
+                                //Align text to right if hud is reversed, otherwise align to the left
+                                //Note: that we always offset by 2 pixels from the edge of the screen regardless of how it is aligned
+                                int x = reverseHud ? xScale - textWidth - 2 : 2;
+                                font.drawStringWithShadow(text, x, y, 0xFFC8C8C8);
+                                y += 9;
+                            }
+                            y += 2;
+                        }
+                        GlStateManager.popMatrix();
                     }
                 }
                 // Traverse a copy of jetpack state and do animations
@@ -289,5 +255,15 @@ public class RenderTickHandler {
             int width = font.getStringWidth(s) + 2;
             font.drawStringWithShadow(s, res.getScaledWidth() - width, y, color);
         }
+    }
+
+    private int makeComponent(Consumer<List<String>> adder, List<List<String>> initial) {
+        List<String> list = new ArrayList<>();
+        adder.accept(list);
+        int size = list.size();
+        if (size > 0) {
+            initial.add(list);
+        }
+        return size;
     }
 }

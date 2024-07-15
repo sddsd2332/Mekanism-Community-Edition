@@ -10,6 +10,7 @@ import mekanism.common.Mekanism;
 import mekanism.common.OreDictCache;
 import mekanism.common.base.IItemNetwork;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
@@ -46,7 +47,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
-public class ItemMekTool extends ItemEnergized implements IItemNetwork {
+public class ItemMekTool extends ItemEnergized implements IItemNetwork, IItemHUDProvider {
 
     public ItemMekTool() {
         super(MekanismConfig.current().general.toolBatteryCapacity.val());
@@ -344,6 +345,12 @@ public class ItemMekTool extends ItemEnergized implements IItemNetwork {
             int state = dataStream.readInt();
             setMode(stack, MekToolMode.values()[state]);
         }
+    }
+
+    @Override
+    public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
+        list.add(LangUtils.localize("tooltip.mode") + ": " + EnumColor.INDIGO + getMode(stack).getModeName());
+        list.add(LangUtils.localize("tooltip.efficiency") + ": " + EnumColor.INDIGO + getMode(stack).getEfficiency());
     }
 
     public enum MekToolMode {

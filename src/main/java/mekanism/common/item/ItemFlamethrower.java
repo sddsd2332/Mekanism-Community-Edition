@@ -9,10 +9,13 @@ import mekanism.client.render.MekanismRenderer;
 import mekanism.common.MekanismFluids;
 import mekanism.common.base.IItemNetwork;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
@@ -26,7 +29,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ItemFlamethrower extends ItemMekanism implements IGasItem, IItemNetwork {
+public class ItemFlamethrower extends ItemMekanism implements IGasItem, IItemNetwork, IItemHUDProvider {
 
     public int TRANSFER_RATE = 16;
 
@@ -169,7 +172,17 @@ public class ItemFlamethrower extends ItemMekanism implements IGasItem, IItemNet
     public void handlePacketData(ItemStack stack, ByteBuf dataStream) {
         if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
             int state = dataStream.readInt();
-            setMode(stack,FlamethrowerMode.values()[state]);
+            setMode(stack, FlamethrowerMode.values()[state]);
+        }
+    }
+
+    @Override
+    public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
+        list.add(LangUtils.localize("tooltip.flamethrower.mode") + " " + getMode(stack).getName());
+        if (getStored(stack) > 0) {
+            list.add(LangUtils.localize("tooltip.flamethrower.stored") + " " + EnumColor.ORANGE + getStored(stack));
+        }else {
+            list.add(LangUtils.localize("tooltip.flamethrower.stored") + " " + EnumColor.ORANGE + LangUtils.localize("tooltip.noGas"));
         }
     }
 

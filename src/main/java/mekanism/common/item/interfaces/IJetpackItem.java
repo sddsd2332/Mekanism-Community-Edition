@@ -95,9 +95,6 @@ public interface IJetpackItem {
 
     boolean canUseJetpack(ItemStack stack);
 
-    default boolean canRendered(ItemStack stack){
-        return true;
-    }
 
     default JetpackMode getJetpackMode(ItemStack stack) {
         return getMode(stack);

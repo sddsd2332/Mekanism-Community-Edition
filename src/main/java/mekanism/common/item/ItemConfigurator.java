@@ -15,6 +15,7 @@ import mekanism.common.base.ISideConfiguration;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.MekanismHooks;
+import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.tier.BinTier;
 import mekanism.common.tier.FluidTankTier;
 import mekanism.common.tier.GasTankTier;
@@ -30,6 +31,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -61,7 +63,7 @@ import java.util.Objects;
         @Interface(iface = "buildcraft.api.tools.IToolWrench", modid = MekanismHooks.BUILDCRAFT_MOD_ID),
         @Interface(iface = "cofh.api.item.IToolHammer", modid = MekanismHooks.COFH_API_MOD_ID)
 })
-public class ItemConfigurator extends ItemEnergized implements IMekWrench, IToolWrench, IItemNetwork, IToolHammer {
+public class ItemConfigurator extends ItemEnergized implements IMekWrench, IToolWrench, IItemNetwork, IToolHammer, IItemHUDProvider {
 
     public final int ENERGY_PER_CONFIGURE = 400;
     public final int ENERGY_PER_ITEM_DUMP = 8;
@@ -294,6 +296,11 @@ public class ItemConfigurator extends ItemEnergized implements IMekWrench, ITool
             int state = dataStream.readInt();
             setState(stack, ConfiguratorMode.values()[state]);
         }
+    }
+
+    @Override
+    public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
+        list.add(EnumColor.PINK + LangUtils.localize("tooltip.mode") + ": " + getColor(getState(stack)) + getStateDisplay(getState(stack)));
     }
 
     @ParametersAreNonnullByDefault

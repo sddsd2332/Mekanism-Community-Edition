@@ -10,6 +10,7 @@ import mekanism.client.render.ModelCustomArmor.ArmorModel;
 import mekanism.common.Mekanism;
 import mekanism.common.MekanismFluids;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import net.minecraft.client.model.ModelBiped;
@@ -17,6 +18,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
@@ -32,7 +34,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ItemScubaTank extends ItemArmor implements IGasItem {
+public class ItemScubaTank extends ItemArmor implements IGasItem, IItemHUDProvider {
 
     public int TRANSFER_RATE = 16;
 
@@ -203,5 +205,15 @@ public class ItemScubaTank extends ItemArmor implements IGasItem {
         ItemStack filled = new ItemStack(this);
         setGas(filled, new GasStack(MekanismFluids.Oxygen, ((IGasItem) filled.getItem()).getMaxGas(filled)));
         list.add(filled);
+    }
+
+    @Override
+    public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
+        if (slotType == getEquipmentSlot()) {
+            String state = getFlowing(stack) ? EnumColor.DARK_GREEN + LangUtils.localize("gui.on") : EnumColor.DARK_RED + LangUtils.localize("gui.off");
+            list.add(LangUtils.localize("tooltip.scuba_tank.mode") + " " + state);
+            list.add(getStored(stack) == 0 ? (LangUtils.localize("tooltip.noGas") + ".") : (getGas(stack).getGas().getLocalizedName() + ": " + getStored(stack)));
+        }
+
     }
 }

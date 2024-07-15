@@ -16,6 +16,7 @@ import mekanism.common.integration.forgeenergy.ForgeEnergyItemWrapper;
 import mekanism.common.integration.ic2.IC2ItemManager;
 import mekanism.common.integration.redstoneflux.RFIntegration;
 import mekanism.common.integration.tesla.TeslaItemWrapper;
+import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
@@ -53,7 +54,7 @@ import java.util.List;
         @Interface(iface = "cofh.redstoneflux.api.IEnergyContainerItem", modid = MekanismHooks.REDSTONEFLUX_MOD_ID),
         @Interface(iface = "ic2.api.item.ISpecialElectricItem", modid = MekanismHooks.IC2_MOD_ID)
 })
-public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor {
+public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor , IItemHUDProvider {
 
     /**
      * The maximum amount of energy this item can hold.
@@ -265,6 +266,14 @@ public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpeci
 
     public void incrementMode(ItemStack itemStack) {
         setMode(itemStack, getMode(itemStack).increment());
+    }
+
+    @Override
+    public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
+        if (slotType == getEquipmentSlot()) {
+            list.add(LangUtils.localize("tooltip.free_runners.mode") + " " + getMode(stack).getName());
+            list.add(LangUtils.localize("tooltip.free_runners.stored") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
+        }
     }
 
     public enum FreeRunnerMode {

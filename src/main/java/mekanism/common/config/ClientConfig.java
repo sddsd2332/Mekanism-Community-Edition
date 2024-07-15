@@ -3,6 +3,7 @@ package mekanism.common.config;
 import io.netty.buffer.ByteBuf;
 import mekanism.common.config.options.BooleanOption;
 import mekanism.common.config.options.DoubleOption;
+import mekanism.common.config.options.FloatOption;
 import mekanism.common.config.options.IntOption;
 
 /**
@@ -57,6 +58,8 @@ public class ClientConfig extends BaseConfig {
 
     public final IntOption AllMekGuiBg = new IntOption(this,"client","AllMekGuiBg",0xFFFFFFFF,
             "All mekanism GUI background colors");
+
+    public final FloatOption hudScale = new FloatOption(this,"client","hudScale",0.6F,"Scale of the text displayed on the HUD.",0.25F,1F);
 
     @Override
     public void write(ByteBuf config) {
