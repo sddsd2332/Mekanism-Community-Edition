@@ -7,7 +7,6 @@ import net.minecraft.util.EnumFacing;
 public class SynchronizedEvaporationData  extends SynchronizedData<SynchronizedEvaporationData>  implements IHeatTransfer {
 
 
-
     @Override
     public double getTemp() {
         return 0;

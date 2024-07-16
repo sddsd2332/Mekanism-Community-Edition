@@ -12,7 +12,6 @@ import mekanism.common.util.NonNullListSynchronized;
 import mekanism.common.util.UnitDisplayUtils.TemperatureUnit;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Map;

@@ -38,11 +38,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.EnumHelper;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.fml.common.Optional.Interface;
 import net.minecraftforge.fml.common.Optional.InterfaceList;
 import net.minecraftforge.fml.common.Optional.Method;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -51,10 +49,9 @@ import java.util.List;
 
 @InterfaceList({
         @Interface(iface = "ic2.api.item.ISpecialElectricItem", modid = MekanismHooks.IC2_MOD_ID),
-        @Interface(iface = "cofh.redstoneflux.api.IEnergyContainerItem", modid = MekanismHooks.REDSTONEFLUX_MOD_ID),
-        @Interface(iface = "ic2.api.item.ISpecialElectricItem", modid = MekanismHooks.IC2_MOD_ID)
+        @Interface(iface = "cofh.redstoneflux.api.IEnergyContainerItem", modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
 })
-public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor , IItemHUDProvider {
+public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor, IItemHUDProvider {
 
     /**
      * The maximum amount of energy this item can hold.
@@ -97,10 +94,6 @@ public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpeci
         list.add(EnumColor.GREY + LangUtils.localize("tooltip.mode") + ": " + EnumColor.GREY + getMode(itemstack).getName());
     }
 
-    public ItemStack getUnchargedItem() {
-        return new ItemStack(this);
-    }
-
     @Override
     public void getSubItems(@Nonnull CreativeTabs tabs, @Nonnull NonNullList<ItemStack> list) {
         if (!isInCreativeTab(tabs)) {
@@ -120,7 +113,7 @@ public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpeci
 
     @Override
     public void setEnergy(ItemStack itemStack, double amount) {
-       if (amount == 0) {
+        if (amount == 0) {
             NBTTagCompound dataMap = ItemDataUtils.getDataMap(itemStack);
             dataMap.removeTag("energyStored");
             if (dataMap.isEmpty()) {
@@ -212,17 +205,6 @@ public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpeci
         return IC2ItemManager.getManager(this);
     }
 
-    @SubscribeEvent
-    public void onEntityAttacked(LivingAttackEvent event) {
-        EntityLivingBase base = event.getEntityLiving();
-        ItemStack stack = base.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-        if (!stack.isEmpty() && stack.getItem() instanceof ItemFreeRunners boots) {
-            if (boots.getMode(stack) != FreeRunnerMode.DISABLED && boots.getEnergy(stack) > 0 && event.getSource() == DamageSource.FALL) {
-                boots.setEnergy(stack, boots.getEnergy(stack) - event.getAmount() * 50);
-                event.setCanceled(true);
-            }
-        }
-    }
 
     @Override
     public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, int slot) {
@@ -277,20 +259,32 @@ public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpeci
     }
 
     public enum FreeRunnerMode {
-        NORMAL("tooltip.freerunner.regular", EnumColor.DARK_GREEN),
-        SAFETY("tooltip.freerunner.safety", EnumColor.ORANGE),
-        DISABLED("tooltip.freerunner.disabled", EnumColor.DARK_RED);
+        NORMAL("tooltip.freerunner.regular", EnumColor.DARK_GREEN, true, true),
+        SAFETY("tooltip.freerunner.safety", EnumColor.ORANGE, true, false),
+        DISABLED("tooltip.freerunner.disabled", EnumColor.DARK_RED, false, false);
 
+        private final boolean preventsFallDamage;
+        private final boolean providesStepBoost;
         private String unlocalized;
         private EnumColor color;
 
-        FreeRunnerMode(String unlocalized, EnumColor color) {
+        FreeRunnerMode(String unlocalized, EnumColor color, boolean preventsFallDamage, boolean providesStepBoost) {
+            this.preventsFallDamage = preventsFallDamage;
+            this.providesStepBoost = providesStepBoost;
             this.unlocalized = unlocalized;
             this.color = color;
         }
 
         public FreeRunnerMode increment() {
             return ordinal() < values().length - 1 ? values()[ordinal() + 1] : values()[0];
+        }
+
+        public boolean preventsFallDamage() {
+            return preventsFallDamage;
+        }
+
+        public boolean providesStepBoost() {
+            return providesStepBoost;
         }
 
         public String getName() {

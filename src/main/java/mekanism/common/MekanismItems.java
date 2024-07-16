@@ -1,7 +1,7 @@
 package mekanism.common;
 
 import mekanism.common.item.*;
-import mekanism.common.item.armour.*;
+import mekanism.common.item.armor.*;
 import mekanism.common.tier.AlloyTier;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;

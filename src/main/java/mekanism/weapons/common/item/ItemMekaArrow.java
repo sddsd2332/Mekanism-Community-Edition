@@ -8,7 +8,6 @@ import net.minecraft.world.World;
 public class ItemMekaArrow extends ItemWeapons {
 
     public ItemMekaArrow() {
-
     }
 
     public EntityMekaArrow createArrow(World worldIn, ItemStack stack, EntityLivingBase shooter) {

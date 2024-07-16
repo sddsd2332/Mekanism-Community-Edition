@@ -1,4 +1,4 @@
-package mekanism.common.item.armour;
+package mekanism.common.item.armor;
 
 import com.google.common.collect.Multimap;
 import mekanism.api.gas.Gas;
@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-public class ItemMekAsuitBodyArmour extends ItemMekAsuitArmour implements IGasItem , IJetpackItem {
+public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasItem , IJetpackItem {
 
     public ItemMekAsuitBodyArmour() {
         super(EntityEquipmentSlot.CHEST);

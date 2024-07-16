@@ -12,10 +12,12 @@ import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
+import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -40,7 +42,7 @@ public class ItemCanteen extends ItemMekanism implements IGasItem {
 
     @Override
     public String getItemStackDisplayName(@Nonnull ItemStack itemstack) {
-        return EnumColor.YELLOW + LangUtils.localize("item.Canteen.name");
+        return EnumColor.YELLOW + super.getItemStackDisplayName(itemstack);
     }
 
     @Override
@@ -70,13 +72,6 @@ public class ItemCanteen extends ItemMekanism implements IGasItem {
     @Override
     public int getRGBDurabilityForDisplay(@Nonnull ItemStack stack) {
         return MathHelper.hsvToRGB(Math.max(0.0F, (float) (1 - getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
-    }
-
-    public void useGas(ItemStack itemstack) {
-        GasStack gas = getGas(itemstack);
-        if (gas != null) {
-            setGas(itemstack, new GasStack(gas.getGas(), gas.amount - 1));
-        }
     }
 
     public GasStack useGas(ItemStack itemstack, int amount) {
@@ -165,35 +160,49 @@ public class ItemCanteen extends ItemMekanism implements IGasItem {
 
     @Nonnull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
-        ItemStack stack = player.getHeldItem(hand);
-        if (player.canEat(false)) {
-            player.setActiveHand(hand);
-            final int max = 49;
-            ItemCanteen tank = (ItemCanteen) stack.getItem();
-            tank.useGas(stack);
-            GasStack received = tank.useGas(stack, max - player.getFoodStats().getFoodLevel());
-            if (received != null) {
-                int max2 = player.getFoodStats().getFoodLevel() + received.amount;
-                player.getFoodStats().setFoodLevel(max2);
-                if (MekanismConfig.current().mekce.EnableBuff.val()) {
-                    player.addPotionEffect(new PotionEffect(Potion.getPotionById(1), 2000, 5, false, false));
-                    player.addPotionEffect(new PotionEffect(Potion.getPotionById(3), 4000, 5, false, false));
-                    player.addPotionEffect(new PotionEffect(Potion.getPotionById(5), 4000, 5, false, false));
-                    player.addPotionEffect(new PotionEffect(Potion.getPotionById(6), 20, 5, false, false));
-                    player.addPotionEffect(new PotionEffect(Potion.getPotionById(8), 2000, 5, false, false));
-                    player.addPotionEffect(new PotionEffect(Potion.getPotionById(10), 4000, 5, false, false));
-                    player.addPotionEffect(new PotionEffect(Potion.getPotionById(11), 4000, 5, false, false));
-                    player.addPotionEffect(new PotionEffect(Potion.getPotionById(12), 4000, 5, false, false));
-                    player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 2000, 5, false, false));
-                    player.addPotionEffect(new PotionEffect(Potion.getPotionById(22), 4000, 5, false, false));
-                    player.addPotionEffect(new PotionEffect(Potion.getPotionById(23), 4000, 5, false, false));
+    public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
+        if (!worldIn.isRemote && entityLiving instanceof EntityPlayer player) {
+            int needed = Math.min(20 - player.getFoodStats().getFoodLevel(), getGas(stack).amount / 50);
+            if (needed > 0) {
+                player.getFoodStats().addStats(needed, 0.8F);
+                useGas(stack, needed * 50);
+                if (MekanismConfig.current().mekce.EnableBuff.val()){
+                    player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 2000, 5));
+                    player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 4000, 5));
+                    player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 4000, 5));
+                    player.addPotionEffect(new PotionEffect(MobEffects.INSTANT_HEALTH, 20, 5));
+                    player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, 2000, 5));
+                    player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 4000, 5));
+                    player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 4000, 5));
+                    player.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 4000, 5));
+                    player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION,  2000, 5));
+                    player.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION, 4000, 5));
+                    player.addPotionEffect(new PotionEffect(MobEffects.SATURATION, 4000, 5));
                 }
             }
-            return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
         }
-        return ActionResult.newResult(EnumActionResult.PASS, stack);
+        return stack;
     }
 
+    @Nonnull
+    @Override
+    public EnumAction getItemUseAction(ItemStack itemstack) {
+        return EnumAction.DRINK;
+    }
 
+    @Override
+    public int getMaxItemUseDuration(ItemStack itemstack) {
+        return 32;
+    }
+
+    @Nonnull
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
+        ItemStack itemstack = player.getHeldItem(hand);
+        if (player.canEat(false)) {
+            player.setActiveHand(hand);
+            return ActionResult.newResult(EnumActionResult.SUCCESS, itemstack);
+        }
+        return ActionResult.newResult(EnumActionResult.FAIL, itemstack);
+    }
 }

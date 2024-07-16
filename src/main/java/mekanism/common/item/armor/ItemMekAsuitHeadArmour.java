@@ -1,4 +1,4 @@
-package mekanism.common.item.armour;
+package mekanism.common.item.armor;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -39,7 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-public class ItemMekAsuitHeadArmour extends ItemMekAsuitArmour implements IGasItem {
+public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasItem {
 
     public ItemMekAsuitHeadArmour() {
         super(EntityEquipmentSlot.HEAD);

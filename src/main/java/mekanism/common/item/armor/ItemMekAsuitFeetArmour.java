@@ -1,4 +1,4 @@
-package mekanism.common.item.armour;
+package mekanism.common.item.armor;
 
 import com.google.common.collect.Multimap;
 import mekanism.api.EnumColor;
@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-public class ItemMekAsuitFeetArmour extends ItemMekAsuitArmour {
+public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor {
 
     public ItemMekAsuitFeetArmour() {
         super(EntityEquipmentSlot.FEET);

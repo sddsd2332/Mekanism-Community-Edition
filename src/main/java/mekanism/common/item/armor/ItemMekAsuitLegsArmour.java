@@ -1,4 +1,4 @@
-package mekanism.common.item.armour;
+package mekanism.common.item.armor;
 
 import com.google.common.collect.Multimap;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitLeg;
@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-public class ItemMekAsuitLegsArmour extends ItemMekAsuitArmour {
+public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor {
 
     public ItemMekAsuitLegsArmour() {
         super(EntityEquipmentSlot.LEGS);
@@ -131,9 +131,4 @@ public class ItemMekAsuitLegsArmour extends ItemMekAsuitArmour {
         }
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean hasEffect(ItemStack stack) {
-        return false;
-    }
 }

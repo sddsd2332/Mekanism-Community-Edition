@@ -11,10 +11,6 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.EnumHelper;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -44,51 +40,4 @@ public class ItemGasMask extends ItemArmor {
         return model;
     }
 
-    @SubscribeEvent
-    public void onEntityDamage(LivingDamageEvent event) {
-        EntityLivingBase base = event.getEntityLiving();
-        ItemStack headStack = base.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-        ItemStack chestStack = base.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-        if (!headStack.isEmpty() && headStack.getItem() instanceof ItemGasMask mask) {
-            if (!chestStack.isEmpty() && chestStack.getItem() instanceof ItemScubaTank tank) {
-                if (tank.getFlowing(chestStack) && tank.getGas(chestStack) != null) {
-                    if (event.getSource().isMagicDamage()) {
-                        event.setCanceled(true);
-                    }
-                }
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public void onEntityHurt(LivingHurtEvent event) {
-        EntityLivingBase base = event.getEntityLiving();
-        ItemStack headStack = base.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-        ItemStack chestStack = base.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-        if (!headStack.isEmpty() && headStack.getItem() instanceof ItemGasMask mask) {
-            if (!chestStack.isEmpty() && chestStack.getItem() instanceof ItemScubaTank tank) {
-                if (tank.getFlowing(chestStack) && tank.getGas(chestStack) != null) {
-                    if (event.getSource().isMagicDamage()) {
-                        event.setCanceled(true);
-                    }
-                }
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public void onEntityAttacked(LivingAttackEvent event) {
-        EntityLivingBase base = event.getEntityLiving();
-        ItemStack headStack = base.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-        ItemStack chestStack = base.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-        if (!headStack.isEmpty() && headStack.getItem() instanceof ItemGasMask mask) {
-            if (!chestStack.isEmpty() && chestStack.getItem() instanceof ItemScubaTank tank) {
-                if (tank.getFlowing(chestStack) && tank.getGas(chestStack) != null) {
-                    if (event.getSource().isMagicDamage()) {
-                        event.setCanceled(true);
-                    }
-                }
-            }
-        }
-    }
 }

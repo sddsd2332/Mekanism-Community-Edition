@@ -1,4 +1,4 @@
-package mekanism.common.item.armour;
+package mekanism.common.item.armor;
 
 
 import cofh.redstoneflux.api.IEnergyContainerItem;
@@ -41,16 +41,15 @@ import org.lwjgl.input.Keyboard;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 @Optional.InterfaceList({
         @Optional.Interface(iface = "ic2.api.item.ISpecialElectricItem", modid = MekanismHooks.IC2_MOD_ID),
         @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyContainerItem", modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
 })
-public abstract class ItemMekAsuitArmour extends ItemArmor implements IEnergizedItem, ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor, IModuleUpgrade {
+public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedItem, ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor, IModuleUpgrade {
 
-    public ItemMekAsuitArmour(EntityEquipmentSlot slot) {
+    public ItemMekaSuitArmor(EntityEquipmentSlot slot) {
         super(EnumHelper.addArmorMaterial("MEKASUIT", "mekasuit", 0, new int[]{0, 0, 0, 0}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 0), 3, slot);
         setMaxStackSize(1);
         setCreativeTab(Mekanism.tabMekanism);
@@ -73,7 +72,7 @@ public abstract class ItemMekAsuitArmour extends ItemArmor implements IEnergized
             } else {
                 list.add(EnumColor.ORANGE + LangUtils.localize("tooltip.hold_for_modules") + ": ");
                 for (Map.Entry<moduleUpgrade, Integer> entry : module.entrySet()) {
-                    list.add("- " + entry.getKey().getLangName().toLowerCase(Locale.ROOT) + (entry.getKey().canMultiply() ? ": " + EnumColor.GREY + "x" + entry.getValue() : ""));
+                    list.add("- " + entry.getKey().getLangName() + (entry.getKey().canMultiply() ? ": " + EnumColor.GREY + "x" + entry.getValue() : ""));
                 }
             }
         }
@@ -216,7 +215,7 @@ public abstract class ItemMekAsuitArmour extends ItemArmor implements IEnergized
     @Override
     public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
         if (!world.isRemote) {
-            if (itemStack.getItem() instanceof ItemMekAsuitArmour){
+            if (itemStack.getItem() instanceof ItemMekaSuitArmor){
                 if (ItemDataUtils.hasData(itemStack, "module")) {
                     Map<moduleUpgrade, Integer> module = moduleUpgrade.buildMap(ItemDataUtils.getDataMap(itemStack));
                     upgrades.putAll(module);

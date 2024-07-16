@@ -7,6 +7,7 @@ import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
 import java.util.EnumMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -86,7 +87,7 @@ public enum moduleUpgrade {
     }
 
     public String getLangName() {
-        return LangUtils.localize("item.module." + name + ".name");
+        return LangUtils.localize("item.module." + name.toLowerCase(Locale.ROOT) + ".name");
     }
 
     public String getDescription() {
