@@ -24,6 +24,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -185,7 +186,9 @@ public class CommonPlayerTickHandler {
             }
         }
         if (entity instanceof EntityPlayer player) {
-
+            if (ItemMekaSuitArmor.tryAbsorbAll(player, event.getSource(), event.getAmount())) {
+                event.setCanceled(true);
+            }
         }
     }
 
@@ -210,11 +213,39 @@ public class CommonPlayerTickHandler {
                 return;
             }
         }
-        if (entity instanceof EntityPlayer player) {
 
+        if (entity instanceof EntityPlayer player) {
+            float ratioAbsorbed = ItemMekaSuitArmor.getDamageAbsorbed(player, event.getSource(), event.getAmount());
+            if (ratioAbsorbed > 0) {
+                float damageRemaining = event.getAmount() * Math.max(0, 1 - ratioAbsorbed);
+                if (damageRemaining <= 0) {
+                    event.setCanceled(true);
+                } else {
+                    event.setAmount(damageRemaining);
+                }
+            }
         }
     }
 
+
+    @SubscribeEvent
+    public void onLivingDamage(LivingDamageEvent event) {
+        EntityLivingBase entity = event.getEntityLiving();
+        if (event.getAmount() <= 0 || !entity.isEntityAlive()) {
+            return;
+        }
+        if (entity instanceof EntityPlayer player) {
+            float ratioAbsorbed = ItemMekaSuitArmor.getDamageAbsorbed(player, event.getSource(), event.getAmount());
+            if (ratioAbsorbed > 0) {
+                float damageRemaining = event.getAmount() * Math.max(0, 1 - ratioAbsorbed);
+                if (damageRemaining <= 0) {
+                    event.setCanceled(true);
+                } else {
+                    event.setAmount(damageRemaining);
+                }
+            }
+        }
+    }
 
     private boolean handleDamage(LivingHurtEvent event, ItemStack energyContainer, float absorptionRatio, float energyCost) {
         if (!energyContainer.isEmpty()) {
@@ -253,9 +284,9 @@ public class CommonPlayerTickHandler {
             if (feetStack.getItem() instanceof ItemFreeRunners boots) {
                 if (boots.getMode(feetStack).preventsFallDamage()) {
                     return new FallEnergyInfo(feetStack, 1, 50);
-                } else if (feetStack.getItem() instanceof ItemMekaSuitArmor) {
-                    return new FallEnergyInfo(feetStack, 1, 50);
                 }
+            } else if (feetStack.getItem() instanceof ItemMekaSuitArmor) {
+                return new FallEnergyInfo(feetStack, 1, 50);
             }
         }
         return null;

@@ -188,11 +188,6 @@ public class ItemScubaTank extends ItemArmor implements IGasItem, IItemHUDProvid
         }
     }
 
-    public ItemStack getEmptyItem() {
-        ItemStack empty = new ItemStack(this);
-        setGas(empty, null);
-        return empty;
-    }
 
     @Override
     public void getSubItems(@Nonnull CreativeTabs tabs, @Nonnull NonNullList<ItemStack> list) {

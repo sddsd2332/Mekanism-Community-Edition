@@ -103,17 +103,6 @@ public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor {
         setMode(itemStack, getMode(itemStack).increment());
     }
 
-    @SubscribeEvent
-    public void onEntityAttacked(LivingAttackEvent event) {
-        EntityLivingBase base = event.getEntityLiving();
-        ItemStack stack = base.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-        if (!stack.isEmpty() && stack.getItem() instanceof ItemMekAsuitFeetArmour boots) {
-            if (boots.getMode(stack) != FreeRunnerMode.DISABLED && boots.getEnergy(stack) > 0 && event.getSource() == DamageSource.FALL) {
-                boots.setEnergy(stack, boots.getEnergy(stack) - event.getAmount() * 50);
-                event.setCanceled(true);
-            }
-        }
-    }
 
     public enum FreeRunnerMode {
         NORMAL("tooltip.freerunner.regular", EnumColor.DARK_GREEN),
