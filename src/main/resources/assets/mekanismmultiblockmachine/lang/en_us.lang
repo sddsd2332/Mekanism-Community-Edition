@@ -21,9 +21,11 @@ tooltip.LargeChemicalWasher=An large ultimate machine that cleans unprocessed sl
 sound_event.mekanismmultiblockmachine.tile.machine.digitalassemblytable=Digital Assembly Table hums
 tile.MultiblockMachine.DigitalAssemblyTable.name=Digital Assembly Table
 tooltip.DigitalAssemblyTable=A range of machines can be assembled
+item.PlasmaCutterNozzles.name=Plasma Cutter Nozzles
+item.DrillBit.name=Drill Bit
+item.LaserLenses.name=Laser Lenses
 # Creative tab
 itemGroup.tabMekanismMultiblockMachine=Mekanism Multiblock Machine
-
 mekanism.configgui.ctgy.multiblock.multiblock=Multi-block setup
 mekanism.configgui.ctgy.multiblock.multiblockmachinegenerators=Multi-block generator configuration
 mekanism.configgui.ctgy.multiblock.multiblockmachines=Multi-block Machine configuration

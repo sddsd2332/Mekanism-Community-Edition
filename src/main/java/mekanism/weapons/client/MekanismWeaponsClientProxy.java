@@ -17,8 +17,11 @@ public class MekanismWeaponsClientProxy extends MekanismWeaponsCommonProxy {
     @Override
     public void registerItemRenders() {
         registerItemRender(MekanismWeaponsItems.mekaBow);
-        registerItemRender(MekanismWeaponsItems.mekArrow);
+        registerItemRender(MekanismWeaponsItems.mekaArrow);
         registerItemRender(MekanismWeaponsItems.mekaTana);
+        registerItemRender(MekanismWeaponsItems.katana_blade);
+        registerItemRender(MekanismWeaponsItems.bow_riser);
+        registerItemRender(MekanismWeaponsItems.bow_limb);
     }
 
     public void registerItemRender(Item item) {

@@ -49,6 +49,7 @@ public class MekanismKeyHandler extends MekKeyHandler {
     public static KeyBinding modeSwitchKey = new KeyBinding("mekanism.key.mode", Keyboard.KEY_M, keybindCategory);
     public static KeyBinding armorModeSwitchKey = new KeyBinding("mekanism.key.armorMode", Keyboard.KEY_G, keybindCategory);
     public static KeyBinding freeRunnerModeSwitchKey = new KeyBinding("mekanism.key.feetMode", Keyboard.KEY_B, keybindCategory);
+    public static KeyBinding MekAsuitFeetModeSwitchKey = new KeyBinding("mekanism.key.MekAsuitFeetMode", Keyboard.KEY_N, keybindCategory);
     public static KeyBinding voiceKey = new KeyBinding("mekanism.key.voice", Keyboard.KEY_U, keybindCategory);
 
     public static KeyBinding enableHUDkEY = new KeyBinding("mekanism.key.enableHUD", Keyboard.KEY_H, keybindCategory);
@@ -60,6 +61,7 @@ public class MekanismKeyHandler extends MekKeyHandler {
             .addBinding(modeSwitchKey, false)
             .addBinding(armorModeSwitchKey, false)
             .addBinding(freeRunnerModeSwitchKey, false)
+            .addBinding(MekAsuitFeetModeSwitchKey, false)
             .addBinding(voiceKey, true)
             .addBinding(enableHUDkEY, false);
 
@@ -69,6 +71,7 @@ public class MekanismKeyHandler extends MekKeyHandler {
         ClientRegistry.registerKeyBinding(modeSwitchKey);
         ClientRegistry.registerKeyBinding(armorModeSwitchKey);
         ClientRegistry.registerKeyBinding(freeRunnerModeSwitchKey);
+        ClientRegistry.registerKeyBinding(MekAsuitFeetModeSwitchKey);
         ClientRegistry.registerKeyBinding(voiceKey);
         ClientRegistry.registerKeyBinding(enableHUDkEY);
 
@@ -82,8 +85,9 @@ public class MekanismKeyHandler extends MekKeyHandler {
 
     @Override
     public void keyDown(KeyBinding kb, boolean isRepeat) {
+        EntityPlayer player = FMLClientHandler.instance().getClient().player;
         if (kb == modeSwitchKey) {
-            EntityPlayer player = FMLClientHandler.instance().getClient().player;
+
             ItemStack toolStack = player.inventory.getCurrentItem();
             Item item = toolStack.getItem();
 
@@ -125,7 +129,7 @@ public class MekanismKeyHandler extends MekKeyHandler {
                         .translation("mekanism.tooltip.flamethrower.modeBump", flamethrower.getMode(toolStack).getTextComponent()));
             }
         } else if (kb == armorModeSwitchKey) {
-            EntityPlayer player = FMLClientHandler.instance().getClient().player;
+
             ItemStack chestStack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
             Item chestItem = chestStack.getItem();
 
@@ -143,11 +147,8 @@ public class MekanismKeyHandler extends MekKeyHandler {
                 SoundHandler.playSound(MekanismSounds.HYDRAULIC);
             }
         } else if (kb == freeRunnerModeSwitchKey) {
-            EntityPlayer player = FMLClientHandler.instance().getClient().player;
             ItemStack feetStack = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-            Item feetItem = feetStack.getItem();
-
-            if (feetItem instanceof ItemFreeRunners freeRunners) {
+            if (feetStack.getItem() instanceof ItemFreeRunners freeRunners) {
                 if (player.isSneaking()) {
                     freeRunners.setMode(feetStack, ItemFreeRunners.FreeRunnerMode.DISABLED);
                 } else {
@@ -155,23 +156,24 @@ public class MekanismKeyHandler extends MekKeyHandler {
                 }
                 Mekanism.packetHandler.sendToServer(new FreeRunnerDataMessage(PacketFreeRunnerData.FreeRunnerPacket.MODE, null, player.isSneaking()));
                 SoundHandler.playSound(MekanismSounds.HYDRAULIC);
-            } else if (feetItem instanceof ItemMekAsuitFeetArmour freeArmour && freeArmour.isUpgradeInstalled(feetStack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
-                if (player.isSneaking() && (Keyboard.isKeyDown(219) || Keyboard.isKeyDown(220))) {
+            } else if (feetStack.getItem() instanceof ItemMekAsuitFeetArmour freeArmour && freeArmour.isUpgradeInstalled(feetStack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
+                if (player.isSneaking()) {
                     freeArmour.setJumpBoostMode(feetStack, ItemMekAsuitFeetArmour.JumpBoost.OFF);
-                    freeArmour.setStepAssistMode(feetStack, ItemMekAsuitFeetArmour.StepAssist.OFF);
-                } else if (player.isSneaking()) {
+                } else {
                     freeArmour.incrementJumpBoostMode(feetStack);
+                }
+                Mekanism.packetHandler.sendToServer(new JumpBoostDataMessage(PacketJumpBoostData.JumpBoostPacket.MODE, null, player.isSneaking()));
+                SoundHandler.playSound(MekanismSounds.HYDRAULIC);
+            }
+        } else if (kb == MekAsuitFeetModeSwitchKey) {
+            ItemStack feetStack = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
+            if (feetStack.getItem() instanceof ItemMekAsuitFeetArmour freeArmour && freeArmour.isUpgradeInstalled(feetStack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
+                if (player.isSneaking()) {
+                    freeArmour.setStepAssistMode(feetStack, ItemMekAsuitFeetArmour.StepAssist.OFF);
                 } else {
                     freeArmour.incrementStepAssistMode(feetStack);
                 }
-                if ((Keyboard.isKeyDown(219) || Keyboard.isKeyDown(220))) {
-                    Mekanism.packetHandler.sendToServer(new JumpBoostDataMessage(PacketJumpBoostData.JumpBoostPacket.MODE, null, player.isSneaking()));
-                    Mekanism.packetHandler.sendToServer(new StepAssistDataMessage(PacketStepAssistData.StepAssistPacket.MODE, null, player.isSneaking()));
-                } else if (player.isSneaking()) {
-                    Mekanism.packetHandler.sendToServer(new JumpBoostDataMessage(PacketJumpBoostData.JumpBoostPacket.MODE, null, true));
-                } else {
-                    Mekanism.packetHandler.sendToServer(new StepAssistDataMessage(PacketStepAssistData.StepAssistPacket.MODE, null, true));
-                }
+                Mekanism.packetHandler.sendToServer(new StepAssistDataMessage(PacketStepAssistData.StepAssistPacket.MODE, null, player.isSneaking()));
                 SoundHandler.playSound(MekanismSounds.HYDRAULIC);
             }
         } else if (kb == enableHUDkEY) {

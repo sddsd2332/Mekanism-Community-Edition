@@ -124,11 +124,11 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
 
             if (flag || !ammo.isEmpty()) {
                 if (ammo.isEmpty()) {
-                    ammo = new ItemStack(MekanismWeaponsItems.mekArrow);
+                    ammo = new ItemStack(MekanismWeaponsItems.mekaArrow);
                 }
                 boolean noConsume = flag && itemstack.getItem() instanceof ItemMekaArrow;
                 if (!world.isRemote) {
-                    ItemMekaArrow itemarrow = (ItemMekaArrow) (ammo.getItem() instanceof ItemMekaArrow ? ammo.getItem() : MekanismWeaponsItems.mekArrow);
+                    ItemMekaArrow itemarrow = (ItemMekaArrow) (ammo.getItem() instanceof ItemMekaArrow ? ammo.getItem() : MekanismWeaponsItems.mekaArrow);
                     int power = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, itemstack);
                     int punch = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, itemstack);
                     boolean fire = EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, itemstack) > 0;

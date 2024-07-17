@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.EnumSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -122,7 +122,7 @@ public class TileEntityLargeChemicalWasher extends TileEntityMultiblockBasicMach
     private void handleTank(GasTank tank, TileEntity tile, EnumFacing side) {
         if (tank.getGas() != null) {
             GasStack toSend = new GasStack(tank.getGas().getGas(), Math.min(tank.getStored(), output));
-            tank.draw(GasUtils.emit(toSend, tile, EnumSet.of(side)), true);
+            tank.draw(GasUtils.emit(toSend, tile, Collections.singleton(side)), true);
         }
     }
 

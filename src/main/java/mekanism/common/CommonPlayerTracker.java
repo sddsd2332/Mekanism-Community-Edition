@@ -64,7 +64,7 @@ public class CommonPlayerTracker {
         Mekanism.packetHandler.sendTo(ScubaTankDataMessage.FULL(Mekanism.playerState.getActiveGasmasks()), player);
         Mekanism.packetHandler.sendTo(FlamethrowerDataMessage.FULL(Mekanism.playerState.getActiveFlamethrowers()), player);
         Mekanism.packetHandler.sendTo(new PacketFreeRunnerData.FreeRunnerDataMessage(PacketFreeRunnerData.FreeRunnerPacket.FULL, null, false), player);
-        Mekanism.packetHandler.sendTo(new PacketJumpBoostData.JumpBoostDataMessage(PacketJumpBoostData.JumpBoostPacket.FULL,null,false),player);
-        Mekanism.packetHandler.sendTo(new PacketStepAssistData.StepAssistDataMessage(PacketStepAssistData.StepAssistPacket.FULL,null,false),player);
+        Mekanism.packetHandler.sendTo(new PacketJumpBoostData.JumpBoostDataMessage(PacketJumpBoostData.JumpBoostPacket.FULL, null, false), player);
+        Mekanism.packetHandler.sendTo(new PacketStepAssistData.StepAssistDataMessage(PacketStepAssistData.StepAssistPacket.FULL, null, false), player);
     }
 }

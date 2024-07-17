@@ -266,7 +266,7 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
                                 float hitZ, @Nonnull IBlockState state) {
         boolean place = true;
         MachineType type = MachineType.get(stack);
-        if (type == MachineType.DIGITAL_MINER) {
+        if (type == MachineType.DIGITAL_MINER || type == MachineType.MODIFICATION_STATION) {
             BlockPos.MutableBlockPos testPos = new BlockPos.MutableBlockPos();
             for (int xPos = -1; xPos <= +1; xPos++) {
                 for (int yPos = 0; yPos <= +1; yPos++) {

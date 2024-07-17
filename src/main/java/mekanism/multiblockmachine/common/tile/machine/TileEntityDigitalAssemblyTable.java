@@ -44,7 +44,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.EnumSet;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Random;
 
@@ -210,14 +210,14 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
     private void handleGasTank(GasTank tank, TileEntity tile) {
         if (tank.getGas() != null) {
             GasStack toSend = new GasStack(tank.getGas().getGas(), Math.min(tank.getStored(), tank.getMaxGas()));
-            tank.draw(GasUtils.emit(toSend, tile, EnumSet.of(EnumFacing.UP)), true);
+            tank.draw(GasUtils.emit(toSend, tile, Collections.singleton(EnumFacing.UP)), true);
         }
     }
 
     private void handleFluidTank(FluidTank tank, TileEntity tile) {
         if (tank.getFluid() != null && tile != null) {
             FluidStack toSend = new FluidStack(tank.getFluid(), Math.min(tank.getCapacity(), tank.getFluidAmount()));
-            tank.drain(PipeUtils.emit(EnumSet.of(EnumFacing.DOWN), toSend, tile), true);
+            tank.drain(PipeUtils.emit(Collections.singleton(EnumFacing.DOWN), toSend, tile), true);
         }
     }
 

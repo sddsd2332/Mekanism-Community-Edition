@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
  * 带有可已存储类型的方块
  */
 
-public abstract class TileEntityContainerBlock extends TileEntityBasicBlock implements ISidedInventory, ISustainedInventory, ITickable, IToggleableCapability {
+public abstract class TileEntityContainerBlock extends TileEntityBasicBlock implements ISidedInventory, ISustainedInventory, IToggleableCapability {
 
     /**
      * The inventory slot itemstacks used by this block.

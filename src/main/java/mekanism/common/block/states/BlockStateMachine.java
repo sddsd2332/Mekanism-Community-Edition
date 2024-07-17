@@ -136,7 +136,9 @@ public class BlockStateMachine extends ExtendedBlockState {
         RECYCLER(MachineBlock.MACHINE_BLOCK_4, 8, "Recycler", 72, TileEntityRecycler::new, true, false, true, Plane.HORIZONTAL, true),
         INDUSTRIAL_ALARM(MachineBlock.MACHINE_BLOCK_4, 9, "IndustrialAlarm", -1, TileEntityIndustrialAlarm::new, false, true, false, BlockStateUtils.ALL_FACINGS, false),
         HYBRID_STORAGE(MachineBlock.MACHINE_BLOCK_4,10,"Hybrid_Storage",74,TileEntityHybridStorage::new,true,false,false,BlockStateUtils.ALL_FACINGS, false),
-        MODIFICATION_STATION(MachineBlock.MACHINE_BLOCK_4,11,"Modification_Station",75,TileEntityModificationStation::new,true, true, true, Plane.HORIZONTAL, false);
+        MODIFICATION_STATION(MachineBlock.MACHINE_BLOCK_4,11,"Modification_Station",75,TileEntityModificationStation::new,true, true, true, Plane.HORIZONTAL, false),
+        RADIOACTIVE_WASTE_BARREL(MachineBlock.MACHINE_BLOCK_4,12,"radioactive_waste_barrel",-1,TileEntityRadioactiveWasteBarrel::new,false,false,false, Plane.HORIZONTAL,false);
+
 
         public MachineBlock typeBlock;
         public int meta;
@@ -234,7 +236,6 @@ public class BlockStateMachine extends ExtendedBlockState {
                 case ELECTRIC_PUMP -> MekanismConfig.current().usage.electricPump.val();
                 case PERSONAL_CHEST -> 30;
                 case CHARGEPAD -> 25;
-                case LOGISTICAL_SORTER -> 0;
                 case ROTARY_CONDENSENTRATOR -> MekanismConfig.current().usage.rotaryCondensentrator.val();
                 case CHEMICAL_OXIDIZER -> MekanismConfig.current().usage.oxidationChamber.val();
                 case CHEMICAL_INFUSER -> MekanismConfig.current().usage.chemicalInfuser.val();
@@ -246,14 +247,8 @@ public class BlockStateMachine extends ExtendedBlockState {
                 case CHEMICAL_CRYSTALLIZER -> MekanismConfig.current().usage.chemicalCrystallizer.val();
                 case SEISMIC_VIBRATOR -> MekanismConfig.current().usage.seismicVibrator.val();
                 case PRESSURIZED_REACTION_CHAMBER -> MekanismConfig.current().usage.pressurizedReactionBase.val();
-                case FLUID_TANK -> 0;
                 case FLUIDIC_PLENISHER -> MekanismConfig.current().usage.fluidicPlenisher.val();
                 case LASER -> MekanismConfig.current().usage.laser.val();
-                case LASER_AMPLIFIER -> 0;
-                case LASER_TRACTOR_BEAM -> 0;
-                case QUANTUM_ENTANGLOPORTER -> 0;
-                case SOLAR_NEUTRON_ACTIVATOR -> 0;
-                case AMBIENT_ACCUMULATOR -> 0;
                 case RESISTIVE_HEATER -> 100;
                 case FORMULAIC_ASSEMBLICATOR -> MekanismConfig.current().usage.formulaicAssemblicator.val();
                 /**
@@ -271,9 +266,7 @@ public class BlockStateMachine extends ExtendedBlockState {
                 case CELL_EXTRACTOR -> MekanismConfig.current().usage.cellExtractor.val();
                 case CELL_SEPARATOR -> MekanismConfig.current().usage.cellSeparator.val();
                 case RECYCLER -> MekanismConfig.current().usage.recycler.val();
-                case INDUSTRIAL_ALARM -> 0;
                 case AMBIENT_ACCUMULATOR_ENERGY -> MekanismConfig.current().usage.AmbientAccumulatorEnergy.val();
-                case HYBRID_STORAGE -> 0;
                 case MODIFICATION_STATION -> MekanismConfig.current().usage.modificationStation.val();
                 default -> 0;
             };

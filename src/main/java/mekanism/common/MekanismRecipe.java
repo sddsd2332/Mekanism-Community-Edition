@@ -260,7 +260,7 @@ public class MekanismRecipe {
         }
         //Chemical Washer Recipes
         if (MekanismConfig.current().general.machinesManager.isEnabled(BlockStateMachine.MachineType.CHEMICAL_WASHER)) {
-            RecipeHandler.addChemicalWasherRecipe(new GasStack(MekanismFluids.FissileFuel, 10000), new GasStack(MekanismFluids.NuclearWaste, 1));
+            RecipeHandler.addChemicalWasherRecipe(new GasStack(MekanismFluids.FissileFuel, 1000), new GasStack(MekanismFluids.NuclearWaste, 1));
         }
         //Chemical Dissolution Chamber Recipes
         if (MekanismConfig.current().general.machinesManager.isEnabled(BlockStateMachine.MachineType.CHEMICAL_DISSOLUTION_CHAMBER)) {

@@ -1,0 +1,15 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "mekanism:radioactive_waste_barrel"
+  },
+  "variants": {
+    "facing": {
+      "east": {"y": 90},
+      "south": {"y": 180},
+      "north": {},
+      "west": {"y": -90}
+    },
+    "inventory": [{}]
+  }
+}

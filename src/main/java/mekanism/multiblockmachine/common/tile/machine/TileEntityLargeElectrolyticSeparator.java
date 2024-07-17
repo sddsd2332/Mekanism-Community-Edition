@@ -41,7 +41,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.EnumSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -173,7 +173,7 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
         if (tank.getGas() != null) {
             if (mode != GasMode.DUMPING) {
                 GasStack toSend = new GasStack(tank.getGas().getGas(), Math.min(tank.getStored(), output));
-                tank.draw(GasUtils.emit(toSend, tile, EnumSet.of(facing)), true);
+                tank.draw(GasUtils.emit(toSend, tile, Collections.singleton(facing)), true);
             } else {
                 tank.draw(dumpAmount, true);
             }

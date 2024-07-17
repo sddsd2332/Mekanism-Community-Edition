@@ -355,6 +355,7 @@ public class Mekanism {
         registerTileEntity(TileEntityAmbientAccumulatorEnergy.class, "ambient_accumulator_energy");
         registerTileEntity(TileEntityHybridStorage.class, "Hybrid_storage");
         registerTileEntity(TileEntityModificationStation.class, "Modification_Station");
+        registerTileEntity(TileEntityRadioactiveWasteBarrel.class, "radioactive_waste_barrel");
         /**
          * End of adding machine
          */

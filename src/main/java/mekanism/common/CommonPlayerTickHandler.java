@@ -63,18 +63,27 @@ public class CommonPlayerTickHandler {
         return Mekanism.playerState.isFlamethrowerOn(player) && !currentItem.isEmpty() && currentItem.getItem() instanceof ItemFlamethrower;
     }
 
-    public static float getStepBoost(EntityPlayer player) { //TODO
+    public static float getStepBoost(EntityPlayer player) {
         ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-        if (stack.isEmpty()) {
-            return 0;
-        } else if (stack.getItem() instanceof ItemFreeRunners freeRunners && freeRunners.getMode(stack).providesStepBoost()) {
-            return 0.5F;
-        } else if (stack.getItem() instanceof ItemMekAsuitFeetArmour feetArmour) {
+        if (!stack.isEmpty() && stack.getItem() instanceof ItemFreeRunners freeRunners && freeRunners.getMode(stack).providesStepBoost() && !player.isSpectator()) {
+            return 1.002F;
+        } else if (!stack.isEmpty() && stack.getItem() instanceof ItemMekAsuitFeetArmour feetArmour && !player.isSpectator()) {
             if (feetArmour.isUpgradeInstalled(stack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
-                return feetArmour.getStepAssistMode(stack).getHeight();
+                float height = feetArmour.getStepAssistMode(stack).getHeight();
+                if (height == 0.5F) {
+                    return 1.002F;
+                } else if (height == 1) {
+                    return 1.6F;
+                } else if (height == 1.5F) {
+                    return 2.002F;
+                } else if (height == 2) {
+                    return 2.6F;
+                }
             }
+        } else if (player.stepHeight >= 1F) {
+            return 0.6F;
         }
-        return 0;
+        return 0.6F;
     }
 
 
@@ -326,19 +335,17 @@ public class CommonPlayerTickHandler {
             ItemStack feet = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
             if (!feet.isEmpty() && feet.getItem() instanceof ItemMekAsuitFeetArmour feetArmor) {
                 if (feetArmor.isUpgradeInstalled(feet, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
-                    if (Mekanism.keyMap.has(player, KeySync.DESCEND)) {
-                        float boost = feetArmor.getJumpBoostMode(feet).getBoost();
-                        double usage = 1000 * (boost / 0.1F);
-                        if (feetArmor.getEnergy(feet) > usage) {
-                            ItemStack leg = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
-                            if (!leg.isEmpty() && leg.getItem() instanceof ItemMekAsuitLegsArmour legsArmor) {
-                                if (legsArmor.isUpgradeInstalled(feet, moduleUpgrade.LOCOMOTIVE_BOOSTING_UNIT)) {
-                                    boost = (float) Math.sqrt(boost);
-                                }
+                    float boost = feetArmor.getJumpBoostMode(feet).getBoost();
+                    double usage = 1000 * (boost / 0.1F);
+                    if (feetArmor.getEnergy(feet) > usage) {
+                        ItemStack leg = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
+                        if (!leg.isEmpty() && leg.getItem() instanceof ItemMekAsuitLegsArmour legsArmor) {
+                            if (legsArmor.isUpgradeInstalled(feet, moduleUpgrade.LOCOMOTIVE_BOOSTING_UNIT)) {
+                                boost = (float) Math.sqrt(boost);
                             }
-                            player.motionY += boost;
-                            feetArmor.setEnergy(feet, feetArmor.getEnergy(feet) - usage);
                         }
+                        player.motionY += boost;
+                        feetArmor.setEnergy(feet, feetArmor.getEnergy(feet) - usage);
                     }
                 }
             }
