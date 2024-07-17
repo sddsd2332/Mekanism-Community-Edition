@@ -3,7 +3,8 @@ package mekanism.common.network;
 import io.netty.buffer.ByteBuf;
 import mekanism.common.Mekanism;
 import mekanism.common.PacketHandler;
-import mekanism.common.item.ItemFreeRunners;
+import mekanism.common.item.armor.ItemMekAsuitFeetArmour;
+import mekanism.common.moduleUpgrade;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -13,30 +14,30 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.UUID;
 
-public class PacketFreeRunnerData implements IMessageHandler<PacketFreeRunnerData.FreeRunnerDataMessage, IMessage> {
+public class PacketJumpBoostData implements IMessageHandler<PacketJumpBoostData.JumpBoostDataMessage, IMessage> {
 
     @Override
-    public IMessage onMessage(FreeRunnerDataMessage message, MessageContext ctx) {
+    public IMessage onMessage(JumpBoostDataMessage message, MessageContext ctx) {
         EntityPlayer entityPlayer = PacketHandler.getPlayer(ctx);
 
         PacketHandler.handlePacket(() -> {
-            if (message.packetType == FreeRunnerPacket.UPDATE) {
+            if (message.packetType == JumpBoostPacket.UPDATE) {
                 if (message.value) {
-                    Mekanism.freeRunnerOn.add(message.uuid);
+                    Mekanism.jumpBoostOn.add(message.uuid);
                 } else {
-                    Mekanism.freeRunnerOn.remove(message.uuid);
+                    Mekanism.jumpBoostOn.remove(message.uuid);
                 }
                 if (!entityPlayer.world.isRemote) {
-                    Mekanism.packetHandler.sendToDimension(new FreeRunnerDataMessage(FreeRunnerPacket.UPDATE, message.uuid, message.value),
+                    Mekanism.packetHandler.sendToDimension(new JumpBoostDataMessage(JumpBoostPacket.UPDATE, message.uuid, message.value),
                             entityPlayer.world.provider.getDimension());
                 }
-            } else if (message.packetType == FreeRunnerPacket.MODE) {
+            } else if (message.packetType == JumpBoostPacket.MODE) {
                 ItemStack stack = entityPlayer.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-                if (!stack.isEmpty() && stack.getItem() instanceof ItemFreeRunners freeRunners) {
+                if (!stack.isEmpty() && stack.getItem() instanceof ItemMekAsuitFeetArmour feet && feet.isUpgradeInstalled(stack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
                     if (!message.value) {
-                        freeRunners.incrementMode(stack);
+                        feet.incrementJumpBoostMode(stack);
                     } else {
-                        freeRunners.setMode(stack, ItemFreeRunners.FreeRunnerMode.DISABLED);
+                        feet.setJumpBoostMode(stack, ItemMekAsuitFeetArmour.JumpBoost.OFF);
                     }
                 }
             }
@@ -44,26 +45,26 @@ public class PacketFreeRunnerData implements IMessageHandler<PacketFreeRunnerDat
         return null;
     }
 
-    public enum FreeRunnerPacket {
+    public enum JumpBoostPacket {
         UPDATE,
         FULL,
         MODE
     }
 
-    public static class FreeRunnerDataMessage implements IMessage {
+    public static class JumpBoostDataMessage implements IMessage {
 
-        public FreeRunnerPacket packetType;
+        public JumpBoostPacket packetType;
 
         public UUID uuid;
         public boolean value;
 
-        public FreeRunnerDataMessage() {
+        public JumpBoostDataMessage() {
         }
 
-        public FreeRunnerDataMessage(FreeRunnerPacket packetType, UUID uuid, boolean value) {
+        public JumpBoostDataMessage(JumpBoostPacket packetType, UUID uuid, boolean value) {
             this.packetType = packetType;
             this.value = value;
-            if (packetType == FreeRunnerPacket.UPDATE) {
+            if (packetType == JumpBoostPacket.UPDATE) {
                 this.uuid = uuid;
             }
         }
@@ -71,15 +72,15 @@ public class PacketFreeRunnerData implements IMessageHandler<PacketFreeRunnerDat
         @Override
         public void toBytes(ByteBuf buf) {
             buf.writeInt(packetType.ordinal());
-            if (packetType == FreeRunnerPacket.MODE) {
+            if (packetType == JumpBoostPacket.MODE) {
                 buf.writeBoolean(value);
-            } else if (packetType == FreeRunnerPacket.UPDATE) {
+            } else if (packetType == JumpBoostPacket.UPDATE) {
                 PacketHandler.writeUUID(buf, uuid);
                 buf.writeBoolean(value);
-            } else if (packetType == FreeRunnerPacket.FULL) {
-                buf.writeInt(Mekanism.freeRunnerOn.size());
-                synchronized (Mekanism.freeRunnerOn) {
-                    for (UUID uuidToSend : Mekanism.freeRunnerOn) {
+            } else if (packetType == JumpBoostPacket.FULL) {
+                buf.writeInt(Mekanism.jumpBoostOn.size());
+                synchronized (Mekanism.jumpBoostOn) {
+                    for (UUID uuidToSend : Mekanism.jumpBoostOn) {
                         PacketHandler.writeUUID(buf, uuidToSend);
                     }
                 }
@@ -88,17 +89,17 @@ public class PacketFreeRunnerData implements IMessageHandler<PacketFreeRunnerDat
 
         @Override
         public void fromBytes(ByteBuf buf) {
-            packetType = FreeRunnerPacket.values()[buf.readInt()];
-            if (packetType == FreeRunnerPacket.MODE) {
+            packetType = JumpBoostPacket.values()[buf.readInt()];
+            if (packetType == JumpBoostPacket.MODE) {
                 value = buf.readBoolean();
-            } else if (packetType == FreeRunnerPacket.UPDATE) {
+            } else if (packetType == JumpBoostPacket.UPDATE) {
                 uuid = PacketHandler.readUUID(buf);
                 value = buf.readBoolean();
-            } else if (packetType == FreeRunnerPacket.FULL) {
-                Mekanism.freeRunnerOn.clear();
+            } else if (packetType == JumpBoostPacket.FULL) {
+                Mekanism.jumpBoostOn.clear();
                 int amount = buf.readInt();
                 for (int i = 0; i < amount; i++) {
-                    Mekanism.freeRunnerOn.add(PacketHandler.readUUID(buf));
+                    Mekanism.jumpBoostOn.add(PacketHandler.readUUID(buf));
                 }
             }
         }

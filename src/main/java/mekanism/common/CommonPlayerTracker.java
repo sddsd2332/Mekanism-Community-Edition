@@ -6,9 +6,11 @@ import mekanism.common.network.PacketConfigSync.ConfigSyncMessage;
 import mekanism.common.network.PacketFlamethrowerData.FlamethrowerDataMessage;
 import mekanism.common.network.PacketFreeRunnerData;
 import mekanism.common.network.PacketJetpackData.JetpackDataMessage;
+import mekanism.common.network.PacketJumpBoostData;
 import mekanism.common.network.PacketScubaTankData.ScubaTankDataMessage;
 import mekanism.common.network.PacketSecurityUpdate.SecurityPacket;
 import mekanism.common.network.PacketSecurityUpdate.SecurityUpdateMessage;
+import mekanism.common.network.PacketStepAssistData;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
@@ -41,12 +43,16 @@ public class CommonPlayerTracker {
     public void onPlayerLogoutEvent(PlayerLoggedOutEvent event) {
         Mekanism.playerState.clearPlayer(event.player.getUniqueID());
         Mekanism.freeRunnerOn.remove(event.player.getUniqueID());
+        Mekanism.jumpBoostOn.remove(event.player.getUniqueID());
+        Mekanism.stepAssistOn.remove(event.player.getUniqueID());
     }
 
     @SubscribeEvent
     public void onPlayerDimChangedEvent(PlayerChangedDimensionEvent event) {
         Mekanism.playerState.clearPlayer(event.player.getUniqueID());
         Mekanism.freeRunnerOn.remove(event.player.getUniqueID());
+        Mekanism.jumpBoostOn.remove(event.player.getUniqueID());
+        Mekanism.stepAssistOn.remove(event.player.getUniqueID());
         if (!event.player.world.isRemote) {
             syncChangedData((EntityPlayerMP) event.player);
         }
@@ -58,5 +64,7 @@ public class CommonPlayerTracker {
         Mekanism.packetHandler.sendTo(ScubaTankDataMessage.FULL(Mekanism.playerState.getActiveGasmasks()), player);
         Mekanism.packetHandler.sendTo(FlamethrowerDataMessage.FULL(Mekanism.playerState.getActiveFlamethrowers()), player);
         Mekanism.packetHandler.sendTo(new PacketFreeRunnerData.FreeRunnerDataMessage(PacketFreeRunnerData.FreeRunnerPacket.FULL, null, false), player);
+        Mekanism.packetHandler.sendTo(new PacketJumpBoostData.JumpBoostDataMessage(PacketJumpBoostData.JumpBoostPacket.FULL,null,false),player);
+        Mekanism.packetHandler.sendTo(new PacketStepAssistData.StepAssistDataMessage(PacketStepAssistData.StepAssistPacket.FULL,null,false),player);
     }
 }

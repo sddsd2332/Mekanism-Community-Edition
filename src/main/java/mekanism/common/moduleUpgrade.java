@@ -29,10 +29,11 @@ public enum moduleUpgrade {
     GYROSCOPIC_STABILIZATION_UNIT("gyroscopic_stabilization_unit", 1),
     GEOTHERMAL_GENERATOR_UNIT("geothermal_generator_unit", 8),
     HYDROSTATIC_REPULSOR_UNIT("hydrostatic_repulsor_unit", 4),
+    LOCOMOTIVE_BOOSTING_UNIT("locomotive_boosting_unit", 4),
     //feet
     HYDRAULIC_PROPULSION_UNIT("hydraulic_propulsion_unit", 4),
-    MAGNETIC_ATTRACTION_UNIT("magnetic_attraction_unit", 4),
     FROST_WALKER_UNIT("frost_walker_unit", 2),
+
 
     //mekaBow
     ARROWENERGY_UNIT("arrowenergy_unit", 1),

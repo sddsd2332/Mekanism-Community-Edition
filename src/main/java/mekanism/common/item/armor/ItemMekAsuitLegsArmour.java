@@ -93,6 +93,7 @@ public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor {
         List<moduleUpgrade> list = super.getValidModule(stack);
         list.add(moduleUpgrade.GYROSCOPIC_STABILIZATION_UNIT);
         list.add(moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT);
+        list.add(moduleUpgrade.LOCOMOTIVE_BOOSTING_UNIT);
         list.add(moduleUpgrade.HYDROSTATIC_REPULSOR_UNIT);
         return list;
     }

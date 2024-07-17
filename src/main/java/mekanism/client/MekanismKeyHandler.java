@@ -7,14 +7,20 @@ import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.item.*;
 import mekanism.common.item.ItemConfigurator.ConfiguratorMode;
+import mekanism.common.item.armor.ItemMekAsuitFeetArmour;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.item.interfaces.IJetpackItem.JetpackMode;
+import mekanism.common.moduleUpgrade;
 import mekanism.common.network.PacketFlamethrowerData.FlamethrowerDataMessage;
 import mekanism.common.network.PacketFreeRunnerData;
 import mekanism.common.network.PacketFreeRunnerData.FreeRunnerDataMessage;
 import mekanism.common.network.PacketItemStack.ItemStackMessage;
 import mekanism.common.network.PacketJetpackData.JetpackDataMessage;
+import mekanism.common.network.PacketJumpBoostData;
+import mekanism.common.network.PacketJumpBoostData.JumpBoostDataMessage;
 import mekanism.common.network.PacketScubaTankData.ScubaTankDataMessage;
+import mekanism.common.network.PacketStepAssistData;
+import mekanism.common.network.PacketStepAssistData.StepAssistDataMessage;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.TextComponentGroup;
 import net.minecraft.client.Minecraft;
@@ -148,6 +154,24 @@ public class MekanismKeyHandler extends MekKeyHandler {
                     freeRunners.incrementMode(feetStack);
                 }
                 Mekanism.packetHandler.sendToServer(new FreeRunnerDataMessage(PacketFreeRunnerData.FreeRunnerPacket.MODE, null, player.isSneaking()));
+                SoundHandler.playSound(MekanismSounds.HYDRAULIC);
+            } else if (feetItem instanceof ItemMekAsuitFeetArmour freeArmour && freeArmour.isUpgradeInstalled(feetStack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
+                if (player.isSneaking() && (Keyboard.isKeyDown(219) || Keyboard.isKeyDown(220))) {
+                    freeArmour.setJumpBoostMode(feetStack, ItemMekAsuitFeetArmour.JumpBoost.OFF);
+                    freeArmour.setStepAssistMode(feetStack, ItemMekAsuitFeetArmour.StepAssist.OFF);
+                } else if (player.isSneaking()) {
+                    freeArmour.incrementJumpBoostMode(feetStack);
+                } else {
+                    freeArmour.incrementStepAssistMode(feetStack);
+                }
+                if ((Keyboard.isKeyDown(219) || Keyboard.isKeyDown(220))) {
+                    Mekanism.packetHandler.sendToServer(new JumpBoostDataMessage(PacketJumpBoostData.JumpBoostPacket.MODE, null, player.isSneaking()));
+                    Mekanism.packetHandler.sendToServer(new StepAssistDataMessage(PacketStepAssistData.StepAssistPacket.MODE, null, player.isSneaking()));
+                } else if (player.isSneaking()) {
+                    Mekanism.packetHandler.sendToServer(new JumpBoostDataMessage(PacketJumpBoostData.JumpBoostPacket.MODE, null, true));
+                } else {
+                    Mekanism.packetHandler.sendToServer(new StepAssistDataMessage(PacketStepAssistData.StepAssistPacket.MODE, null, true));
+                }
                 SoundHandler.playSound(MekanismSounds.HYDRAULIC);
             }
         } else if (kb == enableHUDkEY) {

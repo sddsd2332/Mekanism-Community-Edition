@@ -16,14 +16,17 @@ import mekanism.common.item.ItemConfigurator.ConfiguratorMode;
 import mekanism.common.item.ItemFlamethrower.FlamethrowerMode;
 import mekanism.common.item.ItemMekTool.MekToolMode;
 import mekanism.common.item.armor.ItemMekAsuitBodyArmour;
+import mekanism.common.item.armor.ItemMekAsuitFeetArmour;
 import mekanism.common.item.armor.ItemMekAsuitHeadArmour;
 import mekanism.common.item.armor.ItemMekAsuitLegsArmour;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.item.interfaces.IJetpackItem.JetpackMode;
 import mekanism.common.network.PacketFreeRunnerData;
 import mekanism.common.network.PacketItemStack.ItemStackMessage;
+import mekanism.common.network.PacketJumpBoostData;
 import mekanism.common.network.PacketPortableTeleporter.PortableTeleporterMessage;
 import mekanism.common.network.PacketPortableTeleporter.PortableTeleporterPacketType;
+import mekanism.common.network.PacketStepAssistData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.Render;
@@ -80,7 +83,7 @@ public class ClientTickHandler {
             } else if (mode == JetpackMode.HOVER) {
                 boolean descending = mc.player.movementInput.sneak;
                 if (!rising || descending) {
-                    return !CommonPlayerTickHandler.isOnGround(player);
+                    return !CommonPlayerTickHandler.isOnGroundOrSleeping(player);
                 }
                 return true;
             }
@@ -92,7 +95,7 @@ public class ClientTickHandler {
         if (player != mc.player) {
             return Mekanism.playerState.isGasmaskOn(player);
         }
-        return CommonPlayerTickHandler.isGasMaskOn(player);
+        return CommonPlayerTickHandler.isScubaMaskOn(player, player.getItemStackFromSlot(EntityEquipmentSlot.CHEST));
     }
 
     public static boolean isFreeRunnerOn(EntityPlayer player) {
@@ -104,6 +107,28 @@ public class ClientTickHandler {
         if (!stack.isEmpty() && stack.getItem() instanceof ItemFreeRunners freeRunners) {
             /*freeRunners.getEnergy(stack) > 0 && */
             return freeRunners.getMode(stack) == ItemFreeRunners.FreeRunnerMode.NORMAL;
+        }
+        return false;
+    }
+
+    public static boolean isJumpBooston(EntityPlayer player) {
+        if (player != mc.player) {
+            return Mekanism.jumpBoostOn.contains(player.getUniqueID());
+        }
+        ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
+        if (!stack.isEmpty() && stack.getItem() instanceof ItemMekAsuitFeetArmour feet) {
+            return feet.getJumpBoostMode(stack) == ItemMekAsuitFeetArmour.JumpBoost.OFF;
+        }
+        return false;
+    }
+
+    public static boolean isStepAssist(EntityPlayer player) {
+        if (player != mc.player) {
+            return Mekanism.stepAssistOn.contains(player.getUniqueID());
+        }
+        ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
+        if (!stack.isEmpty() && stack.getItem() instanceof ItemMekAsuitFeetArmour feet) {
+            return feet.getStepAssistMode(stack) == ItemMekAsuitFeetArmour.StepAssist.OFF;
         }
         return false;
     }
@@ -230,18 +255,33 @@ public class ClientTickHandler {
                 Mekanism.packetHandler.sendToServer(new PacketFreeRunnerData.FreeRunnerDataMessage(PacketFreeRunnerData.FreeRunnerPacket.UPDATE, playerUUID, freeRunnerOn));
             }
 
-            ItemStack bootStack = mc.player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-            if (!bootStack.isEmpty() && bootStack.getItem() instanceof ItemFreeRunners && freeRunnerOn && !mc.player.isSneaking()) {
-                mc.player.stepHeight = 1.002F;
-            } else if (mc.player.stepHeight == 1.002F) {
-                mc.player.stepHeight = 0.6F;
+            boolean jumpBoostonOn = isJumpBooston(mc.player);
+            if (Mekanism.jumpBoostOn.contains(playerUUID) != jumpBoostonOn) {
+                if (jumpBoostonOn && mc.currentScreen == null) {
+                    Mekanism.jumpBoostOn.add(playerUUID);
+                } else {
+                    Mekanism.jumpBoostOn.remove(playerUUID);
+                }
+                Mekanism.packetHandler.sendToServer(new PacketJumpBoostData.JumpBoostDataMessage(PacketJumpBoostData.JumpBoostPacket.UPDATE, playerUUID, jumpBoostonOn));
             }
+
+            boolean stepAssistOn = isStepAssist(mc.player);
+            if (Mekanism.stepAssistOn.contains(playerUUID) != stepAssistOn){
+                if (stepAssistOn && mc.currentScreen == null) {
+                    Mekanism.stepAssistOn.add(playerUUID);
+                }else {
+                    Mekanism.stepAssistOn.remove(playerUUID);
+                }
+                Mekanism.packetHandler.sendToServer(new PacketStepAssistData.StepAssistDataMessage(PacketStepAssistData.StepAssistPacket.UPDATE,playerUUID,stepAssistOn));
+            }
+
+            mc.player.stepHeight = CommonPlayerTickHandler.getStepBoost(mc.player);
 
             // Update player's state for various items; this also automatically notifies server if something changed and
             // kicks off sounds as necessary
             ItemStack jetpack = IJetpackItem.getActiveJetpack(mc.player);
             boolean jetpackInUse = isJetpackInUse(mc.player, jetpack);
-            Mekanism.playerState.setJetpackState(playerUUID, isJetpackInUse(mc.player,jetpack), true);
+            Mekanism.playerState.setJetpackState(playerUUID, isJetpackInUse(mc.player, jetpack), true);
             Mekanism.playerState.setGasmaskState(playerUUID, isGasMaskOn(mc.player), true);
             Mekanism.playerState.setFlamethrowerState(playerUUID, hasFlamethrower(mc.player), isFlamethrowerOn(mc.player), true);
 

@@ -919,6 +919,10 @@ public final class MekanismUtils {
         return false;
     }
 
+    public static boolean isPlayingMode(EntityPlayer player) {
+        return !player.isCreative() && !player.isSpectator();
+    }
+
     /**
      * Whether or not a given EntityPlayer is considered an Op.
      *

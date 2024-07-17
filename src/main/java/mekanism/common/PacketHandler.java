@@ -18,6 +18,8 @@ import mekanism.common.network.PacketEntityMove.EntityMoveMessage;
 import mekanism.common.network.PacketFlamethrowerData.FlamethrowerDataMessage;
 import mekanism.common.network.PacketFreeRunnerData.FreeRunnerDataMessage;
 import mekanism.common.network.PacketItemStack.ItemStackMessage;
+import mekanism.common.network.PacketJumpBoostData.JumpBoostDataMessage;
+import mekanism.common.network.PacketStepAssistData.StepAssistDataMessage;
 import mekanism.common.network.PacketJetpackData.JetpackDataMessage;
 import mekanism.common.network.PacketKey.KeyMessage;
 import mekanism.common.network.PacketLogisticalSorterGui.LogisticalSorterGuiMessage;
@@ -197,6 +199,10 @@ public class PacketHandler {
         netHandler.registerMessage(PacketSecurityUpdate.class, SecurityUpdateMessage.class, 30, Side.CLIENT);
         netHandler.registerMessage(PacketFreeRunnerData.class, FreeRunnerDataMessage.class, 31, Side.CLIENT);
         netHandler.registerMessage(PacketFreeRunnerData.class, FreeRunnerDataMessage.class, 31, Side.SERVER);
+        netHandler.registerMessage(PacketJumpBoostData.class, JumpBoostDataMessage.class,32,Side.CLIENT);
+        netHandler.registerMessage(PacketJumpBoostData.class, JumpBoostDataMessage.class,32,Side.SERVER);
+        netHandler.registerMessage(PacketStepAssistData.class, StepAssistDataMessage.class,33,Side.CLIENT);
+        netHandler.registerMessage(PacketStepAssistData.class, StepAssistDataMessage.class,33,Side.SERVER);
     }
 
     /**

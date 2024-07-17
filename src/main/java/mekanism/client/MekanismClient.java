@@ -67,6 +67,8 @@ public class MekanismClient extends Mekanism {
         Mekanism.playerState.clear();
         Mekanism.activeVibrators.clear();
         Mekanism.freeRunnerOn.clear();
+        Mekanism.jumpBoostOn.clear();
+        Mekanism.stepAssistOn.clear();
 
         SynchronizedBoilerData.clientHotMap.clear();
 

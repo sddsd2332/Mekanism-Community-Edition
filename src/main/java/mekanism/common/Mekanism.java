@@ -109,6 +109,8 @@ public class Mekanism {
     public static final String LOG_TAG = '[' + MOD_NAME + ']';
     public static final PlayerState playerState = new PlayerState();
     public static final Set<UUID> freeRunnerOn = new ObjectOpenHashSet<>();
+    public static final Set<UUID> jumpBoostOn = new ObjectOpenHashSet<>();
+    public static final Set<UUID> stepAssistOn = new ObjectOpenHashSet<>();
     /**
      * Mekanism Packet Pipeline
      */
@@ -384,6 +386,8 @@ public class Mekanism {
         privateTeleporters.clear();
         privateEntangloporters.clear();
         freeRunnerOn.clear();
+        jumpBoostOn.clear();
+        stepAssistOn.clear();
 
         //Reset consistent managers
         MultiblockManager.reset();

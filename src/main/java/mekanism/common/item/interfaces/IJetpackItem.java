@@ -4,14 +4,10 @@ import mekanism.api.EnumColor;
 import mekanism.common.CommonPlayerTickHandler;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;
@@ -52,37 +48,26 @@ public interface IJetpackItem {
                 if (player.motionY > 0) {
                     player.motionY = Math.max(player.motionY - 0.15D, 0);
                 } else if (player.motionY < 0) {
-                    if (!isOnGround(player)) {
+                    if (!CommonPlayerTickHandler.isOnGroundOrSleeping(player)) {
                         player.motionY = Math.min(player.motionY + 0.15D, 0);
                     }
                 }
             } else if (ascending) {
                 player.motionY = Math.min(player.motionY + 0.15D, 0.2D);
-            } else if (!isOnGround(player)) {
+            } else if (!CommonPlayerTickHandler.isOnGroundOrSleeping(player)) {
                 player.motionY = Math.max(player.motionY - 0.15D, -0.2D);
             }
         }
         return true;
     }
 
-    static boolean isOnGround(EntityPlayer player) {
-        int x = MathHelper.floor(player.posX);
-        int y = MathHelper.floor(player.posY - 0.01);
-        int z = MathHelper.floor(player.posZ);
-        BlockPos pos = new BlockPos(x, y, z);
-        IBlockState s = player.world.getBlockState(pos);
-        AxisAlignedBB box = s.getBoundingBox(player.world, pos).offset(pos);
-        AxisAlignedBB playerBox = player.getEntityBoundingBox();
-        return !s.getBlock().isAir(s, player.world, pos) && playerBox.offset(0, -0.01, 0).intersects(box);
-
-    }
 
     static JetpackMode getPlayerJetpackMode(EntityPlayer player, JetpackMode mode, BooleanSupplier ascendingSupplier) {
         if (!player.isSpectator()) {
             if (mode != JetpackMode.DISABLED) {
                 boolean ascending = ascendingSupplier.getAsBoolean();
                 if (mode == JetpackMode.HOVER) {
-                    if (ascending && !player.isSneaking() || !CommonPlayerTickHandler.isOnGround(player)) {
+                    if (ascending && !player.isSneaking() || !CommonPlayerTickHandler.isOnGroundOrSleeping(player)) {
                         return mode;
                     }
                 } else if (mode == JetpackMode.NORMAL && ascending) {

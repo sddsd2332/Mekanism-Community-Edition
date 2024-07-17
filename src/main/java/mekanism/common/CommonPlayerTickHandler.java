@@ -7,11 +7,14 @@ import mekanism.common.item.ItemFlamethrower;
 import mekanism.common.item.ItemFreeRunners;
 import mekanism.common.item.ItemGasMask;
 import mekanism.common.item.ItemScubaTank;
+import mekanism.common.item.armor.ItemMekAsuitFeetArmour;
 import mekanism.common.item.armor.ItemMekAsuitHeadArmour;
+import mekanism.common.item.armor.ItemMekAsuitLegsArmour;
 import mekanism.common.item.armor.ItemMekaSuitArmor;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.item.interfaces.IJetpackItem.JetpackMode;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.material.Material;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -20,12 +23,12 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
@@ -36,7 +39,9 @@ public class CommonPlayerTickHandler {
 
     boolean isHeadItem = false;
 
-    public static boolean isOnGround(EntityPlayer player) {
+    public static boolean isOnGroundOrSleeping(EntityPlayer player) {
+        return player.onGround || player.isSneaking();
+        /*
         int x = MathHelper.floor(player.posX);
         int y = MathHelper.floor(player.posY - 0.01);
         int z = MathHelper.floor(player.posZ);
@@ -45,29 +50,33 @@ public class CommonPlayerTickHandler {
         AxisAlignedBB box = s.getBoundingBox(player.world, pos).offset(pos);
         AxisAlignedBB playerBox = player.getEntityBoundingBox();
         return !s.getBlock().isAir(s, player.world, pos) && playerBox.offset(0, -0.01, 0).intersects(box);
-
+         */
     }
 
-    public static boolean isGasMaskOn(EntityPlayer player) {
-        ItemStack tank = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+    public static boolean isScubaMaskOn(EntityPlayer player, ItemStack tank) {
         ItemStack mask = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-        if (!tank.isEmpty() && !mask.isEmpty()) {
-            if (tank.getItem() instanceof ItemScubaTank scubaTank && mask.getItem() instanceof ItemGasMask) {
-                if (scubaTank.getGas(tank) != null) {
-                    return scubaTank.getFlowing(tank);
-                }
+        return !tank.isEmpty() && !mask.isEmpty() && tank.getItem() instanceof ItemScubaTank scubaTank &&
+                mask.getItem() instanceof ItemGasMask && scubaTank.getGas(tank) != null && scubaTank.getFlowing(tank);
+    }
+
+    public static boolean isFlamethrowerOn(EntityPlayer player, ItemStack currentItem) {
+        return Mekanism.playerState.isFlamethrowerOn(player) && !currentItem.isEmpty() && currentItem.getItem() instanceof ItemFlamethrower;
+    }
+
+    public static float getStepBoost(EntityPlayer player) { //TODO
+        ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
+        if (stack.isEmpty()) {
+            return 0;
+        } else if (stack.getItem() instanceof ItemFreeRunners freeRunners && freeRunners.getMode(stack).providesStepBoost()) {
+            return 0.5F;
+        } else if (stack.getItem() instanceof ItemMekAsuitFeetArmour feetArmour) {
+            if (feetArmour.isUpgradeInstalled(stack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
+                return feetArmour.getStepAssistMode(stack).getHeight();
             }
         }
-        return false;
+        return 0;
     }
 
-    public static boolean isFlamethrowerOn(EntityPlayer player) {
-        if (Mekanism.playerState.isFlamethrowerOn(player)) {
-            ItemStack currentItem = player.inventory.getCurrentItem();
-            return !currentItem.isEmpty() && currentItem.getItem() instanceof ItemFlamethrower;
-        }
-        return false;
-    }
 
     @SubscribeEvent
     public void onTick(PlayerTickEvent event) {
@@ -77,17 +86,12 @@ public class CommonPlayerTickHandler {
     }
 
     public void tickEnd(EntityPlayer player) {
-        ItemStack feetStack = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-        if (!feetStack.isEmpty() && feetStack.getItem() instanceof ItemFreeRunners && !player.isSneaking()) {
-            player.stepHeight = 1.002F;
-        } else if (player.stepHeight == 1.002F) {
-            player.stepHeight = 0.6F;
-        }
+        player.stepHeight = getStepBoost(player);
 
-        if (isFlamethrowerOn(player)) {
+        ItemStack currentItem = player.inventory.getCurrentItem();
+        if (isFlamethrowerOn(player, currentItem)) {
             player.world.spawnEntity(new EntityFlame(player));
             if (!player.isCreative() && !player.isSpectator()) {
-                ItemStack currentItem = player.inventory.getCurrentItem();
                 ((ItemFlamethrower) currentItem.getItem()).useGas(currentItem);
             }
         }
@@ -110,13 +114,12 @@ public class CommonPlayerTickHandler {
             }
         }
 
-
-        if (isGasMaskOn(player)) {
-            ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-            ItemScubaTank tank = (ItemScubaTank) stack.getItem();
+        ItemStack chest = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+        if (isScubaMaskOn(player, chest)) {
+            ItemScubaTank tank = (ItemScubaTank) chest.getItem();
             final int max = 300;
-            tank.useGas(stack);
-            GasStack received = tank.useGas(stack, max - player.getAir());
+            tank.useGas(chest, 1);
+            GasStack received = tank.useGas(chest, max - player.getAir());
             if (received != null) {
                 player.setAir(player.getAir() + received.amount);
             }
@@ -131,6 +134,7 @@ public class CommonPlayerTickHandler {
 
         isMekAsuitArmor(player);
     }
+
 
     public void isMekAsuitArmor(EntityPlayer player) {
         ItemStack head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
@@ -150,7 +154,6 @@ public class CommonPlayerTickHandler {
             nv.duration = 0;
         }
     }
-
 
     @SubscribeEvent
     public void onEntityAttacked(LivingAttackEvent event) {
@@ -226,7 +229,6 @@ public class CommonPlayerTickHandler {
             }
         }
     }
-
 
     @SubscribeEvent
     public void onLivingDamage(LivingDamageEvent event) {
@@ -316,6 +318,55 @@ public class CommonPlayerTickHandler {
 
         }
         return false;
+    }
+
+    @SubscribeEvent
+    public void onLivingJump(LivingEvent.LivingJumpEvent event) {
+        if (event.getEntity() instanceof EntityPlayer player) {
+            ItemStack feet = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
+            if (!feet.isEmpty() && feet.getItem() instanceof ItemMekAsuitFeetArmour feetArmor) {
+                if (feetArmor.isUpgradeInstalled(feet, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
+                    if (Mekanism.keyMap.has(player, KeySync.DESCEND)) {
+                        float boost = feetArmor.getJumpBoostMode(feet).getBoost();
+                        double usage = 1000 * (boost / 0.1F);
+                        if (feetArmor.getEnergy(feet) > usage) {
+                            ItemStack leg = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
+                            if (!leg.isEmpty() && leg.getItem() instanceof ItemMekAsuitLegsArmour legsArmor) {
+                                if (legsArmor.isUpgradeInstalled(feet, moduleUpgrade.LOCOMOTIVE_BOOSTING_UNIT)) {
+                                    boost = (float) Math.sqrt(boost);
+                                }
+                            }
+                            player.motionY += boost;
+                            feetArmor.setEnergy(feet, feetArmor.getEnergy(feet) - usage);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void getBreakSpeed(PlayerEvent.BreakSpeed event) {
+        EntityPlayer player = event.getEntityPlayer();
+        float speed = event.getNewSpeed();
+        BlockPos position = event.getPos();
+        /*
+        if (position!=null){
+            BlockPos pos = position;
+            ItemStack mainHand = player.getHeldItemMainhand();
+
+        }
+         */
+        ItemStack legs = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
+        if (!legs.isEmpty() && legs.getItem() instanceof ItemMekaSuitArmor armor && armor.isUpgradeInstalled(legs, moduleUpgrade.GYROSCOPIC_STABILIZATION_UNIT)) {
+            if (player.isInsideOfMaterial(Material.WATER) && !EnchantmentHelper.getAquaAffinityModifier(player)) {
+                speed *= 5.0F;
+            }
+            if (!player.onGround) {
+                speed *= 5.0F;
+            }
+        }
+        event.setNewSpeed(speed);
     }
 
     @Desugar
