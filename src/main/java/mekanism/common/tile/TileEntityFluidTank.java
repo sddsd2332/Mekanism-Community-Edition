@@ -372,6 +372,7 @@ public class TileEntityFluidTank extends TileEntityContainerBlock implements IAc
         return super.isCapabilityDisabled(capability, side);
     }
 
+
     @Override
     public int fill(EnumFacing from, @Nonnull FluidStack resource, boolean doFill) {
         if (tier == FluidTankTier.CREATIVE) {
@@ -414,7 +415,7 @@ public class TileEntityFluidTank extends TileEntityContainerBlock implements IAc
 
     @Override
     public boolean canDrain(EnumFacing from, @Nullable FluidStack fluid) {
-        return fluidTank != null && FluidContainerUtils.canDrain(fluidTank.getFluid(), fluid) && !isActive || from != EnumFacing.DOWN;
+        return fluidTank != null && FluidContainerUtils.canDrain(fluidTank.getFluid(), fluid) &&  (!isActive || from != EnumFacing.DOWN);
     }
 
     @Override
@@ -422,9 +423,10 @@ public class TileEntityFluidTank extends TileEntityContainerBlock implements IAc
         return new FluidTankInfo[]{fluidTank.getInfo()};
     }
 
+
     @Override
     public FluidTankInfo[] getAllTanks() {
-        return getTankInfo(null);
+        return new FluidTankInfo[]{fluidTank.getInfo()};
     }
 
     @Override
