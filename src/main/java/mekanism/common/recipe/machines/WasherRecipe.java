@@ -32,7 +32,11 @@ public class WasherRecipe extends MachineRecipe<GasInput, GasOutput, WasherRecip
     }
 
     public void operate(GasTank inputTank, FluidTank fluidTank, GasTank outputTank, int scale) {
-        if (getInput().useGas(inputTank, true, scale) && waterInput.useFluid(fluidTank, true, scale)) {
+        operate(inputTank,fluidTank,outputTank,scale,true);
+    }
+
+    public void operate(GasTank inputTank, FluidTank fluidTank, GasTank outputTank, int scale,boolean deplete) {
+        if (getInput().useGas(inputTank, deplete, scale) && waterInput.useFluid(fluidTank, deplete, scale)) {
             getOutput().applyOutputs(outputTank, true, scale);
         }
     }

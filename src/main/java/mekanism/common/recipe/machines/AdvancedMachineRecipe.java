@@ -26,7 +26,11 @@ public abstract class AdvancedMachineRecipe<RECIPE extends AdvancedMachineRecipe
     }
 
     public void operate(NonNullList<ItemStack> inventory, int inputIndex, int outputIndex, GasTank gasTank, int needed) {
-        if (getInput().useItem(inventory, inputIndex, true) && getInput().useSecondary(gasTank, needed, true)) {
+        operate(inventory, inputIndex, outputIndex, gasTank, needed, true);
+    }
+
+    public void operate(NonNullList<ItemStack> inventory, int inputIndex, int outputIndex, GasTank gasTank, int needed, boolean deplete) {
+        if (getInput().useItem(inventory, inputIndex, deplete) && getInput().useSecondary(gasTank, needed, deplete)) {
             getOutput().applyOutputs(inventory, outputIndex, true);
         }
     }

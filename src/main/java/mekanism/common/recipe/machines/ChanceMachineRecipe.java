@@ -20,7 +20,11 @@ public abstract class ChanceMachineRecipe<RECIPE extends ChanceMachineRecipe<REC
     }
 
     public void operate(NonNullList<ItemStack> inventory, int inputIndex, int primaryIndex, int secondaryIndex) {
-        if (getInput().useItemStackFromInventory(inventory, inputIndex, true)) {
+        operate(inventory, inputIndex, primaryIndex, secondaryIndex, true);
+    }
+
+    public void operate(NonNullList<ItemStack> inventory, int inputIndex, int primaryIndex, int secondaryIndex, boolean deplete) {
+        if (getInput().useItemStackFromInventory(inventory, inputIndex, deplete)) {
             getOutput().applyOutputs(inventory, primaryIndex, secondaryIndex, true);
         }
     }

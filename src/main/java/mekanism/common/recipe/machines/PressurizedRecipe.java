@@ -42,7 +42,11 @@ public class PressurizedRecipe extends MachineRecipe<PressurizedInput, Pressuriz
     }
 
     public void operate(NonNullList<ItemStack> inventory, int inputIndex, FluidTank inputFluidTank, GasTank inputGasTank, GasTank outputGasTank, int outputIndex) {
-        if (getInput().use(inventory, inputIndex, inputFluidTank, inputGasTank, true)) {
+        operate(inventory,inputIndex,inputFluidTank,inputGasTank,outputGasTank,outputIndex,true);
+    }
+
+    public void operate(NonNullList<ItemStack> inventory, int inputIndex, FluidTank inputFluidTank, GasTank inputGasTank, GasTank outputGasTank, int outputIndex,boolean deplete) {
+        if (getInput().use(inventory, inputIndex, inputFluidTank, inputGasTank, deplete)) {
             getOutput().applyOutputs(inventory, outputIndex, outputGasTank, true);
         }
     }

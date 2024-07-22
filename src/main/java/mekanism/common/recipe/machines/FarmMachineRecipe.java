@@ -21,7 +21,11 @@ public abstract class FarmMachineRecipe<RECIPE extends FarmMachineRecipe<RECIPE>
     }
 
     public void operate(NonNullList<ItemStack> inventory, int inputIndex, GasTank gasTank, int needed, int primaryIndex, int secondaryIndex) {
-        if (getInput().useItem(inventory, inputIndex, true) && getInput().useSecondary(gasTank, needed, true)) {
+        operate(inventory, inputIndex, gasTank, needed, primaryIndex, secondaryIndex, true);
+    }
+
+    public void operate(NonNullList<ItemStack> inventory, int inputIndex, GasTank gasTank, int needed, int primaryIndex, int secondaryIndex, boolean deplete) {
+        if (getInput().useItem(inventory, inputIndex, deplete) && getInput().useSecondary(gasTank, needed, deplete)) {
             getOutput().applyOutputs(inventory, primaryIndex, secondaryIndex, true);
         }
     }

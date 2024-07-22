@@ -22,7 +22,11 @@ public class DissolutionRecipe extends MachineRecipe<ItemStackInput, GasOutput, 
     }
 
     public void operate(NonNullList<ItemStack> inventory, int inputIndex, GasTank outputTank) {
-        if (getInput().useItemStackFromInventory(inventory, inputIndex, true)) {
+        operate(inventory,inputIndex,outputTank,true);
+    }
+
+    public void operate(NonNullList<ItemStack> inventory, int inputIndex, GasTank outputTank,boolean deplete) {
+        if (getInput().useItemStackFromInventory(inventory, inputIndex, deplete)) {
             getOutput().applyOutputs(outputTank, true, 1);
         }
     }

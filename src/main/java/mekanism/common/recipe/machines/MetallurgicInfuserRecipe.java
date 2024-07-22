@@ -29,8 +29,12 @@ public class MetallurgicInfuserRecipe extends MachineRecipe<InfusionInput, ItemS
         return new MetallurgicInfuserRecipe(getInput(), getOutput());
     }
 
-    public void output(NonNullList<ItemStack> inventory, int inputIndex, int outputIndex, InfuseStorage infuseStored) {
-        if (getInput().use(inventory, inputIndex, infuseStored, true)) {
+    public void operate(NonNullList<ItemStack> inventory, int inputIndex, int outputIndex, InfuseStorage infuseStored) {
+        operate(inventory,inputIndex,outputIndex,infuseStored,true);
+    }
+
+    public void operate(NonNullList<ItemStack> inventory, int inputIndex, int outputIndex, InfuseStorage infuseStored,boolean deplete) {
+        if (getInput().use(inventory, inputIndex, infuseStored, deplete)) {
             getOutput().applyOutputs(inventory, outputIndex, true);
         }
     }

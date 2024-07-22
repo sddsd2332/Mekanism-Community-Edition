@@ -24,7 +24,11 @@ public abstract class DoubleMachineRecipe<RECIPE extends DoubleMachineRecipe<REC
     }
 
     public void operate(NonNullList<ItemStack> inventory, int inputIndex, int extraIndex, int outputIndex) {
-        if (getInput().useItem(inventory, inputIndex, true) && getInput().useExtra(inventory, extraIndex, true)) {
+        operate(inventory,inputIndex,extraIndex,outputIndex,true);
+    }
+
+    public void operate(NonNullList<ItemStack> inventory, int inputIndex, int extraIndex, int outputIndex,boolean deplete) {
+        if (getInput().useItem(inventory, inputIndex, deplete) && getInput().useExtra(inventory, extraIndex, deplete)) {
             getOutput().applyOutputs(inventory, outputIndex, true);
         }
     }

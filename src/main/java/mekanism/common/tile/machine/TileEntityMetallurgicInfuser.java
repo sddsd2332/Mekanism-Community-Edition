@@ -151,7 +151,7 @@ public class TileEntityMetallurgicInfuser extends TileEntityUpgradeableMachine<I
     }
 
     public void operate(MetallurgicInfuserRecipe recipe) {
-        recipe.output(inventory, 2, 3, infuseStored);
+        recipe.operate(inventory, 2, 3, infuseStored);
         markForUpdateSync();
     }
 

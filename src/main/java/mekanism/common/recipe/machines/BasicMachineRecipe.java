@@ -24,7 +24,11 @@ public abstract class BasicMachineRecipe<RECIPE extends BasicMachineRecipe<RECIP
     }
 
     public void operate(NonNullList<ItemStack> inventory, int inputIndex, int outputIndex) {
-        if (getInput().useItemStackFromInventory(inventory, inputIndex, true)) {
+        operate(inventory,inputIndex,outputIndex,true);
+    }
+
+    public void operate(NonNullList<ItemStack> inventory, int inputIndex, int outputIndex,boolean deplete) {
+        if (getInput().useItemStackFromInventory(inventory, inputIndex, deplete)) {
             getOutput().applyOutputs(inventory, outputIndex, true);
         }
     }

@@ -18,9 +18,12 @@ public abstract class Chance2MachineRecipe<RECIPE extends Chance2MachineRecipe<R
     public boolean canOperate(NonNullList<ItemStack> inventory, int inputIndex, int primaryIndex) {
         return inputMatches(inventory, inputIndex) && getOutput().applyOutputs(inventory, primaryIndex, false);
     }
-
     public void operate(NonNullList<ItemStack> inventory, int inputIndex, int primaryIndex) {
-        if (getInput().useItemStackFromInventory(inventory, inputIndex, true)) {
+        operate(inventory,inputIndex,primaryIndex,true);
+    }
+
+    public void operate(NonNullList<ItemStack> inventory, int inputIndex, int primaryIndex, boolean deplete) {
+        if (getInput().useItemStackFromInventory(inventory, inputIndex, deplete)) {
             getOutput().applyOutputs(inventory, primaryIndex, true);
         }
     }

@@ -40,7 +40,11 @@ public class NucleosynthesizerRecipe extends MachineRecipe<NucleosynthesizerInpu
     }
 
     public void operate(NonNullList<ItemStack> inventory, int inputIndex, GasTank inputGasTank, int outputIndex) {
-        if (getInput().use(inventory, inputIndex, inputGasTank, true)) {
+        operate(inventory,inputIndex,inputGasTank,outputIndex,true);
+    }
+
+    public void operate(NonNullList<ItemStack> inventory, int inputIndex, GasTank inputGasTank, int outputIndex,boolean deplete ) {
+        if (getInput().use(inventory, inputIndex, inputGasTank, deplete)) {
             getOutput().applyOutputs(inventory, outputIndex, true);
         }
     }

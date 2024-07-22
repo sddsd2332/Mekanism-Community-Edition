@@ -22,7 +22,11 @@ public class CrystallizerRecipe extends MachineRecipe<GasInput, ItemStackOutput,
     }
 
     public void operate(GasTank inputTank, NonNullList<ItemStack> inventory, int outputIndex) {
-        if (getInput().useGas(inputTank, true, 1)) {
+        operate(inputTank,inventory,outputIndex,true);
+    }
+
+    public void operate(GasTank inputTank, NonNullList<ItemStack> inventory, int outputIndex, boolean deplete) {
+        if (getInput().useGas(inputTank, deplete, 1)) {
             getOutput().applyOutputs(inventory, outputIndex, true);
         }
     }
