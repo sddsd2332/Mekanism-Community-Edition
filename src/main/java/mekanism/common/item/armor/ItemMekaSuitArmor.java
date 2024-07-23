@@ -3,6 +3,7 @@ package mekanism.common.item.armor;
 
 import cofh.redstoneflux.api.IEnergyContainerItem;
 import ic2.api.item.IElectricItemManager;
+import ic2.api.item.IHazmatLike;
 import ic2.api.item.ISpecialElectricItem;
 import mekanism.api.EnumColor;
 import mekanism.api.energy.IEnergizedItem;
@@ -21,6 +22,7 @@ import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -47,10 +49,13 @@ import java.util.Map;
 
 @Optional.InterfaceList({
         @Optional.Interface(iface = "ic2.api.item.ISpecialElectricItem", modid = MekanismHooks.IC2_MOD_ID),
-        @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyContainerItem", modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
+        @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyContainerItem", modid = MekanismHooks.REDSTONEFLUX_MOD_ID),
+        @Optional.Interface(iface = "ic2.api.item.IHazmatLike", modid = MekanismHooks.IC2_MOD_ID)
 })
-public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedItem, ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor, IModuleUpgrade {
+public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedItem, ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor, IModuleUpgrade, IHazmatLike {
 
+    private static final EntityEquipmentSlot[] EQUIPMENT_ORDER = {EntityEquipmentSlot.OFFHAND, EntityEquipmentSlot.MAINHAND, EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS,
+            EntityEquipmentSlot.FEET};
     private final float absorption;
 
     public ItemMekaSuitArmor(EntityEquipmentSlot slot) {
@@ -72,6 +77,134 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
             }
             default -> throw new IllegalArgumentException("Unknown Equipment Slot Type");
         }
+    }
+
+    public static float getDamageAbsorbed(EntityPlayer player, DamageSource source, float amount) {
+        return getDamageAbsorbed(player, source, amount, null);
+    }
+
+    public static boolean tryAbsorbAll(EntityPlayer player, DamageSource source, float amount) {
+        List<Runnable> energyUsageCallbacks = new ArrayList<>(4);
+        if (getDamageAbsorbed(player, source, amount, energyUsageCallbacks) >= 1) {
+            for (Runnable energyUsageCallback : energyUsageCallbacks) {
+                energyUsageCallback.run();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static float getDamageAbsorbed(EntityPlayer player, DamageSource source, float amount, @Nullable List<Runnable> energyUseCallbacks) {
+        if (amount <= 0) {
+            return 0;
+        }
+        float ratioAbsorbed = 0;
+        List<FoundArmorDetails> armorDetails = new ArrayList<>();
+        for (ItemStack stack : player.getArmorInventoryList()) {
+            if (!stack.isEmpty() && stack.getItem() instanceof ItemMekaSuitArmor armor) {
+                double energyContainer = armor.getEnergy(stack);
+                if (energyContainer > 0) {
+                    FoundArmorDetails details = new FoundArmorDetails(energyContainer, armor);
+                    armorDetails.add(details);
+                    for (moduleUpgrade upgrade : details.armor.getValidModule(stack)) {
+                        float absorption;
+                        if (upgrade == moduleUpgrade.InhalationPurificationUnit && details.armor.isUpgradeInstalled(stack, moduleUpgrade.InhalationPurificationUnit)) {
+                            absorption = 1F;
+                            ratioAbsorbed += absorbDamage(details.usageInfo, amount, absorption, ratioAbsorbed, 1000D);
+                        }
+                        if (upgrade == moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT && details.armor.isUpgradeInstalled(stack, moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT)) {
+                            absorption = (float) (0.8 * (details.armor.getUpgrades(moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT) / 8));
+                            ratioAbsorbed += absorbDamage(details.usageInfo, amount, absorption, ratioAbsorbed, 0);
+                        }
+                        if (ratioAbsorbed >= 1) {
+                            break;
+                        }
+                    }
+                    if (ratioAbsorbed >= 1) {
+                        break;
+                    }
+                }
+            }
+        }
+        if (ratioAbsorbed < 1) {
+            Float absorbRatio = null;
+            for (FoundArmorDetails details : armorDetails) {
+                if (absorbRatio == null) {
+                    //If we haven't looked up yet if we can absorb the damage type and if we can't
+                    // stop checking if the armor is able to
+                    if (!isSource(source)) {
+                        break;
+                    }
+                    if (Originaltype(source)) {
+                        absorbRatio = 0.75F;
+                    }
+                    if (absorbRatio == null) {
+                        absorbRatio = 1F;
+                    }
+                    float absorption = details.armor.absorption * absorbRatio;
+                    ratioAbsorbed += absorbDamage(details.usageInfo, amount, absorption, ratioAbsorbed, 100000D);
+                    if (ratioAbsorbed >= 1) {
+                        //If we have fully absorbed the damage, stop checking/trying to absorb more
+                        break;
+                    }
+                }
+            }
+            for (FoundArmorDetails details : armorDetails) {
+                if (details.usageInfo.energyUsed != 0) {
+                    if (energyUseCallbacks == null) {
+                        for (ItemStack stack : player.getArmorInventoryList()) {
+                            details.armor.setEnergy(stack, details.energyContainer - details.usageInfo.energyUsed);
+                        }
+                    } else {
+                        energyUseCallbacks.add(() -> {
+                            for (ItemStack stack : player.getArmorInventoryList()) {
+                                details.armor.setEnergy(stack, details.energyContainer - details.usageInfo.energyUsed);
+                            }
+                        });
+                    }
+
+                }
+            }
+        }
+        return Math.min(ratioAbsorbed, 1);
+    }
+
+    private static boolean isSource(DamageSource source) {
+        return (source == DamageSource.ANVIL || source == DamageSource.CACTUS ||
+                source == DamageSource.CRAMMING || source == DamageSource.DRAGON_BREATH ||
+                source == DamageSource.DROWN || source == DamageSource.FALL ||
+                source == DamageSource.FALLING_BLOCK || source == DamageSource.FLY_INTO_WALL ||
+                source == DamageSource.GENERIC || source == DamageSource.HOT_FLOOR ||
+                source == DamageSource.IN_FIRE || source == DamageSource.IN_WALL ||
+                source == DamageSource.LAVA || source == DamageSource.LIGHTNING_BOLT ||
+                source == DamageSource.ON_FIRE || source == DamageSource.WITHER);
+    }
+
+    private static boolean Originaltype(DamageSource source) {
+        return source == DamageSource.STARVE || source == DamageSource.OUT_OF_WORLD || source == DamageSource.MAGIC || source == DamageSource.FIREWORKS;
+    }
+
+    private static float absorbDamage(EnergyUsageInfo usageInfo, float amount, float absorption, float currentAbsorbed, double energyCost) {
+        absorption = Math.min(1 - currentAbsorbed, absorption);
+        float toAbsorb = amount * absorption;
+        if (toAbsorb > 0) {
+            double usage = energyCost * toAbsorb;
+            if (usage == 0) {
+                //No energy is actually needed to absorb the damage, either because of the config
+                // or how small the amount to absorb is
+                return absorption;
+            } else if (usageInfo.energyAvailable >= usage) {
+                usageInfo.energyUsed += usage;
+                usageInfo.energyAvailable = usageInfo.energyAvailable - usage;
+                return absorption;
+            } else if (usageInfo.energyAvailable != 0) {
+                float absorbedPercent = (float) (usageInfo.energyAvailable / usage);
+                usageInfo.energyUsed += usageInfo.energyAvailable;
+                usageInfo.energyAvailable = 0;
+                return absorption * absorbedPercent;
+            }
+        }
+        return 0;
     }
 
     @Override
@@ -228,17 +361,19 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     public List<moduleUpgrade> getValidModule(ItemStack stack) {
         return new ArrayList<>() {{
             add(moduleUpgrade.EnergyUnit);
+            add(moduleUpgrade.RADIATION_SHIELDING_UNIT);
         }};
     }
 
     @Override
     public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
         if (!world.isRemote) {
-            if (itemStack.getItem() instanceof ItemMekaSuitArmor) {
+            if (itemStack.getItem() instanceof ItemMekaSuitArmor armor) {
                 if (ItemDataUtils.hasData(itemStack, "module")) {
                     Map<moduleUpgrade, Integer> module = moduleUpgrade.buildMap(ItemDataUtils.getDataMap(itemStack));
                     upgrades.putAll(module);
                 }
+
             }
         }
     }
@@ -249,117 +384,19 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         return false;
     }
 
-    public static float getDamageAbsorbed(EntityPlayer player, DamageSource source, float amount) {
-        return getDamageAbsorbed(player, source, amount, null);
+    @Override
+    @Optional.Method(modid = MekanismHooks.IC2_MOD_ID)
+    public boolean addsProtection(EntityLivingBase entityLivingBase, EntityEquipmentSlot slotType, ItemStack stack) {
+        return isUpgradeInstalled(stack, moduleUpgrade.RADIATION_SHIELDING_UNIT);
     }
 
-    public static boolean tryAbsorbAll(EntityPlayer player, DamageSource source, float amount) {
-        List<Runnable> energyUsageCallbacks = new ArrayList<>(4);
-        if (getDamageAbsorbed(player, source, amount, energyUsageCallbacks) >= 1) {
-            for (Runnable energyUsageCallback : energyUsageCallbacks) {
-                energyUsageCallback.run();
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private static float getDamageAbsorbed(EntityPlayer player, DamageSource source, float amount, @Nullable List<Runnable> energyUseCallbacks) {
-        if (amount <= 0) {
-            return 0;
-        }
-        float ratioAbsorbed = 0;
-        List<FoundArmorDetails> armorDetails = new ArrayList<>();
-        for (ItemStack stack : player.getArmorInventoryList()) {
-            if (!stack.isEmpty() && stack.getItem() instanceof ItemMekaSuitArmor armor) {
-                double energyContainer = armor.getEnergy(stack);
-                if (energyContainer > 0) {
-                    FoundArmorDetails details = new FoundArmorDetails(energyContainer, armor);
-                    armorDetails.add(details);
-                    for (moduleUpgrade upgrade : details.armor.getValidModule(stack)) {
-                        float absorption;
-                        if (upgrade == moduleUpgrade.InhalationPurificationUnit && details.armor.isUpgradeInstalled(stack, moduleUpgrade.InhalationPurificationUnit)) {
-                            absorption = 1F;
-                            ratioAbsorbed += absorbDamage(details.usageInfo, amount, absorption, ratioAbsorbed, 1000D);
-                        }
-                        if (upgrade == moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT && details.armor.isUpgradeInstalled(stack, moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT)) {
-                            absorption = (float) (0.8 * (details.armor.getUpgrades(moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT) / 8));
-                            ratioAbsorbed += absorbDamage(details.usageInfo, amount, absorption, ratioAbsorbed, 0);
-                        }
-                        if (ratioAbsorbed >= 1) {
-                            break;
-                        }
-                    }
-                    if (ratioAbsorbed >= 1) {
-                        break;
-                    }
-                }
-            }
-        }
-        if (ratioAbsorbed < 1) {
-            Float absorbRatio = null;
-            for (FoundArmorDetails details : armorDetails) {
-                if (absorbRatio == null) {
-                    //If we haven't looked up yet if we can absorb the damage type and if we can't
-                    // stop checking if the armor is able to
-                    if (!isSource(source)) {
-                        break;
-                    }
-                    if (Originaltype(source)) {
-                        absorbRatio = 0.75F;
-                    }
-                    if (absorbRatio == null) {
-                        absorbRatio = 1F;
-                    }
-                    float absorption = details.armor.absorption * absorbRatio;
-                    ratioAbsorbed += absorbDamage(details.usageInfo, amount, absorption, ratioAbsorbed, 100000D);
-                    if (ratioAbsorbed >= 1) {
-                        //If we have fully absorbed the damage, stop checking/trying to absorb more
-                        break;
-                    }
-                }
-            }
-            for (FoundArmorDetails details : armorDetails) {
-                if (details.usageInfo.energyUsed != 0) {
-                    if (energyUseCallbacks == null) {
-                        for (ItemStack stack : player.getArmorInventoryList()) {
-                            details.armor.setEnergy(stack, details.energyContainer - details.usageInfo.energyUsed);
-                        }
-                    } else {
-                        energyUseCallbacks.add(() -> {
-                            for (ItemStack stack : player.getArmorInventoryList()) {
-                                details.armor.setEnergy(stack, details.energyContainer - details.usageInfo.energyUsed);
-                            }
-                        });
-                    }
-
-                }
-            }
-        }
-        return Math.min(ratioAbsorbed, 1);
-    }
-
-    private static boolean isSource(DamageSource source) {
-        return (source == DamageSource.ANVIL || source == DamageSource.CACTUS ||
-                source == DamageSource.CRAMMING || source == DamageSource.DRAGON_BREATH ||
-                source == DamageSource.DROWN || source == DamageSource.FALL ||
-                source == DamageSource.FALLING_BLOCK || source == DamageSource.FLY_INTO_WALL ||
-                source == DamageSource.GENERIC || source == DamageSource.HOT_FLOOR ||
-                source == DamageSource.IN_FIRE || source == DamageSource.IN_WALL ||
-                source == DamageSource.LAVA || source == DamageSource.LIGHTNING_BOLT ||
-                source == DamageSource.ON_FIRE || source == DamageSource.WITHER);
-    }
-
-    private static boolean Originaltype(DamageSource source) {
-        return source == DamageSource.STARVE || source == DamageSource.OUT_OF_WORLD || source == DamageSource.MAGIC || source == DamageSource.FIREWORKS;
-    }
-
+    abstract double getShieldingByArmor();
 
     private static class FoundArmorDetails {
 
-        private double energyContainer;
         private final EnergyUsageInfo usageInfo;
         private final ItemMekaSuitArmor armor;
+        private double energyContainer;
 
         public FoundArmorDetails(double energyContainer, ItemMekaSuitArmor armor) {
             this.energyContainer = energyContainer;
@@ -378,28 +415,5 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
             //Copy it so we can just use minusEquals without worry
             this.energyAvailable = energyAvailable;
         }
-    }
-
-    private static float absorbDamage(EnergyUsageInfo usageInfo, float amount, float absorption, float currentAbsorbed, double energyCost) {
-        absorption = Math.min(1 - currentAbsorbed, absorption);
-        float toAbsorb = amount * absorption;
-        if (toAbsorb > 0) {
-            double usage = energyCost * toAbsorb;
-            if (usage == 0) {
-                //No energy is actually needed to absorb the damage, either because of the config
-                // or how small the amount to absorb is
-                return absorption;
-            } else if (usageInfo.energyAvailable >= usage) {
-                usageInfo.energyUsed += usage;
-                usageInfo.energyAvailable = usageInfo.energyAvailable - usage;
-                return absorption;
-            } else if (usageInfo.energyAvailable != 0) {
-                float absorbedPercent = (float) (usageInfo.energyAvailable / usage);
-                usageInfo.energyUsed += usageInfo.energyAvailable;
-                usageInfo.energyAvailable = 0;
-                return absorption * absorbedPercent;
-            }
-        }
-        return 0;
     }
 }

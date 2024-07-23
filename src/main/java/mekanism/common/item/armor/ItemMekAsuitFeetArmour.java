@@ -124,6 +124,10 @@ public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor implements IItemHU
         }
     }
 
+    @Override
+    double getShieldingByArmor() {
+        return 1.5;
+    }
 
 
     public void removeEnchantment(ItemStack stack) {
@@ -228,5 +232,7 @@ public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor implements IItemHU
             return ordinal() < values().length - 1 ? values()[ordinal() + 1] : values()[0];
         }
     }
+
+
 
 }

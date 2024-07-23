@@ -100,4 +100,5 @@ dependencies {
     implementation rfg.deobf("curse.maven:thermal-foundation-222880:2926428")
     implementation rfg.deobf("curse.maven:thermal-expansion-69163:2926431")
     implementation rfg.deobf("curse.maven:cofh-world-271384:2920434")
+    implementation rfg.deobf("curse.maven:nuclearcraft-overhauled-336895:5446445")
 }

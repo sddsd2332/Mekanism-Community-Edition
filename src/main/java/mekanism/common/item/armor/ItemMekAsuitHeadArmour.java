@@ -273,6 +273,11 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
     }
 
     @Override
+    double getShieldingByArmor() {
+        return 2.5;
+    }
+
+    @Override
     public List<moduleUpgrade> getValidModule(ItemStack stack) {
         List<moduleUpgrade> list = super.getValidModule(stack);
         list.add(moduleUpgrade.SolarRechargingUnit);
