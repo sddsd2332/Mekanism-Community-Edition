@@ -20,6 +20,7 @@ import mekanism.common.multiblock.MultiblockManager;
 import mekanism.common.network.PacketSimpleGui;
 import mekanism.common.recipe.RecipeHandler;
 import mekanism.common.util.StackUtils;
+import mekanism.generators.common.content.fission.SynchronizedFissionData;
 import mekanism.generators.common.content.turbine.SynchronizedTurbineData;
 import mekanism.generators.common.fixers.GeneratorTEFixer;
 import net.minecraft.block.Block;
@@ -66,7 +67,7 @@ public class MekanismGenerators implements IModule {
     public static final int DATA_VERSION = 1;
     public static CreativeTabMekanismGenerators tabMekanismGenerators = new CreativeTabMekanismGenerators();
     public static MultiblockManager<SynchronizedTurbineData> turbineManager = new MultiblockManager<>("industrialTurbine");
-
+    public static MultiblockManager<SynchronizedFissionData> fissionMangaer = new MultiblockManager<>("fissionReactor");
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         // Register blocks and tile entities
@@ -168,6 +169,7 @@ public class MekanismGenerators implements IModule {
     @Override
     public void resetClient() {
         SynchronizedTurbineData.clientRotationMap.clear();
+        SynchronizedFissionData.clientHotMap.clear();
         proxy.setGasGeneratorMaxEnergy();
     }
 

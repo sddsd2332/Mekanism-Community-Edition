@@ -9,6 +9,10 @@ import mekanism.generators.common.GeneratorsBlocks;
 import mekanism.generators.common.MekanismGenerators;
 import mekanism.generators.common.block.BlockGenerator;
 import mekanism.generators.common.tile.*;
+import mekanism.generators.common.tile.fission.TileEntityControlRodAssembly;
+import mekanism.generators.common.tile.fission.TileEntityFissionCasing;
+import mekanism.generators.common.tile.fission.TileEntityFissionFuelAssembly;
+import mekanism.generators.common.tile.fission.TileEntityFissionValve;
 import mekanism.generators.common.tile.turbine.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
@@ -43,6 +47,7 @@ public class BlockStateGenerator extends ExtendedBlockState {
 
     public enum GeneratorBlock {
         GENERATOR_BLOCK_1;
+      //  GENERATOR_BLOCK_2;
 
         PropertyEnum<GeneratorType> generatorTypeProperty;
 
@@ -54,10 +59,10 @@ public class BlockStateGenerator extends ExtendedBlockState {
         }
 
         public Block getBlock() {
-            if (this == GeneratorBlock.GENERATOR_BLOCK_1) {
-                return GeneratorsBlocks.Generator;
-            }
-            return null;
+            return switch (this) {
+                case GENERATOR_BLOCK_1 -> GeneratorsBlocks.Generator;
+              //  case GENERATOR_BLOCK_2 -> GeneratorsBlocks.Generator2;
+            };
         }
     }
 
@@ -74,7 +79,12 @@ public class BlockStateGenerator extends ExtendedBlockState {
         TURBINE_CASING(GeneratorBlock.GENERATOR_BLOCK_1, 10, "TurbineCasing", -1, -1, TileEntityTurbineCasing::new, false, BlockStateUtils.NO_ROTATION, false),
         TURBINE_VALVE(GeneratorBlock.GENERATOR_BLOCK_1, 11, "TurbineValve", -1, -1, TileEntityTurbineValve::new, false, BlockStateUtils.NO_ROTATION, false, true),
         TURBINE_VENT(GeneratorBlock.GENERATOR_BLOCK_1, 12, "TurbineVent", -1, -1, TileEntityTurbineVent::new, false, BlockStateUtils.NO_ROTATION, false),
-        SATURATING_CONDENSER(GeneratorBlock.GENERATOR_BLOCK_1, 13, "SaturatingCondenser", -1, -1, TileEntitySaturatingCondenser::new, false, BlockStateUtils.NO_ROTATION, false);
+        SATURATING_CONDENSER(GeneratorBlock.GENERATOR_BLOCK_1, 13, "SaturatingCondenser", -1, -1, TileEntitySaturatingCondenser::new, false, BlockStateUtils.NO_ROTATION, false),
+       /* FISSION_REACTOR_CASING(GeneratorBlock.GENERATOR_BLOCK_2,0,"fission_reactor_casing",-1,-1, TileEntityFissionCasing::new,false,BlockStateUtils.NO_ROTATION, false),
+        FISSION_REACTOR_PORT(GeneratorBlock.GENERATOR_BLOCK_2,1,"fission_reactor_port",-1,-1, TileEntityFissionValve::new,false,BlockStateUtils.NO_ROTATION, false),
+        FISSION_FUEL_ASSEMBLY(GeneratorBlock.GENERATOR_BLOCK_2,2,"fission_fuel_assembly",-1,-1, TileEntityFissionFuelAssembly::new,false,BlockStateUtils.NO_ROTATION, false),
+        CONTROL_ROD_ASSEMBLY(GeneratorBlock.GENERATOR_BLOCK_2,3,"control_rod_assembly",-1,-1, TileEntityControlRodAssembly::new,false,BlockStateUtils.NO_ROTATION, false)*/;
+
 
         private static final List<GeneratorType> GENERATORS_FOR_CONFIG;
 
