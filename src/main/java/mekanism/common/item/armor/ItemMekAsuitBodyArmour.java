@@ -252,6 +252,6 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
 
     @Override
     double getShieldingByArmor() {
-        return 4;
+        return 40;
     }
 }

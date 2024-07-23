@@ -63,18 +63,9 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         setMaxStackSize(1);
         setCreativeTab(Mekanism.tabMekanism);
         switch (armorType) {
-            case HEAD -> {
-                absorption = 0.15F;
-            }
-            case CHEST -> {
-                absorption = 0.4F;
-            }
-            case LEGS -> {
-                absorption = 0.3F;
-            }
-            case FEET -> {
-                absorption = 0.15F;
-            }
+            case HEAD, FEET -> absorption = 0.15F;
+            case CHEST -> absorption = 0.4F;
+            case LEGS -> absorption = 0.3F;
             default -> throw new IllegalArgumentException("Unknown Equipment Slot Type");
         }
     }
@@ -262,6 +253,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         ItemStack discharged = new ItemStack(this);
         list.add(discharged);
         ItemStack charged = new ItemStack(this);
+
         setEnergy(charged, ((IEnergizedItem) charged.getItem()).getMaxEnergy(charged));
         list.add(charged);
 
@@ -368,12 +360,31 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     @Override
     public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
         if (!world.isRemote) {
-            if (itemStack.getItem() instanceof ItemMekaSuitArmor armor) {
+            if (itemStack.getItem() instanceof ItemMekaSuitArmor) {
                 if (ItemDataUtils.hasData(itemStack, "module")) {
                     Map<moduleUpgrade, Integer> module = moduleUpgrade.buildMap(ItemDataUtils.getDataMap(itemStack));
                     upgrades.putAll(module);
                 }
+                Shielding(itemStack);
+            }
+        }
+    }
 
+    public void Shielding(ItemStack stack) {
+        if(Mekanism.hooks.NuclearCraft){
+            NBTTagCompound tag = stack.getTagCompound();
+            if (tag == null) {
+                tag = new NBTTagCompound();
+            }
+            double nc = 0;
+            if (tag.hasKey("ncRadiationResistance")) {
+                nc = tag.getDouble("ncRadiationResistance");
+            }
+            if (isUpgradeInstalled(stack, moduleUpgrade.RADIATION_SHIELDING_UNIT) && nc != getShieldingByArmor()) {
+                tag.setDouble("ncRadiationResistance", getShieldingByArmor());
+            }
+            if (nc == 0 && tag.isEmpty()){
+                stack.setTagCompound(null);
             }
         }
     }

@@ -126,7 +126,7 @@ public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor implements IItemHU
 
     @Override
     double getShieldingByArmor() {
-        return 1.5;
+        return 15;
     }
 
 

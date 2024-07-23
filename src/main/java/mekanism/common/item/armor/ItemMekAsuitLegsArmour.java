@@ -134,7 +134,7 @@ public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor {
 
     @Override
     double getShieldingByArmor() {
-        return 2;
+        return 20;
     }
 
 }
