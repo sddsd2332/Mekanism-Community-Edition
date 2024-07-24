@@ -78,8 +78,8 @@ public class FusionReactor {
     public boolean hasHohlraum() {
         if (controller != null) {
             ItemStack hohlraum = controller.inventory.get(0);
-            if (!hohlraum.isEmpty() && hohlraum.getItem() instanceof ItemHohlraum) {
-                GasStack gasStack = ((ItemHohlraum) hohlraum.getItem()).getGas(hohlraum);
+            if (!hohlraum.isEmpty() && hohlraum.getItem() instanceof ItemHohlraum itemHohlraum) {
+                GasStack gasStack = itemHohlraum.getGas(hohlraum);
                 return gasStack != null && gasStack.getGas() == MekanismFluids.FusionFuel && gasStack.amount == ItemHohlraum.MAX_GAS;
             }
         }
@@ -290,9 +290,9 @@ public class FusionReactor {
 
         for (int[] coords : positions) {
             TileEntity tile = centre.clone().translate(coords[0], coords[1], coords[2]).getTileEntity(controller.getWorld());
-            if (tile instanceof TileEntityReactorBlock && ((TileEntityReactorBlock) tile).isFrame()) {
-                reactorBlocks.add((TileEntityReactorBlock) tile);
-                ((TileEntityReactorBlock) tile).setReactor(this);
+            if (tile instanceof TileEntityReactorBlock  block &&block.isFrame()) {
+                reactorBlocks.add(block);
+                block.setReactor(this);
             } else {
                 return false;
             }
@@ -316,11 +316,11 @@ public class FusionReactor {
             if (LaserManager.isReceptor(tile, null) && !(coords[1] == 0 && (coords[0] == 0 || coords[2] == 0))) {
                 return false;
             }
-            if (tile instanceof TileEntityReactorBlock) {
-                reactorBlocks.add((TileEntityReactorBlock) tile);
-                ((TileEntityReactorBlock) tile).setReactor(this);
-                if (tile instanceof IHeatTransfer) {
-                    heatTransfers.add((IHeatTransfer) tile);
+            if (tile instanceof TileEntityReactorBlock block) {
+                reactorBlocks.add(block);
+                block.setReactor(this);
+                if (tile instanceof IHeatTransfer heat) {
+                    heatTransfers.add(heat);
                 }
             } else {
                 return false;

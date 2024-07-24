@@ -85,8 +85,11 @@ public class TileEntityDynamicValve extends TileEntityDynamicTank implements IFl
                     });
                 }
                 if (gasTank.getGas() != null && gasTank.getGas().getGas() != null) {
-                    GasStack toSend = new GasStack(gasTank.getGas().getGas(),Math.min(gasTank.getMaxGas(), gasTank.getGasAmount()));
-                    gasTank.output(GasUtils.emit(toSend, this, EnumSet.allOf(EnumFacing.class)), true);
+                    Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
+                        GasStack toSend = new GasStack(gasTank.getGas().getGas(),Math.min(gasTank.getMaxGas(), gasTank.getGasAmount()));
+                        gasTank.output(GasUtils.emit(toSend, this, EnumSet.allOf(EnumFacing.class)), true);
+                    });
+
                 }
             }
         }

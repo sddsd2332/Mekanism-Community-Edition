@@ -46,7 +46,9 @@ public class TileEntityRadioactiveWasteBarrel extends TileEntityBasicBlock imple
                     gasTank.draw(1, true);
                 }
                 if (getActive()) {
-                    gasTank.draw(GasUtils.emit(gasTank.stored, this, Collections.singleton(EnumFacing.DOWN)), true);
+                    Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
+                        gasTank.draw(GasUtils.emit(gasTank.stored, this, Collections.singleton(EnumFacing.DOWN)), true);
+                    });
                 }
             }
         }

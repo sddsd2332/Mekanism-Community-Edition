@@ -44,7 +44,8 @@ public class TileEntityFissionValve extends TileEntityFissionCasing implements I
     private int currentRedstoneLevel;
 
     public boolean Eject;
-    public TileEntityFissionValve(){
+
+    public TileEntityFissionValve() {
         super("FissionValve");
         waterTank = new FissionWaterTank(this);
         steamTank = new FissionSteamTank(this);
@@ -84,8 +85,11 @@ public class TileEntityFissionValve extends TileEntityFissionCasing implements I
                     });
                 }
                 if (outputTank.getGas() != null && outputTank.getGas().getGas() != null && Eject) {
-                    GasStack toSend = new GasStack(outputTank.getGas().getGas(), Math.min(outputTank.getMaxGas(), outputTank.getGasAmount()));
-                    outputTank.output(GasUtils.emit(toSend, this, EnumSet.allOf(EnumFacing.class)), true);
+                    Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
+                        GasStack toSend = new GasStack(outputTank.getGas().getGas(), Math.min(outputTank.getMaxGas(), outputTank.getGasAmount()));
+                        outputTank.output(GasUtils.emit(toSend, this, EnumSet.allOf(EnumFacing.class)), true);
+                    });
+
                 }
 
                 int newRedstoneLevel = getRedstoneLevel();
@@ -256,7 +260,7 @@ public class TileEntityFissionValve extends TileEntityFissionCasing implements I
     @Override
     public EnumActionResult onSneakRightClick(EntityPlayer player, EnumFacing side) {
         if (!world.isRemote) {
-            Eject =! Eject;
+            Eject = !Eject;
             String modeText = " " + (Eject ? EnumColor.DARK_RED : EnumColor.DARK_GREEN) + LangUtils.transOutputInput(Eject) + ".";
             player.sendMessage(new TextComponentString(EnumColor.DARK_BLUE + Mekanism.LOG_TAG + " " + EnumColor.GREY +
                     LangUtils.localize("tooltip.configurator.reactorPortEject") + modeText));

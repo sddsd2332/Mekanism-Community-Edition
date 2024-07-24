@@ -25,7 +25,6 @@ public abstract class TileEntityReactorBlock extends TileEntityElectricBlock {
 
     public TileEntityReactorBlock() {
         super("ReactorBlock", 0);
-        inventory = NonNullListSynchronized.withSize(0, ItemStack.EMPTY);
     }
 
     public TileEntityReactorBlock(String name, double maxEnergy) {
@@ -137,10 +136,10 @@ public abstract class TileEntityReactorBlock extends TileEntityElectricBlock {
             iterated.add(pos);
             for (EnumFacing side : EnumFacing.VALUES) {
                 Coord4D coord = pos.offset(side);
-                if (!iterated.contains(coord) && coord.getTileEntity(world) instanceof TileEntityReactorBlock) {
-                    ((TileEntityReactorBlock) coord.getTileEntity(world)).attempted = true;
-                    if (coord.getTileEntity(world) instanceof TileEntityReactorController) {
-                        found = (TileEntityReactorController) coord.getTileEntity(world);
+                if (!iterated.contains(coord) && coord.getTileEntity(world) instanceof TileEntityReactorBlock block) {
+                    block.attempted = true;
+                    if (coord.getTileEntity(world) instanceof TileEntityReactorController controller) {
+                        found = controller;
                         return;
                     }
                     loop(coord);

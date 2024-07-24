@@ -69,15 +69,29 @@ public class TileEntitySynchronized extends TileEntity {
         NBTTagCompound compound = new NBTTagCompound();
         super.writeToNBT(compound);
         writeCustomNBT(compound);
+        super.getUpdateTag();
         return compound;
     }
 
+/*
+    @Override
     public final void onDataPacket(@Nonnull NetworkManager manager, @Nonnull SPacketUpdateTileEntity packet) {
         super.onDataPacket(manager, packet);
         readCustomNBT(packet.getNbtCompound());
         readNetNBT(packet.getNbtCompound());
     }
+ */
 
+    @Override
+    public void handleUpdateTag(@Nonnull NBTTagCompound tag) {
+        // The super implementation of handleUpdateTag is to call this readFromNBT. But, the given TagCompound
+        // only has x/y/z/id data, so our readFromNBT will set a bunch of default values which are wrong.
+        // So simply call the super's readFromNBT, to let Forge do whatever it wants, but don't treat this like
+        // a full NBT object, don't pass it to our custom read methods.
+        readCustomNBT(tag);
+        readNetNBT(tag);
+        super.readFromNBT(tag);
+    }
 
     @SuppressWarnings("ConstantValue")
     public void markNoUpdate() {
