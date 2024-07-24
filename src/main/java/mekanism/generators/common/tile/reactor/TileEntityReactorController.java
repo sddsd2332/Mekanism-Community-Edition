@@ -48,7 +48,6 @@ public class TileEntityReactorController extends TileEntityReactorBlock implemen
     @SideOnly(Side.CLIENT)
     private ISound activeSound;
     private int playSoundCooldown = 0;
-    public FusionReactor fusionReactors = new FusionReactor(this);
 
     public TileEntityReactorController() {
         super("ReactorController", MekanismConfig.current().generators.reactorGeneratorStorage.val());
@@ -66,7 +65,7 @@ public class TileEntityReactorController extends TileEntityReactorBlock implemen
 
     public void formMultiblock(boolean keepBurning) {
         if (getReactor() == null) {
-            setReactor(fusionReactors);
+            setReactor(new FusionReactor(this));
         }
         getReactor().formMultiblock(keepBurning);
     }
@@ -92,21 +91,17 @@ public class TileEntityReactorController extends TileEntityReactorBlock implemen
     @Override
     public void onUpdate() {
         super.onUpdate();
-        if (!world.isRemote) {
-            if (isFormed()) {
-                getReactor().simulate();
-                if (getReactor().isBurning() != clientBurning || Math.abs(getReactor().getPlasmaTemp() - clientTemp) > 1000000) {
-                    Mekanism.packetHandler.sendUpdatePacket(this);
-                    clientBurning = getReactor().isBurning();
-                    clientTemp = getReactor().getPlasmaTemp();
-                }
-            } else if (ticker % 100 == 0 && !isFormed()) {
-                formMultiblock(false);
-            }
-        } else {
+        if (world.isRemote) {
             updateSound();
         }
-
+        if (isFormed()) {
+            getReactor().simulate();
+            if (!world.isRemote && (getReactor().isBurning() != clientBurning || Math.abs(getReactor().getPlasmaTemp() - clientTemp) > 1000000)) {
+                Mekanism.packetHandler.sendUpdatePacket(this);
+                clientBurning = getReactor().isBurning();
+                clientTemp = getReactor().getPlasmaTemp();
+            }
+        }
     }
 
     @SideOnly(Side.CLIENT)
@@ -180,7 +175,7 @@ public class TileEntityReactorController extends TileEntityReactorBlock implemen
         super.readCustomNBT(tag);
         boolean formed = tag.getBoolean("formed");
         if (formed) {
-            setReactor(fusionReactors);
+            setReactor(new FusionReactor(this));
             getReactor().setPlasmaTemp(tag.getDouble("plasmaTemp"));
             getReactor().setCaseTemp(tag.getDouble("caseTemp"));
             getReactor().setInjectionRate(tag.getInteger("injectionRate"));
@@ -240,7 +235,7 @@ public class TileEntityReactorController extends TileEntityReactorBlock implemen
                     Mekanism.proxy.doMultiblockSparkle(this, corner, 5, 5, 6, tile -> tile instanceof TileEntityReactorBlock);
                 }
                 if (getReactor() == null) {
-                    setReactor(fusionReactors);
+                    setReactor(new FusionReactor(this));
                     MekanismUtils.updateBlock(world, getPos());
                 }
 
@@ -283,7 +278,7 @@ public class TileEntityReactorController extends TileEntityReactorBlock implemen
     @Override
     public void setActive(boolean active) {
         if (active == (getReactor() == null)) {
-            setReactor(active ? fusionReactors : null);
+            setReactor(active ? new FusionReactor(this) : null);
         }
     }
 

@@ -7,6 +7,7 @@ import mekanism.client.render.GasRenderMap;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.client.render.MekanismRenderer.DisplayInteger;
 import mekanism.client.render.MekanismRenderer.Model3D;
+import mekanism.common.Mekanism;
 import mekanism.multiblockmachine.client.model.machine.ModelDigitalAssemblyTable;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachineGenerator;
 import mekanism.multiblockmachine.common.tile.machine.TileEntityDigitalAssemblyTable;
@@ -20,6 +21,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -35,6 +37,8 @@ import static mekanism.multiblockmachine.common.MultiblockMachineBlocks.Multiblo
 public class RenderDigitalAssemblyTable extends RenderTileEntityTime<TileEntityDigitalAssemblyTable> {
     public static final RenderDigitalAssemblyTable INSTANCE = new RenderDigitalAssemblyTable();
     private static final int stages = 3600;
+    public static ResourceLocation OVERLAY_ON = MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "DigitalAssemblyTable/DigitalAssemblyTable_ON.png");
+    public static ResourceLocation OVERLAY_OFF = MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "DigitalAssemblyTable/DigitalAssemblyTable_OFF.png");
     private static Map<EnumFacing, GasRenderMap<DisplayInteger[]>> cachedCenterInputGas = new EnumMap<>(EnumFacing.class);
     private static Map<EnumFacing, GasRenderMap<DisplayInteger[]>> cachedCenterOutputGas = new EnumMap<>(EnumFacing.class);
     private static Map<EnumFacing, DisplayInteger[]> energyDisplays1 = new EnumMap<>(EnumFacing.class);
@@ -52,16 +56,21 @@ public class RenderDigitalAssemblyTable extends RenderTileEntityTime<TileEntityD
         cachedCenterOutputFluids.clear();
     }
 
+    public ModelDigitalAssemblyTable getModel(){
+        return model;
+    }
+
     @Override
     public void render(TileEntityDigitalAssemblyTable tileEntity, double x, double y, double z, float partialTick, int destroyStage, float alpha) {
         GlStateManager.pushMatrix();
         GlStateManager.translate((float) x + 0.5F, (float) y + 1.5F, (float) z + 0.5F);
-        bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "DigitalAssemblyTable/DigitalAssemblyTable.png"));
+        bindTexture(tileEntity.getEnergy() > 0 ? OVERLAY_ON : OVERLAY_OFF);
         MekanismRenderer.rotate(tileEntity.facing, 0, 180, 90, 270);
         float actualRate = tileEntity.DoorHeight / 16F;
         GlStateManager.rotate(180, 0, 0, 1);
-        model.renderWithPiston(Math.max(0, actualRate), 0.0625F); // 先渲染本体
+        model.renderWithPiston(Math.max(0, actualRate), 0.0625F, tileEntity.getEnergy() != 0, tileEntity.getActive(), rendererDispatcher.renderEngine, getTime()); // 先渲染本体
         GlStateManager.popMatrix();
+
 
         if (tileEntity.getEnergy() > 0) {
             GlStateManager.pushMatrix();
@@ -205,7 +214,7 @@ public class RenderDigitalAssemblyTable extends RenderTileEntityTime<TileEntityD
 
         GlStateManager.pushMatrix();
         GlStateManager.translate((float) x + 0.5F, (float) y + 1.5F, (float) z + 0.5F);
-        bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "DigitalAssemblyTable/DigitalAssemblyTable.png"));
+        bindTexture(OVERLAY_ON);
         MekanismRenderer.rotate(tileEntity.facing, 0, 180, 90, 270);
         GlStateManager.rotate(180, 0, 0, 1);
         model.renderGlass(0.0625F);// 最后渲染玻璃

@@ -27,6 +27,7 @@ public class MekanismMultiblockMachineRecipe {
         }
         GasTankStack.getTagCompound().setInteger("tier", 3);
 
+
         ItemStack FluidTankStack = new ItemStack(MekanismBlocks.MachineBlock2, 1, 11);
         if (!FluidTankStack.hasTagCompound()) {
             FluidTankStack.setTagCompound(new NBTTagCompound());

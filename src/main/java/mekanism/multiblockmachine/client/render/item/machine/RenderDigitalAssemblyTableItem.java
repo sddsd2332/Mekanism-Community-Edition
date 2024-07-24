@@ -25,7 +25,7 @@ public class RenderDigitalAssemblyTableItem {
             GlStateManager.rotate(90, 0, 1, 0);
         }
         GlStateManager.translate(0, 0.1F, 0);
-        MekanismRenderer.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "DigitalAssemblyTable/DigitalAssemblyTable.png"));
+        MekanismRenderer.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "DigitalAssemblyTable/DigitalAssemblyTable_OFF.png"));
         model.renderItem(0.007F);
         GlStateManager.popMatrix();
     }
