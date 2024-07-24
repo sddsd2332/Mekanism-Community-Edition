@@ -102,6 +102,8 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
     public FluidInput waterInput = new FluidInput(new FluidStack(FluidRegistry.WATER, WATER_USAGE));
     private boolean machineUsesGAS;
     private boolean isMachineUsesGAS = true;
+    private boolean machineUsesFluid;
+    private boolean isMachineUsesFluid = true;
     /**
      * How much secondary energy each operation consumes per tick
      */
@@ -977,6 +979,8 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
             lastUsage = dataStream.readDouble();
             machineUsesGAS = dataStream.readBoolean();
             isMachineUsesGAS = dataStream.readBoolean();
+            machineUsesFluid = dataStream.readBoolean();
+            isMachineUsesFluid = dataStream.readBoolean();
             int amount = dataStream.readInt();
             if (amount > 0) {
                 infuseStored.setAmount(amount);
@@ -1028,6 +1032,8 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         GasUtils.clearIfInvalid(gasTank, recipeType::isValidGas);
         machineUsesGAS = nbtTags.getBoolean("machineUsesGAS");
         isMachineUsesGAS = nbtTags.getBoolean("isMachineUsesGAS");
+        machineUsesFluid = nbtTags.getBoolean("machineUsesFluid");
+        isMachineUsesFluid = nbtTags.getBoolean("isMachineUsesFluid");
     }
 
     @Override
@@ -1051,6 +1057,8 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         nbtTags.setTag("gasOutTank", gasOutTank.write(new NBTTagCompound()));
         nbtTags.setBoolean("machineUsesGAS", machineUsesGAS);
         nbtTags.setBoolean("isMachineUsesGAS", isMachineUsesGAS);
+        nbtTags.setBoolean("machineUsesFluid",machineUsesFluid);
+        nbtTags.setBoolean("isMachineUsesFluid",isMachineUsesFluid);
     }
 
     @Override
@@ -1065,6 +1073,8 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         data.add(lastUsage);
         data.add(machineUsesGAS);
         data.add(isMachineUsesGAS);
+        data.add(machineUsesFluid);
+        data.add(isMachineUsesFluid);
         data.add(infuseStored.getAmount());
         if (infuseStored.getAmount() > 0) {
             data.add(infuseStored.getType().name);
@@ -1450,8 +1460,17 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
             configComponent.setCanEject(TransmissionType.GAS, true);
         }
 
+        if (!inputFluidMachine()) {
+            configComponent.fillConfig(TransmissionType.FLUID,  -1);
+            machineUsesFluid = false;
+            isMachineUsesFluid = true;
+        }else {
+            if (!machineUsesFluid && isMachineUsesFluid){
+                configComponent.fillConfig(TransmissionType.FLUID,  1);
+                isMachineUsesFluid = false;
+            }
+        }
 
-        configComponent.fillConfig(TransmissionType.FLUID, !inputFluidMachine() ? -1 : 1);
     }
 
 
