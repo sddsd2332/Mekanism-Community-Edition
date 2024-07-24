@@ -4,7 +4,11 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
+import mekanism.common.MekanismBlocks;
+import mekanism.common.util.ItemDataUtils;
 import mezz.jei.api.ingredients.IIngredientHelper;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -34,6 +38,7 @@ public class GasStackHelper implements IIngredientHelper<GasStack> {
         return ingredient.getGas().getLocalizedName();
     }
 
+
     @Override
     public String getUniqueId(GasStack ingredient) {
         return "gas:" + ingredient.getGas().getName();
@@ -58,6 +63,20 @@ public class GasStackHelper implements IIngredientHelper<GasStack> {
     public String getResourceId(GasStack ingredient) {
         return ingredient.getGas().getTranslationKey();
     }
+
+
+    @Override
+    public ItemStack getCheatItemStack(GasStack ingredient) {
+        ItemStack gas = new ItemStack(MekanismBlocks.GasTank);
+        if (!gas.hasTagCompound()){
+            gas.setTagCompound(new NBTTagCompound());
+        }
+        gas.getTagCompound().setInteger("tier", 4);
+        GasStack gasStack = new GasStack(ingredient.getGas(), Integer.MAX_VALUE);
+        ItemDataUtils.setCompound(gas,"stored", gasStack.write(new NBTTagCompound()));
+        return gas;
+    }
+
 
     @Override
     public GasStack copyIngredient(GasStack ingredient) {

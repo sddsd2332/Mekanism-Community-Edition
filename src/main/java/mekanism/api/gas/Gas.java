@@ -34,6 +34,8 @@ public class Gas {
 
     private boolean radiation = false;
 
+    private boolean isRegisterFluid = false;
+
     /**
      * Creates a new Gas object with a defined name or key value.
      *
@@ -106,6 +108,9 @@ public class Gas {
         return radiation;
     }
 
+    public boolean isRegisterFluid(){
+        return isRegisterFluid;
+    }
     /**
      * Sets this gas's "visible" state to a new value. Setting it to 'false' will treat this gas as an internal gas, and it will not be displayed or accessed by other
      * mods.
@@ -291,7 +296,7 @@ public class Gas {
                 fluid = FluidRegistry.getFluid(name);
             }
         }
-
+        isRegisterFluid = true;
         return this;
     }
 

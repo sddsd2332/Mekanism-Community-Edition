@@ -2,12 +2,15 @@ package mekanism.common;
 
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasRegistry;
+import mekanism.api.gas.GasStack;
 import mekanism.api.gas.OreGas;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class MekanismFluids {
 
@@ -168,7 +171,13 @@ public class MekanismFluids {
         FluidRegistry.enableUniversalBucket();
 
         FluidRegistry.addBucketForFluid(HeavyWater);
+        /*
         FluidRegistry.addBucketForFluid(Brine.getFluid());
         FluidRegistry.addBucketForFluid(Lithium.getFluid());
+         */
+        List<GasStack> list = GasRegistry.getRegisteredGasses().stream().filter(Gas::isRegisterFluid).map(g -> new GasStack(g, Fluid.BUCKET_VOLUME)).collect(Collectors.toList());
+        for (GasStack gas : list){
+            FluidRegistry.addBucketForFluid(gas.getGas().getFluid());
+        }
     }
 }
