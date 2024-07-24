@@ -7,6 +7,7 @@ import mekanism.client.render.GasRenderMap;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.client.render.MekanismRenderer.DisplayInteger;
 import mekanism.client.render.MekanismRenderer.Model3D;
+import mekanism.common.Mekanism;
 import mekanism.multiblockmachine.client.model.machine.ModelDigitalAssemblyTable;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachineGenerator;
 import mekanism.multiblockmachine.common.tile.machine.TileEntityDigitalAssemblyTable;
@@ -52,6 +53,10 @@ public class RenderDigitalAssemblyTable extends RenderTileEntityTime<TileEntityD
         cachedCenterOutputFluids.clear();
     }
 
+    public ModelDigitalAssemblyTable getModel(){
+        return model;
+    }
+
     @Override
     public void render(TileEntityDigitalAssemblyTable tileEntity, double x, double y, double z, float partialTick, int destroyStage, float alpha) {
         GlStateManager.pushMatrix();
@@ -60,8 +65,9 @@ public class RenderDigitalAssemblyTable extends RenderTileEntityTime<TileEntityD
         MekanismRenderer.rotate(tileEntity.facing, 0, 180, 90, 270);
         float actualRate = tileEntity.DoorHeight / 16F;
         GlStateManager.rotate(180, 0, 0, 1);
-        model.renderWithPiston(Math.max(0, actualRate), 0.0625F); // 先渲染本体
+        model.renderWithPiston(Math.max(0, actualRate), 0.0625F, tileEntity.getEnergy() != 0, tileEntity.getActive(), rendererDispatcher.renderEngine, getTime()); // 先渲染本体
         GlStateManager.popMatrix();
+
 
         if (tileEntity.getEnergy() > 0) {
             GlStateManager.pushMatrix();

@@ -1,9 +1,13 @@
 package mekanism.multiblockmachine.client.model.machine;
 
+import mekanism.client.render.MekanismRenderer;
+import mekanism.common.Mekanism;
+import mekanism.multiblockmachine.common.util.MekanismMultiblockMachineUtils;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -978,7 +982,7 @@ public class ModelDigitalAssemblyTable extends ModelBase {
         ornament.cubeList.add(new ModelBox(ornament, 110, 19, -41.0F, -12.0F, -29.0F, 13, 2, 2, 0.0F, false));
     }
 
-    public void renderWithPiston(float piston, float size) {
+    public void renderWithPiston(float piston, float size, boolean power, boolean isActive, TextureManager manager, double progress) {
         door1.rotationPointY = 24 - (piston * 16);
         door2.rotationPointY = 40 - (piston * 16 * 2);
         door3.rotationPointY = 56 - (piston * 16 * 3);
@@ -986,7 +990,78 @@ public class ModelDigitalAssemblyTable extends ModelBase {
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
         doRender(size);
         GlStateManager.popMatrix();
+        if (power) {
+            GlStateManager.pushMatrix();
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            GlStateManager.disableAlpha();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "DigitalAssemblyTable/Led.png"));
+            GlStateManager.scale(1.001F, 1.001F, 1.001F);
+            GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
+            MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
+            doRender(size);
+            MekanismRenderer.disableGlow(glowInfo);
+            GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
+            GlStateManager.popMatrix();
+        }
 
+        if (isActive) {
+            GlStateManager.pushMatrix();
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            GlStateManager.disableAlpha();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            GlStateManager.scale(1.002F, 1.002F, 1.002F);
+            GlStateManager.translate(-0.0012F, -0.0012F, -0.0012F);
+            MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
+            manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "DigitalAssemblyTable/ON.png"));
+            pm.render(size);
+            manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "DigitalAssemblyTable/Progress_" + getTick(progress) + ".png"));
+            pm_progress.render(size);
+            MekanismRenderer.disableGlow(glowInfo);
+            GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
+            GlStateManager.popMatrix();
+        }
+    }
+
+    public void renderBloom(float size, boolean power, boolean isActive, TextureManager manager, double progress) {
+        if (power) {
+            GlStateManager.pushMatrix();
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            GlStateManager.disableAlpha();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "DigitalAssemblyTable/Led.png"));
+            GlStateManager.scale(1.001F, 1.001F, 1.001F);
+            GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
+            MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
+            doRender(size);
+            MekanismRenderer.disableGlow(glowInfo);
+            GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
+            GlStateManager.popMatrix();
+        }
+        if (isActive) {
+            GlStateManager.pushMatrix();
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            GlStateManager.disableAlpha();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            GlStateManager.scale(1.002F, 1.002F, 1.002F);
+            GlStateManager.translate(-0.0012F, -0.0012F, -0.0012F);
+            MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
+            manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "DigitalAssemblyTable/ON.png"));
+            pm.render(size);
+            manager.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER_MACHINE, "DigitalAssemblyTable/Progress_" + getTick(progress) + ".png"));
+            pm_progress.render(size);
+            MekanismRenderer.disableGlow(glowInfo);
+            GlStateManager.disableBlend();
+            GlStateManager.enableAlpha();
+            GlStateManager.popMatrix();
+        }
     }
 
     public void renderItem(float size) {
@@ -1039,6 +1114,29 @@ public class ModelDigitalAssemblyTable extends ModelBase {
         Warninglights.render(size);
         Warninglights2.render(size);
         ornament.render(size);
+    }
+
+
+
+    public int getTick(double tick) {
+        if (tick >= 0 && tick < 0.125D) {
+            return 1;
+        } else if (tick >= 0.125D && tick < 0.25D) {
+            return 2;
+        } else if (tick >= 0.25F && tick < 0.375D) {
+            return 3;
+        } else if (tick >= 0.375D && tick < 0.5D) {
+            return 4;
+        } else if (tick >= 0.5D && tick < 0.625D) {
+            return 5;
+        } else if (tick >= 0.625D && tick < 0.75D) {
+            return 6;
+        } else if (tick >= 0.75D && tick < 0.875D) {
+            return 7;
+        } else if (tick >= 0.875D) {
+            return 8;
+        }
+        return 0;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {

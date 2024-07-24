@@ -25,11 +25,7 @@ public class TileUtils {
     private static final NBTTagCompound EMPTY_TAG_COMPOUND = new NBTTagCompound();
 
     public static void addTankData(TileNetworkList data, GasTank tank) {
-        if (tank.getGas() != null) {
-            data.add(tank.getGas().write(new NBTTagCompound()));
-        } else {
-            data.add(EMPTY_TAG_COMPOUND);
-        }
+        addGasStack(data,tank.getGas());
     }
 
     public static void addTankData(TileNetworkList data, FluidTank tank) {

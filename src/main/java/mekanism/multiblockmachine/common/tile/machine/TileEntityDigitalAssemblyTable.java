@@ -17,6 +17,7 @@ import mekanism.common.recipe.outputs.CompositeOutput;
 import mekanism.common.tier.FluidTankTier;
 import mekanism.common.tier.GasTankTier;
 import mekanism.common.util.*;
+import mekanism.multiblockmachine.client.render.bloom.machine.BloomRenderDigitalAssemblyTable;
 import mekanism.multiblockmachine.common.MultiblockMachineItems;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine;
 import mekanism.multiblockmachine.common.tile.machine.prefab.TileEntityMultiblockBasicMachine;
@@ -71,6 +72,7 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
     public int lastInputFluid;
     public int lastOutputGas;
     public int lastOutputFluid;
+    public int lastoperatingTicks;
 
     public TileEntityDigitalAssemblyTable() {
         super("digitalassemblytable", BlockStateMultiblockMachine.MultiblockMachineType.DIGITAL_ASSEMBLY_TABLE, 200, 0);
@@ -118,7 +120,7 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
             if (!canOperate(recipe)) {
                 operatingTicks = 0;
             }
-            if (prevEnergy != getEnergy() || lastInputFluid != inputFluidTank.getFluidAmount() || lastInputGas != inputGasTank.getStored() || lastOutputGas != outputGasTank.getStored() || lastOutputFluid != outputFluidTank.getFluidAmount()) {
+            if (prevEnergy != getEnergy() || lastInputFluid != inputFluidTank.getFluidAmount() || lastInputGas != inputGasTank.getStored() || lastOutputGas != outputGasTank.getStored() || lastOutputFluid != outputFluidTank.getFluidAmount() ||  lastoperatingTicks != operatingTicks) {
                 SPacketUpdateTileEntity packet = this.getUpdatePacket();
                 PlayerChunkMapEntry trackingEntry = ((WorldServer) this.world).getPlayerChunkMap().getEntry(this.pos.getX() >> 4, this.pos.getZ() >> 4);
                 if (trackingEntry != null) {
@@ -132,6 +134,7 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
             lastInputFluid = inputFluidTank.getFluidAmount();
             lastOutputGas = outputGasTank.getStored();
             lastOutputFluid = outputFluidTank.getFluidAmount();
+            lastoperatingTicks = operatingTicks;
             if (needsPacket) {
                 Mekanism.packetHandler.sendUpdatePacket(this);
             }
@@ -175,6 +178,7 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
             if (Math.abs(outputFluidScale - targetOutputFluidScale) > 0.01) {
                 outputFluidScale = (9 * outputFluidScale + targetOutputFluidScale) / 10;
             }
+
 
             if (updateDelay > 0) {
                 updateDelay--;
@@ -844,6 +848,17 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
     @SideOnly(Side.CLIENT)
     public double getMaxRenderDistanceSquared() {
         return 16384.0D;
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        if (world.isRemote && !rendererInitialized) {
+            rendererInitialized = true;
+            if (Mekanism.hooks.Bloom) {
+                new BloomRenderDigitalAssemblyTable(this);
+            }
+        }
     }
 
 }

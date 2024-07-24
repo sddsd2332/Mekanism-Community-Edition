@@ -1,6 +1,5 @@
 package mekanism.generators.common;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mekanism.api.Coord4D;
 import mekanism.api.IHeatTransfer;
 import mekanism.api.gas.GasStack;
@@ -30,6 +29,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -49,8 +49,8 @@ public class FusionReactor {
     public static double caseWaterConductivity = 0.3;
     public static double caseAirConductivity = 0.1;
     public TileEntityReactorController controller;
-    public Set<TileEntityReactorBlock> reactorBlocks = new ObjectOpenHashSet<>();
-    public Set<IHeatTransfer> heatTransfers = new ObjectOpenHashSet<>();
+    public Set<TileEntityReactorBlock> reactorBlocks = new HashSet<>();
+    public Set<IHeatTransfer> heatTransfers = new HashSet<>();
     //Current stores of temperature - internally uses ambient-relative kelvin units
     public double plasmaTemperature;
     public double caseTemperature;
