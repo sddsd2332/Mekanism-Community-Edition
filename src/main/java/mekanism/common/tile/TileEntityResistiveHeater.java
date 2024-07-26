@@ -324,7 +324,7 @@ public class TileEntityResistiveHeater extends TileEntityEffectsBlock implements
         super.validate();
         if (world.isRemote && !rendererInitialized) {
             rendererInitialized = true;
-            if (Mekanism.hooks.Bloom) {
+            if (Mekanism.hooks.Bloom && MekanismConfig.current().client.enableBloom.val()) {
                 new BloomRenderResistiveHeater(this);
             }
         }

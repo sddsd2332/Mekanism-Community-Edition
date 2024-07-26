@@ -54,7 +54,6 @@ public class MultiblockRecipeRegistryHelper {
 
     private static void registerRecipeItem(IModRegistry registry, MultiblockMachineType type, RecipeHandler.Recipe recipe) {
         registry.addRecipeCatalyst(type.getStack(), recipe.getJEICategory());
-
     }
 
     private static <INPUT extends MachineInput<INPUT>, OUTPUT extends MachineOutput<OUTPUT>, RECIPE extends MachineRecipe<INPUT, OUTPUT, RECIPE>>

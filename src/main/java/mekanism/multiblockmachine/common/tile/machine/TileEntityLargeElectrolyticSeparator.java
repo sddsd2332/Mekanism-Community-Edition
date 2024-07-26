@@ -712,7 +712,7 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
         super.validate();
         if (world.isRemote && !rendererInitialized) {
             rendererInitialized = true;
-            if (Mekanism.hooks.Bloom) {
+            if (Mekanism.hooks.Bloom && MekanismConfig.current().client.enableBloom.val()) {
                 new BloomRenderLargeElectrolyticSeparator(this);
             }
         }

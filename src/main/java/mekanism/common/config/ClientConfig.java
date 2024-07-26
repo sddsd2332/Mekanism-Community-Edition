@@ -61,6 +61,9 @@ public class ClientConfig extends BaseConfig {
 
     public final FloatOption hudScale = new FloatOption(this,"client","hudScale",0.6F,"Scale of the text displayed on the HUD.",0.25F,1F);
 
+    public final BooleanOption enableBloom = new BooleanOption(this, "client", "enableBloom", false,
+            "Enable the glow texture of MeKCEu, which may cause a performance penalty. (GTCEu or Lumenized installation required)");
+
     @Override
     public void write(ByteBuf config) {
         throw new UnsupportedOperationException("Client config shouldn't be synced");

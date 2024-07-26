@@ -2,6 +2,8 @@ package mekanism.multiblockmachine.client;
 
 import mekanism.client.render.MekanismRenderer;
 import mekanism.client.render.item.ItemLayerWrapper;
+import mekanism.common.Mekanism;
+import mekanism.multiblockmachine.client.gui.GuiMidsizeGasTank;
 import mekanism.multiblockmachine.client.gui.generator.GuiLargeGasGenerator;
 import mekanism.multiblockmachine.client.gui.generator.GuiLargeHeatGenerator;
 import mekanism.multiblockmachine.client.gui.generator.GuiLargeWindGenerator;
@@ -26,6 +28,7 @@ import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachin
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine.MultiblockMachineType;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachineGenerator.MultiblockMachineGeneratorBlockStateMapper;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachineGenerator.MultiblockMachineGeneratorType;
+import mekanism.multiblockmachine.common.tile.TileEntityMidsizeGasTank;
 import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeGasGenerator;
 import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeHeatGenerator;
 import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeWindGenerator;
@@ -91,6 +94,16 @@ public class MultiblockMachineClientProxy extends MultiblockMachineCommonProxy {
         for (MultiblockMachineType type : MultiblockMachineType.values()) {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(type.typeBlock.getBlock()), type.meta, getInventoryMRL(type.getName()));
         }
+
+        ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(MultiblockMachineBlocks.MidsizeGasTank), stack -> {
+            ResourceLocation baseLocation = new ResourceLocation(MekanismMultiblockMachine.MODID, "MidsizeGasTank");
+            return new ModelResourceLocation(baseLocation, "facing=north");
+        });
+
+        ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(MultiblockMachineBlocks.MultiblockGasTank), stack -> {
+            ResourceLocation baseLocation = new ResourceLocation(MekanismMultiblockMachine.MODID, "MultiblockGasTank");
+            return new ModelResourceLocation(baseLocation, "facing=north");
+        });
     }
 
     private ModelResourceLocation getInventoryMRL(String type) {
@@ -145,6 +158,7 @@ public class MultiblockMachineClientProxy extends MultiblockMachineCommonProxy {
             case 4 -> new GuiLargeChemicalInfuser(player.inventory, (TileEntityLargeChemicalInfuser) tileEntity);
             case 5 -> new GuiLargeChemicalWasher(player.inventory, (TileEntityLargeChemicalWasher) tileEntity);
             case 6 -> new GuiDigitalAssemblyTable(player.inventory,(TileEntityDigitalAssemblyTable) tileEntity);
+            case 7 -> new GuiMidsizeGasTank(player.inventory,(TileEntityMidsizeGasTank) tileEntity);
             default -> null;
         };
     }

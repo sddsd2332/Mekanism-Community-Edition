@@ -74,12 +74,16 @@ public class TileUtils {
     }
 
     public static void receiveGasItem(ItemStack stack, GasTank tank) {
+        receiveGasItem(stack,tank,true);
+    }
+
+    public static void receiveGasItem(ItemStack stack, GasTank tank,boolean doReceive) {
         if (!stack.isEmpty() && tank.getNeeded() > 0 && stack.getItem() instanceof IGasItem item) {
             GasStack gasStack = item.getGas(stack);
             if (gasStack != null && item.canProvideGas(stack, gasStack.getGas())) {
                 Gas gas = gasStack.getGas();
                 if (gas != null && tank.canReceive(gas)) {
-                    tank.receive(GasUtils.removeGas(stack, gas, tank.getNeeded()), true);
+                    tank.receive(GasUtils.removeGas(stack, gas, tank.getNeeded()), doReceive);
                 }
             }
         }

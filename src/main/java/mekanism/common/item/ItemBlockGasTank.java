@@ -212,9 +212,7 @@ public class ItemBlockGasTank extends ItemBlock implements IGasItem, ISustainedI
 
     @Override
     public int addGas(ItemStack itemstack, GasStack stack) {
-        if (getGas(itemstack) != null && getGas(itemstack).getGas() != stack.getGas() &&
-                (getBaseTier(itemstack) != BaseTier.CREATIVE &&
-                        (getGas(itemstack).getGas() == MekanismFluids.NuclearWaste || getGas(itemstack).getGas() == MekanismFluids.Plutonium || getGas(itemstack).getGas() == MekanismFluids.Polonium || getGas(itemstack).getGas() == MekanismFluids.SpentNuclearWaste))) {
+        if (getGas(itemstack) != null && getGas(itemstack).getGas() != stack.getGas() && getBaseTier(itemstack) != BaseTier.CREATIVE && getGas(itemstack).getGas().isRadiation()) {
             return 0;
         }
         if (getBaseTier(itemstack) == BaseTier.CREATIVE) {
@@ -245,7 +243,7 @@ public class ItemBlockGasTank extends ItemBlock implements IGasItem, ISustainedI
 
     @Override
     public boolean canReceiveGas(ItemStack itemstack, Gas type) {
-        if (getBaseTier(itemstack) != BaseTier.CREATIVE && (type == MekanismFluids.NuclearWaste || type == MekanismFluids.Plutonium || type == MekanismFluids.Polonium || type == MekanismFluids.SpentNuclearWaste)) {
+        if (getBaseTier(itemstack) != BaseTier.CREATIVE && type.isRadiation()) {
             return false;
         } else {
             return getGas(itemstack) == null || getGas(itemstack).getGas() == type;
@@ -254,11 +252,7 @@ public class ItemBlockGasTank extends ItemBlock implements IGasItem, ISustainedI
 
     @Override
     public boolean canProvideGas(ItemStack itemstack, Gas type) {
-        if (getBaseTier(itemstack) != BaseTier.CREATIVE
-                && (getGas(itemstack) != null && (type == null || getGas(itemstack).getGas() == MekanismFluids.NuclearWaste
-                || getGas(itemstack).getGas() == MekanismFluids.Plutonium
-                || getGas(itemstack).getGas() == MekanismFluids.Polonium
-                || getGas(itemstack).getGas() == MekanismFluids.SpentNuclearWaste))) {
+        if (getBaseTier(itemstack) != BaseTier.CREATIVE && (getGas(itemstack) != null && (type == null || getGas(itemstack).getGas().isRadiation()))) {
             return false;
         } else {
             return getGas(itemstack) != null && (type == null || getGas(itemstack).getGas() == type);

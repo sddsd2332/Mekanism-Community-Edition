@@ -186,11 +186,14 @@ public abstract class BlockMultiblockMachine extends BlockMekanismContainer {
                             MekanismUtils.dismantleBlock(this, state, world, pos);
                             return true;
                         }
+                        /*
                         if (tileEntity != null) {
                             EnumFacing change = tileEntity.facing.rotateY();
                             tileEntity.setFacing(change);
                             world.notifyNeighborsOfStateChange(pos, this, true);
                         }
+
+                         */
                     } else {
                         SecurityUtils.displayNoAccess(entityplayer);
                     }

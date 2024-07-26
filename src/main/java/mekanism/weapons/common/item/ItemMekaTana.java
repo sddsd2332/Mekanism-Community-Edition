@@ -129,7 +129,7 @@ public class ItemMekaTana extends ItemMekaEnergyBase implements IModuleUpgrade {
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return true;
+        return getEnergy(stack) >0;
     }
 
     @Override

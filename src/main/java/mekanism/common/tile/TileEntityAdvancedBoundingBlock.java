@@ -38,20 +38,6 @@ public class TileEntityAdvancedBoundingBlock extends TileEntityBoundingBlock imp
         IEnergyProvider, IComputerIntegration, ISpecialConfigData {
 
     @Override
-    public void update() {
-        ticker++;
-        if (!world.isRemote) {
-            final TileEntity tile = getMainTile();
-            if (ticker % 200 == 0 && !(tile instanceof IAdvancedBoundingBlock)) {
-                if (MekanismConfig.current().mekce.VirtualErrors.val()) {
-                    Mekanism.logger.error("Found tile {} instead of an IAdvancedBoundingBlock, at {}. Multiblock cannot function, Blocks to be removed {}", tile, getMainPos(), getPos());
-                }
-                world.setBlockToAir(getPos());
-            }
-        }
-    }
-
-    @Override
     public boolean isEmpty() {
         IAdvancedBoundingBlock inv = getInv();
         if (inv == null) {
@@ -328,8 +314,15 @@ public class TileEntityAdvancedBoundingBlock extends TileEntityBoundingBlock imp
     public IAdvancedBoundingBlock getInv() {
         // Return the inventory/main tile; note that it's possible, esp. when chunks are
         // loading that the inventory/main tile has not yet loaded and thus is null.
-        TileEntity tile = getMainTile();
+        final TileEntity tile = getMainTile();
         if (tile == null) {
+            return null;
+        }
+        if (!(tile instanceof IAdvancedBoundingBlock)) {
+            // On the off chance that another block got placed there (which seems only likely with corruption,
+            // go ahead and log what we found.
+            Mekanism.logger.error("Found tile {} instead of an IAdvancedBoundingBlock, at {}. Multiblock cannot function", tile, getMainPos());
+            //world.setBlockToAir(mainPos);
             return null;
         }
         return (IAdvancedBoundingBlock) tile;

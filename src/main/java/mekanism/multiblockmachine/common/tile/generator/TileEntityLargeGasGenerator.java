@@ -17,7 +17,6 @@ import mekanism.multiblockmachine.client.render.bloom.generator.BloomRendererLar
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.common.capabilities.Capability;
@@ -482,7 +481,7 @@ public class TileEntityLargeGasGenerator extends TileEntityMultiblockGenerator i
         super.validate();
         if (world.isRemote && !rendererInitialized) {
             rendererInitialized = true;
-            if (Mekanism.hooks.Bloom) {
+            if (Mekanism.hooks.Bloom && MekanismConfig.current().client.enableBloom.val()) {
                 new BloomRendererLargeGasGenerator(this);
             }
         }

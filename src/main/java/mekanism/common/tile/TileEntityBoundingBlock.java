@@ -4,10 +4,8 @@ import io.netty.buffer.ByteBuf;
 import mekanism.api.Coord4D;
 import mekanism.api.TileNetworkList;
 import mekanism.common.Mekanism;
-import mekanism.common.base.IBoundingBlock;
 import mekanism.common.base.ITileNetwork;
 import mekanism.common.capabilities.Capabilities;
-import mekanism.common.config.MekanismConfig;
 import mekanism.common.network.PacketDataRequest.DataRequestMessage;
 import mekanism.common.network.PacketTileEntity.TileEntityMessage;
 import mekanism.common.tile.prefab.TileEntityBasicBlock;
@@ -15,7 +13,6 @@ import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 
@@ -24,29 +21,12 @@ import javax.annotation.Nonnull;
 /**
  * Multi-block used by wind turbines, solar panels, and other machines
  */
-public class TileEntityBoundingBlock extends TileEntity implements ITileNetwork, ITickable {
-
-    private BlockPos mainPos = BlockPos.ORIGIN;
+public class TileEntityBoundingBlock extends TileEntity implements ITileNetwork {
 
     public boolean receivedCoords;
-
     public int prevPower;
-
     public int ticker;
-
-    @Override
-    public void update() {
-        ticker++;
-        if (!world.isRemote) {
-            final TileEntity tile = getMainTile();
-            if (ticker % 200 == 0 && !(tile instanceof IBoundingBlock)) {
-                if (MekanismConfig.current().mekce.VirtualErrors.val()) {
-                    Mekanism.logger.error("Found tile {} instead of an IBoundingBlock, at {}. Multiblock cannot function, Blocks to be removed {}", tile, getMainPos(), getPos());
-                }
-                world.setBlockToAir(getPos());
-            }
-        }
-    }
+    private BlockPos mainPos = BlockPos.ORIGIN;
 
     public void setMainLocation(BlockPos pos) {
         receivedCoords = pos != null;
@@ -81,7 +61,7 @@ public class TileEntityBoundingBlock extends TileEntity implements ITileNetwork,
 
     public void onNeighborChange(Block block) {
         final TileEntity tile = getMainTile();
-        if (tile instanceof TileEntityBasicBlock tileEntity) {
+        if (tile instanceof final TileEntityBasicBlock tileEntity) {
             int power = world.getRedstonePowerFromNeighbors(getPos());
             if (prevPower != power) {
                 if (power > 0) {

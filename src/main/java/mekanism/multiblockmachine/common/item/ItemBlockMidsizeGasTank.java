@@ -1,0 +1,220 @@
+package mekanism.multiblockmachine.common.item;
+
+import mekanism.api.gas.Gas;
+import mekanism.api.gas.GasStack;
+import mekanism.api.gas.IGasItem;
+import mekanism.client.render.MekanismRenderer;
+import mekanism.common.Mekanism;
+import mekanism.common.base.ISustainedInventory;
+import mekanism.common.config.MekanismConfig;
+import mekanism.common.security.ISecurityItem;
+import mekanism.common.security.ISecurityTile;
+import mekanism.common.security.ISecurityTile.SecurityMode;
+import mekanism.common.util.ItemDataUtils;
+import mekanism.multiblockmachine.common.MekanismMultiblockMachine;
+import mekanism.multiblockmachine.common.tile.TileEntityMidsizeGasTank;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
+import java.util.UUID;
+
+public class ItemBlockMidsizeGasTank extends ItemBlock implements IGasItem, ISustainedInventory, ISecurityItem {
+
+    public Block metaBlock;
+
+    public ItemBlockMidsizeGasTank(Block block) {
+        super(block);
+        metaBlock = block;
+        setMaxStackSize(1);
+        setCreativeTab(MekanismMultiblockMachine.tabMekanismMultiblockMachine);
+    }
+
+
+    @Override
+    public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, World world, @Nonnull BlockPos pos, EnumFacing side, float hitX, float hitY,
+                                float hitZ, @Nonnull IBlockState state) {
+        boolean place = true;
+        Block block = world.getBlockState(pos).getBlock();
+        if (stack.getItem() instanceof ItemBlockMidsizeGasTank) {
+            if (!(block.isReplaceable(world, pos) && world.isAirBlock(pos.add(0, 1, 0)))) {
+                place = false;
+            }
+        }
+        if (place && super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, state)) {
+            TileEntityMidsizeGasTank tileEntity = (TileEntityMidsizeGasTank) world.getTileEntity(pos);
+            tileEntity.gasTank.setMaxGas(tileEntity.GasStorage);
+            tileEntity.gasTank.setGas(getGas(stack));
+            ((ISecurityTile) tileEntity).getSecurity().setOwnerUUID(getOwnerUUID(stack));
+            if (hasSecurity(stack)) {
+                ((ISecurityTile) tileEntity).getSecurity().setMode(getSecurity(stack));
+            }
+            if (getOwnerUUID(stack) == null) {
+                ((ISecurityTile) tileEntity).getSecurity().setOwnerUUID(player.getUniqueID());
+            }
+            ((ISustainedInventory) tileEntity).setInventory(getInventory(stack));
+            if (!world.isRemote) {
+                Mekanism.packetHandler.sendUpdatePacket(tileEntity);
+            }
+        }
+        return place;
+    }
+
+    @Override
+    public GasStack getGas(ItemStack itemstack) {
+        return GasStack.readFromNBT(ItemDataUtils.getCompound(itemstack, "stored"));
+    }
+
+    @Override
+    public void setGas(ItemStack itemstack, GasStack stack) {
+        if (stack == null || stack.amount == 0) {
+            ItemDataUtils.removeData(itemstack, "stored");
+        } else {
+            int amount = Math.max(0, Math.min(stack.amount, getMaxGas(itemstack)));
+            GasStack gasStack = new GasStack(stack.getGas(), amount);
+            ItemDataUtils.setCompound(itemstack, "stored", gasStack.write(new NBTTagCompound()));
+        }
+    }
+
+    @Override
+    public int getMaxGas(ItemStack itemstack) {
+        return 819200 * 2;
+    }
+
+    @Override
+    public int getRate(ItemStack itemstack) {
+        return 512000 * 2;
+    }
+
+    @Override
+    public int addGas(ItemStack itemstack, GasStack stack) {
+        if (getGas(itemstack) != null && getGas(itemstack).getGas() != stack.getGas() && getGas(itemstack).getGas().isRadiation()) {
+            return 0;
+        }
+        int toUse = Math.min(getMaxGas(itemstack) - getStored(itemstack), Math.min(getRate(itemstack), stack.amount));
+        setGas(itemstack, new GasStack(stack.getGas(), getStored(itemstack) + toUse));
+        return toUse;
+    }
+
+    @Override
+    public GasStack removeGas(ItemStack itemstack, int amount) {
+        if (getGas(itemstack) == null) {
+            return null;
+        }
+        Gas type = getGas(itemstack).getGas();
+        int gasToUse = Math.min(getStored(itemstack), Math.min(getRate(itemstack), amount));
+        setGas(itemstack, new GasStack(type, getStored(itemstack) - gasToUse));
+        return new GasStack(type, gasToUse);
+    }
+
+    private int getStored(ItemStack itemstack) {
+        return getGas(itemstack) != null ? getGas(itemstack).amount : 0;
+    }
+
+    @Override
+    public boolean canReceiveGas(ItemStack itemstack, Gas type) {
+        if (type.isRadiation()) {
+            return false;
+        } else {
+            return getGas(itemstack) == null || getGas(itemstack).getGas() == type;
+        }
+    }
+
+    @Override
+    public boolean canProvideGas(ItemStack itemstack, Gas type) {
+        if ((getGas(itemstack) != null && (type == null || getGas(itemstack).getGas().isRadiation()))) {
+            return false;
+        } else {
+            return getGas(itemstack) != null && (type == null || getGas(itemstack).getGas() == type);
+        }
+    }
+
+    @Override
+    public void setInventory(NBTTagList nbtTags, Object... data) {
+        if (data[0] instanceof ItemStack) {
+            ItemDataUtils.setList((ItemStack) data[0], "Items", nbtTags);
+        }
+    }
+
+    @Override
+    public NBTTagList getInventory(Object... data) {
+        if (data[0] instanceof ItemStack) {
+            return ItemDataUtils.getList((ItemStack) data[0], "Items");
+        }
+        return null;
+    }
+
+    @Override
+    public boolean showDurabilityBar(ItemStack stack) {
+        return getGas(stack) != null; // No bar for empty containers as bars are drawn on top of stack count number
+    }
+
+    @Override
+    public double getDurabilityForDisplay(ItemStack stack) {
+        return 1D - ((getGas(stack) != null ? (double) getGas(stack).amount : 0D) / (double) getMaxGas(stack));
+    }
+
+    @Override
+    public int getRGBDurabilityForDisplay(@Nonnull ItemStack stack) {
+        GasStack gas = getGas(stack);
+        if (gas != null) {
+            MekanismRenderer.color(gas);
+            return gas.getGas().getTint();
+        } else {
+            return MathHelper.hsvToRGB(Math.max(0.0F, (float) (1 - getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
+        }
+    }
+
+    @Override
+    public UUID getOwnerUUID(ItemStack stack) {
+        if (ItemDataUtils.hasData(stack, "ownerUUID")) {
+            return UUID.fromString(ItemDataUtils.getString(stack, "ownerUUID"));
+        }
+        return null;
+    }
+
+    @Override
+    public void setOwnerUUID(ItemStack stack, UUID owner) {
+        if (owner == null) {
+            ItemDataUtils.removeData(stack, "ownerUUID");
+        } else {
+            ItemDataUtils.setString(stack, "ownerUUID", owner.toString());
+        }
+    }
+
+    @Override
+    public SecurityMode getSecurity(ItemStack stack) {
+        if (!MekanismConfig.current().general.allowProtection.val()) {
+            return SecurityMode.PUBLIC;
+        }
+        return SecurityMode.values()[ItemDataUtils.getInt(stack, "security")];
+    }
+
+    @Override
+    public void setSecurity(ItemStack stack, SecurityMode mode) {
+        if (getOwnerUUID(stack) == null) {
+            ItemDataUtils.removeData(stack, "security");
+        } else {
+            ItemDataUtils.setInt(stack, "security", mode.ordinal());
+        }
+    }
+
+    @Override
+    public boolean hasSecurity(ItemStack stack) {
+        return true;
+    }
+
+    @Override
+    public boolean hasOwner(ItemStack stack) {
+        return hasSecurity(stack);
+    }
+}

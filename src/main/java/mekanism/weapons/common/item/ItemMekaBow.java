@@ -254,7 +254,7 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return true;
+        return getEnergy(stack) >0;
     }
 
     @Override

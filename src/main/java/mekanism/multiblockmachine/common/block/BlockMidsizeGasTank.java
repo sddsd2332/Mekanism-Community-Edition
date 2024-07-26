@@ -1,22 +1,21 @@
-package mekanism.common.block;
+package mekanism.multiblockmachine.common.block;
 
 import mekanism.api.IMekWrench;
 import mekanism.api.gas.IGasItem;
-import mekanism.common.Mekanism;
-import mekanism.common.MekanismBlocks;
-import mekanism.common.base.ISideConfiguration;
+import mekanism.common.base.IBoundingBlock;
 import mekanism.common.base.ISustainedInventory;
-import mekanism.common.base.ITierItem;
+import mekanism.common.block.BlockMekanismContainer;
 import mekanism.common.block.states.BlockStateFacing;
-import mekanism.common.block.states.BlockStateGasTank;
 import mekanism.common.integration.wrenches.Wrenches;
 import mekanism.common.security.ISecurityItem;
 import mekanism.common.security.ISecurityTile;
-import mekanism.common.tile.TileEntityGasTank;
 import mekanism.common.tile.prefab.TileEntityBasicBlock;
-import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.SecurityUtils;
+import mekanism.multiblockmachine.common.MekanismMultiblockMachine;
+import mekanism.multiblockmachine.common.MultiblockMachineBlocks;
+import mekanism.multiblockmachine.common.block.states.BlockStateMidsizeGasTank;
+import mekanism.multiblockmachine.common.tile.TileEntityMidsizeGasTank;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
@@ -36,28 +35,19 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 
-public class BlockGasTank extends BlockMekanismContainer {
+public class BlockMidsizeGasTank extends BlockMekanismContainer {
 
-    private static final AxisAlignedBB TANK_BOUNDS = new AxisAlignedBB(0.1875F, 0.0F, 0.1875F, 0.8125F, 1.0F, 0.8125F);
-
-    public BlockGasTank() {
+    public BlockMidsizeGasTank() {
         super(Material.IRON);
         setHardness(3.5F);
         setResistance(8F);
-        setCreativeTab(Mekanism.tabMekanism);
+        setCreativeTab(MekanismMultiblockMachine.tabMekanismMultiblockMachine);
     }
 
     @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateGasTank(this);
-    }
-
-    @Nonnull
-    @Override
-    @Deprecated
-    public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState();
+        return new BlockStateMidsizeGasTank(this);
     }
 
     @Override
@@ -70,12 +60,9 @@ public class BlockGasTank extends BlockMekanismContainer {
     @Deprecated
     public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         TileEntity tile = MekanismUtils.getTileEntitySafe(worldIn, pos);
-        if (tile instanceof TileEntityGasTank tank) {
+        if (tile instanceof TileEntityMidsizeGasTank tank) {
             if (tank.facing != null) {
                 state = state.withProperty(BlockStateFacing.facingProperty, tank.facing);
-            }
-            if (tank.tier != null) {
-                state = state.withProperty(BlockStateGasTank.typeProperty, tank.tier);
             }
         }
         return state;
@@ -84,16 +71,43 @@ public class BlockGasTank extends BlockMekanismContainer {
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         TileEntityBasicBlock tileEntity = (TileEntityBasicBlock) world.getTileEntity(pos);
+        if (tileEntity == null) {
+            return;
+        }
         EnumFacing change = EnumFacing.SOUTH;
-        int side = MathHelper.floor((double) (placer.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-        switch (side) {
-            case 0 -> change = EnumFacing.NORTH;
-            case 1 -> change = EnumFacing.EAST;
-            case 2 -> change = EnumFacing.SOUTH;
-            case 3 -> change = EnumFacing.WEST;
+        if (tileEntity.canSetFacing(EnumFacing.DOWN) && tileEntity.canSetFacing(EnumFacing.UP)) {
+            int height = Math.round(placer.rotationPitch);
+            if (height >= 65) {
+                change = EnumFacing.UP;
+            } else if (height <= -65) {
+                change = EnumFacing.DOWN;
+            }
+        }
+
+        if (change != EnumFacing.DOWN && change != EnumFacing.UP) {
+            int side = MathHelper.floor((placer.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+            change = switch (side) {
+                case 0 -> EnumFacing.NORTH;
+                case 1 -> EnumFacing.EAST;
+                case 2 -> EnumFacing.SOUTH;
+                case 3 -> EnumFacing.WEST;
+                default -> change;
+            };
         }
         tileEntity.setFacing(change);
         tileEntity.redstone = world.getRedstonePowerFromNeighbors(pos) > 0;
+        if (tileEntity instanceof IBoundingBlock) {
+            ((IBoundingBlock) tileEntity).onPlace();
+        }
+    }
+
+    @Override
+    public void breakBlock(World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+        TileEntityBasicBlock tileEntity = (TileEntityBasicBlock) world.getTileEntity(pos);
+        if (tileEntity instanceof IBoundingBlock) {
+            ((IBoundingBlock) tileEntity).onBreak();
+        }
+        super.breakBlock(world, pos, state);
     }
 
     @Override
@@ -119,7 +133,7 @@ public class BlockGasTank extends BlockMekanismContainer {
         if (world.isRemote) {
             return true;
         }
-        TileEntityGasTank tileEntity = (TileEntityGasTank) world.getTileEntity(pos);
+        TileEntityMidsizeGasTank tileEntity = (TileEntityMidsizeGasTank) world.getTileEntity(pos);
         ItemStack stack = entityplayer.getHeldItem(hand);
         if (!stack.isEmpty()) {
             IMekWrench wrenchHandler = Wrenches.getHandler(stack);
@@ -146,7 +160,7 @@ public class BlockGasTank extends BlockMekanismContainer {
         if (tileEntity != null) {
             if (!entityplayer.isSneaking()) {
                 if (SecurityUtils.canAccess(entityplayer, tileEntity)) {
-                    entityplayer.openGui(Mekanism.instance, 10, world, pos.getX(), pos.getY(), pos.getZ());
+                    entityplayer.openGui(MekanismMultiblockMachine.instance, 7, world, pos.getX(), pos.getY(), pos.getZ());
                 } else {
                     SecurityUtils.displayNoAccess(entityplayer);
                 }
@@ -173,19 +187,19 @@ public class BlockGasTank extends BlockMekanismContainer {
     @Override
     @Deprecated
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
-        return TANK_BOUNDS;
+        return super.getBoundingBox(state, world, pos);
     }
 
     @Override
     public TileEntity createNewTileEntity(@Nonnull World world, int meta) {
-        return new TileEntityGasTank();
+        return new TileEntityMidsizeGasTank();
     }
 
     @Nonnull
     @Override
     protected ItemStack getDropItem(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
-        TileEntityGasTank tileEntity = (TileEntityGasTank) world.getTileEntity(pos);
-        ItemStack itemStack = new ItemStack(MekanismBlocks.GasTank);
+        TileEntityMidsizeGasTank tileEntity = (TileEntityMidsizeGasTank) world.getTileEntity(pos);
+        ItemStack itemStack = new ItemStack(MultiblockMachineBlocks.MidsizeGasTank);
         if (itemStack.hasTagCompound()) {
             itemStack.setTagCompound(new NBTTagCompound());
         }
@@ -195,11 +209,7 @@ public class BlockGasTank extends BlockMekanismContainer {
                 securityItem.setOwnerUUID(itemStack, ((ISecurityTile) tileEntity).getSecurity().getOwnerUUID());
                 securityItem.setSecurity(itemStack, ((ISecurityTile) tileEntity).getSecurity().getMode());
             }
-            ((ISideConfiguration) tileEntity).getConfig().write(ItemDataUtils.getDataMap(itemStack));
-            ((ISideConfiguration) tileEntity).getEjector().write(ItemDataUtils.getDataMap(itemStack));
         }
-        ITierItem tierItem = (ITierItem) itemStack.getItem();
-        tierItem.setBaseTier(itemStack, tileEntity.tier.getBaseTier());
 
         IGasItem storageTank = (IGasItem) itemStack.getItem();
         storageTank.setGas(itemStack, tileEntity.gasTank.getGas());
@@ -218,7 +228,7 @@ public class BlockGasTank extends BlockMekanismContainer {
     @Override
     @Deprecated
     public int getComparatorInputOverride(IBlockState state, World world, BlockPos pos) {
-        TileEntityGasTank tileEntity = (TileEntityGasTank) world.getTileEntity(pos);
+        TileEntityMidsizeGasTank tileEntity = (TileEntityMidsizeGasTank) world.getTileEntity(pos);
         return tileEntity.getRedstoneLevel();
     }
 
@@ -227,7 +237,6 @@ public class BlockGasTank extends BlockMekanismContainer {
         TileEntity tile = world.getTileEntity(pos);
         EnumFacing[] valid = new EnumFacing[6];
         if (tile instanceof TileEntityBasicBlock basicTile) {
-
             for (EnumFacing dir : EnumFacing.VALUES) {
                 if (basicTile.canSetFacing(dir)) {
                     valid[dir.ordinal()] = dir;
@@ -241,7 +250,6 @@ public class BlockGasTank extends BlockMekanismContainer {
     public boolean rotateBlock(World world, @Nonnull BlockPos pos, @Nonnull EnumFacing axis) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEntityBasicBlock basicTile) {
-
             if (basicTile.canSetFacing(axis)) {
                 basicTile.setFacing(axis);
                 return true;
@@ -268,4 +276,5 @@ public class BlockGasTank extends BlockMekanismContainer {
     public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing face) {
         return face == EnumFacing.UP || face == EnumFacing.DOWN ? BlockFaceShape.CENTER_BIG : BlockFaceShape.UNDEFINED;
     }
+
 }

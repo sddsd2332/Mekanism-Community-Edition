@@ -16,6 +16,8 @@ public class MultiblockMachineJEI implements IModPlugin {
     public void registerItemSubtypes(ISubtypeRegistry registry) {
         registry.registerSubtypeInterpreter(Item.getItemFromBlock(MultiblockMachineBlocks.MultiblockGenerator), MekanismJEI.NBT_INTERPRETER);
         registry.registerSubtypeInterpreter(Item.getItemFromBlock(MultiblockMachineBlocks.MultiblockMachine), MekanismJEI.NBT_INTERPRETER);
+        registry.registerSubtypeInterpreter(Item.getItemFromBlock(MultiblockMachineBlocks.MidsizeGasTank),MekanismJEI.NBT_INTERPRETER);
+        registry.registerSubtypeInterpreter(Item.getItemFromBlock(MultiblockMachineBlocks.MultiblockGasTank),MekanismJEI.NBT_INTERPRETER);
     }
 
     @Override

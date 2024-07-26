@@ -19,7 +19,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
@@ -646,7 +645,7 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
         super.validate();
         if (world.isRemote && !rendererInitialized) {
             rendererInitialized = true;
-            if (Mekanism.hooks.Bloom) {
+            if (Mekanism.hooks.Bloom && MekanismConfig.current().client.enableBloom.val()) {
                 new BloomRenderLargeWindGenerator(this);
             }
         }

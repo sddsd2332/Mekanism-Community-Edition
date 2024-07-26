@@ -207,10 +207,12 @@ public abstract class BlockMultiblockMachineGenerator extends BlockMekanismConta
                             MekanismUtils.dismantleBlock(this, state, world, pos);
                             return true;
                         }
+                        /*
                         if (tileEntity != null) {
                             tileEntity.setFacing(tileEntity.facing.rotateY());
                             world.notifyNeighborsOfStateChange(pos, this, true);
                         }
+                         */
                     } else {
                         SecurityUtils.displayNoAccess(entityplayer);
                     }

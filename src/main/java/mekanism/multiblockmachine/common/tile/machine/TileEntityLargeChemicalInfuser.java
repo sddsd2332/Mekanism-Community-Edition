@@ -24,7 +24,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.common.capabilities.Capability;
@@ -562,7 +561,7 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
         super.validate();
         if (world.isRemote && !rendererInitialized) {
             rendererInitialized = true;
-            if (Mekanism.hooks.Bloom) {
+            if (Mekanism.hooks.Bloom && MekanismConfig.current().client.enableBloom.val()) {
                 new BloomRenderLargeChemicalInfuser(this);
             }
         }

@@ -98,7 +98,6 @@ public class MEKCEConfig extends BaseConfig {
 
     public final BooleanOption EnableUpgradeConfigure  = new BooleanOption(this,"mekce","EnableUpgradeConfigure",false,"Enable an upgrade similar to IC2");
 
-    public final BooleanOption VirtualErrors = new BooleanOption(this,"mekce","VirtualErrors",false,"Close the virtual block error and remove the virtual block prompt");
 
     public final IntOption MAXThreadUpgrade = new IntOption(this, "mekce", "MAXThreadUpgrade", 8,
             "The maximum number of thread upgrades that can be installed", 1, Integer.MAX_VALUE).setRequiresGameRestart(true);

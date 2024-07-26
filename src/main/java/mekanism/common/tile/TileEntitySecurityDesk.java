@@ -7,6 +7,7 @@ import mekanism.client.render.bloom.BloomRenderSecurityDesk;
 import mekanism.common.Mekanism;
 import mekanism.common.PacketHandler;
 import mekanism.common.base.IBoundingBlock;
+import mekanism.common.config.MekanismConfig;
 import mekanism.common.frequency.Frequency;
 import mekanism.common.frequency.FrequencyManager;
 import mekanism.common.frequency.IFrequencyHandler;
@@ -40,8 +41,8 @@ public class TileEntitySecurityDesk extends TileEntityContainerBlock implements 
 
     public UUID ownerUUID;
     public String clientOwner;
-    private boolean rendererInitialized = false;
     public SecurityFrequency frequency;
+    private boolean rendererInitialized = false;
 
     public TileEntitySecurityDesk() {
         super("SecurityDesk");
@@ -281,7 +282,7 @@ public class TileEntitySecurityDesk extends TileEntityContainerBlock implements 
         super.validate();
         if (world.isRemote && !rendererInitialized) {
             rendererInitialized = true;
-            if (Mekanism.hooks.Bloom) {
+            if (Mekanism.hooks.Bloom && MekanismConfig.current().client.enableBloom.val()) {
                 new BloomRenderSecurityDesk(this);
             }
         }
