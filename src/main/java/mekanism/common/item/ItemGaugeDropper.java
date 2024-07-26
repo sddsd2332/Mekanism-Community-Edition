@@ -56,7 +56,7 @@ public class ItemGaugeDropper extends ItemMekanism implements IGasItem {
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return true;
+        return getGas(stack) != null || FluidUtil.getFluidContained(stack) != null;
     }
 
     @Override

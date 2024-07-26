@@ -17,6 +17,9 @@ public class IC2ItemManager implements IElectricItemManager {
 
     @Override
     public double charge(ItemStack itemStack, double amount, int tier, boolean ignoreTransferLimit, boolean simulate) {
+        if (itemStack.getCount() >1){
+            return 0;
+        }
         if (energizedItem.canReceive(itemStack)) {
             double energyNeeded = energizedItem.getMaxEnergy(itemStack) - energizedItem.getEnergy(itemStack);
             double energyToStore = Math.min(Math.min(IC2Integration.fromEU(amount), energizedItem.getMaxEnergy(itemStack) * 0.01), energyNeeded);
@@ -31,6 +34,9 @@ public class IC2ItemManager implements IElectricItemManager {
     @Override
     public double discharge(ItemStack itemStack, double amount, int tier, boolean ignoreTransferLimit, boolean external,
                             boolean simulate) {
+        if (itemStack.getCount() >1){
+            return 0;
+        }
         if (energizedItem.canSend(itemStack)) {
             double energyWanted = IC2Integration.fromEU(amount);
             double energyToGive = Math.min(Math.min(energyWanted, energizedItem.getMaxEnergy(itemStack) * 0.01), energizedItem.getEnergy(itemStack));

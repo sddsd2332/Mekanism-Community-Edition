@@ -50,6 +50,7 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemNetwor
 
     public ItemAtomicDisassembler() {
         super(MekanismConfig.current().general.disassemblerBatteryCapacity.val());
+        setMaxStackSize(1);
     }
 
     @Override

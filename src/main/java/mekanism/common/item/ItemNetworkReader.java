@@ -30,6 +30,7 @@ public class ItemNetworkReader extends ItemEnergized {
 
     public ItemNetworkReader() {
         super(60000);
+        setMaxStackSize(1);
     }
 
     @Nonnull

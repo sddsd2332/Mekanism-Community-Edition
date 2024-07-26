@@ -4,7 +4,10 @@ import com.google.common.collect.Multimap;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitLeg;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.moduleUpgrade;
+import mekanism.common.util.LangUtils;
+import mekanism.common.util.MekanismUtils;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -32,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor {
+public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor implements IItemHUDProvider {
 
     public ItemMekAsuitLegsArmour() {
         super(EntityEquipmentSlot.LEGS);
@@ -83,10 +86,6 @@ public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor {
         return 0;
     }
 
-    @Override
-    public void damageArmor(EntityLivingBase entity, @NotNull ItemStack stack, DamageSource source, int damage, int slot) {
-
-    }
 
     @Override
     public List<moduleUpgrade> getValidModule(ItemStack stack) {
@@ -137,4 +136,10 @@ public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor {
         return 20;
     }
 
+    @Override
+    public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
+        if (slotType == getEquipmentSlot()){
+            list.add(LangUtils.localize("tooltip.meka_legs.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
+        }
+    }
 }

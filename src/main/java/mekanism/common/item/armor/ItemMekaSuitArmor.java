@@ -29,6 +29,7 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
@@ -54,8 +55,6 @@ import java.util.Map;
 })
 public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedItem, ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor, IModuleUpgrade, IHazmatLike {
 
-    private static final EntityEquipmentSlot[] EQUIPMENT_ORDER = {EntityEquipmentSlot.OFFHAND, EntityEquipmentSlot.MAINHAND, EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS,
-            EntityEquipmentSlot.FEET};
     private final float absorption;
 
     public ItemMekaSuitArmor(EntityEquipmentSlot slot) {
@@ -331,7 +330,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return true;
+        return getEnergy(stack) > 0;
     }
 
     @Override
@@ -371,7 +370,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     }
 
     public void Shielding(ItemStack stack) {
-        if(Mekanism.hooks.NuclearCraft){
+        if (Mekanism.hooks.NuclearCraft) {
             NBTTagCompound tag = stack.getTagCompound();
             if (tag == null) {
                 tag = new NBTTagCompound();
@@ -383,7 +382,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
             if (isUpgradeInstalled(stack, moduleUpgrade.RADIATION_SHIELDING_UNIT) && nc != getShieldingByArmor()) {
                 tag.setDouble("ncRadiationResistance", getShieldingByArmor());
             }
-            if (nc == 0 && tag.isEmpty()){
+            if (nc == 0 && tag.isEmpty()) {
                 stack.setTagCompound(null);
             }
         }
@@ -426,5 +425,31 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
             //Copy it so we can just use minusEquals without worry
             this.energyAvailable = energyAvailable;
         }
+    }
+
+    @Override
+    public boolean handleUnblockableDamage(EntityLivingBase entity, @Nonnull ItemStack armor, DamageSource source, double damage, int slot) {
+        if (isUpgradeInstalled(armor, moduleUpgrade.RADIATION_SHIELDING_UNIT)) {
+            return source.damageType.equals("radiation") || source.damageType.equals("sulphuric_acid") || source.damageType.equals("acid_burn") || source.damageType.equals("corium_burn") || source.damageType.equals("hot_coolant_burn");
+        }
+        return false;
+    }
+
+    @Override
+    public void damageArmor(EntityLivingBase entity, @Nonnull ItemStack stack, DamageSource source, int damage, int slot) {
+        if (Mekanism.hooks.IC2Loaded) {
+            if (isUpgradeInstalled(stack, moduleUpgrade.RADIATION_SHIELDING_UNIT)) {
+                Potion radiation = Potion.getPotionFromResourceLocation("ic2:radiation");
+                if (radiation != null && entity.isPotionActive(radiation)) {
+                    entity.removePotionEffect(radiation);
+                }
+            }
+        }
+    }
+
+    @Nonnull
+    @Override
+    public String getItemStackDisplayName(@Nonnull ItemStack itemstack) {
+        return EnumColor.ORANGE + super.getItemStackDisplayName(itemstack);
     }
 }

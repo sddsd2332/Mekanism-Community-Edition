@@ -26,6 +26,7 @@ public class ItemSeismicReader extends ItemEnergized {
 
     public ItemSeismicReader() {
         super(12000);
+        setMaxStackSize(1);
     }
 
     @Override

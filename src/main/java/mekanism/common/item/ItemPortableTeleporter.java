@@ -34,6 +34,7 @@ public class ItemPortableTeleporter extends ItemEnergized implements IOwnerItem 
 
     public ItemPortableTeleporter() {
         super(1000000);
+        setMaxStackSize(1);
     }
 
     public static double calculateEnergyCost(Entity entity, Coord4D coords) {

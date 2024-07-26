@@ -90,9 +90,6 @@ public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor implements IItemHU
         return 0;
     }
 
-    @Override
-    public void damageArmor(EntityLivingBase entity, @NotNull ItemStack stack, DamageSource source, int damage, int slot) {
-    }
 
     @Override
     public List<moduleUpgrade> getValidModule(ItemStack stack) {

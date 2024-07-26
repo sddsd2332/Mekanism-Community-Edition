@@ -70,6 +70,7 @@ public class ItemConfigurator extends ItemEnergized implements IMekWrench, ITool
 
     public ItemConfigurator() {
         super(60000);
+        setMaxStackSize(1);
     }
 
     @Override

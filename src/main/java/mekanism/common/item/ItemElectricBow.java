@@ -35,6 +35,7 @@ public class ItemElectricBow extends ItemEnergized implements IItemNetwork, IIte
 
     public ItemElectricBow() {
         super(120000);
+        setMaxStackSize(1);
         setFull3D();
         this.addPropertyOverride(new ResourceLocation("pull"), new IItemPropertyGetter() {
             @SideOnly(Side.CLIENT)

@@ -400,9 +400,9 @@
 			"translation": [0, 4, 0]
 		},
 		"gui": {
-			"rotation": [45, -135, 0],
-			"translation": [0, -2.25, 0],
-			"scale": [0.4, 0.4, 0.4]
+			"rotation": [30, -135, 0],
+			"translation": [0, -3, 0],
+			"scale": [0.425, 0.425, 0.425]
 		},
 		"head": {
 			"translation": [0, 14.25, 0]

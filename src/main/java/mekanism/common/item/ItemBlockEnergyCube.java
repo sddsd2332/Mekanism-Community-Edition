@@ -66,7 +66,6 @@ public class ItemBlockEnergyCube extends ItemBlock implements IEnergizedItem, IS
     public ItemBlockEnergyCube(Block block) {
         super(block);
         metaBlock = block;
-        setMaxStackSize(1);
         setHasSubtypes(true);
         setNoRepair();
         setCreativeTab(Mekanism.tabMekanism);
@@ -75,7 +74,9 @@ public class ItemBlockEnergyCube extends ItemBlock implements IEnergizedItem, IS
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(@Nonnull ItemStack itemstack, World world, @Nonnull List<String> list, @Nonnull ITooltipFlag flag) {
-        list.add(EnumColor.BRIGHT_GREEN + LangUtils.localize("tooltip.storedEnergy") + ": " + EnumColor.GREY + MekanismUtils.getEnergyDisplay(getEnergy(itemstack)));
+        if (itemstack.getCount() <= 1) {
+            list.add(EnumColor.BRIGHT_GREEN + LangUtils.localize("tooltip.storedEnergy") + ": " + EnumColor.GREY + MekanismUtils.getEnergyDisplay(getEnergy(itemstack)));
+        }
         list.add(EnumColor.INDIGO + LangUtils.localize("tooltip.capacity") + ": " + EnumColor.GREY +
                 MekanismUtils.getEnergyDisplay(EnergyCubeTier.values()[getBaseTier(itemstack).ordinal()].getMaxEnergy()));
 
@@ -95,11 +96,6 @@ public class ItemBlockEnergyCube extends ItemBlock implements IEnergizedItem, IS
         }
     }
 
-    public ItemStack getUnchargedItem(EnergyCubeTier tier) {
-        ItemStack stack = new ItemStack(this);
-        setBaseTier(stack, tier.getBaseTier());
-        return stack;
-    }
 
     @Nonnull
     @Override
@@ -171,6 +167,9 @@ public class ItemBlockEnergyCube extends ItemBlock implements IEnergizedItem, IS
 
     @Override
     public double getEnergy(ItemStack itemStack) {
+        if (itemStack.getCount() > 1) {
+            return 0;
+        }
         if (!itemStack.hasTagCompound()) {
             return 0;
         }
@@ -179,15 +178,18 @@ public class ItemBlockEnergyCube extends ItemBlock implements IEnergizedItem, IS
 
     @Override
     public void setEnergy(ItemStack itemStack, double amount) {
+        if (itemStack.getCount() > 1) {
+            return;
+        }
         if (getBaseTier(itemStack) == BaseTier.CREATIVE && amount != Double.MAX_VALUE) {
             return;
         }
-       if (amount == 0) {
+        if (amount == 0) {
             NBTTagCompound dataMap = ItemDataUtils.getDataMap(itemStack);
             dataMap.removeTag("energyStored");
-           if (dataMap.isEmpty() && itemStack.getTagCompound()!=null) {
-               itemStack.getTagCompound().removeTag(ItemDataUtils.DATA_ID);
-           }
+            if (dataMap.isEmpty() && itemStack.getTagCompound() != null) {
+                itemStack.getTagCompound().removeTag(ItemDataUtils.DATA_ID);
+            }
         } else {
             ItemDataUtils.setDouble(itemStack, "energyStored", Math.max(Math.min(amount, getMaxEnergy(itemStack)), 0));
         }
@@ -195,27 +197,36 @@ public class ItemBlockEnergyCube extends ItemBlock implements IEnergizedItem, IS
 
     @Override
     public double getMaxEnergy(ItemStack itemStack) {
+        if (itemStack.getCount() > 1) {
+            return 0;
+        }
         return EnergyCubeTier.values()[getBaseTier(itemStack).ordinal()].getMaxEnergy();
     }
 
     @Override
     public double getMaxTransfer(ItemStack itemStack) {
+        if (itemStack.getCount() > 1) {
+            return 0;
+        }
         return getMaxEnergy(itemStack) * 0.005;
     }
 
     @Override
     public boolean canReceive(ItemStack itemStack) {
-        return true;
+        return itemStack.getCount() <= 1;
     }
 
     @Override
     public boolean canSend(ItemStack itemStack) {
-        return true;
+        return itemStack.getCount() <= 1;
     }
 
     @Override
     @Method(modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
     public int receiveEnergy(ItemStack theItem, int energy, boolean simulate) {
+        if (theItem.getCount() > 1) {
+            return 0;
+        }
         if (canReceive(theItem)) {
             double energyNeeded = getMaxEnergy(theItem) - getEnergy(theItem);
             double toReceive = Math.min(RFIntegration.fromRF(energy), energyNeeded);
@@ -230,6 +241,9 @@ public class ItemBlockEnergyCube extends ItemBlock implements IEnergizedItem, IS
     @Override
     @Method(modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
     public int extractEnergy(ItemStack theItem, int energy, boolean simulate) {
+        if (theItem.getCount() > 1) {
+            return 0;
+        }
         if (canSend(theItem)) {
             double energyRemaining = getEnergy(theItem);
             double toSend = Math.min(RFIntegration.fromRF(energy), energyRemaining);
@@ -244,18 +258,24 @@ public class ItemBlockEnergyCube extends ItemBlock implements IEnergizedItem, IS
     @Override
     @Method(modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
     public int getEnergyStored(ItemStack theItem) {
+        if (theItem.getCount() > 1) {
+            return 0;
+        }
         return RFIntegration.toRF(getEnergy(theItem));
     }
 
     @Override
     @Method(modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
     public int getMaxEnergyStored(ItemStack theItem) {
+        if (theItem.getCount() > 1) {
+            return 0;
+        }
         return RFIntegration.toRF(getMaxEnergy(theItem));
     }
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return true;
+        return getEnergy(stack) > 0;
     }
 
     @Override
@@ -301,9 +321,9 @@ public class ItemBlockEnergyCube extends ItemBlock implements IEnergizedItem, IS
 
     @Override
     public void setSecurity(ItemStack stack, SecurityMode mode) {
-        if (getOwnerUUID(stack) == null){
-            ItemDataUtils.removeData(stack,"security");
-        }else {
+        if (getOwnerUUID(stack) == null) {
+            ItemDataUtils.removeData(stack, "security");
+        } else {
             ItemDataUtils.setInt(stack, "security", mode.ordinal());
         }
     }

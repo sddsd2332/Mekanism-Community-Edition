@@ -27,6 +27,7 @@ public class ItemRobit extends ItemEnergized implements ISustainedInventory {
 
     public ItemRobit() {
         super(100000);
+        setMaxStackSize(1);
     }
 
     @Override

@@ -45,12 +45,11 @@ public class ItemEnergized extends ItemMekanism implements IEnergizedItem, ISpec
     public ItemEnergized(double maxElectricity) {
         super();
         MAX_ELECTRICITY = maxElectricity;
-        setMaxStackSize(1);
     }
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return true;
+        return getEnergy(stack) > 0;
     }
 
     @Override
@@ -66,7 +65,9 @@ public class ItemEnergized extends ItemMekanism implements IEnergizedItem, ISpec
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemstack, World world, List<String> list, ITooltipFlag flag) {
-        list.add(EnumColor.AQUA + LangUtils.localize("tooltip.storedEnergy") + ": " + EnumColor.GREY + MekanismUtils.getEnergyDisplay(getEnergy(itemstack), getMaxEnergy(itemstack)));
+        if (itemstack.getCount() <= 1){
+            list.add(EnumColor.AQUA + LangUtils.localize("tooltip.storedEnergy") + ": " + EnumColor.GREY + MekanismUtils.getEnergyDisplay(getEnergy(itemstack), getMaxEnergy(itemstack)));
+        }
     }
 
     public ItemStack getUnchargedItem() {
@@ -87,11 +88,17 @@ public class ItemEnergized extends ItemMekanism implements IEnergizedItem, ISpec
 
     @Override
     public double getEnergy(ItemStack itemStack) {
+        if (itemStack.getCount() > 1){
+            return 0;
+        }
         return ItemDataUtils.getDouble(itemStack, "energyStored");
     }
 
     @Override
     public void setEnergy(ItemStack itemStack, double amount) {
+        if (itemStack.getCount() > 1){
+            return ;
+        }
         if (amount == 0) {
             NBTTagCompound dataMap = ItemDataUtils.getDataMap(itemStack);
             dataMap.removeTag("energyStored");
@@ -110,22 +117,34 @@ public class ItemEnergized extends ItemMekanism implements IEnergizedItem, ISpec
 
     @Override
     public double getMaxTransfer(ItemStack itemStack) {
+        if (itemStack.getCount() > 1){
+            return 0;
+        }
         return getMaxEnergy(itemStack) * 0.005;
     }
 
     @Override
     public boolean canReceive(ItemStack itemStack) {
+        if (itemStack.getCount() > 1){
+            return false;
+        }
         return getMaxEnergy(itemStack) - getEnergy(itemStack) > 0;
     }
 
     @Override
     public boolean canSend(ItemStack itemStack) {
+        if (itemStack.getCount() > 1){
+            return false;
+        }
         return getEnergy(itemStack) > 0;
     }
 
     @Override
     @Method(modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
     public int receiveEnergy(ItemStack theItem, int energy, boolean simulate) {
+        if (theItem.getCount() > 1){
+            return 0;
+        }
         if (canReceive(theItem)) {
             double energyNeeded = getMaxEnergy(theItem) - getEnergy(theItem);
             double toReceive = Math.min(RFIntegration.fromRF(energy), energyNeeded);
@@ -140,6 +159,9 @@ public class ItemEnergized extends ItemMekanism implements IEnergizedItem, ISpec
     @Override
     @Method(modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
     public int extractEnergy(ItemStack theItem, int energy, boolean simulate) {
+        if (theItem.getCount() > 1){
+            return 0;
+        }
         if (canSend(theItem)) {
             double energyRemaining = getEnergy(theItem);
             double toSend = Math.min(RFIntegration.fromRF(energy), energyRemaining);

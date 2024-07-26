@@ -58,7 +58,7 @@ public class ItemScubaTank extends ItemArmor implements IGasItem, IItemHUDProvid
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return true;
+        return getStored(stack) > 0;
     }
 
     @Override

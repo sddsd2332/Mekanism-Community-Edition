@@ -101,7 +101,7 @@ public class ItemFlamethrower extends ItemMekanism implements IGasItem, IItemNet
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return true;
+        return getStored(stack) > 0;
     }
 
     @Override

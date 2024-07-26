@@ -24,6 +24,8 @@ tooltip.DigitalAssemblyTable=A range of machines can be assembled
 item.PlasmaCutterNozzles.name=Plasma Cutter Nozzles
 item.DrillBit.name=Drill Bit
 item.LaserLenses.name=Laser Lenses
+tile.MidsizeGasTank.name=Medium-sized gas storage tanks
+tile.MultiblockGasTank.name=Large gas storage tanks
 # Creative tab
 itemGroup.tabMekanismMultiblockMachine=Mekanism Multiblock Machine
 mekanism.configgui.ctgy.multiblock.multiblock=Multi-block setup

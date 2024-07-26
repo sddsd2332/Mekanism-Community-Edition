@@ -67,16 +67,10 @@ public class ItemBlockMultiblockGenerator extends ItemBlock implements IEnergize
         super(block);
         metaBlock = block;
         setHasSubtypes(true);
+        setMaxStackSize(1);
     }
 
-    @Override
-    public int getItemStackLimit(ItemStack stack) {
-        MultiblockMachineGeneratorType type = MultiblockMachineGeneratorType.get(stack);
-        if (type != null && type.maxEnergy == -1) {
-            return 64;
-        }
-        return 1;
-    }
+
 
     @Override
     public int getMetadata(int i) {

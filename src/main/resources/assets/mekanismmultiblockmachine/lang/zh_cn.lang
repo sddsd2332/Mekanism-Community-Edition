@@ -24,6 +24,8 @@ tooltip.DigitalAssemblyTable=可组装一系列机器
 item.PlasmaCutterNozzles.name=等离子切割机喷嘴
 item.DrillBit.name=钻头
 item.LaserLenses.name=激光透镜
+tile.MidsizeGasTank.name=中型气体储罐
+tile.MultiblockGasTank.name=大型气体储罐
 # Creative tab
 itemGroup.tabMekanismMultiblockMachine=通用机械 多方块
 mekanism.configgui.ctgy.multiblock.multiblock=多方块设置

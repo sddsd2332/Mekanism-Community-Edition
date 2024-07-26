@@ -1,6 +1,7 @@
 package mekanism.common.item.armor;
 
 import com.google.common.collect.Multimap;
+import mekanism.api.EnumColor;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
@@ -9,9 +10,12 @@ import mekanism.client.model.mekasuitarmour.ModuleJetpack;
 import mekanism.common.MekanismFluids;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.moduleUpgrade;
 import mekanism.common.util.ItemDataUtils;
+import mekanism.common.util.LangUtils;
+import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBiped;
@@ -34,7 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasItem , IJetpackItem {
+public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasItem, IJetpackItem, IItemHUDProvider {
 
     public ItemMekAsuitBodyArmour() {
         super(EntityEquipmentSlot.CHEST);
@@ -97,10 +101,6 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
         return 0;
     }
 
-    @Override
-    public void damageArmor(EntityLivingBase entity, @NotNull ItemStack stack, DamageSource source, int damage, int slot) {
-
-    }
 
     @Override
     public List<moduleUpgrade> getValidModule(ItemStack stack) {
@@ -161,7 +161,7 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
 
     @Override
     public boolean canUseJetpack(ItemStack stack) {
-        if (isUpgradeInstalled(stack, moduleUpgrade.JETPACK_UNIT)){
+        if (isUpgradeInstalled(stack, moduleUpgrade.JETPACK_UNIT)) {
             return getStored(stack) > 0;
         }
         return false;
@@ -253,5 +253,17 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
     @Override
     double getShieldingByArmor() {
         return 40;
+    }
+
+
+    @Override
+    public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
+        if (slotType == getEquipmentSlot()) {
+            if (isUpgradeInstalled(stack, moduleUpgrade.JETPACK_UNIT)) {
+                list.add(LangUtils.localize("tooltip.jetpack.mode") + " " + getMode(stack).getName());
+                list.add(LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + (getStored(stack) > 0 ? getStored(stack): LangUtils.localize("tooltip.noGas")));
+            }
+            list.add(LangUtils.localize("tooltip.meka_body.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
+        }
     }
 }

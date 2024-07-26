@@ -186,7 +186,7 @@ public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpeci
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return true;
+        return getEnergy(stack) > 0;
     }
 
     @Override

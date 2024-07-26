@@ -51,6 +51,7 @@ public class ItemMekTool extends ItemEnergized implements IItemNetwork, IItemHUD
 
     public ItemMekTool() {
         super(MekanismConfig.current().general.toolBatteryCapacity.val());
+        setMaxStackSize(1);
     }
 
 
@@ -62,7 +63,7 @@ public class ItemMekTool extends ItemEnergized implements IItemNetwork, IItemHUD
     @Nonnull
     @Override
     public String getItemStackDisplayName(@Nonnull ItemStack itemstack) {
-        return EnumColor.PURPLE + LangUtils.localize("item.MekTool.name");
+        return EnumColor.PURPLE + super.getItemStackDisplayName(itemstack);
     }
 
     @SideOnly(Side.CLIENT)

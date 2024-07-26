@@ -132,7 +132,7 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
         metaBlock = block;
         setHasSubtypes(true);
         setNoRepair();
-        setMaxStackSize(1);
+        //setMaxStackSize(1);
     }
 
     @Override
@@ -175,7 +175,7 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
         MachineType type = MachineType.get(itemstack);
         if (type != null) { // If the block is null, no information is added
             if (!MekKeyHandler.getIsKeyPressed(MekanismKeyHandler.sneakKey)) {
-                if (type == MachineType.FLUID_TANK) {
+                if (type == MachineType.FLUID_TANK && itemstack.getCount() <= 1) {
                     FluidStack fluidStack = getFluidStack(itemstack);
                     if (fluidStack != null) {
                         int amount = getFluidStack(itemstack).amount;
@@ -221,15 +221,14 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
                     list.add(EnumColor.INDIGO + LangUtils.localizeWithFormat("mekanism.tooltip.portableTank.bucketMode", LangUtils.transYesNo(getBucketMode(itemstack))));
                 }
 
-                if (type.isElectric) {
-                    list.add(EnumColor.BRIGHT_GREEN + LangUtils.localize("tooltip.storedEnergy") + ": " + EnumColor.GREY
-                            + MekanismUtils.getEnergyDisplay(getEnergy(itemstack), getMaxEnergy(itemstack)));
+                if (type.isElectric && itemstack.getCount() <= 1) {
+                    list.add(EnumColor.BRIGHT_GREEN + LangUtils.localize("tooltip.storedEnergy") + ": " + EnumColor.GREY + MekanismUtils.getEnergyDisplay(getEnergy(itemstack), getMaxEnergy(itemstack)));
                 }
 
                 if (hasTank(itemstack) && type != MachineType.FLUID_TANK) {
                     FluidStack fluidStack = getFluidStack(itemstack);
 
-                    if (fluidStack != null) {
+                    if (fluidStack != null && itemstack.getCount() <=1) {
                         list.add(EnumColor.PINK + LangUtils.localizeFluidStack(fluidStack) + ": " + EnumColor.GREY + getFluidStack(itemstack).amount + "mB");
                     }
                 }
@@ -545,6 +544,9 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
 
     @Override
     public double getEnergy(ItemStack itemStack) {
+        if (itemStack.getCount() > 1){
+            return 0;
+        }
         if (!MachineType.get(itemStack).isElectric) {
             return 0;
         }
@@ -553,6 +555,9 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
 
     @Override
     public void setEnergy(ItemStack itemStack, double amount) {
+        if (itemStack.getCount() > 1){
+            return;
+        }
         if (!MachineType.get(itemStack).isElectric) {
             return;
         }
@@ -581,12 +586,15 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
 
     @Override
     public double getMaxTransfer(ItemStack itemStack) {
+        if (itemStack.getCount() > 1){
+            return 0;
+        }
         return getMaxEnergy(itemStack) * 0.005;
     }
 
     @Override
     public boolean canReceive(ItemStack itemStack) {
-        return MachineType.get(itemStack).isElectric;
+        return MachineType.get(itemStack).isElectric && itemStack.getCount() == 1;
     }
 
     @Override
@@ -597,6 +605,9 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
     @Override
     @Method(modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
     public int receiveEnergy(ItemStack theItem, int energy, boolean simulate) {
+        if (theItem.getCount() > 1){
+            return 0;
+        }
         if (canReceive(theItem)) {
             double energyNeeded = getMaxEnergy(theItem) - getEnergy(theItem);
             double toReceive = Math.min(RFIntegration.fromRF(energy), energyNeeded);
@@ -611,6 +622,9 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
     @Override
     @Method(modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
     public int extractEnergy(ItemStack theItem, int energy, boolean simulate) {
+        if (theItem.getCount() > 1){
+            return 0;
+        }
         if (canSend(theItem)) {
             double energyRemaining = getEnergy(theItem);
             double toSend = Math.min(RFIntegration.fromRF(energy), energyRemaining);
@@ -652,6 +666,9 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
 
     @Override
     public int fill(ItemStack container, FluidStack resource, boolean doFill) {
+        if (container.getCount() > 1){
+            return 0;
+        }
         if (MachineType.get(container) == MachineType.FLUID_TANK && resource != null) {
             if (getBaseTier(container) == BaseTier.CREATIVE) {
                 setFluidStack(PipeUtils.copy(resource, Integer.MAX_VALUE), container);
@@ -678,6 +695,9 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
 
     @Override
     public FluidStack drain(ItemStack container, int maxDrain, boolean doDrain) {
+        if (container.getCount() > 1){
+            return null;
+        }
         if (MachineType.get(container) == MachineType.FLUID_TANK) {
             FluidStack stored = getFluidStack(container);
             if (stored != null) {
@@ -775,5 +795,9 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
                 setBucketMode(stack, state);
             }
         }
+    }
+    @Override
+    public boolean showDurabilityBar(ItemStack stack) {
+        return getEnergy(stack) > 0;
     }
 }

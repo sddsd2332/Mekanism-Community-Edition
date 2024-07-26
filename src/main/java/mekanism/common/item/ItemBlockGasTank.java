@@ -10,7 +10,6 @@ import mekanism.client.MekanismClient;
 import mekanism.client.MekanismKeyHandler;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.common.Mekanism;
-import mekanism.common.MekanismFluids;
 import mekanism.common.base.ISideConfiguration;
 import mekanism.common.base.ISustainedInventory;
 import mekanism.common.base.ITierItem;
@@ -63,7 +62,7 @@ public class ItemBlockGasTank extends ItemBlock implements IGasItem, ISustainedI
         super(block);
         metaBlock = block;
         setHasSubtypes(true);
-        setMaxStackSize(1);
+        //setMaxStackSize(1);
         setCreativeTab(Mekanism.tabMekanism);
     }
 
@@ -113,11 +112,13 @@ public class ItemBlockGasTank extends ItemBlock implements IGasItem, ISustainedI
     @SideOnly(Side.CLIENT)
     public void addInformation(@Nonnull ItemStack itemstack, World world, @Nonnull List<String> list, @Nonnull ITooltipFlag flag) {
         GasStack gasStack = getGas(itemstack);
-        if (gasStack == null) {
-            list.add(EnumColor.DARK_RED + LangUtils.localize("gui.empty") + ".");
-        } else {
-            String amount = gasStack.amount == Integer.MAX_VALUE ? LangUtils.localize("gui.infinite") : Integer.toString(gasStack.amount);
-            list.add(EnumColor.ORANGE + gasStack.getGas().getLocalizedName() + ": " + EnumColor.GREY + amount);
+        if (itemstack.getCount() <= 1) {
+            if (gasStack == null) {
+                list.add(EnumColor.DARK_RED + LangUtils.localize("gui.empty") + ".");
+            } else {
+                String amount = gasStack.amount == Integer.MAX_VALUE ? LangUtils.localize("gui.infinite") : Integer.toString(gasStack.amount);
+                list.add(EnumColor.ORANGE + gasStack.getGas().getLocalizedName() + ": " + EnumColor.GREY + amount);
+            }
         }
         int cap = GasTankTier.values()[getBaseTier(itemstack).ordinal()].getStorage();
         list.add(EnumColor.INDIGO + LangUtils.localize("tooltip.capacity") + ": " + EnumColor.GREY + (cap == Integer.MAX_VALUE ? LangUtils.localize("gui.infinite") : cap));
@@ -146,6 +147,9 @@ public class ItemBlockGasTank extends ItemBlock implements IGasItem, ISustainedI
 
     @Override
     public void setGas(ItemStack itemstack, GasStack stack) {
+        if (itemstack.getCount() > 1) {
+            return;
+        }
         if (stack == null || stack.amount == 0) {
             ItemDataUtils.removeData(itemstack, "stored");
         } else {
@@ -174,7 +178,7 @@ public class ItemBlockGasTank extends ItemBlock implements IGasItem, ISustainedI
         }
         if (MekanismConfig.current().general.prefilledGasTanks.val()) {
             for (Gas type : GasRegistry.getRegisteredGasses()) {
-                if (type.isVisible() || MekanismConfig.current().mekce.ShowHiddenGas.val() ) {
+                if (type.isVisible() || MekanismConfig.current().mekce.ShowHiddenGas.val()) {
                     ItemStack filled = new ItemStack(this);
                     setBaseTier(filled, BaseTier.CREATIVE);
                     setGas(filled, new GasStack(type, ((IGasItem) filled.getItem()).getMaxGas(filled)));
@@ -202,16 +206,25 @@ public class ItemBlockGasTank extends ItemBlock implements IGasItem, ISustainedI
 
     @Override
     public int getMaxGas(ItemStack itemstack) {
+        if (itemstack.getCount() > 1) {
+            return 0;
+        }
         return GasTankTier.values()[getBaseTier(itemstack).ordinal()].getStorage();
     }
 
     @Override
     public int getRate(ItemStack itemstack) {
+        if (itemstack.getCount() > 1) {
+            return 0;
+        }
         return GasTankTier.values()[getBaseTier(itemstack).ordinal()].getOutput();
     }
 
     @Override
     public int addGas(ItemStack itemstack, GasStack stack) {
+        if (itemstack.getCount() > 1) {
+            return 0;
+        }
         if (getGas(itemstack) != null && getGas(itemstack).getGas() != stack.getGas() && getBaseTier(itemstack) != BaseTier.CREATIVE && getGas(itemstack).getGas().isRadiation()) {
             return 0;
         }
@@ -226,6 +239,9 @@ public class ItemBlockGasTank extends ItemBlock implements IGasItem, ISustainedI
 
     @Override
     public GasStack removeGas(ItemStack itemstack, int amount) {
+        if (itemstack.getCount() > 1) {
+            return null;
+        }
         if (getGas(itemstack) == null) {
             return null;
         }
@@ -238,11 +254,17 @@ public class ItemBlockGasTank extends ItemBlock implements IGasItem, ISustainedI
     }
 
     private int getStored(ItemStack itemstack) {
+        if (itemstack.getCount() > 1) {
+            return 0;
+        }
         return getGas(itemstack) != null ? getGas(itemstack).amount : 0;
     }
 
     @Override
     public boolean canReceiveGas(ItemStack itemstack, Gas type) {
+        if (itemstack.getCount() > 1) {
+            return false;
+        }
         if (getBaseTier(itemstack) != BaseTier.CREATIVE && type.isRadiation()) {
             return false;
         } else {
@@ -252,6 +274,9 @@ public class ItemBlockGasTank extends ItemBlock implements IGasItem, ISustainedI
 
     @Override
     public boolean canProvideGas(ItemStack itemstack, Gas type) {
+        if (itemstack.getCount() > 1) {
+            return false;
+        }
         if (getBaseTier(itemstack) != BaseTier.CREATIVE && (getGas(itemstack) != null && (type == null || getGas(itemstack).getGas().isRadiation()))) {
             return false;
         } else {
@@ -276,7 +301,7 @@ public class ItemBlockGasTank extends ItemBlock implements IGasItem, ISustainedI
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return getGas(stack) != null; // No bar for empty containers as bars are drawn on top of stack count number
+        return getStored(stack) > 0; // No bar for empty containers as bars are drawn on top of stack count number
     }
 
     @Override
@@ -322,9 +347,9 @@ public class ItemBlockGasTank extends ItemBlock implements IGasItem, ISustainedI
 
     @Override
     public void setSecurity(ItemStack stack, SecurityMode mode) {
-        if (getOwnerUUID(stack) == null){
-            ItemDataUtils.removeData(stack,"security");
-        }else {
+        if (getOwnerUUID(stack) == null) {
+            ItemDataUtils.removeData(stack, "security");
+        } else {
             ItemDataUtils.setInt(stack, "security", mode.ordinal());
         }
     }

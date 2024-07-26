@@ -36,8 +36,8 @@ public class ItemCanteen extends ItemMekanism implements IGasItem {
     public static final int ItemStack = 50;
 
     public ItemCanteen() {
-        this.setMaxStackSize(1);
-        this.setNoRepair();
+        setMaxStackSize(1);
+        setNoRepair();
     }
 
     @Override

@@ -1,8 +1,12 @@
 package mekanism.multiblockmachine.common.item;
 
+import mekanism.api.EnumColor;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
+import mekanism.client.MekKeyHandler;
+import mekanism.client.MekanismClient;
+import mekanism.client.MekanismKeyHandler;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.common.Mekanism;
 import mekanism.common.base.ISustainedInventory;
@@ -11,10 +15,15 @@ import mekanism.common.security.ISecurityItem;
 import mekanism.common.security.ISecurityTile;
 import mekanism.common.security.ISecurityTile.SecurityMode;
 import mekanism.common.util.ItemDataUtils;
+import mekanism.common.util.LangUtils;
+import mekanism.common.util.SecurityUtils;
 import mekanism.multiblockmachine.common.MekanismMultiblockMachine;
 import mekanism.multiblockmachine.common.tile.TileEntityMidsizeGasTank;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -24,8 +33,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.UUID;
 
 public class ItemBlockMidsizeGasTank extends ItemBlock implements IGasItem, ISustainedInventory, ISecurityItem {
@@ -35,10 +47,41 @@ public class ItemBlockMidsizeGasTank extends ItemBlock implements IGasItem, ISus
     public ItemBlockMidsizeGasTank(Block block) {
         super(block);
         metaBlock = block;
-        setMaxStackSize(1);
+        //  setMaxStackSize(1);
         setCreativeTab(MekanismMultiblockMachine.tabMekanismMultiblockMachine);
     }
 
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(@Nonnull ItemStack itemstack, World world, @Nonnull List<String> list, @Nonnull ITooltipFlag flag) {
+        GasStack gasStack = getGas(itemstack);
+        if (itemstack.getCount() <= 1) {
+            if (gasStack == null) {
+                list.add(EnumColor.DARK_RED + LangUtils.localize("gui.empty") + ".");
+            } else {
+                String amount = gasStack.amount == Integer.MAX_VALUE ? LangUtils.localize("gui.infinite") : Integer.toString(gasStack.amount);
+                list.add(EnumColor.ORANGE + gasStack.getGas().getLocalizedName() + ": " + EnumColor.GREY + amount);
+            }
+        }
+        int cap = getMaxGas(itemstack);
+        list.add(EnumColor.INDIGO + LangUtils.localize("tooltip.capacity") + ": " + EnumColor.GREY + (cap == Integer.MAX_VALUE ? LangUtils.localize("gui.infinite") : cap));
+
+        if (!MekKeyHandler.getIsKeyPressed(MekanismKeyHandler.sneakKey)) {
+            list.add(LangUtils.localize("tooltip.hold") + " " + EnumColor.AQUA + GameSettings.getKeyDisplayString(MekanismKeyHandler.sneakKey.getKeyCode()) +
+                    EnumColor.GREY + " " + LangUtils.localize("tooltip.forDetails") + ".");
+        } else {
+            if (hasSecurity(itemstack)) {
+                list.add(SecurityUtils.getOwnerDisplay(Minecraft.getMinecraft().player, MekanismClient.clientUUIDMap.get(getOwnerUUID(itemstack))));
+                list.add(EnumColor.GREY + LangUtils.localize("gui.security") + ": " + SecurityUtils.getSecurityDisplay(itemstack, Side.CLIENT));
+                if (SecurityUtils.isOverridden(itemstack, Side.CLIENT)) {
+                    list.add(EnumColor.RED + "(" + LangUtils.localize("gui.overridden") + ")");
+                }
+            }
+
+            list.add(EnumColor.AQUA + LangUtils.localize("tooltip.inventory") + ": " + EnumColor.GREY +
+                    LangUtils.transYesNo(getInventory(itemstack) != null && getInventory(itemstack).tagCount() != 0));
+        }
+    }
 
     @Override
     public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, World world, @Nonnull BlockPos pos, EnumFacing side, float hitX, float hitY,
@@ -76,6 +119,9 @@ public class ItemBlockMidsizeGasTank extends ItemBlock implements IGasItem, ISus
 
     @Override
     public void setGas(ItemStack itemstack, GasStack stack) {
+        if (itemstack.getCount() > 1) {
+            return;
+        }
         if (stack == null || stack.amount == 0) {
             ItemDataUtils.removeData(itemstack, "stored");
         } else {
@@ -87,16 +133,25 @@ public class ItemBlockMidsizeGasTank extends ItemBlock implements IGasItem, ISus
 
     @Override
     public int getMaxGas(ItemStack itemstack) {
+        if (itemstack.getCount() > 1) {
+            return 0;
+        }
         return 819200 * 2;
     }
 
     @Override
     public int getRate(ItemStack itemstack) {
+        if (itemstack.getCount() > 1) {
+            return 0;
+        }
         return 512000 * 2;
     }
 
     @Override
     public int addGas(ItemStack itemstack, GasStack stack) {
+        if (itemstack.getCount() > 1) {
+            return 0;
+        }
         if (getGas(itemstack) != null && getGas(itemstack).getGas() != stack.getGas() && getGas(itemstack).getGas().isRadiation()) {
             return 0;
         }
@@ -107,6 +162,9 @@ public class ItemBlockMidsizeGasTank extends ItemBlock implements IGasItem, ISus
 
     @Override
     public GasStack removeGas(ItemStack itemstack, int amount) {
+        if (itemstack.getCount() > 1) {
+            return null;
+        }
         if (getGas(itemstack) == null) {
             return null;
         }
@@ -117,11 +175,17 @@ public class ItemBlockMidsizeGasTank extends ItemBlock implements IGasItem, ISus
     }
 
     private int getStored(ItemStack itemstack) {
+        if (itemstack.getCount() > 1) {
+            return 0;
+        }
         return getGas(itemstack) != null ? getGas(itemstack).amount : 0;
     }
 
     @Override
     public boolean canReceiveGas(ItemStack itemstack, Gas type) {
+        if (itemstack.getCount() > 1) {
+            return false;
+        }
         if (type.isRadiation()) {
             return false;
         } else {
@@ -131,6 +195,9 @@ public class ItemBlockMidsizeGasTank extends ItemBlock implements IGasItem, ISus
 
     @Override
     public boolean canProvideGas(ItemStack itemstack, Gas type) {
+        if (itemstack.getCount() > 1) {
+            return false;
+        }
         if ((getGas(itemstack) != null && (type == null || getGas(itemstack).getGas().isRadiation()))) {
             return false;
         } else {
@@ -155,7 +222,7 @@ public class ItemBlockMidsizeGasTank extends ItemBlock implements IGasItem, ISus
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return getGas(stack) != null; // No bar for empty containers as bars are drawn on top of stack count number
+        return getStored(stack) > 0;
     }
 
     @Override

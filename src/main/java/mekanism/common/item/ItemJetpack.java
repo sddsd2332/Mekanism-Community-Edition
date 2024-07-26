@@ -50,7 +50,7 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return true;
+        return getStored(stack) > 0;
     }
 
     @Override
@@ -73,7 +73,6 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemstack, World world, List<String> list, ITooltipFlag flag) {
         GasStack gasStack = getGas(itemstack);
-
         if (gasStack == null) {
             list.add(LangUtils.localize("tooltip.noGas") + ".");
         } else {

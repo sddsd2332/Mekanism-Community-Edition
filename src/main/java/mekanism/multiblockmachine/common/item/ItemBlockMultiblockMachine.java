@@ -65,7 +65,7 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
         metaBlock = block;
         setHasSubtypes(true);
         setNoRepair();
-        setMaxStackSize(1);
+      //  setMaxStackSize(1);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
                         list.add(EnumColor.RED + "(" + LangUtils.localize("gui.overridden") + ")");
                     }
                 }
-                if (type.isElectric) {
+                if (type.isElectric && itemstack.getCount() <= 1) {
                     list.add(EnumColor.BRIGHT_GREEN + LangUtils.localize("tooltip.storedEnergy") + ": " + EnumColor.GREY
                             + MekanismUtils.getEnergyDisplay(getEnergy(itemstack), getMaxEnergy(itemstack)));
                 }
@@ -270,6 +270,9 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
 
     @Override
     public double getEnergy(ItemStack itemStack) {
+        if (itemStack.getCount() > 1){
+            return 0;
+        }
         if (!MultiblockMachineType.get(itemStack).isElectric) {
             return 0;
         }
@@ -300,12 +303,15 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
 
     @Override
     public double getMaxTransfer(ItemStack itemStack) {
+        if (itemStack.getCount() > 1){
+            return 0;
+        }
         return getMaxEnergy(itemStack) * 0.005;
     }
 
     @Override
     public boolean canReceive(ItemStack itemStack) {
-        return MultiblockMachineType.get(itemStack).isElectric;
+        return MultiblockMachineType.get(itemStack).isElectric && itemStack.getCount() == 1;
     }
 
     @Override
@@ -316,6 +322,9 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
     @Override
     @Optional.Method(modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
     public int receiveEnergy(ItemStack theItem, int energy, boolean simulate) {
+        if (theItem.getCount() > 1){
+            return 0;
+        }
         if (canReceive(theItem)) {
             double energyNeeded = getMaxEnergy(theItem) - getEnergy(theItem);
             double toReceive = Math.min(RFIntegration.fromRF(energy), energyNeeded);
@@ -330,6 +339,9 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
     @Override
     @Optional.Method(modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
     public int extractEnergy(ItemStack theItem, int energy, boolean simulate) {
+        if (theItem.getCount() > 1){
+            return 0;
+        }
         if (canSend(theItem)) {
             double energyRemaining = getEnergy(theItem);
             double toSend = Math.min(RFIntegration.fromRF(energy), energyRemaining);
@@ -410,5 +422,8 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
         return new ItemCapabilityWrapper(stack, new TeslaItemWrapper(), new ForgeEnergyItemWrapper());
     }
 
-
+    @Override
+    public boolean showDurabilityBar(ItemStack stack) {
+        return getEnergy(stack) > 0;
+    }
 }
