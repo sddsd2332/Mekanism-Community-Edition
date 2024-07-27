@@ -61,7 +61,7 @@ public abstract class TileEntityGenerator extends TileEntityEffectsBlock impleme
                 }
             }
             if (MekanismUtils.canFunction(this)) {
-                CableUtils.emit(this);
+                Mekanism.EXECUTE_MANAGER.addSyncTask(() -> CableUtils.emit(this));
             }
         }
     }
