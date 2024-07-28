@@ -98,13 +98,13 @@ public class ContainerDigitalAssemblyTable extends ContainerMekanism<TileEntityD
         addSlotToContainer(new Slot(tileEntity, 11, 49, 16) {
             @Override
             public boolean isItemValid(ItemStack stack) {
-                return stack.getItem() == MultiblockMachineItems.PlasmaCutterNozzles;
+                return stack.getItem() == MultiblockMachineItems.gas_adsorption_fractionation_module;
             }
         });
         addSlotToContainer(new Slot(tileEntity, 12, 49, 16 + 18) {
             @Override
             public boolean isItemValid(ItemStack stack) {
-                return stack.getItem() == MultiblockMachineItems.DrillBit;
+                return stack.getItem() == MultiblockMachineItems.high_frequency_fusion_molding_module;
             }
         });
         addSlotToContainer(new Slot(tileEntity, 13, 49, 16 + 2 * 18) {

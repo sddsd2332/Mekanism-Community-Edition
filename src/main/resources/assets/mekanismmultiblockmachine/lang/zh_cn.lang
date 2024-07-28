@@ -21,9 +21,10 @@ tooltip.LargeChemicalWasher=一台能够清理未经处理的浆液，为结晶�
 tile.MultiblockMachine.DigitalAssemblyTable.name=数字组装机
 sound_event.mekanismmultiblockmachine.tile.machine.digitalassemblytable=数字组装机：嗡嗡
 tooltip.DigitalAssemblyTable=可组装一系列机器
-item.PlasmaCutterNozzles.name=等离子切割机喷嘴
-item.DrillBit.name=钻头
+item.high_frequency_fusion_molding_module.name=等离子喷嘴模块
+item.gas_adsorption_fractionation_module.name=气体清理模块
 item.LaserLenses.name=激光透镜
+item.advanced_electrolysis_core.name=高级电解核心
 tile.MidsizeGasTank.name=中型气体储罐
 tile.MultiblockGasTank.name=大型气体储罐
 # Creative tab

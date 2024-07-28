@@ -91,8 +91,8 @@ public class DigitalAssemblyTableRecipeCategory<WRAPPER extends DigitalAssemblyT
         itemStacks.set(7, tempRecipe.recipeInput.itemInput8);
         itemStacks.set(8, tempRecipe.recipeInput.itemInput9);
 
-        itemStacks.set(9, new ItemStack(MultiblockMachineItems.PlasmaCutterNozzles));
-        itemStacks.set(10, new ItemStack(MultiblockMachineItems.DrillBit));
+        itemStacks.set(9, new ItemStack(MultiblockMachineItems.gas_adsorption_fractionation_module));
+        itemStacks.set(10, new ItemStack(MultiblockMachineItems.high_frequency_fusion_molding_module));
         itemStacks.set(11, new ItemStack(MultiblockMachineItems.LaserLenses));
 
         itemStacks.set(12, tempRecipe.recipeOutput.itemOutput);

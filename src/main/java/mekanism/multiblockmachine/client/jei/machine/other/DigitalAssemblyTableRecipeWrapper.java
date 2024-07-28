@@ -9,7 +9,6 @@ import mekanism.common.util.MekanismUtils;
 import mekanism.multiblockmachine.common.MultiblockMachineItems;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
@@ -34,8 +33,8 @@ public class DigitalAssemblyTableRecipeWrapper <RECIPE extends DigitalAssemblyTa
         ingredients.setInput(VanillaTypes.ITEM, recipe.recipeInput.itemInput7);
         ingredients.setInput(VanillaTypes.ITEM, recipe.recipeInput.itemInput8);
         ingredients.setInput(VanillaTypes.ITEM, recipe.recipeInput.itemInput9);
-        ingredients.setInput(VanillaTypes.ITEM, new ItemStack(MultiblockMachineItems.PlasmaCutterNozzles));
-        ingredients.setInput(VanillaTypes.ITEM, new ItemStack(MultiblockMachineItems.DrillBit));
+        ingredients.setInput(VanillaTypes.ITEM, new ItemStack(MultiblockMachineItems.gas_adsorption_fractionation_module));
+        ingredients.setInput(VanillaTypes.ITEM, new ItemStack(MultiblockMachineItems.high_frequency_fusion_molding_module));
         ingredients.setInput(VanillaTypes.ITEM, new ItemStack(MultiblockMachineItems.LaserLenses));
         ingredients.setInput(VanillaTypes.FLUID, recipe.recipeInput.fluidInput);
         ingredients.setInput(MekanismJEI.TYPE_GAS, recipe.recipeInput.gasInput);

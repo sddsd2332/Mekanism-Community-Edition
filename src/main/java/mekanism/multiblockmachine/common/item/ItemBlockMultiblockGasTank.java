@@ -135,10 +135,7 @@ public class ItemBlockMultiblockGasTank extends ItemBlock implements IGasItem, I
 
     @Override
     public int getMaxGas(ItemStack itemstack) {
-        if (itemstack.getCount() > 1) {
-            return 0;
-        }
-        return 819200 * 2;
+        return 819200 * 3;
     }
 
     @Override
@@ -146,7 +143,7 @@ public class ItemBlockMultiblockGasTank extends ItemBlock implements IGasItem, I
         if (itemstack.getCount() > 1) {
             return 0;
         }
-        return 512000 * 2;
+        return 512000 * 3;
     }
 
     @Override

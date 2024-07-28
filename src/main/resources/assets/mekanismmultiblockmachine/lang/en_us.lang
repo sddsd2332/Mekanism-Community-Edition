@@ -21,9 +21,10 @@ tooltip.LargeChemicalWasher=An large ultimate machine that cleans unprocessed sl
 sound_event.mekanismmultiblockmachine.tile.machine.digitalassemblytable=Digital Assembly Table hums
 tile.MultiblockMachine.DigitalAssemblyTable.name=Digital Assembly Table
 tooltip.DigitalAssemblyTable=A range of machines can be assembled
-item.PlasmaCutterNozzles.name=Plasma Cutter Nozzles
-item.DrillBit.name=Drill Bit
+item.high_frequency_fusion_molding_module.name=Plasma nozzle module
+item.gas_adsorption_fractionation_module.name=Gas Cleaning Module
 item.LaserLenses.name=Laser Lenses
+item.advanced_electrolysis_core.name=Advanced electrolysis core
 tile.MidsizeGasTank.name=Medium-sized gas storage tanks
 tile.MultiblockGasTank.name=Large gas storage tanks
 # Creative tab

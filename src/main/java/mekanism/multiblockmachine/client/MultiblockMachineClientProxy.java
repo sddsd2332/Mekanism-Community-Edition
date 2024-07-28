@@ -2,7 +2,6 @@ package mekanism.multiblockmachine.client;
 
 import mekanism.client.render.MekanismRenderer;
 import mekanism.client.render.item.ItemLayerWrapper;
-import mekanism.common.Mekanism;
 import mekanism.multiblockmachine.client.gui.GuiMidsizeGasTank;
 import mekanism.multiblockmachine.client.gui.generator.GuiLargeGasGenerator;
 import mekanism.multiblockmachine.client.gui.generator.GuiLargeHeatGenerator;
@@ -75,9 +74,10 @@ public class MultiblockMachineClientProxy extends MultiblockMachineCommonProxy {
 
     @Override
     public void registerItemRenders() {
-        registerItemRender(MultiblockMachineItems.PlasmaCutterNozzles);
-        registerItemRender(MultiblockMachineItems.DrillBit);
+        registerItemRender(MultiblockMachineItems.gas_adsorption_fractionation_module);
+        registerItemRender(MultiblockMachineItems.high_frequency_fusion_molding_module);
         registerItemRender(MultiblockMachineItems.LaserLenses);
+        registerItemRender(MultiblockMachineItems.advanced_electrolysis_core);
         Item.getItemFromBlock(MultiblockMachineBlocks.MultiblockGenerator).setTileEntityItemStackRenderer(new RenderMultiblockGeneratorItem());
         Item.getItemFromBlock(MultiblockMachineBlocks.MultiblockMachine).setTileEntityItemStackRenderer(new RenderMultiblockMachineItem());
     }

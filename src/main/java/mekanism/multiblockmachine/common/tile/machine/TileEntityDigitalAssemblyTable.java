@@ -190,7 +190,7 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
     }
 
     private boolean isMachiningTools() {
-        return inventory.get(11).getItem() == MultiblockMachineItems.PlasmaCutterNozzles && inventory.get(12).getItem() == MultiblockMachineItems.DrillBit && inventory.get(13).getItem() == MultiblockMachineItems.LaserLenses;
+        return inventory.get(11).getItem() == MultiblockMachineItems.gas_adsorption_fractionation_module && inventory.get(12).getItem() == MultiblockMachineItems.high_frequency_fusion_molding_module && inventory.get(13).getItem() == MultiblockMachineItems.LaserLenses;
     }
 
     private TileEntity getGasTankside() {
@@ -310,11 +310,11 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
                     return true;
                 }
             } else if (slotID == 11) {
-                if (ItemHandlerHelper.canItemStacksStack(MultiblockMachineItems.PlasmaCutterNozzles.getDefaultInstance(), itemstack)) {
+                if (ItemHandlerHelper.canItemStacksStack(MultiblockMachineItems.gas_adsorption_fractionation_module.getDefaultInstance(), itemstack)) {
                     return true;
                 }
             } else if (slotID == 12) {
-                if (ItemHandlerHelper.canItemStacksStack(MultiblockMachineItems.DrillBit.getDefaultInstance(), itemstack)) {
+                if (ItemHandlerHelper.canItemStacksStack(MultiblockMachineItems.high_frequency_fusion_molding_module.getDefaultInstance(), itemstack)) {
                     return true;
                 }
             } else if (slotID == 13) {

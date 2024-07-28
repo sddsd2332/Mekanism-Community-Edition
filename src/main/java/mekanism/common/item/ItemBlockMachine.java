@@ -50,6 +50,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -228,7 +229,7 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
                 if (hasTank(itemstack) && type != MachineType.FLUID_TANK) {
                     FluidStack fluidStack = getFluidStack(itemstack);
 
-                    if (fluidStack != null && itemstack.getCount() <=1) {
+                    if (fluidStack != null && itemstack.getCount() <= 1) {
                         list.add(EnumColor.PINK + LangUtils.localizeFluidStack(fluidStack) + ": " + EnumColor.GREY + getFluidStack(itemstack).amount + "mB");
                     }
                 }
@@ -301,9 +302,9 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
                 }
             }
 
-            if (tileEntity instanceof IUpgradeTile) {
+            if (tileEntity instanceof IUpgradeTile upgradeTile) {
                 if (ItemDataUtils.hasData(stack, "upgrades")) {
-                    ((IUpgradeTile) tileEntity).getComponent().read(ItemDataUtils.getDataMap(stack));
+                    upgradeTile.getComponent().read(ItemDataUtils.getDataMap(stack));
                 }
             }
 
@@ -314,15 +315,15 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
                 }
             }
 
-            if (tileEntity instanceof ISustainedData) {
+            if (tileEntity instanceof ISustainedData data) {
                 if (stack.getTagCompound() != null) {
-                    ((ISustainedData) tileEntity).readSustainedData(stack);
+                    data.readSustainedData(stack);
                 }
             }
 
-            if (tileEntity instanceof IRedstoneControl) {
+            if (tileEntity instanceof IRedstoneControl redstoneControl) {
                 if (ItemDataUtils.hasData(stack, "controlType")) {
-                    ((IRedstoneControl) tileEntity).setControlType(RedstoneControl.values()[ItemDataUtils.getInt(stack, "controlType")]);
+                    redstoneControl.setControlType(RedstoneControl.values()[ItemDataUtils.getInt(stack, "controlType")]);
                 }
             }
 
@@ -345,21 +346,21 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
                 Mekanism.packetHandler.sendUpdatePacket(tileEntity);
             }
 
-            if (tileEntity instanceof ISustainedTank) {
+            if (tileEntity instanceof ISustainedTank tank) {
                 if (hasTank(stack) && getFluidStack(stack) != null) {
-                    ((ISustainedTank) tileEntity).setFluidStack(getFluidStack(stack));
+                    tank.setFluidStack(getFluidStack(stack));
                 }
             }
-            if (tileEntity instanceof ISustainedInventory) {
-                ((ISustainedInventory) tileEntity).setInventory(getInventory(stack));
+            if (tileEntity instanceof ISustainedInventory block) {
+                block.setInventory(getInventory(stack));
             }
-            if (tileEntity instanceof TileEntityElectricBlock) {
-                ((TileEntityElectricBlock) tileEntity).electricityStored.set(getEnergy(stack));
+            if (tileEntity instanceof TileEntityElectricBlock block) {
+                block.electricityStored.set(getEnergy(stack));
             }
-            if (!world.isRemote && tileEntity instanceof TileEntityQuantumEntangloporter && ItemDataUtils.hasData(stack, "entangleporter_frequency")) {
+            if (!world.isRemote && tileEntity instanceof TileEntityQuantumEntangloporter quantum && ItemDataUtils.hasData(stack, "entangleporter_frequency")) {
                 Frequency.Identity freq = Frequency.Identity.load(ItemDataUtils.getCompound(stack, "entangleporter_frequency"));
                 if (freq != null) {
-                    ((TileEntityQuantumEntangloporter) tileEntity).setFrequency(freq.name, freq.publicFreq);
+                    quantum.setFrequency(freq.name, freq.publicFreq);
                 }
             }
             return true;
@@ -397,7 +398,6 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer entityplayer, @Nonnull EnumHand hand) {
         ItemStack itemstack = entityplayer.getHeldItem(hand);
         MachineType type = MachineType.get(itemstack);
-
         if (MachineType.get(itemstack) == MachineType.PERSONAL_CHEST) {
             if (!world.isRemote) {
                 if (getOwnerUUID(itemstack) == null) {
@@ -544,7 +544,7 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
 
     @Override
     public double getEnergy(ItemStack itemStack) {
-        if (itemStack.getCount() > 1){
+        if (itemStack.getCount() > 1) {
             return 0;
         }
         if (!MachineType.get(itemStack).isElectric) {
@@ -555,18 +555,18 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
 
     @Override
     public void setEnergy(ItemStack itemStack, double amount) {
-        if (itemStack.getCount() > 1){
+        if (itemStack.getCount() > 1) {
             return;
         }
         if (!MachineType.get(itemStack).isElectric) {
             return;
         }
-       if (amount == 0) {
+        if (amount == 0) {
             NBTTagCompound dataMap = ItemDataUtils.getDataMap(itemStack);
             dataMap.removeTag("energyStored");
-           if (dataMap.isEmpty() && itemStack.getTagCompound()!=null) {
-               itemStack.getTagCompound().removeTag(ItemDataUtils.DATA_ID);
-           }
+            if (dataMap.isEmpty() && itemStack.getTagCompound() != null) {
+                itemStack.getTagCompound().removeTag(ItemDataUtils.DATA_ID);
+            }
         } else {
             ItemDataUtils.setDouble(itemStack, "energyStored", Math.max(Math.min(amount, getMaxEnergy(itemStack)), 0));
         }
@@ -579,14 +579,14 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
             RecipeType recipeType = getRecipeTypeOrNull(itemStack);
             int tierProcess = machineType.factoryTier.processes;
             double baseMaxEnergy = machineType.factoryTier == FactoryTier.CREATIVE ? Double.MAX_VALUE : tierProcess * (recipeType == null ? 1 : Math.max(0.5D * recipeType.getEnergyStorage(), recipeType.getEnergyUsage()));
-            return  ItemDataUtils.hasData(itemStack, "upgrades") ? MekanismUtils.getMaxEnergy(itemStack, baseMaxEnergy) : baseMaxEnergy;
+            return ItemDataUtils.hasData(itemStack, "upgrades") ? MekanismUtils.getMaxEnergy(itemStack, baseMaxEnergy) : baseMaxEnergy;
         }
-        return ItemDataUtils.hasData(itemStack, "upgrades") ? MekanismUtils.getMaxEnergy(itemStack, machineType.getStorage()) : machineType.getStorage() ;
+        return ItemDataUtils.hasData(itemStack, "upgrades") ? MekanismUtils.getMaxEnergy(itemStack, machineType.getStorage()) : machineType.getStorage();
     }
 
     @Override
     public double getMaxTransfer(ItemStack itemStack) {
-        if (itemStack.getCount() > 1){
+        if (itemStack.getCount() > 1) {
             return 0;
         }
         return getMaxEnergy(itemStack) * 0.005;
@@ -605,7 +605,7 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
     @Override
     @Method(modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
     public int receiveEnergy(ItemStack theItem, int energy, boolean simulate) {
-        if (theItem.getCount() > 1){
+        if (theItem.getCount() > 1) {
             return 0;
         }
         if (canReceive(theItem)) {
@@ -622,7 +622,7 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
     @Override
     @Method(modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
     public int extractEnergy(ItemStack theItem, int energy, boolean simulate) {
-        if (theItem.getCount() > 1){
+        if (theItem.getCount() > 1) {
             return 0;
         }
         if (canSend(theItem)) {
@@ -666,7 +666,7 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
 
     @Override
     public int fill(ItemStack container, FluidStack resource, boolean doFill) {
-        if (container.getCount() > 1){
+        if (container.getCount() > 1) {
             return 0;
         }
         if (MachineType.get(container) == MachineType.FLUID_TANK && resource != null) {
@@ -695,7 +695,7 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
 
     @Override
     public FluidStack drain(ItemStack container, int maxDrain, boolean doDrain) {
-        if (container.getCount() > 1){
+        if (container.getCount() > 1) {
             return null;
         }
         if (MachineType.get(container) == MachineType.FLUID_TANK) {
@@ -755,9 +755,9 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
 
     @Override
     public void setSecurity(ItemStack stack, SecurityMode mode) {
-        if (getOwnerUUID(stack) == null){
-            ItemDataUtils.removeData(stack,"security");
-        }else {
+        if (getOwnerUUID(stack) == null) {
+            ItemDataUtils.removeData(stack, "security");
+        } else {
             ItemDataUtils.setInt(stack, "security", mode.ordinal());
         }
     }
@@ -796,8 +796,23 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
             }
         }
     }
+
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
+        MachineType type = MachineType.get(stack);
+        if (type == MachineType.CREATIVE_FACTORY){
+            return false;
+        }
         return getEnergy(stack) > 0;
+    }
+
+    @Override
+    public double getDurabilityForDisplay(ItemStack stack) {
+        return 1D - (getEnergy(stack) / getMaxEnergy(stack));
+    }
+
+    @Override
+    public int getRGBDurabilityForDisplay(@Nonnull ItemStack stack) {
+        return MathHelper.hsvToRGB(Math.max(0.0F, (float) (1 - getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
     }
 }

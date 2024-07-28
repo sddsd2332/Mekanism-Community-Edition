@@ -111,7 +111,7 @@ public class TileEntityLargeGasGenerator extends TileEntityMultiblockGenerator i
                 currentRedstoneLevel = newRedstoneLevel;
             }
             if (MekanismUtils.canFunction(this)) {
-                CableUtils.emit(this, 3);
+                Mekanism.EXECUTE_MANAGER.addSyncTask(() -> CableUtils.emit(this, 3));
             }
         } else if (getActive()) {
             animation = animation % 10;

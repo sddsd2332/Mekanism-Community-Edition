@@ -98,7 +98,7 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
                 explode();
             }
             if (MekanismUtils.canFunction(this)) {
-                CableUtils.emit(this, 4);
+                Mekanism.EXECUTE_MANAGER.addSyncTask(() -> CableUtils.emit(this, 4));
             }
         } else if (getActive()) {
             angle = (angle + (getPos().getY() + 46F) / SPEED_SCALED) % 360;

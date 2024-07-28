@@ -133,9 +133,6 @@ public class ItemBlockMidsizeGasTank extends ItemBlock implements IGasItem, ISus
 
     @Override
     public int getMaxGas(ItemStack itemstack) {
-        if (itemstack.getCount() > 1) {
-            return 0;
-        }
         return 819200 * 2;
     }
 

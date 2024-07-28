@@ -10,8 +10,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.oredict.OreDictionary;
 
-import java.util.Random;
-
 /**
  * An input of a gas, a fluid and an item for the pressurized reaction chamber
  */
@@ -19,7 +17,7 @@ public class CompositeInput extends MachineInput<CompositeInput> implements IWil
 
     public ItemStack itemInput = ItemStack.EMPTY;
     public ItemStack itemInput2 = ItemStack.EMPTY;
-    public ItemStack itemInput3= ItemStack.EMPTY;
+    public ItemStack itemInput3 = ItemStack.EMPTY;
     public ItemStack itemInput4 = ItemStack.EMPTY;
     public ItemStack itemInput5 = ItemStack.EMPTY;
     public ItemStack itemInput6 = ItemStack.EMPTY;
@@ -31,7 +29,7 @@ public class CompositeInput extends MachineInput<CompositeInput> implements IWil
     public FluidStack fluidInput;
     public GasStack gasInput;
 
-    public CompositeInput(ItemStack item, ItemStack item2,ItemStack item3,ItemStack item4,ItemStack item5,ItemStack item6,ItemStack item7,ItemStack item8,ItemStack item9,
+    public CompositeInput(ItemStack item, ItemStack item2, ItemStack item3, ItemStack item4, ItemStack item5, ItemStack item6, ItemStack item7, ItemStack item8, ItemStack item9,
                           FluidStack fluid, GasStack gas) {
         itemInput = item;
         itemInput2 = item2;
@@ -77,12 +75,12 @@ public class CompositeInput extends MachineInput<CompositeInput> implements IWil
                 !itemInput8.isEmpty() &&
                 !itemInput9.isEmpty() &&
                 fluidInput != null &&
-                 gasInput != null;
+                gasInput != null;
     }
 
     public boolean use(NonNullList<ItemStack> inventory, int index, int index2, int index3, int index4, int index5, int index6, int index7, int index8, int index9,
                        FluidTank fluidTank, GasTank gasTank, boolean deplete) {
-        if (meets(new CompositeInput(inventory.get(index),inventory.get(index2),inventory.get(index3),inventory.get(index4),inventory.get(index5),inventory.get(index6),inventory.get(index7),inventory.get(index8),inventory.get(index9),  fluidTank.getFluid(), gasTank.getGas()))) {
+        if (meets(new CompositeInput(inventory.get(index), inventory.get(index2), inventory.get(index3), inventory.get(index4), inventory.get(index5), inventory.get(index6), inventory.get(index7), inventory.get(index8), inventory.get(index9), fluidTank.getFluid(), gasTank.getGas()))) {
             if (deplete) {
                 inventory.set(index, StackUtils.subtract(inventory.get(index), itemInput));
                 inventory.set(index2, StackUtils.subtract(inventory.get(index2), itemInput2));
@@ -107,11 +105,69 @@ public class CompositeInput extends MachineInput<CompositeInput> implements IWil
      * @param stack - stack to check
      * @return if the stack's item type is contained in this PressurizedReactants
      */
-    public boolean containsType(ItemStack stack,ItemStack stack2) {
+    public boolean containsType(ItemStack stack) {
         if (stack.isEmpty() || stack.getCount() == 0) {
             return false;
         }
-        return MachineInput.inputItemMatches(stack, stack2);
+        return MachineInput.inputItemMatches(stack, itemInput);
+    }
+
+
+    public boolean containsType2(ItemStack stack) {
+        if (stack.isEmpty() || stack.getCount() == 0) {
+            return false;
+        }
+        return MachineInput.inputItemMatches(stack, itemInput2);
+    }
+
+    public boolean containsType3(ItemStack stack) {
+        if (stack.isEmpty() || stack.getCount() == 0) {
+            return false;
+        }
+        return MachineInput.inputItemMatches(stack, itemInput3);
+    }
+
+
+    public boolean containsType4(ItemStack stack) {
+        if (stack.isEmpty() || stack.getCount() == 0) {
+            return false;
+        }
+        return MachineInput.inputItemMatches(stack, itemInput4);
+    }
+
+    public boolean containsType5(ItemStack stack) {
+        if (stack.isEmpty() || stack.getCount() == 0) {
+            return false;
+        }
+        return MachineInput.inputItemMatches(stack, itemInput5);
+    }
+
+    public boolean containsType6(ItemStack stack) {
+        if (stack.isEmpty() || stack.getCount() == 0) {
+            return false;
+        }
+        return MachineInput.inputItemMatches(stack, itemInput6);
+    }
+
+    public boolean containsType7(ItemStack stack) {
+        if (stack.isEmpty() || stack.getCount() == 0) {
+            return false;
+        }
+        return MachineInput.inputItemMatches(stack, itemInput7);
+    }
+
+    public boolean containsType8(ItemStack stack) {
+        if (stack.isEmpty() || stack.getCount() == 0) {
+            return false;
+        }
+        return MachineInput.inputItemMatches(stack, itemInput8);
+    }
+
+    public boolean containsType9(ItemStack stack) {
+        if (stack.isEmpty() || stack.getCount() == 0) {
+            return false;
+        }
+        return MachineInput.inputItemMatches(stack, itemInput9);
     }
 
     /**
@@ -157,7 +213,7 @@ public class CompositeInput extends MachineInput<CompositeInput> implements IWil
     }
 
 
-    public boolean getItemCount(CompositeInput input){
+    public boolean getItemCount(CompositeInput input) {
         return input.itemInput.getCount() >= itemInput.getCount() &&
                 input.itemInput2.getCount() >= itemInput2.getCount() &&
                 input.itemInput3.getCount() >= itemInput3.getCount() &&
@@ -166,18 +222,18 @@ public class CompositeInput extends MachineInput<CompositeInput> implements IWil
                 input.itemInput6.getCount() >= itemInput6.getCount() &&
                 input.itemInput7.getCount() >= itemInput7.getCount() &&
                 input.itemInput8.getCount() >= itemInput8.getCount() &&
-                input.itemInput9.getCount() >= itemInput9.getCount() ;
+                input.itemInput9.getCount() >= itemInput9.getCount();
     }
 
-    public boolean getItem(CompositeInput input){
+    public boolean getItem(CompositeInput input) {
         return StackUtils.equalsWildcardWithNBT(input.itemInput, itemInput) &&
-                StackUtils.equalsWildcardWithNBT(input.itemInput2, itemInput2)&&
-                StackUtils.equalsWildcardWithNBT(input.itemInput3, itemInput3)&&
-                StackUtils.equalsWildcardWithNBT(input.itemInput4, itemInput4)&&
-                StackUtils.equalsWildcardWithNBT(input.itemInput5, itemInput5)&&
-                StackUtils.equalsWildcardWithNBT(input.itemInput6, itemInput6)&&
-                StackUtils.equalsWildcardWithNBT(input.itemInput7, itemInput7)&&
-                StackUtils.equalsWildcardWithNBT(input.itemInput8, itemInput8)&&
+                StackUtils.equalsWildcardWithNBT(input.itemInput2, itemInput2) &&
+                StackUtils.equalsWildcardWithNBT(input.itemInput3, itemInput3) &&
+                StackUtils.equalsWildcardWithNBT(input.itemInput4, itemInput4) &&
+                StackUtils.equalsWildcardWithNBT(input.itemInput5, itemInput5) &&
+                StackUtils.equalsWildcardWithNBT(input.itemInput6, itemInput6) &&
+                StackUtils.equalsWildcardWithNBT(input.itemInput7, itemInput7) &&
+                StackUtils.equalsWildcardWithNBT(input.itemInput8, itemInput8) &&
                 StackUtils.equalsWildcardWithNBT(input.itemInput9, itemInput9);
     }
 
@@ -200,34 +256,25 @@ public class CompositeInput extends MachineInput<CompositeInput> implements IWil
 
     @Override
     public int hashIngredients() {
-        return StackUtils.hashItemStack(itemInput) << 17 |
-                StackUtils.hashItemStack(itemInput2) << 16 |
-                StackUtils.hashItemStack(itemInput3) << 15 |
-                StackUtils.hashItemStack(itemInput4) << 14 |
-                StackUtils.hashItemStack(itemInput5) << 13 |
-                StackUtils.hashItemStack(itemInput6) << 12 |
-                StackUtils.hashItemStack(itemInput7) << 11 |
-                StackUtils.hashItemStack(itemInput8) << 10 |
-                StackUtils.hashItemStack(itemInput9) << 9 |
-                 (fluidInput.getFluid() != null ? fluidInput.getFluid().hashCode() : 0) << 8 |
-                 gasInput.hashCode();
+        return StackUtils.hashItemStack(itemInput) << 8 | (fluidInput.getFluid() != null ? fluidInput.getFluid().hashCode() : 0) << 4 | gasInput.hashCode();
     }
+
 
     @Override
     public boolean testEquality(CompositeInput other) {
         return testItemEquality(other) && other.containsType(fluidInput) && other.containsType(gasInput);
     }
 
-    public boolean testItemEquality(CompositeInput other){
-        return other.containsType(itemInput,itemInput) &&
-                other.containsType(itemInput2,itemInput2) &&
-                other.containsType(itemInput3,itemInput3) &&
-                other.containsType(itemInput4,itemInput4) &&
-                other.containsType(itemInput5,itemInput5) &&
-                other.containsType(itemInput6,itemInput6) &&
-                other.containsType(itemInput7,itemInput7) &&
-                other.containsType(itemInput8,itemInput8) &&
-                other.containsType(itemInput9,itemInput9) ;
+    public boolean testItemEquality(CompositeInput other) {
+        return other.containsType(itemInput) &&
+                other.containsType2(itemInput2) &&
+                other.containsType3(itemInput3) &&
+                other.containsType4(itemInput4) &&
+                other.containsType5(itemInput5) &&
+                other.containsType6(itemInput6) &&
+                other.containsType7(itemInput7) &&
+                other.containsType8(itemInput8) &&
+                other.containsType9(itemInput9);
     }
 
     @Override
@@ -239,14 +286,14 @@ public class CompositeInput extends MachineInput<CompositeInput> implements IWil
     public CompositeInput wildCopy() {
         return new CompositeInput(
                 new ItemStack(itemInput.getItem(), itemInput.getCount(), OreDictionary.WILDCARD_VALUE),
-                new ItemStack(itemInput.getItem(), itemInput.getCount(), OreDictionary.WILDCARD_VALUE),
-                new ItemStack(itemInput.getItem(), itemInput.getCount(), OreDictionary.WILDCARD_VALUE),
-                new ItemStack(itemInput.getItem(), itemInput.getCount(), OreDictionary.WILDCARD_VALUE),
-                new ItemStack(itemInput.getItem(), itemInput.getCount(), OreDictionary.WILDCARD_VALUE),
-                new ItemStack(itemInput.getItem(), itemInput.getCount(), OreDictionary.WILDCARD_VALUE),
-                new ItemStack(itemInput.getItem(), itemInput.getCount(), OreDictionary.WILDCARD_VALUE),
-                new ItemStack(itemInput.getItem(), itemInput.getCount(), OreDictionary.WILDCARD_VALUE),
-                new ItemStack(itemInput.getItem(), itemInput.getCount(), OreDictionary.WILDCARD_VALUE),
+                new ItemStack(itemInput2.getItem(), itemInput2.getCount(), OreDictionary.WILDCARD_VALUE),
+                new ItemStack(itemInput3.getItem(), itemInput3.getCount(), OreDictionary.WILDCARD_VALUE),
+                new ItemStack(itemInput4.getItem(), itemInput4.getCount(), OreDictionary.WILDCARD_VALUE),
+                new ItemStack(itemInput5.getItem(), itemInput5.getCount(), OreDictionary.WILDCARD_VALUE),
+                new ItemStack(itemInput6.getItem(), itemInput6.getCount(), OreDictionary.WILDCARD_VALUE),
+                new ItemStack(itemInput7.getItem(), itemInput7.getCount(), OreDictionary.WILDCARD_VALUE),
+                new ItemStack(itemInput8.getItem(), itemInput8.getCount(), OreDictionary.WILDCARD_VALUE),
+                new ItemStack(itemInput9.getItem(), itemInput9.getCount(), OreDictionary.WILDCARD_VALUE),
                 fluidInput, gasInput);
     }
 }

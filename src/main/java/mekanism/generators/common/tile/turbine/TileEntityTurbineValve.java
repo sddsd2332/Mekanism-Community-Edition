@@ -8,6 +8,7 @@ import ic2.api.energy.tile.IEnergyConductor;
 import ic2.api.energy.tile.IEnergyEmitter;
 import ic2.api.energy.tile.IEnergyTile;
 import mekanism.api.Coord4D;
+import mekanism.common.Mekanism;
 import mekanism.common.base.FluidHandlerWrapper;
 import mekanism.common.base.IComparatorSupport;
 import mekanism.common.base.IEnergyWrapper;
@@ -64,7 +65,7 @@ public class TileEntityTurbineValve extends TileEntityTurbineCasing implements I
 
         if (!world.isRemote) {
             if (structure != null) {
-                CableUtils.emit(this);
+                Mekanism.EXECUTE_MANAGER.addSyncTask(() -> CableUtils.emit(this));
             }
             int newRedstoneLevel = getRedstoneLevel();
             if (newRedstoneLevel != currentRedstoneLevel) {

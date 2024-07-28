@@ -71,7 +71,7 @@ public class TileEntityInductionPort extends TileEntityInductionCasing implement
         }
         if (!world.isRemote) {
             if (structure != null && mode) {
-                CableUtils.emit(this);
+                Mekanism.EXECUTE_MANAGER.addSyncTask(() -> CableUtils.emit(this));
             }
             int newRedstoneLevel = getRedstoneLevel();
             if (newRedstoneLevel != currentRedstoneLevel) {

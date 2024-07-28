@@ -43,11 +43,9 @@ public class TileEntityChargepad extends TileEntityEffectsBlock {
     public void onUpdate() {
         super.onUpdate();
         if (!world.isRemote) {
-
             isActive = false;
             List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class,
                     new AxisAlignedBB(getPos().getX(), getPos().getY(), getPos().getZ(), getPos().getX() + 1, getPos().getY() + 0.2, getPos().getZ() + 1));
-
             for (EntityLivingBase entity : entities) {
                 if (entity instanceof EntityPlayer || entity instanceof EntityRobit) {
                     isActive = getEnergy() > 0;
@@ -171,5 +169,10 @@ public class TileEntityChargepad extends TileEntityEffectsBlock {
             return true;
         }
         return super.isCapabilityDisabled(capability, side);
+    }
+
+    @Override
+    public boolean supportsAsync() {
+        return false;
     }
 }

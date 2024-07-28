@@ -572,15 +572,15 @@ public final class RecipeHandler {
     public static boolean isInDigitalAssemblyRecipe(@Nonnull ItemStack stack) {
         if (!stack.isEmpty()) {
             for (CompositeInput key : Recipe.DIGITAL_ASSEMBLY_TABLE.get().keySet()) {
-                if (key.containsType(stack, key.itemInput) ||
-                        key.containsType(stack, key.itemInput2) ||
-                        key.containsType(stack, key.itemInput3) ||
-                        key.containsType(stack, key.itemInput4) ||
-                        key.containsType(stack, key.itemInput5) ||
-                        key.containsType(stack, key.itemInput6) ||
-                        key.containsType(stack, key.itemInput7) ||
-                        key.containsType(stack, key.itemInput8) ||
-                        key.containsType(stack, key.itemInput9)) {
+                if (key.containsType(stack) &&
+                        key.containsType2(stack) &&
+                        key.containsType3(stack) &&
+                        key.containsType4(stack) &&
+                        key.containsType5(stack) &&
+                        key.containsType6(stack) &&
+                        key.containsType7(stack) &&
+                        key.containsType8(stack) &&
+                        key.containsType9(stack)) {
                     return true;
                 }
             }

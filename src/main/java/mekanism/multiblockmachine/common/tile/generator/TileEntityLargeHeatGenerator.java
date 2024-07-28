@@ -95,7 +95,7 @@ public class TileEntityLargeHeatGenerator extends TileEntityMultiblockGenerator 
                 currentRedstoneLevel = newRedstoneLevel;
             }
             if (MekanismUtils.canFunction(this)) {
-                CableUtils.emit(this, 2);
+                Mekanism.EXECUTE_MANAGER.addSyncTask(() -> CableUtils.emit(this, 2));
             }
         }
     }

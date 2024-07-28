@@ -41,6 +41,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
@@ -425,5 +426,15 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
         return getEnergy(stack) > 0;
+    }
+
+    @Override
+    public double getDurabilityForDisplay(ItemStack stack) {
+        return 1D - (getEnergy(stack) / getMaxEnergy(stack));
+    }
+
+    @Override
+    public int getRGBDurabilityForDisplay(@Nonnull ItemStack stack) {
+        return MathHelper.hsvToRGB(Math.max(0.0F, (float) (1 - getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
     }
 }
