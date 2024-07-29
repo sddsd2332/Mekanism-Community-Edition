@@ -256,7 +256,16 @@ public class CompositeInput extends MachineInput<CompositeInput> implements IWil
 
     @Override
     public int hashIngredients() {
-        return StackUtils.hashItemStack(itemInput) << 8 | (fluidInput.getFluid() != null ? fluidInput.getFluid().hashCode() : 0) << 4 | gasInput.hashCode();
+        return (StackUtils.hashItemStack(itemInput) +
+                StackUtils.hashItemStack(itemInput2) +
+                StackUtils.hashItemStack(itemInput3) +
+                StackUtils.hashItemStack(itemInput4) +
+                StackUtils.hashItemStack(itemInput5) +
+                StackUtils.hashItemStack(itemInput6) +
+                StackUtils.hashItemStack(itemInput7) +
+                StackUtils.hashItemStack(itemInput8) +
+                StackUtils.hashItemStack(itemInput9)) << 16
+                | (fluidInput.getFluid() != null ? fluidInput.getFluid().hashCode() : 0) << 8 | gasInput.hashCode();
     }
 
 

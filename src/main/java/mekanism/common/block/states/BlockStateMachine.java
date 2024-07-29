@@ -214,8 +214,8 @@ public class BlockStateMachine extends ExtendedBlockState {
         }
 
         public boolean isValidMachine() {
-          //  return this != MODIFICATION_STATION;
              return true;
+        //   return this != HYBRID_STORAGE;
         }
 
         public TileEntity create() {

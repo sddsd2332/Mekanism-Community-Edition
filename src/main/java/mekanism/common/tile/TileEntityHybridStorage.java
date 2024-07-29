@@ -53,6 +53,7 @@ public class TileEntityHybridStorage extends TileEntityElectricBlock implements 
     public RedstoneControl controlType;
     public ContainerEditMode editMode = ContainerEditMode.BOTH;
 
+    //TODO：Maybe remove this,Because it's not good to have both input and output in the same place at the same time
     public TileEntityHybridStorage() {
         super(MachineType.HYBRID_STORAGE.getBlockName(), MachineType.HYBRID_STORAGE.getStorage());
         configComponent = new TileComponentConfig(this, TransmissionType.ITEM, TransmissionType.ENERGY, TransmissionType.FLUID, TransmissionType.GAS);
