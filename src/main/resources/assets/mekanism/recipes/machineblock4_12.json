@@ -1,0 +1,28 @@
+{
+  "result": {
+    "item": "mekanism:machineblock4",
+    "data": 12
+  },
+  "pattern": [
+    "ABA",
+    "B B",
+    "ABA"
+  ],
+  "type": "mekanism:ore_shaped",
+  "conditions": [
+    {
+      "type": "mekanism:recipe_enabled",
+      "machineType": "radioactive_waste_barrel"
+    }
+  ],
+  "key": {
+    "A": {
+      "ore": "ingotSteel",
+      "type": "forge:ore_dict"
+    },
+    "B": {
+      "ore": "ingotLead",
+      "type": "forge:ore_dict"
+    }
+  }
+}

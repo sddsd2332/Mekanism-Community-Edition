@@ -1,0 +1,29 @@
+{
+      "result": {
+            "item": "mekanism:moduleupgrade",
+            "data": 2
+      },
+      "pattern": [
+            "CDC",
+            "CBC",
+            "AAA"
+      ],
+      "type": "mekanism:ore_shaped",
+      "key": {
+            "A": {
+                  "item": "mekanism:polyethene",
+                  "data": 2
+            },
+            "B": {
+                  "item": "mekanism:modulebase"
+            },
+            "C": {
+                  "ore": "alloyAdvanced",
+                  "type": "forge:ore_dict"
+            },
+            "D": {
+                  "ore": "blockLead",
+                  "type": "forge:ore_dict"
+            }
+      }
+}

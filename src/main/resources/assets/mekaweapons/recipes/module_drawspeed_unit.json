@@ -1,0 +1,31 @@
+{
+      "result": {
+            "item": "mekanism:moduleupgrade",
+            "data": 19
+      },
+      "pattern": [
+            "SBS",
+            "AMA",
+            "PPP"
+      ],
+      "type": "mekanism:ore_shaped",
+      "key": {
+            "M": {
+                  "item": "mekanism:modulebase"
+            },
+            "P": {
+                  "ore": "PoloniumPellet",
+                  "type": "forge:ore_dict"
+            },
+            "B": {
+                  "item": "mekanism:electricbow"
+            },
+            "A": {
+                  "ore": "alloyElite",
+                  "type": "forge:ore_dict"
+            },
+            "S": {
+                  "item": "mekanism:speedupgrade"
+            }
+      }
+}

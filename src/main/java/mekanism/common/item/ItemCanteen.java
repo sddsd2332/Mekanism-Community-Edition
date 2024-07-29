@@ -61,7 +61,7 @@ public class ItemCanteen extends ItemMekanism implements IGasItem {
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return true;
+        return getStored(stack) > 0;
     }
 
     @Override

@@ -1,0 +1,30 @@
+{
+  "result": {
+    "item": "mekanism:moduleupgrade",
+    "data": 15
+  },
+  "pattern": [
+    "CDC",
+    "CBC",
+    "ADA"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "A": {
+      "ore": "PoloniumPellet",
+      "type": "forge:ore_dict"
+    },
+    "B": {
+      "item": "mekanism:modulebase"
+    },
+    "C": {
+      "ore": "alloyElite",
+      "type": "forge:ore_dict"
+    },
+    "D": {
+      "type": "minecraft:item_nbt",
+      "item": "forge:bucketfilled",
+      "nbt": {"FluidName":"liquidhydrogen", "Amount": 1000}
+    }
+  }
+}

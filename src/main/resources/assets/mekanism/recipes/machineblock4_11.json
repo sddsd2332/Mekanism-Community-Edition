@@ -1,0 +1,39 @@
+{
+  "result": {
+    "item": "mekanism:machineblock4",
+    "data": 11
+  },
+  "pattern": [
+    "ABA",
+    "CDC",
+    "AEA"
+  ],
+  "type": "mekanism:ore_shaped",
+  "conditions": [
+    {
+      "type": "mekanism:recipe_enabled",
+      "machineType": "Modification_Station"
+    }
+  ],
+  "key": {
+    "A": {
+      "item": "mekanism:polyethene",
+      "data": 2
+    },
+    "B": {
+      "ore": "chestWood",
+      "type": "forge:ore_dict"
+    },
+    "C": {
+      "item": "#CIRCUITULTIMATE"
+    },
+    "D": {
+      "item": "mekanism:basicblock",
+      "data": 8
+    },
+    "E": {
+      "ore": "PoloniumPellet",
+      "type": "forge:ore_dict"
+    }
+  }
+}

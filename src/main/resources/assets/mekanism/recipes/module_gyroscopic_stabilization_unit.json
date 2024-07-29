@@ -1,0 +1,29 @@
+{
+      "result": {
+            "item": "mekanism:moduleupgrade",
+            "data": 10
+      },
+      "pattern": [
+            "CDC",
+            "DBD",
+            "ADA"
+      ],
+      "type": "mekanism:ore_shaped",
+      "key": {
+            "A": {
+                  "ore": "PoloniumPellet",
+                  "type": "forge:ore_dict"
+            },
+            "B": {
+                  "item": "mekanism:modulebase"
+            },
+            "C": {
+                  "ore": "alloyElite",
+                  "type": "forge:ore_dict"
+            },
+            "D": {
+                  "ore":"obsidian",
+                  "type": "forge:ore_dict"
+            }
+      }
+}

@@ -1,0 +1,31 @@
+{
+      "result": {
+            "item": "mekanism:moduleupgrade",
+            "data": 18
+      },
+      "pattern": [
+            "ACA",
+            "EME",
+            "PPP"
+      ],
+      "type": "mekanism:ore_shaped",
+      "key": {
+            "M": {
+                  "item": "mekanism:modulebase"
+            },
+            "P": {
+                  "ore": "PoloniumPellet",
+                  "type": "forge:ore_dict"
+            },
+            "C": {
+                  "item": "minecraft:clock"
+            },
+            "A": {
+                  "ore": "alloyElite",
+                  "type": "forge:ore_dict"
+            },
+            "E": {
+                  "item": "#CIRCUITULTIMATE"
+            }
+      }
+}

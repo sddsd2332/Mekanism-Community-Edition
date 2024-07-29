@@ -1,0 +1,28 @@
+{
+      "result": {
+            "item": "mekanism:moduleupgrade",
+            "data": 7
+      },
+      "pattern": [
+            "CDC",
+            "CBC",
+            "AAA"
+      ],
+      "type": "mekanism:ore_shaped",
+      "key": {
+            "A": {
+                  "ore": "PoloniumPellet",
+                  "type": "forge:ore_dict"
+            },
+            "B": {
+                  "item": "mekanism:modulebase"
+            },
+            "C": {
+                  "ore": "alloyElite",
+                  "type": "forge:ore_dict"
+            },
+            "D": {
+                  "item":"mekanism:canteen"
+            }
+      }
+}

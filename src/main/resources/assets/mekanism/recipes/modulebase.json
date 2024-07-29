@@ -1,0 +1,25 @@
+{
+      "result": {
+            "item": "mekanism:modulebase"
+      },
+      "pattern": [
+            "BCB",
+            "CAC",
+            "BCB"
+      ],
+      "type": "mekanism:ore_shaped",
+      "key": {
+            "A": {
+                  "item": "mekanism:polyethene",
+                  "data": 2
+            },
+            "B": {
+                  "ore": "nuggetBronze",
+                  "type": "forge:ore_dict"
+            },
+            "C": {
+                  "ore": "ingotTin",
+                  "type": "forge:ore_dict"
+            }
+      }
+}

@@ -1,0 +1,31 @@
+{
+      "result": {
+            "item": "mekanism:mekasuitchestplate"
+      },
+      "pattern": [
+            "ACA",
+            "ADA",
+            "BEB"
+      ],
+      "type": "mekanism:ore_shaped",
+      "key": {
+            "A": {
+                  "item": "mekanism:polyethene",
+                  "data": 2
+            },
+            "B": {
+                  "ore": "PoloniumPellet",
+                  "type": "forge:ore_dict"
+            },
+            "C": {
+                  "item": "#CIRCUITULTIMATE"
+            },
+            "D": {
+                  "item": "minecraft:diamond_chestplate"
+            },
+            "E": {
+                  "item": "mekanism:basicblock2",
+                  "data": 3
+            }
+      }
+}
