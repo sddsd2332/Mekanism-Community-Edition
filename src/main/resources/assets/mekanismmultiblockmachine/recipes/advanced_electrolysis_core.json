@@ -1,0 +1,20 @@
+{
+  "result": {
+    "item": "mekanismmultiblockmachine:advanced_electrolysis_core"
+  },
+  "pattern": [
+    "ABA",
+    "BAB",
+    "ABA"
+  ],
+  "type": "mekanism:ore_shaped",
+  "key": {
+    "A": {
+      "item": "mekanism:electrolyticcore"
+    },
+    "B": {
+      "ore": "alloyUltimate",
+      "type": "forge:ore_dict"
+    }
+  }
+}

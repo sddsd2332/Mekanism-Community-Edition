@@ -7,7 +7,6 @@ import mekanism.client.render.GasRenderMap;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.client.render.MekanismRenderer.DisplayInteger;
 import mekanism.client.render.MekanismRenderer.Model3D;
-import mekanism.common.Mekanism;
 import mekanism.multiblockmachine.client.model.machine.ModelDigitalAssemblyTable;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachineGenerator;
 import mekanism.multiblockmachine.common.tile.machine.TileEntityDigitalAssemblyTable;
@@ -56,7 +55,7 @@ public class RenderDigitalAssemblyTable extends RenderTileEntityTime<TileEntityD
         cachedCenterOutputFluids.clear();
     }
 
-    public ModelDigitalAssemblyTable getModel(){
+    public ModelDigitalAssemblyTable getModel() {
         return model;
     }
 
@@ -187,7 +186,7 @@ public class RenderDigitalAssemblyTable extends RenderTileEntityTime<TileEntityD
         }
 
         ItemStack stack = tileEntity.getStackInSlot(14);
-        if (!stack.isEmpty()) {
+        if (!stack.isEmpty() && (stack.getItem() == Item.getItemFromBlock(MultiblockMachine) || stack.getItem() == Item.getItemFromBlock(MultiblockGenerator) && !stack.isItemEqual(BlockStateMultiblockMachineGenerator.MultiblockMachineGeneratorType.LARGE_WIND_GENERATOR.getStack()))) {
             GlStateManager.pushMatrix();
             if (stack.getItem() == Item.getItemFromBlock(MultiblockMachine)) {
                 GlStateManager.translate((float) x + 0.5F, (float) y + 2.5F, (float) z + 0.5F);
@@ -195,9 +194,6 @@ public class RenderDigitalAssemblyTable extends RenderTileEntityTime<TileEntityD
             } else if (stack.getItem() == Item.getItemFromBlock(MultiblockGenerator) && !stack.isItemEqual(BlockStateMultiblockMachineGenerator.MultiblockMachineGeneratorType.LARGE_WIND_GENERATOR.getStack())) {
                 GlStateManager.translate((float) x + 0.5F, (float) y + 2.5F, (float) z + 0.5F);
                 GlStateManager.scale(3.125F, 3.125F, 3.125F);
-            } else {
-                GlStateManager.translate((float) x + 0.5F, (float) y + 1.5F, (float) z + 0.5F);
-                GlStateManager.scale(1.0F, 1.0F, 1.0F);
             }
             MekanismRenderer.rotate(tileEntity.facing, 270, 90, 0, 180);
             GlStateManager.disableLighting();

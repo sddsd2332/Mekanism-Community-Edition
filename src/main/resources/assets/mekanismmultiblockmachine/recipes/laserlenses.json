@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "mekanismmultiblockmachine:laserlenses"
+  },
+  "pattern": [
+    "AAA",
+    "ABA",
+    "AAA"
+  ],
+  "type": "mekanism:ore_shaped",
+  "key": {
+    "A": {
+      "item": "mekanism:basicblock",
+      "data": 10
+    },
+    "B": {
+      "item": "mekanism:machineblock2",
+      "data": 14
+    }
+  }
+}

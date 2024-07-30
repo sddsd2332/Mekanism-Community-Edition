@@ -1,0 +1,31 @@
+{
+  "result": {
+    "item": "mekanismmultiblockmachine:gas_adsorption_fractionation_module"
+  },
+  "pattern": [
+    "ABA",
+    "BCB",
+    "DCD"
+  ],
+  "type": "mekanism:ore_shaped",
+  "key": {
+    "A": {
+      "ore": "alloyUltimate",
+      "type": "forge:ore_dict"
+    },
+    "B": {
+      "item": "mekanism:polyethene",
+      "data": 2
+    },
+    "C": {
+      "nbt": {"tier": 3},
+      "item": "mekanism:transmitter",
+      "data": 2,
+      "type": "mekanism:item_nbt"
+    },
+    "D": {
+      "item": "mekanism:polyethene",
+      "data": 3
+    }
+  }
+}

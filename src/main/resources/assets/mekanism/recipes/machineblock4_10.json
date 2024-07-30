@@ -1,0 +1,50 @@
+{
+  "result": {
+    "item": "mekanism:machineblock4",
+    "data": 10
+  },
+  "pattern": [
+    "ABC",
+    "DFD",
+    "ADE"
+  ],
+  "type": "mekanism:ore_shaped",
+  "conditions": [
+    {
+      "type": "mekanism:recipe_enabled",
+      "machineType": "Hybrid_Storage"
+    }
+  ],
+  "key": {
+    "A": {
+      "nbt": {"tier": 3},
+      "item": "mekanism:gastank",
+      "data": 0,
+      "type": "mekanism:item_nbt"
+    },
+    "B": {
+      "ore": "circuitUltimate",
+      "type": "forge:ore_dict"
+    },
+    "C": {
+      "nbt": {"tier": 3},
+      "item": "mekanism:machineblock2",
+      "data": 11,
+      "type": "mekanism:item_nbt"
+    },
+    "D": {
+      "ore": "blockSteel",
+      "type": "forge:ore_dict"
+    },
+    "E": {
+      "nbt": {"tier": 3},
+      "item": "mekanism:energycube",
+      "data": 0,
+      "type": "mekanism:item_nbt"
+    },
+    "F": {
+      "item": "mekanism:machineblock",
+      "data": 13
+    }
+  }
+}

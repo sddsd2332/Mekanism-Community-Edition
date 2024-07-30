@@ -1,0 +1,36 @@
+{
+  "result": {
+    "item": "mekanismmultiblockmachine:high_frequency_fusion_molding_module"
+  },
+  "pattern": [
+    "ABA",
+    "CDC",
+    "EFE"
+  ],
+  "type": "mekanism:ore_shaped",
+  "key": {
+    "A": {
+      "ore": "alloyUltimate",
+      "type": "forge:ore_dict"
+    },
+    "B": {
+      "ore": "circuitUltimate",
+      "type": "forge:ore_dict"
+    },
+    "C": {
+      "item": "mekanism:polyethene",
+      "data": 2
+    },
+    "D": {
+      "item": "mekanism:machineblock2",
+      "data": 13
+    },
+    "E": {
+      "item": "mekanism:polyethene",
+      "data": 3
+    },
+    "F": {
+      "item": "mekanism:cosmicmatter"
+    }
+  }
+}

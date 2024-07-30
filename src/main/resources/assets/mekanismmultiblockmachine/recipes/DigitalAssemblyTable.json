@@ -1,0 +1,43 @@
+{
+  "result": {
+    "item": "mekanismmultiblockmachine:multiblockmachine",
+    "data": 3
+  },
+  "pattern": [
+    "ABA",
+    "CDC",
+    "EFE"
+  ],
+  "type": "mekanism:ore_shaped",
+  "key": {
+    "A": {
+      "item": "mekanism:robit"
+    },
+    "B": {
+      "nbt": {"tier": 3},
+      "item": "mekanism:gastank",
+      "data": 0,
+      "type": "mekanism:item_nbt"
+    },
+    "C": {
+      "item": "mekanism:basicblock",
+      "data": 8
+    },
+    "D": {
+      "nbt": {"tier": 3},
+      "item": "mekanism:energycube",
+      "data": 0,
+      "type": "mekanism:item_nbt"
+    },
+    "E": {
+      "ore": "blockSteel",
+      "type": "forge:ore_dict"
+    },
+    "F": {
+      "nbt": {"tier": 3},
+      "item": "mekanism:machineblock2",
+      "data": 11,
+      "type": "mekanism:item_nbt"
+    }
+  }
+}
