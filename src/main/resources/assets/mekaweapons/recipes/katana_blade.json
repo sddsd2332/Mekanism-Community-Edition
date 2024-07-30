@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "mekaweapons:katana_blade"
+  },
+  "pattern": [
+    "  s",
+    "as ",
+    "oa "
+  ],
+  "type": "mekanism:ore_shaped",
+  "key": {
+    "o": {
+      "ore": "ingotRefinedObsidian",
+      "type": "forge:ore_dict"
+    },
+    "s": {
+      "ore": "ingotSteel",
+      "type": "forge:ore_dict"
+    },
+    "a": {
+      "ore": "alloyUltimate",
+      "type": "forge:ore_dict"
+    }
+  }
+}

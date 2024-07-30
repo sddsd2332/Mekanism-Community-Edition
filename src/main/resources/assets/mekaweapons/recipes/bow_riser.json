@@ -1,0 +1,32 @@
+{
+  "result": {
+    "item": "mekaweapons:bow_riser"
+  },
+  "pattern": [
+    " EO",
+    "SDA",
+    " EO"
+  ],
+  "type": "mekanism:ore_shaped",
+  "key": {
+    "O": {
+      "ore": "ingotRefinedObsidian",
+      "type": "forge:ore_dict"
+    },
+    "S": {
+      "ore": "ingotSteel",
+      "type": "forge:ore_dict"
+    },
+    "A": {
+      "ore": "alloyUltimate",
+      "type": "forge:ore_dict"
+    },
+    "D": {
+      "item": "mekanism:electricbow"
+    },
+    "E": {
+      "ore": "circuitUltimate",
+      "type": "forge:ore_dict"
+    }
+  }
+}

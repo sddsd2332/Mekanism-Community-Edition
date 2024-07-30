@@ -1,0 +1,28 @@
+{
+  "result": {
+    "item": "mekaweapons:mekaarrow"
+  },
+  "pattern": [
+    " D ",
+    " A ",
+    "BCB"
+  ],
+  "type": "mekanism:ore_shaped",
+  "key": {
+    "A": {
+      "item": "minecraft:arrow"
+    },
+    "B": {
+      "item": "mekanism:polyethene",
+      "data": 2
+    },
+    "C": {
+      "item": "mekanism:polyethene",
+      "data": 1
+    },
+    "D": {
+      "ore": "ingotRefinedObsidian",
+      "type": "forge:ore_dict"
+    }
+  }
+}

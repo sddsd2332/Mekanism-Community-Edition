@@ -1,0 +1,36 @@
+{
+  "result": {
+    "item": "mekaweapons:mekatana"
+  },
+  "pattern": [
+    "ckc",
+    "hsh",
+    "pep"
+  ],
+  "type": "mekanism:ore_shaped",
+  "key": {
+    "s": {
+      "ore": "ingotSteel",
+      "type": "forge:ore_dict"
+    },
+    "p": {
+      "ore": "PoloniumPellet",
+      "type": "forge:ore_dict"
+    },
+    "c": {
+      "ore": "circuitUltimate",
+      "type": "forge:ore_dict"
+    },
+    "e": {
+      "item": "mekanism:basicblock2",
+      "data": 3
+    },
+    "h": {
+      "item": "mekanism:polyethene",
+      "data": 2
+    },
+    "k": {
+      "item": "mekaweapons:katana_blade"
+    }
+  }
+}
