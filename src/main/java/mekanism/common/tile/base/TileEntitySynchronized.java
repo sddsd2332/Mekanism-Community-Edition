@@ -10,6 +10,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import javax.annotation.Nonnull;
 
@@ -137,7 +138,6 @@ public class TileEntitySynchronized extends TileEntity {
         inUpdateTask = false;
     }
 
-
     public void markNoUpdateSync() {
         if (inMarkTask) {
             return;
@@ -161,17 +161,25 @@ public class TileEntitySynchronized extends TileEntity {
         if (inUpdateTask) {
             return;
         }
-        Mekanism.EXECUTE_MANAGER.addTEUpdateTask(this);
-        inUpdateTask = true;
-        inMarkTask = true;
+        if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
+            Mekanism.EXECUTE_MANAGER.addTEUpdateTask(this);
+            inUpdateTask = true;
+            inMarkTask = true;
+        } else {
+            markForUpdate();
+        }
     }
 
     public void updateComparatorOutputLevelSync() {
         if (inMarkTask) {
             return;
         }
-        Mekanism.EXECUTE_MANAGER.addUpdateComparatorOutputLevelTask(this);
         requireUpdateComparatorOutputLevel = true;
+        if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
+            Mekanism.EXECUTE_MANAGER.addUpdateComparatorOutputLevelTask(this);
+        } else {
+            updateComparatorOutputLevel();
+        }
     }
 
     public void updateComparatorOutputLevel() {
