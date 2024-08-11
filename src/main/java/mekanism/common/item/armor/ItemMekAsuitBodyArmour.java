@@ -16,11 +16,7 @@ import mekanism.common.moduleUpgrade;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -54,10 +50,6 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
     public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped _default) {
         ModelMekAsuitBody armorModel = ModelMekAsuitBody.armorModel;
         ModuleJetpack jetpack = ModuleJetpack.jetpacks;
-        Render<AbstractClientPlayer> render = Minecraft.getMinecraft().getRenderManager().getEntityRenderObject(entityLiving);
-        if (render instanceof RenderPlayer) {
-            armorModel.setModelAttributes(_default);
-        }
         if (isUpgradeInstalled(itemStack, moduleUpgrade.JETPACK_UNIT)) {
             if (!armorModel.chest_armor.childModels.contains(jetpack.jetpack)) {
                 armorModel.bipedBody.addChild(jetpack.jetpack);
@@ -261,7 +253,7 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
         if (slotType == getEquipmentSlot()) {
             if (isUpgradeInstalled(stack, moduleUpgrade.JETPACK_UNIT)) {
                 list.add(LangUtils.localize("tooltip.jetpack.mode") + " " + getMode(stack).getName());
-                list.add(LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + (getStored(stack) > 0 ? getStored(stack): LangUtils.localize("tooltip.noGas")));
+                list.add(LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + (getStored(stack) > 0 ? getStored(stack) : LangUtils.localize("tooltip.noGas")));
             }
             list.add(LangUtils.localize("tooltip.meka_body.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
         }

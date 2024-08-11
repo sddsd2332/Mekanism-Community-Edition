@@ -18,11 +18,7 @@ import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -59,10 +55,6 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
     public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped _default) {
         ModelMekAsuitHead armorModel = ModelMekAsuitHead.head;
         ModuleSolarHelmet Solar = ModuleSolarHelmet.solar;
-        Render<AbstractClientPlayer> render = Minecraft.getMinecraft().getRenderManager().getEntityRenderObject(entityLiving);
-        if (render instanceof RenderPlayer) {
-            armorModel.setModelAttributes(_default);
-        }
         if (isUpgradeInstalled(itemStack, moduleUpgrade.SolarRechargingUnit)) {
             if (armorModel.helmet_armor.childModels.contains(armorModel.hide)) {
                 armorModel.helmet_armor.childModels.remove(armorModel.hide);
@@ -108,8 +100,6 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
         }
         return 0;
     }
-
-
 
 
     @Override
@@ -219,8 +209,8 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
                         if (chestStack.getItem() instanceof ItemMekAsuitBodyArmour armour && armour.isUpgradeInstalled(chestStack, moduleUpgrade.JETPACK_UNIT)) {
                             int productionRate = (int) Math.pow(2, getUpgrades(moduleUpgrade.ElectrolyticBreathingUnit));
                             GasStack stack = new GasStack(MekanismFluids.Hydrogen, productionRate * 2);
-                            if (armour.getStored(chestStack) < armour.getMaxGas(chestStack)){
-                                armour.addGas(chestStack,stack);
+                            if (armour.getStored(chestStack) < armour.getMaxGas(chestStack)) {
+                                armour.addGas(chestStack, stack);
                                 item.setEnergy(headStack, item.getEnergy(headStack) - MekanismConfig.current().general.FROM_H2.val() * 2);
                             }
                         }
@@ -293,9 +283,9 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
 
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
-        if (slotType == getEquipmentSlot()){
-            if (isUpgradeInstalled(stack,moduleUpgrade.NutritionalInjectionUnit)){
-                list.add(LangUtils.localize("tooltip.autoeatgas.stored") + " " + EnumColor.ORANGE + (getStored(stack) > 0 ? getStored(stack): LangUtils.localize("tooltip.noGas")));
+        if (slotType == getEquipmentSlot()) {
+            if (isUpgradeInstalled(stack, moduleUpgrade.NutritionalInjectionUnit)) {
+                list.add(LangUtils.localize("tooltip.autoeatgas.stored") + " " + EnumColor.ORANGE + (getStored(stack) > 0 ? getStored(stack) : LangUtils.localize("tooltip.noGas")));
             }
             list.add(LangUtils.localize("tooltip.meka_head.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
         }

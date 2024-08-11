@@ -9,11 +9,7 @@ import mekanism.common.moduleUpgrade;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -50,10 +46,6 @@ public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor implements IItemHU
     @SideOnly(Side.CLIENT)
     public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped _default) {
         ModelMekAsuitLeg armorModel = ModelMekAsuitLeg.leg;
-        Render<AbstractClientPlayer> render = Minecraft.getMinecraft().getRenderManager().getEntityRenderObject(entityLiving);
-        if (render instanceof RenderPlayer) {
-            armorModel.setModelAttributes(_default);
-        }
         return armorModel;
     }
 
@@ -138,7 +130,7 @@ public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor implements IItemHU
 
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
-        if (slotType == getEquipmentSlot()){
+        if (slotType == getEquipmentSlot()) {
             list.add(LangUtils.localize("tooltip.meka_legs.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
         }
     }

@@ -15,10 +15,7 @@ import mekanism.common.item.ItemAtomicDisassembler.Mode;
 import mekanism.common.item.ItemConfigurator.ConfiguratorMode;
 import mekanism.common.item.ItemFlamethrower.FlamethrowerMode;
 import mekanism.common.item.ItemMekTool.MekToolMode;
-import mekanism.common.item.armor.ItemMekAsuitBodyArmour;
-import mekanism.common.item.armor.ItemMekAsuitFeetArmour;
-import mekanism.common.item.armor.ItemMekAsuitHeadArmour;
-import mekanism.common.item.armor.ItemMekAsuitLegsArmour;
+import mekanism.common.item.armor.*;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.item.interfaces.IJetpackItem.JetpackMode;
 import mekanism.common.network.PacketFreeRunnerData;
@@ -38,6 +35,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraftforge.client.event.MouseEvent;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -158,62 +156,49 @@ public class ClientTickHandler {
         }
     }
 
-    public void isMekAsuitArmor(EntityPlayer player) { //When the player has Meka armor equipped, the corresponding model is hidden
-        Render<AbstractClientPlayer> render = Minecraft.getMinecraft().getRenderManager().getEntityRenderObject(player);
-        ItemStack itemstackhead = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-        ItemStack itemstackchest = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-        ItemStack itemstacklegs = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
-        if (render instanceof RenderPlayer renderPlayer) {
-            if (itemstackhead.getItem() instanceof ItemMekAsuitHeadArmour) {
-                renderPlayer.getMainModel().bipedHead.isHidden = true;
-                renderPlayer.getMainModel().bipedHeadwear.isHidden = true;
-                renderPlayer.getMainModel().bipedHead.showModel = false;
-                renderPlayer.getMainModel().bipedHeadwear.showModel = false;
-            } else {
-                renderPlayer.getMainModel().bipedHead.isHidden = false;
-                renderPlayer.getMainModel().bipedHeadwear.isHidden = false;
-                renderPlayer.getMainModel().bipedHead.showModel = true;
-                renderPlayer.getMainModel().bipedHeadwear.showModel = true;
-            }
+    @SubscribeEvent
+    public void renderEntityPre(RenderPlayerEvent.Pre evt) {
+        setModelVisibility(evt.getEntityPlayer(), evt.getRenderer(), false);
+    }
 
-            if (itemstackchest.getItem() instanceof ItemMekAsuitBodyArmour) {
-                renderPlayer.getMainModel().bipedLeftArmwear.showModel = false;
-                renderPlayer.getMainModel().bipedRightArmwear.showModel = false;
-                renderPlayer.getMainModel().bipedBodyWear.showModel = false;
-                renderPlayer.getMainModel().bipedLeftArmwear.isHidden = true;
-                renderPlayer.getMainModel().bipedRightArmwear.isHidden = true;
-                renderPlayer.getMainModel().bipedBodyWear.isHidden = true;
-            } else {
-                renderPlayer.getMainModel().bipedLeftArmwear.showModel = true;
-                renderPlayer.getMainModel().bipedRightArmwear.showModel = true;
-                renderPlayer.getMainModel().bipedBodyWear.showModel = true;
-                renderPlayer.getMainModel().bipedLeftArmwear.isHidden = false;
-                renderPlayer.getMainModel().bipedRightArmwear.isHidden = false;
-                renderPlayer.getMainModel().bipedBodyWear.isHidden = false;
 
+    @SubscribeEvent
+    public void renderEntityPost(RenderPlayerEvent.Post evt) {
+        setModelVisibility(evt.getEntityPlayer(), evt.getRenderer(), true);
+    }
+
+    private static void setModelVisibility(EntityPlayer entity, Render<?> entityModel, boolean showModel) {
+        if (entityModel instanceof RenderPlayer renderPlayer) {
+            if (entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() instanceof ItemMekaSuitArmor) {
+                renderPlayer.getMainModel().bipedHead.showModel = showModel;
+                renderPlayer.getMainModel().bipedHeadwear.showModel = showModel;
+                renderPlayer.getMainModel().bipedHead.isHidden = !showModel;
+                renderPlayer.getMainModel().bipedHeadwear.isHidden = !showModel;
             }
-            if (itemstacklegs.getItem() instanceof ItemMekAsuitLegsArmour) {
-                renderPlayer.getMainModel().bipedLeftLegwear.isHidden = true;
-                renderPlayer.getMainModel().bipedRightLegwear.isHidden = true;
-                renderPlayer.getMainModel().bipedLeftLegwear.showModel = false;
-                renderPlayer.getMainModel().bipedRightLegwear.showModel = false;
-                renderPlayer.getMainModel().bipedBodyWear.isHidden = true;
-                renderPlayer.getMainModel().bipedBodyWear.showModel = false;
-            } else {
-                renderPlayer.getMainModel().bipedLeftLegwear.isHidden = false;
-                renderPlayer.getMainModel().bipedRightLegwear.isHidden = false;
-                renderPlayer.getMainModel().bipedLeftLegwear.showModel = true;
-                renderPlayer.getMainModel().bipedRightLegwear.showModel = true;
-                renderPlayer.getMainModel().bipedBodyWear.isHidden = false;
-                renderPlayer.getMainModel().bipedBodyWear.showModel = true;
+            if (entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() instanceof ItemMekaSuitArmor) {
+                renderPlayer.getMainModel().bipedLeftArmwear.showModel = showModel;
+                renderPlayer.getMainModel().bipedRightArmwear.showModel = showModel;
+                renderPlayer.getMainModel().bipedBodyWear.showModel = showModel;
+                renderPlayer.getMainModel().bipedLeftArmwear.isHidden = !showModel;
+                renderPlayer.getMainModel().bipedRightArmwear.isHidden = !showModel;
+                renderPlayer.getMainModel().bipedBodyWear.isHidden = !showModel;
+            }
+            if (entity.getItemStackFromSlot(EntityEquipmentSlot.LEGS).getItem() instanceof ItemMekaSuitArmor) {
+                renderPlayer.getMainModel().bipedLeftLegwear.showModel = showModel;
+                renderPlayer.getMainModel().bipedRightLegwear.showModel = showModel;
+                renderPlayer.getMainModel().bipedBodyWear.showModel = showModel;
+                renderPlayer.getMainModel().bipedLeftLegwear.isHidden = !showModel;
+                renderPlayer.getMainModel().bipedRightLegwear.isHidden = !showModel;
+                renderPlayer.getMainModel().bipedBodyWear.isHidden = !showModel;
             }
         }
     }
 
+
     //Maybe it works
     @SubscribeEvent
-    public void remove(WorldEvent.Unload event){
-      portableTeleports.remove(mc.player);
+    public void remove(WorldEvent.Unload event) {
+        portableTeleports.remove(mc.player);
     }
 
 
@@ -274,13 +259,13 @@ public class ClientTickHandler {
             }
 
             boolean stepAssistOn = isStepAssist(mc.player);
-            if (Mekanism.stepAssistOn.contains(playerUUID) != stepAssistOn){
+            if (Mekanism.stepAssistOn.contains(playerUUID) != stepAssistOn) {
                 if (stepAssistOn && mc.currentScreen == null) {
                     Mekanism.stepAssistOn.add(playerUUID);
-                }else {
+                } else {
                     Mekanism.stepAssistOn.remove(playerUUID);
                 }
-                Mekanism.packetHandler.sendToServer(new PacketStepAssistData.StepAssistDataMessage(PacketStepAssistData.StepAssistPacket.UPDATE,playerUUID,stepAssistOn));
+                Mekanism.packetHandler.sendToServer(new PacketStepAssistData.StepAssistDataMessage(PacketStepAssistData.StepAssistPacket.UPDATE, playerUUID, stepAssistOn));
             }
 
             mc.player.stepHeight = CommonPlayerTickHandler.getStepBoost(mc.player);
@@ -348,8 +333,6 @@ public class ClientTickHandler {
                     }
                 }
             }
-
-            isMekAsuitArmor(mc.player);
         }
     }
 

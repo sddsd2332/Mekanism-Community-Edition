@@ -1,6 +1,5 @@
 package mekanism.common.item.armor;
 
-import cofh.core.util.filter.ItemFilterWrapper;
 import com.google.common.collect.Multimap;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitBoot;
 import mekanism.common.MekanismItems;
@@ -10,18 +9,13 @@ import mekanism.common.moduleUpgrade;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -29,8 +23,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -54,10 +46,6 @@ public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor implements IItemHU
     @SideOnly(Side.CLIENT)
     public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped _default) {
         ModelMekAsuitBoot armorModel = ModelMekAsuitBoot.boot;
-        Render<AbstractClientPlayer> render = Minecraft.getMinecraft().getRenderManager().getEntityRenderObject(entityLiving);
-        if (render instanceof RenderPlayer) {
-            armorModel.setModelAttributes(_default);
-        }
         return armorModel;
     }
 
@@ -167,7 +155,7 @@ public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor implements IItemHU
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
         if (slotType == getEquipmentSlot()) {
-            if (isUpgradeInstalled(stack,moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)){
+            if (isUpgradeInstalled(stack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
                 list.add(LangUtils.localize("tooltip.module.jump_boost.name") + " " + getJumpBoostMode(stack).getBoost());
                 list.add(LangUtils.localize("tooltip.module.step_assist.name") + " " + getStepAssistMode(stack).getHeight());
             }
@@ -229,7 +217,6 @@ public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor implements IItemHU
             return ordinal() < values().length - 1 ? values()[ordinal() + 1] : values()[0];
         }
     }
-
 
 
 }
