@@ -238,7 +238,9 @@ public class Mekanism {
 
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-        event.getRegistry().register(new BinRecipe());
+        if (!MekanismConfig.current().mekce.BinRecipeClosed.val()){
+            event.getRegistry().register(new BinRecipe());
+        }
         MekanismRecipe.addRecipes();
         GasConversionHandler.addDefaultGasMappings();
     }

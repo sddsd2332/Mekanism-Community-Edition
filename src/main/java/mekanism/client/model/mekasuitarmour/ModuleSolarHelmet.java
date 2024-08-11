@@ -6,6 +6,9 @@ import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
 
 public class ModuleSolarHelmet extends ModelBase {
+
+	public static final  ModuleSolarHelmet solar = new ModuleSolarHelmet();
+
 	public final ModelRenderer solar_helmet;
 	 ModelRenderer solar_helmet_head_visor_right_back_r2;
 	 ModelRenderer override_solar_helmet_helmet_head_visor_right_r2;

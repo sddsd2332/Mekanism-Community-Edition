@@ -161,25 +161,25 @@ public class ItemCanteen extends ItemMekanism implements IGasItem {
     @Nonnull
     @Override
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
-        if (!worldIn.isRemote && entityLiving instanceof EntityPlayer player) {
-            int needed = Math.min(20 - player.getFoodStats().getFoodLevel(), getGas(stack).amount / 50);
-            if (needed > 0) {
-                player.getFoodStats().addStats(needed, 0.8F);
-                useGas(stack, needed * 50);
-                if (MekanismConfig.current().mekce.EnableBuff.val()){
-                    player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 2000, 5));
-                    player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 4000, 5));
-                    player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 4000, 5));
-                    player.addPotionEffect(new PotionEffect(MobEffects.INSTANT_HEALTH, 20, 5));
-                    player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, 2000, 5));
-                    player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 4000, 5));
-                    player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 4000, 5));
-                    player.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 4000, 5));
-                    player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION,  2000, 5));
-                    player.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION, 4000, 5));
-                    player.addPotionEffect(new PotionEffect(MobEffects.SATURATION, 4000, 5));
+        if (!worldIn.isRemote && entityLiving instanceof EntityPlayer player && player.canEat(false)) {
+                int needed = Math.min(20 - player.getFoodStats().getFoodLevel(), getGas(stack).amount / 50);
+                if (needed > 0) {
+                    player.getFoodStats().addStats(needed, 0.8F);
+                    useGas(stack, needed * 50);
+                    if (MekanismConfig.current().mekce.EnableBuff.val()){
+                        player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 2000, 5));
+                        player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 4000, 5));
+                        player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 4000, 5));
+                        player.addPotionEffect(new PotionEffect(MobEffects.INSTANT_HEALTH, 20, 5));
+                        player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, 2000, 5));
+                        player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 4000, 5));
+                        player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 4000, 5));
+                        player.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 4000, 5));
+                        player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION,  2000, 5));
+                        player.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION, 4000, 5));
+                        player.addPotionEffect(new PotionEffect(MobEffects.SATURATION, 4000, 5));
+                    }
                 }
-            }
         }
         return stack;
     }

@@ -6,6 +6,7 @@ import net.minecraft.client.model.ModelRenderer;
 
 public class ModelMekAsuitBoot extends ModelBiped {
 
+    public static final ModelMekAsuitBoot boot = new ModelMekAsuitBoot();
     ModelRenderer right_boot_armor;
     ModelRenderer shared_boots_leggings_right_leg_exo_frame_r1;
     ModelRenderer shared_boots_leggings_right_leg_exo_plate_r1;

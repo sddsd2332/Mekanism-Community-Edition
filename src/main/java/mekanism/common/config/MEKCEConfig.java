@@ -104,4 +104,8 @@ public class MEKCEConfig extends BaseConfig {
 
     public final IntOption MAXThreadUpgradeSize = new IntOption(this, "mekce", "MAXThreadUpgradeSize", 8,
             "The maximum number of stacks that can be stacked for thread upgrades", 1, 64).setRequiresGameRestart(true);
+
+    public final BooleanOption BinRecipeClosed = new BooleanOption(this,"mekce","BinRecipeClosed",false,"Turn off the BIN synthesis recipe").setRequiresGameRestart(true);
+
+    public final BooleanOption BinRecipeRemovesItem = new BooleanOption(this,"mekce","BinRecipeRemovesItem",false,"Close Bin to remove items").setRequiresGameRestart(true);
 }

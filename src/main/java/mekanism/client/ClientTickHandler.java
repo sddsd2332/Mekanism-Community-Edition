@@ -38,6 +38,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraftforge.client.event.MouseEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
@@ -208,6 +209,13 @@ public class ClientTickHandler {
             }
         }
     }
+
+    //Maybe it works
+    @SubscribeEvent
+    public void remove(WorldEvent.Unload event){
+      portableTeleports.remove(mc.player);
+    }
+
 
     @SubscribeEvent
     public void onTick(ClientTickEvent event) {

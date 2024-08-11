@@ -5,6 +5,9 @@ import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
 
 public class ModelMekAsuitLeg extends ModelBiped {
+
+    public static final ModelMekAsuitLeg leg = new ModelMekAsuitLeg();
+
     ModelRenderer right_leg_armor;
     ModelRenderer leggings_right_leg_exo_brace3_r1;
     ModelRenderer leggings_right_leg_exo_frame1_r1;

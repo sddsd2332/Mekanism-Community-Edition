@@ -52,8 +52,8 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
     @Override
     @SideOnly(Side.CLIENT)
     public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped _default) {
-        ModelMekAsuitBody armorModel = new ModelMekAsuitBody();
-        ModuleJetpack jetpack = new ModuleJetpack();
+        ModelMekAsuitBody armorModel = ModelMekAsuitBody.armorModel;
+        ModuleJetpack jetpack = ModuleJetpack.jetpacks;
         Render<AbstractClientPlayer> render = Minecraft.getMinecraft().getRenderManager().getEntityRenderObject(entityLiving);
         if (render instanceof RenderPlayer) {
             armorModel.setModelAttributes(_default);

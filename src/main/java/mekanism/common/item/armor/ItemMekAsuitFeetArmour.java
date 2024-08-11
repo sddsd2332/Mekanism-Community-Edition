@@ -53,7 +53,7 @@ public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor implements IItemHU
     @Override
     @SideOnly(Side.CLIENT)
     public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped _default) {
-        ModelMekAsuitBoot armorModel = new ModelMekAsuitBoot();
+        ModelMekAsuitBoot armorModel = ModelMekAsuitBoot.boot;
         Render<AbstractClientPlayer> render = Minecraft.getMinecraft().getRenderManager().getEntityRenderObject(entityLiving);
         if (render instanceof RenderPlayer) {
             armorModel.setModelAttributes(_default);

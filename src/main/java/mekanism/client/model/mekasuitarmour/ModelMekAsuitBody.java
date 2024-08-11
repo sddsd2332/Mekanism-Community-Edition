@@ -6,6 +6,8 @@ import net.minecraft.client.model.ModelRenderer;
 
 public class ModelMekAsuitBody extends ModelBiped {
 
+    public static final ModelMekAsuitBody armorModel = new ModelMekAsuitBody();
+
     ModelRenderer legs_chest_exo;
     public final ModelRenderer chest_armor;
     ModelRenderer chest_body_plate5_r1;

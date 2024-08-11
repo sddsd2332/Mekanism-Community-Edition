@@ -2,6 +2,7 @@ package mekanism.common.inventory;
 
 import mekanism.common.base.ITierItem;
 import mekanism.common.block.states.BlockStateBasic.BasicBlockType;
+import mekanism.common.config.MekanismConfig;
 import mekanism.common.tier.BinTier;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.StackUtils;
@@ -28,14 +29,17 @@ public class InventoryBin {
     }
 
     public ItemStack removeStack() {
-        ItemStack stack = getStack();
-        if (stack.isEmpty()) {
-            return ItemStack.EMPTY;
+        if (!MekanismConfig.current().mekce.BinRecipeRemovesItem.val()){
+            ItemStack stack = getStack();
+            if (stack.isEmpty()) {
+                return ItemStack.EMPTY;
+            }
+            if (getTier() != BinTier.CREATIVE) {
+                setItemCount(getItemCount() - stack.getCount());
+            }
+            return stack.copy();
         }
-        if (getTier() != BinTier.CREATIVE) {
-            setItemCount(getItemCount() - stack.getCount());
-        }
-        return stack.copy();
+        return ItemStack.EMPTY;
     }
 
     public ItemStack add(ItemStack stack) {

@@ -102,6 +102,9 @@ public class TileEntityFluidTank extends TileEntityContainerBlock implements IAc
                 prevScale = (9 * prevScale + targetScale) / 10;
             }
         } else {
+            if (fluidTank.getFluid() != null && fluidTank.getFluidAmount() == 0) {
+                fluidTank.setFluid(null);
+            }
             if (updateDelay > 0) {
                 updateDelay--;
                 if (updateDelay == 0 && clientActive != isActive) {

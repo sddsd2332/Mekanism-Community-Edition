@@ -6,6 +6,8 @@ import net.minecraft.client.model.ModelRenderer;
 
 public class ModelMekAsuitHead extends ModelBiped {
 
+    public static final ModelMekAsuitHead head = new ModelMekAsuitHead();
+
     public ModelRenderer helmet_armor;
     public ModelRenderer hide;
     ModelRenderer helmet_head_center3_r1;

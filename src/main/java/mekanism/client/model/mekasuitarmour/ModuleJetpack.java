@@ -5,6 +5,9 @@ import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
 
 public class ModuleJetpack extends ModelBase {
+
+	public static final  ModuleJetpack jetpacks = new ModuleJetpack();
+
 	public final ModelRenderer jetpack;
 	ModelRenderer jetpack_body_rod2_r1;
 
