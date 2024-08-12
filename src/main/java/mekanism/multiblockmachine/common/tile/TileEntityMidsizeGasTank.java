@@ -11,6 +11,7 @@ import mekanism.common.base.IComparatorSupport;
 import mekanism.common.base.IRedstoneControl;
 import mekanism.common.base.ITankManager;
 import mekanism.common.capabilities.Capabilities;
+import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.MekanismHooks;
 import mekanism.common.integration.computer.IComputerIntegration;
 import mekanism.common.network.PacketTileEntity;
@@ -63,7 +64,7 @@ public class TileEntityMidsizeGasTank extends TileEntityContainerBlock implement
     }
 
     public TileEntityMidsizeGasTank() {
-        this("MidsizeGasTank", 819200 * 2, 512000 * 2);
+        this("MidsizeGasTank", MekanismConfig.current().multiblock.MidsizeGasTankStorage.val(), MekanismConfig.current().multiblock.MidsizeGasTankOutput.val());
     }
 
     @Override

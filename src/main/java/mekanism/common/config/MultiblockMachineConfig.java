@@ -87,6 +87,14 @@ public class MultiblockMachineConfig extends BaseConfig {
     public final DoubleOption DigitalAssemblyTableStorage = new DoubleOption(this, "multiblock", "LargeChemicalWasherStorage", 80000D * 27,
             "Base energy storage (Joules).");
 
+    public final IntOption MidsizeGasTankStorage = new IntOption(this, "multiblock", "MidsizeGasTankStorage",819200 * 2, "Storage size of Midsize Gas Tank in mB.");
+
+    public final IntOption MidsizeGasTankOutput = new IntOption(this,"multiblock","MidsizeGasTankOutput",512000 * 2,"Output rate of Midsize Gas Tank in mB.");
+
+    public final IntOption MultiblockGasTankStorage = new IntOption(this, "multiblock", "MultiblockGasTankStorage",819200 * 3, "Storage size of Multiblock Gas Tank in mB.");
+
+    public final IntOption MultiblockGasTankOutput = new IntOption(this,"multiblock","MultiblockGasTankOutput",512000 * 3,"Output rate of Multiblock Gas Tank in mB.");
+
     public final TypeConfigManager<MultiblockMachineType> multiblockmachinesManager = new TypeConfigManager<>(this, "multiblockmachines", MultiblockMachineType.class,MultiblockMachineType::getValidMachines,MultiblockMachineType::getBlockName);
 
 
