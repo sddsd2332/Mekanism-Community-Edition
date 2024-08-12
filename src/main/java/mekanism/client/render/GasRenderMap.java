@@ -2,7 +2,6 @@ package mekanism.client.render;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import mekanism.api.gas.GasStack;
-import net.minecraftforge.fluids.FluidStack;
 
 
 /**

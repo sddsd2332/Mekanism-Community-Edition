@@ -5,7 +5,7 @@ import mekanism.client.jei.GuiElementHandler;
 import mekanism.client.jei.MekanismJEI;
 import mekanism.multiblockmachine.client.jei.machine.other.DigitalAssemblyTableRecipeCategory;
 import mekanism.multiblockmachine.common.MultiblockMachineBlocks;
-import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine.*;
+import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine.MultiblockMachineType;
 import mezz.jei.api.*;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import net.minecraft.item.Item;

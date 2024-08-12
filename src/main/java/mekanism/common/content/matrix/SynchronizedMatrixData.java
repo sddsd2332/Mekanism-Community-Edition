@@ -11,7 +11,6 @@ import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
 import java.util.Set;

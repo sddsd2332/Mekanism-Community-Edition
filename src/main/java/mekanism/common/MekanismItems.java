@@ -1,7 +1,10 @@
 package mekanism.common;
 
 import mekanism.common.item.*;
-import mekanism.common.item.armor.*;
+import mekanism.common.item.armor.ItemMekAsuitBodyArmour;
+import mekanism.common.item.armor.ItemMekAsuitFeetArmour;
+import mekanism.common.item.armor.ItemMekAsuitHeadArmour;
+import mekanism.common.item.armor.ItemMekAsuitLegsArmour;
 import mekanism.common.tier.AlloyTier;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;

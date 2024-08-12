@@ -471,4 +471,9 @@ public class TileEntityFluidTank extends TileEntityContainerBlock implements IAc
     public BaseTier getTier() {
         return tier.getBaseTier();
     }
+
+    @Override
+    public boolean supportsAsync() {
+        return false;
+    }
 }

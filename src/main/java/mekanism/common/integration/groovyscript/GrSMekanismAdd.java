@@ -3,7 +3,6 @@ package mekanism.common.integration.groovyscript;
 import com.cleanroommc.groovyscript.api.GroovyPlugin;
 import com.cleanroommc.groovyscript.compat.mods.GroovyContainer;
 import com.cleanroommc.groovyscript.compat.mods.GroovyPropertyContainer;
-import com.cleanroommc.groovyscript.compat.mods.ModPropertyContainer;
 import mekanism.common.Mekanism;
 import org.jetbrains.annotations.NotNull;
 

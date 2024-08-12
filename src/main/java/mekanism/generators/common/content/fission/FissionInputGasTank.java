@@ -3,7 +3,6 @@ package mekanism.generators.common.content.fission;
 import mekanism.api.gas.GasStack;
 import mekanism.generators.common.tile.fission.TileEntityFissionCasing;
 
-
 import javax.annotation.Nullable;
 
 public class FissionInputGasTank extends FissionGasTank{

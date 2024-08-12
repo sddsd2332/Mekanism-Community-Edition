@@ -4,7 +4,7 @@ import mekanism.api.Coord4D;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.util.MekanismUtils;
 
-public class TileEntityMultiblockGasTank extends TileEntityMidsizeGasTank {
+public class TileEntityMultiblockGasTank extends  TileEntityMidsizeGasTank{
 
     public TileEntityMultiblockGasTank() {
         super("MultiblockGasTank", MekanismConfig.current().multiblock.MultiblockGasTankStorage.val(), MekanismConfig.current().multiblock.MultiblockGasTankOutput.val());

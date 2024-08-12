@@ -2,7 +2,6 @@ package mekanism.client.render.item.machine;
 
 import mekanism.client.model.ModelResistiveHeater;
 import mekanism.client.render.MekanismRenderer;
-import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.client.Minecraft;

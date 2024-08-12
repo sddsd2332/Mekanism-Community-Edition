@@ -8,7 +8,6 @@ import mekanism.common.util.FluidContainerUtils.ContainerEditMode;
 import mekanism.common.util.NonNullListSynchronized;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Set;

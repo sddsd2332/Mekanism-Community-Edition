@@ -1,7 +1,6 @@
 package mekanism.generators.client.render.item;
 
 import mekanism.client.render.MekanismRenderer;
-import mekanism.common.util.ItemDataUtils;
 import mekanism.generators.client.model.ModelHeatGenerator;
 import mekanism.generators.common.util.MekanismGeneratorUtils;
 import mekanism.generators.common.util.MekanismGeneratorUtils.ResourceType;
