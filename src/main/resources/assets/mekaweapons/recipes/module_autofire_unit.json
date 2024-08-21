@@ -25,7 +25,8 @@
       "type": "forge:ore_dict"
     },
     "E": {
-      "item": "#CIRCUITULTIMATE"
+      "ore": "circuitUltimate",
+      "type": "forge:ore_dict"
     }
   }
 }
