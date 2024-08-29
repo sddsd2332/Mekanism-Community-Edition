@@ -59,12 +59,12 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
             if (armorModel.helmet_armor.childModels.contains(armorModel.hide)) {
                 armorModel.helmet_armor.childModels.remove(armorModel.hide);
             }
-            if (!armorModel.helmet_armor.childModels.contains(Solar.solar_helmet)) {
+            if (!armorModel.bipedHead.childModels.contains(Solar.solar_helmet)) {
                 armorModel.bipedHead.addChild(Solar.solar_helmet);
             }
         } else {
             if (armorModel.bipedHead.childModels.contains(Solar.solar_helmet)) {
-                armorModel.helmet_armor.childModels.remove(Solar.solar_helmet);
+                armorModel.bipedHead.childModels.remove(Solar.solar_helmet);
             }
             if (!armorModel.helmet_armor.childModels.contains(armorModel.hide)) {
                 armorModel.helmet_armor.childModels.add(armorModel.hide);

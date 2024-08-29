@@ -51,12 +51,12 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
         ModelMekAsuitBody armorModel = ModelMekAsuitBody.armorModel;
         ModuleJetpack jetpack = ModuleJetpack.jetpacks;
         if (isUpgradeInstalled(itemStack, moduleUpgrade.JETPACK_UNIT)) {
-            if (!armorModel.chest_armor.childModels.contains(jetpack.jetpack)) {
+            if (!armorModel.bipedBody.childModels.contains(jetpack.jetpack)) {
                 armorModel.bipedBody.addChild(jetpack.jetpack);
             }
         } else {
             if (armorModel.bipedBody.childModels.contains(jetpack.jetpack)) {
-                armorModel.chest_armor.childModels.remove(jetpack.jetpack);
+                armorModel.bipedBody.childModels.remove(jetpack.jetpack);
             }
         }
 
