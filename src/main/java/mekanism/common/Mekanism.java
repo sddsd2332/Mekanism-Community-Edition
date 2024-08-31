@@ -420,8 +420,8 @@ public class Mekanism {
         configurationce = new Configuration(new File("config/mekanism/MekanismCE.cfg"));
         configurationgenerators = new Configuration(new File("config/mekanism/MekanismGenerators.cfg"));
         configurationtools = new Configuration(new File("config/mekanism/MekanismTools.cfg"));
-        configurationMultiblockMachine = new Configuration(new File("config/mekanism/MekanismMultiblockMachine"));
-        configurationmekaweapons = new Configuration(new File("config/mekanism/MekanismWeapons"));
+        configurationMultiblockMachine = new Configuration(new File("config/mekanism/MekanismMultiblockMachine.cfg"));
+        configurationmekaweapons = new Configuration(new File("config/mekanism/MekanismWeapons.cfg"));
         //Load configuration
         proxy.loadConfiguration();
         proxy.onConfigSync(false);

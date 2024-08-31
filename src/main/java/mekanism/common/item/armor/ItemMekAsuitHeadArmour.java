@@ -17,6 +17,7 @@ import mekanism.common.moduleUpgrade;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.UpgradeHelper;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.Entity;
@@ -55,7 +56,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
     public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped _default) {
         ModelMekAsuitHead armorModel = ModelMekAsuitHead.head;
         ModuleSolarHelmet Solar = ModuleSolarHelmet.solar;
-        if (isUpgradeInstalled(itemStack, moduleUpgrade.SolarRechargingUnit)) {
+        if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.SolarRechargingUnit)) {
             if (armorModel.helmet_armor.childModels.contains(armorModel.hide)) {
                 armorModel.helmet_armor.childModels.remove(armorModel.hide);
             }
@@ -187,7 +188,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
             ItemStack chestStack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
             PotionEffect nv = player.getActivePotionEffect(MobEffects.NIGHT_VISION);
             if (headStack.getItem() instanceof ItemMekAsuitHeadArmour item) {
-                if (isUpgradeInstalled(itemStack, moduleUpgrade.NutritionalInjectionUnit)) {
+                if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.NutritionalInjectionUnit)) {
                     if (player.canEat(false) && item.getGas(headStack) != null) {
                         int needed = Math.min(20 - player.getFoodStats().getFoodLevel(), item.getStored(headStack) / 50);
                         int toFeed = Math.min(20000, needed);
@@ -200,14 +201,14 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
                     }
                 }
 
-                if (isUpgradeInstalled(itemStack, moduleUpgrade.ElectrolyticBreathingUnit)) {
+                if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.ElectrolyticBreathingUnit)) {
                     if (player.isEntityAlive() && player.isInsideOfMaterial(Material.WATER)) {
                         if (!player.canBreatheUnderwater() && !player.capabilities.disableDamage) {
                             player.setAir(300);
                             item.setEnergy(headStack, item.getEnergy(headStack) - MekanismConfig.current().general.FROM_H2.val() * 2);
                         }
-                        if (chestStack.getItem() instanceof ItemMekAsuitBodyArmour armour && armour.isUpgradeInstalled(chestStack, moduleUpgrade.JETPACK_UNIT)) {
-                            int productionRate = (int) Math.pow(2, getUpgrades(moduleUpgrade.ElectrolyticBreathingUnit));
+                        if (chestStack.getItem() instanceof ItemMekAsuitBodyArmour armour && UpgradeHelper.isUpgradeInstalled(chestStack, moduleUpgrade.JETPACK_UNIT)) {
+                            int productionRate = (int) Math.pow(2, UpgradeHelper.getUpgradeLevel(chestStack, moduleUpgrade.ElectrolyticBreathingUnit));
                             GasStack stack = new GasStack(MekanismFluids.Hydrogen, productionRate * 2);
                             if (armour.getStored(chestStack) < armour.getMaxGas(chestStack)) {
                                 armour.addGas(chestStack, stack);
@@ -217,7 +218,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
                     }
                 }
 
-                if (isUpgradeInstalled(itemStack, moduleUpgrade.InhalationPurificationUnit)) {
+                if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.InhalationPurificationUnit)) {
                     List<PotionEffect> effects = Lists.newArrayList(player.getActivePotionEffects());
                     //if ()
                     for (PotionEffect potion : Collections2.filter(effects, potion -> potion.getPotion().isBadEffect())) {
@@ -232,7 +233,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
                  */
                 }
 
-                if (isUpgradeInstalled(itemStack, moduleUpgrade.VisionEnhancementUnit)) {
+                if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.VisionEnhancementUnit)) {
                     if (!player.getEntityWorld().isDaytime() && !player.getEntityWorld().provider.isNether()) {
                         if (nv == null) {
                             player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false));
@@ -245,7 +246,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
                     }
                 }
 
-                if (isUpgradeInstalled(headStack, moduleUpgrade.SolarRechargingUnit)) {
+                if (UpgradeHelper.isUpgradeInstalled(headStack, moduleUpgrade.SolarRechargingUnit)) {
                     if (player.getEntityWorld().isDaytime() && player.getEntityWorld().canSeeSky(player.getPosition())) {
                         Biome b = player.getEntityWorld().provider.getBiomeForCoords(player.getPosition());
                         float tempEff = 0.3f * (0.8f - b.getTemperature(player.getPosition()));
@@ -257,7 +258,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
                         if (needsRainCheck && (world.isRaining() || world.isThundering())) {
                             production *= 0.2;
                         }
-                        item.setEnergy(headStack, item.getEnergy(headStack) + production * getUpgrades(moduleUpgrade.SolarRechargingUnit));
+                        item.setEnergy(headStack, item.getEnergy(headStack) + production * UpgradeHelper.getUpgradeLevel(headStack, moduleUpgrade.SolarRechargingUnit));
                     }
                 }
             }
@@ -284,7 +285,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
         if (slotType == getEquipmentSlot()) {
-            if (isUpgradeInstalled(stack, moduleUpgrade.NutritionalInjectionUnit)) {
+            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.NutritionalInjectionUnit)) {
                 list.add(LangUtils.localize("tooltip.autoeatgas.stored") + " " + EnumColor.ORANGE + (getStored(stack) > 0 ? getStored(stack) : LangUtils.localize("tooltip.noGas")));
             }
             list.add(LangUtils.localize("tooltip.meka_head.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));

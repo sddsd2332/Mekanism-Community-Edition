@@ -9,14 +9,15 @@ import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.moduleUpgrade;
 import mekanism.common.tile.prefab.TileEntityOperationalMachine;
 import mekanism.common.util.ChargeUtils;
-import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.NonNullListSynchronized;
+import mekanism.common.util.UpgradeHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
+import static mekanism.common.util.ItemDataUtils.DATA_ID;
 
 public class TileEntityModificationStation extends TileEntityOperationalMachine implements IBoundingBlock {
 
@@ -35,40 +36,19 @@ public class TileEntityModificationStation extends TileEntityOperationalMachine 
         super.onUpdate();
         if (!world.isRemote) {
             ChargeUtils.discharge(1, this);
-            ItemStack UpgradeStack = inventory.get(3);
-            ItemStack moduleStack = inventory.get(2);
-            if (!UpgradeStack.isEmpty() && UpgradeStack.getItem() instanceof IModuleUpgrade module) {
-                if (ItemDataUtils.hasData(UpgradeStack, "module")) {
-                    Map<moduleUpgrade, Integer> upgrade = moduleUpgrade.buildMap(ItemDataUtils.getDataMap(UpgradeStack));
-                    module.upgrades.putAll(upgrade);
-                } else {
-                    module.upgrades.clear();
+            ItemStack moduleSlot = inventory.get(2);
+            ItemStack containerSlot = inventory.get(3);
+            if (canOperate() && MekanismUtils.canFunction(this) && getEnergy() >= energyPerTick && !moduleSlot.isEmpty() && !containerSlot.isEmpty() && moduleSlot.getItem() instanceof IModuleUpgradeItem module && containerSlot.getItem() instanceof IModuleUpgrade item) {
+                if (UpgradeHelper.getUpgradeLevel(containerSlot, module.getmoduleUpgrade(moduleSlot)) >= module.getmoduleUpgrade(moduleSlot).getMax()) {
+                    return;
                 }
-            }
-
-            if (moduleStack.getItem() instanceof IModuleUpgradeItem item) {
-                if (!UpgradeStack.isEmpty() && UpgradeStack.getItem() instanceof IModuleUpgrade module && ItemDataUtils.hasData(UpgradeStack, "module")) {
-                    if (module.upgrades.containsKey(item.getmoduleUpgrade(moduleStack))) {
-                        if (module.upgrades.get(item.getmoduleUpgrade(moduleStack)) >= item.getmoduleUpgrade(moduleStack).getMax()) {
-                            return;
-                        }
-                    }
-                }
-
-                if (getActive() && !UpgradeStack.isEmpty() && UpgradeStack.getItem() instanceof IModuleUpgrade module) {
-                    electricityStored.addAndGet(-energyPerTick);
-                    if ((operatingTicks + 1) < ticksRequired) {
-                        operatingTicks++;
-                    } else if ((operatingTicks + 1) >= ticksRequired) {
-                        operatingTicks = 0;
-                        addUpgrades(item.getmoduleUpgrade(moduleStack), moduleStack.getCount(), module);
-                        moduleUpgrade.saveMap(module.upgrades, ItemDataUtils.getDataMap(UpgradeStack));
-                    }
-                }
-            }
-            if (MekanismUtils.canFunction(this) && getEnergy() >= energyPerTick && !moduleStack.isEmpty() && !UpgradeStack.isEmpty()) {
-                if (moduleStack.getItem() instanceof IModuleUpgradeItem item && UpgradeStack.getItem() instanceof IModuleUpgrade upgrade) {
-                    setActive(upgrade.getValidModule(UpgradeStack).contains(item.getmoduleUpgrade(moduleStack)));
+                setActive(true);
+                electricityStored.addAndGet(-energyPerTick);
+                if ((operatingTicks + 1) < ticksRequired) {
+                    operatingTicks++;
+                } else if ((operatingTicks + 1) >= ticksRequired) {
+                    operatingTicks = 0;
+                    addUpgrades(module.getmoduleUpgrade(moduleSlot), moduleSlot.getCount());
                 }
             } else if (prevEnergy >= getEnergy()) {
                 setActive(false);
@@ -80,6 +60,15 @@ public class TileEntityModificationStation extends TileEntityOperationalMachine 
         }
     }
 
+
+    public boolean canOperate() {
+        ItemStack moduleSlot = inventory.get(2);
+        ItemStack containerSlot = inventory.get(3);
+        if (!moduleSlot.isEmpty() && !containerSlot.isEmpty() && moduleSlot.getItem() instanceof IModuleUpgradeItem item && containerSlot.getItem() instanceof IModuleUpgrade upgrade) {
+            return upgrade.getValidModule(containerSlot).contains(item.getmoduleUpgrade(moduleSlot));
+        }
+        return false;
+    }
 
     @Override
     public boolean sideIsConsumer(EnumFacing side) {
@@ -120,13 +109,31 @@ public class TileEntityModificationStation extends TileEntityOperationalMachine 
         world.setBlockToAir(getPos());
     }
 
-    public void addUpgrades(moduleUpgrade upgrade, int maxAvailable, IModuleUpgrade stack) {
-        int installed = stack.getUpgrades(upgrade);
-        if (installed < upgrade.getMax()) {
-            int toAdd = Math.min(upgrade.getMax() - installed, maxAvailable);
-            if (toAdd > 0) {
-                stack.upgrades.put(upgrade, installed + toAdd);
-                inventory.get(2).shrink(toAdd);
+    public void addUpgrades(moduleUpgrade upgrade, int maxAvailable) {
+        ItemStack containerSlot = inventory.get(3);
+        if (!containerSlot.isEmpty()) {
+            int installed = UpgradeHelper.getUpgradeLevel(containerSlot, upgrade);
+            if (installed < upgrade.getMax()) {
+                int toAdd = Math.min(upgrade.getMax() - installed, maxAvailable);
+                if (toAdd > 0) {
+                    UpgradeHelper.setUpgradeLevel(containerSlot, upgrade, installed + toAdd);
+                    inventory.get(2).shrink(toAdd);
+                }
+            }
+        }
+    }
+
+    public void removeUpgrade(moduleUpgrade upgrade, boolean removeAll) {
+        ItemStack containerSlot = inventory.get(3);
+        if (!containerSlot.isEmpty() && containerSlot.getTagCompound() != null) {
+            int installed = UpgradeHelper.getUpgradeLevel(containerSlot, upgrade);
+            if (installed > 0) {
+                int toRemove = removeAll ? installed : 1;
+                UpgradeHelper.setUpgradeLevel(containerSlot, upgrade, installed - toRemove);
+            }
+            if (UpgradeHelper.getUpgradeLevel(containerSlot, upgrade) == 0) {
+                NBTTagCompound upgradeTag = containerSlot.getOrCreateSubCompound(DATA_ID);
+                upgradeTag.removeTag(upgrade.getName());
             }
         }
     }

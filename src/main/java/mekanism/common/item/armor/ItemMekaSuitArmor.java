@@ -19,6 +19,7 @@ import mekanism.common.moduleUpgrade;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.UpgradeHelper;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -98,12 +99,12 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
                     armorDetails.add(details);
                     for (moduleUpgrade upgrade : details.armor.getValidModule(stack)) {
                         float absorption;
-                        if (upgrade == moduleUpgrade.InhalationPurificationUnit && details.armor.isUpgradeInstalled(stack, moduleUpgrade.InhalationPurificationUnit)) {
+                        if (upgrade == moduleUpgrade.InhalationPurificationUnit && UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.InhalationPurificationUnit)) {
                             absorption = 1F;
                             ratioAbsorbed += absorbDamage(details.usageInfo, amount, absorption, ratioAbsorbed, 1000D);
                         }
-                        if (upgrade == moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT && details.armor.isUpgradeInstalled(stack, moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT)) {
-                            absorption = (float) (0.8 * (details.armor.getUpgrades(moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT) / 8));
+                        if (upgrade == moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT && UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT)) {
+                            absorption = (float) (0.8 * ((double) UpgradeHelper.getUpgradeLevel(stack, moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT) / 8));
                             ratioAbsorbed += absorbDamage(details.usageInfo, amount, absorption, ratioAbsorbed, 0);
                         }
                         if (ratioAbsorbed >= 1) {
@@ -207,17 +208,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     public void addInformation(ItemStack itemstack, World world, List<String> list, ITooltipFlag flag) {
         super.addInformation(itemstack, world, list, flag);
         list.add(EnumColor.AQUA + LangUtils.localize("tooltip.storedEnergy") + ": " + EnumColor.GREY + MekanismUtils.getEnergyDisplay(getEnergy(itemstack), getMaxEnergy(itemstack)));
-        if (ItemDataUtils.hasData(itemstack, "module")) {
-            Map<moduleUpgrade, Integer> module = moduleUpgrade.buildMap(ItemDataUtils.getDataMap(itemstack));
-            if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-                list.add(LangUtils.localize("tooltip.hold") + " " + EnumColor.AQUA + "shift" + EnumColor.GREY + " " + LangUtils.localize("tooltip.forDetails"));
-            } else {
-                list.add(EnumColor.ORANGE + LangUtils.localize("tooltip.hold_for_modules") + ": ");
-                for (Map.Entry<moduleUpgrade, Integer> entry : module.entrySet()) {
-                    list.add("- " + entry.getKey().getLangName() + (entry.getKey().canMultiply() ? ": " + EnumColor.GREY + "x" + entry.getValue() : ""));
-                }
-            }
-        }
+        list.addAll(UpgradeHelper.getUpgradeStats(itemstack));
     }
 
     @Override
@@ -241,7 +232,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     @Override
     public double getMaxEnergy(ItemStack itemStack) {
         //  return 4096000000D;
-        return ItemDataUtils.hasData(itemStack, "module") ? MekanismUtils.getModuleMaxEnergy(itemStack, 16000000D) : 16000000D;
+        return MekanismUtils.getModuleMaxEnergy(itemStack, 16000000D);
     }
 
     @Override
@@ -258,10 +249,9 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
 
         ItemStack fullUpgrade = new ItemStack(this);
         for (moduleUpgrade upgrade : getValidModule(fullUpgrade)) {
-            upgrades.put(upgrade, upgrade.getMax());
-            moduleUpgrade.saveMap(upgrades, ItemDataUtils.getDataMap(fullUpgrade));
+            UpgradeHelper.setUpgradeLevel(fullUpgrade,upgrade,upgrade.getMax());
         }
-        upgrades.clear();
+
         setEnergy(fullUpgrade, ((IEnergizedItem) fullUpgrade.getItem()).getMaxEnergy(fullUpgrade));
         list.add(fullUpgrade);
 
@@ -360,10 +350,6 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
         if (!world.isRemote) {
             if (itemStack.getItem() instanceof ItemMekaSuitArmor) {
-                if (ItemDataUtils.hasData(itemStack, "module")) {
-                    Map<moduleUpgrade, Integer> module = moduleUpgrade.buildMap(ItemDataUtils.getDataMap(itemStack));
-                    upgrades.putAll(module);
-                }
                 Shielding(itemStack);
             }
         }
@@ -379,7 +365,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
             if (tag.hasKey("ncRadiationResistance")) {
                 nc = tag.getDouble("ncRadiationResistance");
             }
-            if (isUpgradeInstalled(stack, moduleUpgrade.RADIATION_SHIELDING_UNIT) && nc != getShieldingByArmor()) {
+            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.RADIATION_SHIELDING_UNIT) && nc != getShieldingByArmor()) {
                 tag.setDouble("ncRadiationResistance", getShieldingByArmor());
             }
             if (nc == 0 && tag.isEmpty()) {
@@ -397,7 +383,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     @Override
     @Optional.Method(modid = MekanismHooks.IC2_MOD_ID)
     public boolean addsProtection(EntityLivingBase entityLivingBase, EntityEquipmentSlot slotType, ItemStack stack) {
-        return isUpgradeInstalled(stack, moduleUpgrade.RADIATION_SHIELDING_UNIT);
+        return UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.RADIATION_SHIELDING_UNIT);
     }
 
     abstract double getShieldingByArmor();
@@ -429,7 +415,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
 
     @Override
     public boolean handleUnblockableDamage(EntityLivingBase entity, @Nonnull ItemStack armor, DamageSource source, double damage, int slot) {
-        if (isUpgradeInstalled(armor, moduleUpgrade.RADIATION_SHIELDING_UNIT)) {
+        if (UpgradeHelper.isUpgradeInstalled(armor, moduleUpgrade.RADIATION_SHIELDING_UNIT)) {
             return source.damageType.equals("radiation") || source.damageType.equals("sulphuric_acid") || source.damageType.equals("acid_burn") || source.damageType.equals("corium_burn") || source.damageType.equals("hot_coolant_burn");
         }
         return false;
@@ -438,7 +424,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     @Override
     public void damageArmor(EntityLivingBase entity, @Nonnull ItemStack stack, DamageSource source, int damage, int slot) {
         if (Mekanism.hooks.IC2Loaded) {
-            if (isUpgradeInstalled(stack, moduleUpgrade.RADIATION_SHIELDING_UNIT)) {
+            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.RADIATION_SHIELDING_UNIT)) {
                 Potion radiation = Potion.getPotionFromResourceLocation("ic2:radiation");
                 if (radiation != null && entity.isPotionActive(radiation)) {
                     entity.removePotionEffect(radiation);

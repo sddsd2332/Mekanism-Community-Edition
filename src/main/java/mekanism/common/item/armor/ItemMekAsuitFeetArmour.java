@@ -9,6 +9,7 @@ import mekanism.common.moduleUpgrade;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.UpgradeHelper;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -94,10 +95,10 @@ public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor implements IItemHU
         if (!world.isRemote) {
             ItemStack feetStack = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
             if (feetStack.getItem() instanceof ItemMekAsuitFeetArmour armour) {
-                if (isUpgradeInstalled(feetStack, moduleUpgrade.FROST_WALKER_UNIT)) {
+                if (UpgradeHelper.isUpgradeInstalled(feetStack, moduleUpgrade.FROST_WALKER_UNIT)) {
                     if (armour.getEnergy(feetStack) > 500D) {
                         if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FROST_WALKER, feetStack) == 0) {
-                            feetStack.addEnchantment(Enchantments.FROST_WALKER, armour.getUpgrades(moduleUpgrade.FROST_WALKER_UNIT));
+                            feetStack.addEnchantment(Enchantments.FROST_WALKER, UpgradeHelper.getUpgradeLevel(feetStack, moduleUpgrade.FROST_WALKER_UNIT));
                             hasEffect(feetStack);
                             armour.setEnergy(feetStack, armour.getEnergy(feetStack) - 500D);
                         }
@@ -155,7 +156,7 @@ public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor implements IItemHU
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
         if (slotType == getEquipmentSlot()) {
-            if (isUpgradeInstalled(stack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
+            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
                 list.add(LangUtils.localize("tooltip.module.jump_boost.name") + " " + getJumpBoostMode(stack).getBoost());
                 list.add(LangUtils.localize("tooltip.module.step_assist.name") + " " + getStepAssistMode(stack).getHeight());
             }

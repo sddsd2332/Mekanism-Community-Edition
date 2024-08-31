@@ -14,6 +14,7 @@ import mekanism.common.moduleUpgrade;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.UpgradeHelper;
 import mekanism.weapons.common.MekanismWeapons;
 import mekanism.weapons.common.MekanismWeaponsItems;
 import mekanism.weapons.common.entity.EntityMekaArrow;
@@ -37,14 +38,13 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+
+import static mekanism.common.util.UpgradeHelper.isUpgradeInstalled;
 
 
 @Optional.InterfaceList({
@@ -80,7 +80,7 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
 
     @Override
     public double getMaxEnergy(ItemStack itemStack) {
-        return ItemDataUtils.hasData(itemStack, "module") ? MekanismUtils.getModuleMaxEnergy(itemStack, MekanismConfig.current().weapons.mekaBowBaseEnergyCapacity.val()) : MekanismConfig.current().weapons.mekaBowBaseEnergyCapacity.val();
+        return  MekanismUtils.getModuleMaxEnergy(itemStack, MekanismConfig.current().weapons.mekaBowBaseEnergyCapacity.val());
     }
 
     @Override
@@ -93,17 +93,7 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
     public void addInformation(ItemStack itemstack, World world, List<String> list, ITooltipFlag flag) {
         super.addInformation(itemstack, world, list, flag);
         list.add(EnumColor.AQUA + LangUtils.localize("tooltip.storedEnergy") + ": " + EnumColor.GREY + MekanismUtils.getEnergyDisplay(getEnergy(itemstack), getMaxEnergy(itemstack)));
-        if (ItemDataUtils.hasData(itemstack, "module")) {
-            Map<moduleUpgrade, Integer> module = moduleUpgrade.buildMap(ItemDataUtils.getDataMap(itemstack));
-            if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-                list.add(LangUtils.localize("tooltip.hold") + " " + EnumColor.AQUA + "shift" + EnumColor.GREY + " " + LangUtils.localize("tooltip.forDetails"));
-            } else {
-                list.add(EnumColor.ORANGE + LangUtils.localize("tooltip.hold_for_modules") + ": ");
-                for (Entry<moduleUpgrade, Integer> entry : module.entrySet()) {
-                    list.add("- " + entry.getKey().getLangName() + (entry.getKey().canMultiply() ? ": " + EnumColor.GREY + "x" + entry.getValue() : ""));
-                }
-            }
-        }
+        list.addAll(UpgradeHelper.getUpgradeStats(itemstack));
     }
 
     @Override
@@ -175,7 +165,7 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
     }
 
     public int getArrowNumber(ItemStack itemStack) {
-        int quantity = MekanismUtils.getModule(itemStack, moduleUpgrade.MultipleArrowsUnit);
+        int quantity = UpgradeHelper.getUpgradeLevel(itemStack, moduleUpgrade.MultipleArrowsUnit);
         if (quantity == 0) {
             NBTTagCompound dataMap = ItemDataUtils.getDataMap(itemStack);
             if (dataMap.isEmpty()) {
@@ -187,7 +177,7 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
 
     public int getSpeed(ItemStack itemStack) {
         int speed = 1;
-        int numUpgrades = MekanismUtils.getModule(itemStack, moduleUpgrade.ARROWVELOCITY_UNIT);
+        int numUpgrades = UpgradeHelper.getUpgradeLevel(itemStack, moduleUpgrade.ARROWVELOCITY_UNIT);
         if (numUpgrades == 0) {
             NBTTagCompound dataMap = ItemDataUtils.getDataMap(itemStack);
             if (dataMap.isEmpty()) {
@@ -202,7 +192,7 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
 
     public int getDamage(ItemStack itemStack) {
         int damage = MekanismConfig.current().weapons.mekaBowBaseDamage.val();
-        int numUpgrades = MekanismUtils.getModule(itemStack, moduleUpgrade.ATTACK_AMPLIFICATION_UNIT);
+        int numUpgrades = UpgradeHelper.getUpgradeLevel(itemStack, moduleUpgrade.ATTACK_AMPLIFICATION_UNIT);
         if (numUpgrades == 0) {
             NBTTagCompound dataMap = ItemDataUtils.getDataMap(itemStack);
             if (dataMap.isEmpty()) {
@@ -253,7 +243,7 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return getEnergy(stack) >0;
+        return getEnergy(stack) > 0;
     }
 
     @Override
@@ -277,26 +267,15 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
         ItemStack charged = new ItemStack(this);
         setEnergy(charged, ((IEnergizedItem) charged.getItem()).getMaxEnergy(charged));
         list.add(charged);
-
         ItemStack fullupgrade = new ItemStack(this);
         for (moduleUpgrade upgrade : getValidModule(fullupgrade)) {
-            upgrades.put(upgrade, upgrade.getMax());
-            moduleUpgrade.saveMap(upgrades, ItemDataUtils.getDataMap(fullupgrade));
+            UpgradeHelper.setUpgradeLevel(fullupgrade, upgrade, upgrade.getMax());
         }
-        upgrades.clear();
         setEnergy(fullupgrade, ((IEnergizedItem) fullupgrade.getItem()).getMaxEnergy(fullupgrade));
         list.add(fullupgrade);
-
-        ItemStack full = new ItemStack(this);
-        for (moduleUpgrade upgrade : getValidModule(full)) {
-            upgrades.put(upgrade, upgrade.getMax());
-            moduleUpgrade.saveMap(upgrades, ItemDataUtils.getDataMap(full));
-        }
-        upgrades.clear();
-        setEnergy(full, ((IEnergizedItem) full.getItem()).getMaxEnergy(full));
-        full.addEnchantment(Enchantments.POWER,5);
-        full.addEnchantment(Enchantments.PUNCH,2);
-        list.add(full);
+        fullupgrade.addEnchantment(Enchantments.POWER, 5);
+        fullupgrade.addEnchantment(Enchantments.PUNCH, 2);
+        list.add(fullupgrade);
     }
 
 
@@ -391,7 +370,7 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
     }
 
     public int getDrawTicks(ItemStack stack) {
-        int numUpgrades = MekanismUtils.getModule(stack, moduleUpgrade.DRAWSPEED_UNIT);
+        int numUpgrades = UpgradeHelper.getUpgradeLevel(stack, moduleUpgrade.DRAWSPEED_UNIT);
         if (numUpgrades == 0) {
             NBTTagCompound dataMap = ItemDataUtils.getDataMap(stack);
             if (dataMap.isEmpty()) {

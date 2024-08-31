@@ -1,14 +1,13 @@
 package mekanism.weapons.common.item;
 
 import com.google.common.collect.Multimap;
-import mekanism.api.EnumColor;
 import mekanism.api.energy.IEnergizedItem;
 import mekanism.common.base.IModuleUpgrade;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.moduleUpgrade;
 import mekanism.common.util.ItemDataUtils;
-import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.UpgradeHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -26,12 +25,10 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 public class ItemMekaTana extends ItemMekaEnergyBase implements IModuleUpgrade {
@@ -65,7 +62,7 @@ public class ItemMekaTana extends ItemMekaEnergyBase implements IModuleUpgrade {
 
     @Override
     public double getMaxEnergy(ItemStack itemStack) {
-        return ItemDataUtils.hasData(itemStack, "module") ? MekanismUtils.getModuleMaxEnergy(itemStack, MekanismConfig.current().weapons.mekaTanaBaseEnergyCapacity.val()) : MekanismConfig.current().weapons.mekaTanaBaseEnergyCapacity.val();
+        return MekanismUtils.getModuleMaxEnergy(itemStack, MekanismConfig.current().weapons.mekaTanaBaseEnergyCapacity.val());
     }
 
     @Override
@@ -91,7 +88,7 @@ public class ItemMekaTana extends ItemMekaEnergyBase implements IModuleUpgrade {
 
     public int getAttackDamage(ItemStack itemStack) {
         int damage = MekanismConfig.current().weapons.mekaTanaBaseDamage.val();
-        int numUpgrades = MekanismUtils.getModule(itemStack, moduleUpgrade.ATTACK_AMPLIFICATION_UNIT);
+        int numUpgrades = UpgradeHelper.getUpgradeLevel(itemStack, moduleUpgrade.ATTACK_AMPLIFICATION_UNIT);
         if (numUpgrades == 0) {
             NBTTagCompound dataMap = ItemDataUtils.getDataMap(itemStack);
             if (dataMap.isEmpty()) {
@@ -129,7 +126,7 @@ public class ItemMekaTana extends ItemMekaEnergyBase implements IModuleUpgrade {
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return getEnergy(stack) >0;
+        return getEnergy(stack) > 0;
     }
 
     @Override
@@ -156,10 +153,8 @@ public class ItemMekaTana extends ItemMekaEnergyBase implements IModuleUpgrade {
 
         ItemStack fullupgrade = new ItemStack(this);
         for (moduleUpgrade upgrade : getValidModule(fullupgrade)) {
-            upgrades.put(upgrade, upgrade.getMax());
-            moduleUpgrade.saveMap(upgrades, ItemDataUtils.getDataMap(fullupgrade));
+            UpgradeHelper.setUpgradeLevel(fullupgrade, upgrade, upgrade.getMax());
         }
-        upgrades.clear();
         setEnergy(fullupgrade, ((IEnergizedItem) fullupgrade.getItem()).getMaxEnergy(fullupgrade));
         list.add(fullupgrade);
     }
@@ -168,17 +163,7 @@ public class ItemMekaTana extends ItemMekaEnergyBase implements IModuleUpgrade {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemstack, World world, List<String> list, ITooltipFlag flag) {
         super.addInformation(itemstack, world, list, flag);
-        if (ItemDataUtils.hasData(itemstack, "module")) {
-            Map<moduleUpgrade, Integer> module = moduleUpgrade.buildMap(ItemDataUtils.getDataMap(itemstack));
-            if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-                list.add(LangUtils.localize("tooltip.hold") + " " + EnumColor.AQUA + "shift" + EnumColor.GREY + " " + LangUtils.localize("tooltip.forDetails"));
-            } else {
-                list.add(EnumColor.ORANGE + LangUtils.localize("tooltip.hold_for_modules") + ": ");
-                for (Map.Entry<moduleUpgrade, Integer> entry : module.entrySet()) {
-                    list.add("- " + entry.getKey().getLangName() + (entry.getKey().canMultiply() ? ": " + EnumColor.GREY + "x" + entry.getValue() : ""));
-                }
-            }
-        }
+        list.addAll(UpgradeHelper.getUpgradeStats(itemstack));
     }
 
 

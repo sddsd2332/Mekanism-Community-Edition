@@ -8,6 +8,7 @@ import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.moduleUpgrade;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.UpgradeHelper;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.enchantment.Enchantment;
@@ -30,6 +31,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
+
+import static mekanism.common.util.UpgradeHelper.isUpgradeInstalled;
 
 public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor implements IItemHUDProvider {
 
@@ -97,13 +100,13 @@ public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor implements IItemHU
             if (legStack.getItem() instanceof ItemMekAsuitLegsArmour armour) {
                 if (isUpgradeInstalled(legStack, moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT)) {
                     if (player.isInLava() || player.isBurning()) {
-                        armour.setEnergy(legStack, armour.getEnergy(legStack) + 10.5 * armour.getUpgrades(moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT) * 200);
+                        armour.setEnergy(legStack, armour.getEnergy(legStack) + 10.5 * UpgradeHelper.getUpgradeLevel(legStack, moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT) * 200);
                     }
                 }
                 if (isUpgradeInstalled(legStack, moduleUpgrade.HYDROSTATIC_REPULSOR_UNIT)) {
                     if (player.isInsideOfMaterial(Material.WATER) && !player.canBreatheUnderwater() && armour.getEnergy(legStack) > 500D) {
                         if (EnchantmentHelper.getEnchantmentLevel(Enchantments.DEPTH_STRIDER, legStack) == 0) {
-                            legStack.addEnchantment(Enchantments.DEPTH_STRIDER, armour.getUpgrades(moduleUpgrade.HYDROSTATIC_REPULSOR_UNIT));
+                            legStack.addEnchantment(Enchantments.DEPTH_STRIDER, UpgradeHelper.getUpgradeLevel(legStack, moduleUpgrade.HYDROSTATIC_REPULSOR_UNIT));
                             hasEffect(legStack);
                         }
                         armour.setEnergy(legStack, armour.getEnergy(legStack) - 500D);

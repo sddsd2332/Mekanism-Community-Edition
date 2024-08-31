@@ -23,6 +23,7 @@ import mekanism.common.network.PacketStepAssistData;
 import mekanism.common.network.PacketStepAssistData.StepAssistDataMessage;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.TextComponentGroup;
+import mekanism.common.util.UpgradeHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
@@ -156,7 +157,7 @@ public class MekanismKeyHandler extends MekKeyHandler {
                 }
                 Mekanism.packetHandler.sendToServer(new FreeRunnerDataMessage(PacketFreeRunnerData.FreeRunnerPacket.MODE, null, player.isSneaking()));
                 SoundHandler.playSound(MekanismSounds.HYDRAULIC);
-            } else if (feetStack.getItem() instanceof ItemMekAsuitFeetArmour freeArmour && freeArmour.isUpgradeInstalled(feetStack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
+            } else if (feetStack.getItem() instanceof ItemMekAsuitFeetArmour freeArmour && UpgradeHelper.isUpgradeInstalled(feetStack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
                 if (player.isSneaking()) {
                     freeArmour.setJumpBoostMode(feetStack, ItemMekAsuitFeetArmour.JumpBoost.OFF);
                 } else {
@@ -167,7 +168,7 @@ public class MekanismKeyHandler extends MekKeyHandler {
             }
         } else if (kb == MekAsuitFeetModeSwitchKey) {
             ItemStack feetStack = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-            if (feetStack.getItem() instanceof ItemMekAsuitFeetArmour freeArmour && freeArmour.isUpgradeInstalled(feetStack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
+            if (feetStack.getItem() instanceof ItemMekAsuitFeetArmour freeArmour && UpgradeHelper.isUpgradeInstalled(feetStack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
                 if (player.isSneaking()) {
                     freeArmour.setStepAssistMode(feetStack, ItemMekAsuitFeetArmour.StepAssist.OFF);
                 } else {

@@ -8,7 +8,7 @@ import java.io.*;
 public final class BoxBlacklistParser {
 
     private static File mekanismDir = new File(Mekanism.proxy.getMinecraftDir(), "config/mekanism");
-    private static File boxBlacklistFile = new File(mekanismDir, "MekanismCardboardBoxBlacklist");
+    private static File boxBlacklistFile = new File(mekanismDir, "MekanismCardboardBoxBlacklist.txt");
 
     private BoxBlacklistParser() {
     }

@@ -5,6 +5,7 @@ import mekanism.common.Mekanism;
 import mekanism.common.PacketHandler;
 import mekanism.common.item.armor.ItemMekAsuitFeetArmour;
 import mekanism.common.moduleUpgrade;
+import mekanism.common.util.UpgradeHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -33,7 +34,7 @@ public class PacketStepAssistData implements IMessageHandler<PacketStepAssistDat
                 }
             } else if (message.packetType == StepAssistPacket.MODE) {
                 ItemStack stack = entityPlayer.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-                if (!stack.isEmpty() && stack.getItem() instanceof ItemMekAsuitFeetArmour feet && feet.isUpgradeInstalled(stack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
+                if (!stack.isEmpty() && stack.getItem() instanceof ItemMekAsuitFeetArmour feet && UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
                     if (!message.value) {
                         feet.incrementStepAssistMode(stack);
                     } else {

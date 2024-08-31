@@ -16,6 +16,7 @@ import mekanism.common.moduleUpgrade;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.UpgradeHelper;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -50,7 +51,7 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
     public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped _default) {
         ModelMekAsuitBody armorModel = ModelMekAsuitBody.armorModel;
         ModuleJetpack jetpack = ModuleJetpack.jetpacks;
-        if (isUpgradeInstalled(itemStack, moduleUpgrade.JETPACK_UNIT)) {
+        if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.JETPACK_UNIT)) {
             if (!armorModel.bipedBody.childModels.contains(jetpack.jetpack)) {
                 armorModel.bipedBody.addChild(jetpack.jetpack);
             }
@@ -153,7 +154,7 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
 
     @Override
     public boolean canUseJetpack(ItemStack stack) {
-        if (isUpgradeInstalled(stack, moduleUpgrade.JETPACK_UNIT)) {
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.JETPACK_UNIT)) {
             return getStored(stack) > 0;
         }
         return false;
@@ -235,7 +236,7 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
         if (!world.isRemote) {
             ItemStack chestStack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
             if (chestStack.getItem() instanceof ItemMekAsuitBodyArmour) {
-                if (isUpgradeInstalled(itemStack, moduleUpgrade.CHARGE_DISTRIBUTION_UNIT)) {
+                if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.CHARGE_DISTRIBUTION_UNIT)) {
                     chargeSuit(player);
                 }
             }
@@ -251,7 +252,7 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
         if (slotType == getEquipmentSlot()) {
-            if (isUpgradeInstalled(stack, moduleUpgrade.JETPACK_UNIT)) {
+            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.JETPACK_UNIT)) {
                 list.add(LangUtils.localize("tooltip.jetpack.mode") + " " + getMode(stack).getName());
                 list.add(LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + (getStored(stack) > 0 ? getStored(stack) : LangUtils.localize("tooltip.noGas")));
             }

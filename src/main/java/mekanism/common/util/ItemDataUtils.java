@@ -8,7 +8,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public final class ItemDataUtils {
+public class ItemDataUtils {
 
     public static final String DATA_ID = "mekData";
 

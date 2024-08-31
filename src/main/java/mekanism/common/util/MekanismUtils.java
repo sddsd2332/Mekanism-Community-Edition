@@ -78,7 +78,15 @@ public final class MekanismUtils {
     public static final EnumFacing[] SIDE_DIRS = new EnumFacing[]{EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST};
 
     public static final Map<String, Class<?>> classesFound = new Object2ObjectOpenHashMap<>();
-
+    public static final ThreadLocal<Boolean> isInjecting = ThreadLocal.withInitial(() -> false);
+    public static final BiConsumer<Integer, Runnable> inject = (reqTime, process) -> {
+        if (!isInjecting.get()) {
+            isInjecting.set(true);
+            for (int i = reqTime; i < 0; i++)
+                process.run();
+            isInjecting.set(false);
+        }
+    };
     private static final List<UUID> warnedFails = new ArrayList<>();
     /**
      * Pre-calculated cache of translated block orientations
@@ -369,15 +377,14 @@ public final class MekanismUtils {
     }
 
     public static double getModuleMaxEnergy(ItemStack itemStack, double def) {
-        Map<moduleUpgrade, Integer> module = moduleUpgrade.buildMap(ItemDataUtils.getDataMap(itemStack));
-        float numUpgrades = module.get(moduleUpgrade.EnergyUnit) == null ? 0 : (float) module.get(moduleUpgrade.EnergyUnit);
-        return def * Math.pow(2, numUpgrades);
+        int module = UpgradeHelper.getUpgradeLevel(itemStack, moduleUpgrade.EnergyUnit);
+        if (module == 0) {
+            return def;
+        } else {
+            return def * Math.pow(2, module);
+        }
     }
 
-    public static int getModule(ItemStack itemStack,moduleUpgrade upgrade) {
-        Map<moduleUpgrade, Integer> module = moduleUpgrade.buildMap(ItemDataUtils.getDataMap(itemStack));
-        return module.get(upgrade) == null ? 0 : module.get(upgrade);
-    }
     /**
      * Better version of the World.getRedstonePowerFromNeighbors() method that doesn't load chunks.
      *
@@ -628,7 +635,6 @@ public final class MekanismUtils {
         //entity id, gui type
         player.openGui(Mekanism.instance, 1, player.world, entity.getEntityId(), guiID, 0);
     }
-
 
     /**
      * Gets a ResourceLocation with a defined resource type and name.
@@ -1061,7 +1067,6 @@ public final class MekanismUtils {
         return null;
     }
 
-
     /**
      * Dismantles a block, dropping it and removing it from the world.
      */
@@ -1099,7 +1104,6 @@ public final class MekanismUtils {
         return Integer.MAX_VALUE;
     }
 
-
     public static double time(IUpgradeTile tile) {
         return Math.pow(MekanismConfig.current().general.maxUpgradeMultiplier.val(), tile.getComponent().getUpgrades(Upgrade.SPEED) / -8D);
     }
@@ -1122,18 +1126,6 @@ public final class MekanismUtils {
         double dt = (double) ((int) Math.round(d * Math.pow(10, significant - 1))) / Math.pow(10, significant - 1 - exp);
         return Math.abs(exp) <= significant - 1 ? String.valueOf(dt) : d + "E" + exp;
     }
-
-
-    public static final ThreadLocal<Boolean> isInjecting = ThreadLocal.withInitial(() -> false);
-
-    public static final BiConsumer<Integer, Runnable> inject = (reqTime, process) -> {
-        if (!isInjecting.get()) {
-            isInjecting.set(true);
-            for (int i = reqTime; i < 0; i++)
-                process.run();
-            isInjecting.set(false);
-        }
-    };
 
     public enum ResourceType {
         GUI("gui"),

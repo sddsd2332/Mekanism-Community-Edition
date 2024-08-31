@@ -13,6 +13,7 @@ import mekanism.common.item.armor.ItemMekAsuitLegsArmour;
 import mekanism.common.item.armor.ItemMekaSuitArmor;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.item.interfaces.IJetpackItem.JetpackMode;
+import mekanism.common.util.UpgradeHelper;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -68,7 +69,7 @@ public class CommonPlayerTickHandler {
         if (!stack.isEmpty() && stack.getItem() instanceof ItemFreeRunners freeRunners && freeRunners.getMode(stack).providesStepBoost() && !player.isSpectator()) {
             return 1.002F;
         } else if (!stack.isEmpty() && stack.getItem() instanceof ItemMekAsuitFeetArmour feetArmour && !player.isSpectator()) {
-            if (feetArmour.isUpgradeInstalled(stack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
+            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
                 float height = feetArmour.getStepAssistMode(stack).getHeight();
                 if (height == 0.5F) {
                     return 1.002F;
@@ -334,13 +335,13 @@ public class CommonPlayerTickHandler {
         if (event.getEntity() instanceof EntityPlayer player) {
             ItemStack feet = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
             if (!feet.isEmpty() && feet.getItem() instanceof ItemMekAsuitFeetArmour feetArmor) {
-                if (feetArmor.isUpgradeInstalled(feet, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
+                if (UpgradeHelper.isUpgradeInstalled(feet, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
                     float boost = feetArmor.getJumpBoostMode(feet).getBoost();
                     double usage = 1000 * (boost / 0.1F);
                     if (feetArmor.getEnergy(feet) > usage) {
                         ItemStack leg = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
-                        if (!leg.isEmpty() && leg.getItem() instanceof ItemMekAsuitLegsArmour legsArmor) {
-                            if (legsArmor.isUpgradeInstalled(feet, moduleUpgrade.LOCOMOTIVE_BOOSTING_UNIT)) {
+                        if (!leg.isEmpty() && leg.getItem() instanceof ItemMekAsuitLegsArmour) {
+                            if (UpgradeHelper.isUpgradeInstalled(leg, moduleUpgrade.LOCOMOTIVE_BOOSTING_UNIT)) {
                                 boost = (float) Math.sqrt(boost);
                             }
                         }
@@ -365,7 +366,7 @@ public class CommonPlayerTickHandler {
         }
          */
         ItemStack legs = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
-        if (!legs.isEmpty() && legs.getItem() instanceof ItemMekaSuitArmor armor && armor.isUpgradeInstalled(legs, moduleUpgrade.GYROSCOPIC_STABILIZATION_UNIT)) {
+        if (!legs.isEmpty() && legs.getItem() instanceof ItemMekaSuitArmor && UpgradeHelper.isUpgradeInstalled(legs, moduleUpgrade.GYROSCOPIC_STABILIZATION_UNIT)) {
             if (player.isInsideOfMaterial(Material.WATER) && !EnchantmentHelper.getAquaAffinityModifier(player)) {
                 speed *= 5.0F;
             }
