@@ -1,6 +1,7 @@
 package mekanism.common.entity;
 
 import cofh.redstoneflux.api.IEnergyContainerItem;
+import com.google.common.base.Stopwatch;
 import ic2.api.item.ElectricItem;
 import ic2.api.item.IElectricItem;
 import mekanism.api.Coord4D;
@@ -66,6 +67,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Interface(iface = "micdoodle8.mods.galacticraft.api.entity.IEntityBreathable", modid = MekanismHooks.GALACTICRAFT_MOD_ID)
 public class EntityRobit extends EntityCreature implements IInventory, ISustainedInventory, IEntityBreathable {
@@ -82,6 +84,7 @@ public class EntityRobit extends EntityCreature implements IInventory, ISustaine
     public int currentItemBurnTime = 0;
     public int furnaceCookTime = 0;
     public boolean texTick;
+    private final Stopwatch lastClicked = Stopwatch.createStarted();
 
     public EntityRobit(World world) {
         super(world);
@@ -196,7 +199,7 @@ public class EntityRobit extends EntityCreature implements IInventory, ISustaine
                 } else if (stack.getItem() == Items.REDSTONE && getEnergy() + MekanismConfig.current().general.ENERGY_PER_REDSTONE.val() <= MAX_ELECTRICITY) {
                     setEnergy(getEnergy() + MekanismConfig.current().general.ENERGY_PER_REDSTONE.val());
                     stack.shrink(1);
-                }else if (stack.getItem() ==  Item.getItemFromBlock(Blocks.REDSTONE_BLOCK) && getEnergy() + MekanismConfig.current().general.ENERGY_PER_REDSTONE_BLOCK.val() <= MAX_ELECTRICITY) {
+                } else if (stack.getItem() == Item.getItemFromBlock(Blocks.REDSTONE_BLOCK) && getEnergy() + MekanismConfig.current().general.ENERGY_PER_REDSTONE_BLOCK.val() <= MAX_ELECTRICITY) {
                     setEnergy(getEnergy() + MekanismConfig.current().general.ENERGY_PER_REDSTONE_BLOCK.val());
                     stack.shrink(1);
                 }
@@ -324,18 +327,20 @@ public class EntityRobit extends EntityCreature implements IInventory, ISustaine
         ItemStack stack = entityplayer.getHeldItem(hand);
         if (entityplayer.isSneaking()) {
             if (!stack.isEmpty() && stack.getItem() instanceof ItemConfigurator) {
-                if (!world.isRemote) {
-                    drop();
+                if (this.lastClicked.elapsed(TimeUnit.MILLISECONDS) > 200) {
+                    this.lastClicked.reset().start();
+                    if (!world.isRemote) {
+                        drop();
+                    }
+                    setDead();
+                    entityplayer.swingArm(hand);
+                    return EnumActionResult.SUCCESS;
                 }
-                setDead();
-                entityplayer.swingArm(hand);
-                return EnumActionResult.SUCCESS;
             }
         } else {
             MekanismUtils.openEntityGui(entityplayer, this, 21);
             return EnumActionResult.SUCCESS;
         }
-
         return EnumActionResult.PASS;
     }
 
