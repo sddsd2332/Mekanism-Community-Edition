@@ -38,8 +38,7 @@ import java.util.List;
 
 public class TileEntityOredictionificator extends TileEntityContainerBlock implements IRedstoneControl, ISpecialConfigData, ISustainedData, ISecurityTile, ISideConfiguration {
 
-    public static final int MAX_LENGTH = 24;
-    private static final int[] SLOTS = {0, 1};
+
     public static List<String> possibleFilters = Arrays.asList("ingot", "ore", "dust", "nugget");
     public HashList<OredictionificatorFilter> filters = new HashList<>();
     public RedstoneControl controlType = RedstoneControl.DISABLED;
@@ -63,7 +62,7 @@ public class TileEntityOredictionificator extends TileEntityContainerBlock imple
 
         ejectorComponent = new TileComponentEjector(this);
         ejectorComponent.setOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(2));
-        ejectorComponent.setInputOutputData(TransmissionType.ITEM,configComponent.getOutputs(TransmissionType.ITEM).get(3));
+        ejectorComponent.setInputOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(3));
         doAutoSync = false;
     }
 
@@ -75,7 +74,6 @@ public class TileEntityOredictionificator extends TileEntityContainerBlock imple
                     Mekanism.packetHandler.sendTo(new TileEntityMessage(this, getGenericPacket(new TileNetworkList())), (EntityPlayerMP) player);
                 }
             }
-
             didProcess = false;
             ItemStack inputStack = inventory.get(0);
             if (MekanismUtils.canFunction(this) && !inputStack.isEmpty() && getValidName(inputStack) != null) {
@@ -145,8 +143,12 @@ public class TileEntityOredictionificator extends TileEntityContainerBlock imple
 
     @Override
     public boolean isItemValidForSlot(int slotID, @Nonnull ItemStack itemstack) {
-        return slotID == 0 && !getResult(itemstack).isEmpty();
-
+        if (slotID == 1){
+            return false;
+        }else if (slotID == 0) {
+            return !getResult(itemstack).isEmpty();
+        }
+        return false;
     }
 
 
@@ -343,10 +345,7 @@ public class TileEntityOredictionificator extends TileEntityContainerBlock imple
 
     @Override
     public boolean isCapabilityDisabled(@Nonnull Capability<?> capability, EnumFacing side) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return side == facing;
-        }
-        return super.isCapabilityDisabled(capability, side);
+        return configComponent.isCapabilityDisabled(capability, side, facing) || super.isCapabilityDisabled(capability, side);
     }
 
     @Override
