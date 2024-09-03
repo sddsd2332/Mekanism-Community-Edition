@@ -6,6 +6,7 @@ import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitBody;
+import mekanism.client.model.mekasuitarmour.ModuleGravitational;
 import mekanism.client.model.mekasuitarmour.ModuleJetpack;
 import mekanism.common.MekanismFluids;
 import mekanism.common.MekanismItems;
@@ -51,7 +52,9 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
     public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped _default) {
         ModelMekAsuitBody armorModel = ModelMekAsuitBody.armorModel;
         ModuleJetpack jetpack = ModuleJetpack.jetpacks;
-        if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.JETPACK_UNIT)) {
+        ModuleGravitational gravitational = ModuleGravitational.gravitational;
+
+        if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.JETPACK_UNIT) && getJetpackMode(itemStack)!= JetpackMode.DISABLED) {
             if (!armorModel.bipedBody.childModels.contains(jetpack.jetpack)) {
                 armorModel.bipedBody.addChild(jetpack.jetpack);
             }
@@ -61,6 +64,15 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
             }
         }
 
+        if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.GRAVITATIONAL_MODULATING_UNIT) && getJetpackMode(itemStack) == JetpackMode.DISABLED) {
+            if (!armorModel.bipedBody.childModels.contains(gravitational.gravitational_modulator)) {
+                armorModel.bipedBody.addChild(gravitational.gravitational_modulator);
+            }
+        } else {
+            if (armorModel.bipedBody.childModels.contains(gravitational.gravitational_modulator)) {
+                armorModel.bipedBody.childModels.remove(gravitational.gravitational_modulator);
+            }
+        }
         return armorModel;
     }
 
@@ -100,6 +112,7 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
         List<moduleUpgrade> list = super.getValidModule(stack);
         list.add(moduleUpgrade.JETPACK_UNIT);
         list.add(moduleUpgrade.CHARGE_DISTRIBUTION_UNIT);
+        list.add(moduleUpgrade.GRAVITATIONAL_MODULATING_UNIT);
         return list;
     }
 
@@ -236,7 +249,7 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
         if (!world.isRemote) {
             ItemStack chestStack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
             if (chestStack.getItem() instanceof ItemMekAsuitBodyArmour) {
-                if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.CHARGE_DISTRIBUTION_UNIT)) {
+                if (UpgradeHelper.isUpgradeInstalled(chestStack, moduleUpgrade.CHARGE_DISTRIBUTION_UNIT)) {
                     chargeSuit(player);
                 }
             }
@@ -247,7 +260,6 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
     double getShieldingByArmor() {
         return 40;
     }
-
 
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {

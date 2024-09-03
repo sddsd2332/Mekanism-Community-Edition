@@ -164,7 +164,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
         if (tank.getGas() != null) {
             if (mode != GasMode.DUMPING) {
                 if (configComponent.isEjecting(TransmissionType.GAS)) {
-                    GasStack toSend = new GasStack(tank.getGas().getGas(), Math.min(tank.getStored(), output));
+                    GasStack toSend = new GasStack(tank.getGas().getGas(), Math.min(tank.getStored(), tank.getMaxGas()));
                     tank.draw(GasUtils.emit(toSend, this, side), true);
                 }
             } else {

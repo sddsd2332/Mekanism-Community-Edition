@@ -172,7 +172,7 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
     private void handleTank(GasTank tank, GasMode mode, TileEntity tile, int dumpAmount) {
         if (tank.getGas() != null) {
             if (mode != GasMode.DUMPING) {
-                GasStack toSend = new GasStack(tank.getGas().getGas(), Math.min(tank.getStored(), output));
+                GasStack toSend = new GasStack(tank.getGas().getGas(), Math.min(tank.getStored(), tank.getMaxGas()));
                 tank.draw(GasUtils.emit(toSend, tile, Collections.singleton(facing)), true);
             } else {
                 tank.draw(dumpAmount, true);

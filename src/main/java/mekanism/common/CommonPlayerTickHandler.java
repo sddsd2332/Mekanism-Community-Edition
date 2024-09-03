@@ -7,10 +7,7 @@ import mekanism.common.item.ItemFlamethrower;
 import mekanism.common.item.ItemFreeRunners;
 import mekanism.common.item.ItemGasMask;
 import mekanism.common.item.ItemScubaTank;
-import mekanism.common.item.armor.ItemMekAsuitFeetArmour;
-import mekanism.common.item.armor.ItemMekAsuitHeadArmour;
-import mekanism.common.item.armor.ItemMekAsuitLegsArmour;
-import mekanism.common.item.armor.ItemMekaSuitArmor;
+import mekanism.common.item.armor.*;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.item.interfaces.IJetpackItem.JetpackMode;
 import mekanism.common.util.UpgradeHelper;
@@ -19,6 +16,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -36,8 +34,13 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 public class CommonPlayerTickHandler {
 
+    public static final List<UUID> FLYING_PLAYERS = new ArrayList<>();
     boolean isHeadItem = false;
 
     public static boolean isOnGroundOrSleeping(EntityPlayer player) {
@@ -87,12 +90,24 @@ public class CommonPlayerTickHandler {
         return 0.6F;
     }
 
+    @SubscribeEvent
+    public static void playerLoggedOut(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent event) {
+        removeFlyingPlayer(event.player.getUniqueID());
+    }
+
+    private static void removeFlyingPlayer(UUID playerUUID) {
+        FLYING_PLAYERS.removeIf(uuid -> uuid.equals(playerUUID));
+    }
 
     @SubscribeEvent
     public void onTick(PlayerTickEvent event) {
         if (event.phase == Phase.END && event.side == Side.SERVER) {
             tickEnd(event.player);
         }
+        if (event.phase == Phase.START) {
+            isMekAsuitArmorFlying(event.player);
+        }
+
     }
 
     public void tickEnd(EntityPlayer player) {
@@ -142,14 +157,35 @@ public class CommonPlayerTickHandler {
             }
         }
 
-        isMekAsuitArmor(player);
+        isMekAsuitArmorHeadEff(player);
     }
 
 
-    public void isMekAsuitArmor(EntityPlayer player) {
-        ItemStack head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+    public void isMekAsuitArmorFlying(EntityPlayer player) {
         ItemStack chest = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-        ItemStack legs = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
+        PlayerCapabilities capabilities = player.capabilities;
+        UUID playerUUID = player.getUniqueID();
+        if (!chest.isEmpty() && chest.getItem() instanceof ItemMekAsuitBodyArmour && UpgradeHelper.isUpgradeInstalled(chest, moduleUpgrade.GRAVITATIONAL_MODULATING_UNIT)) {
+            if (!capabilities.allowFlying) {
+                capabilities.allowFlying = true;
+                player.sendPlayerAbilities();
+                if (!FLYING_PLAYERS.contains(playerUUID))
+                    FLYING_PLAYERS.add(playerUUID);
+            }
+        } else {
+            if (FLYING_PLAYERS.contains(playerUUID)) {
+                if (capabilities.allowFlying && !player.isSpectator() && !player.isCreative()) {
+                    capabilities.allowFlying = false;
+                    capabilities.isFlying = false;
+                    player.sendPlayerAbilities();
+                }
+                removeFlyingPlayer(playerUUID);
+            }
+        }
+    }
+
+    public void isMekAsuitArmorHeadEff(EntityPlayer player) {
+        ItemStack head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
         PotionEffect nv = player.getActivePotionEffect(MobEffects.NIGHT_VISION);
         if (!head.isEmpty()) {
             if (head.getItem() instanceof ItemMekAsuitHeadArmour headArmour) {
@@ -160,10 +196,12 @@ public class CommonPlayerTickHandler {
             }
         }
 
+
         if (nv != null && isHeadItem) {
             nv.duration = 0;
         }
     }
+
 
     @SubscribeEvent
     public void onEntityAttacked(LivingAttackEvent event) {

@@ -26,6 +26,7 @@ import mekanism.common.recipe.outputs.ItemStackOutput;
 import mekanism.common.recipe.outputs.PressurizedOutput;
 import mekanism.common.tier.BaseTier;
 import mekanism.common.tier.FactoryTier;
+import mekanism.common.tile.component.SideConfig;
 import mekanism.common.tile.component.TileComponentConfig;
 import mekanism.common.tile.component.TileComponentEjector;
 import mekanism.common.tile.component.config.DataType;
@@ -34,8 +35,10 @@ import mekanism.common.util.*;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -43,6 +46,8 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -113,6 +118,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
      * How many recipe ticks have progressed.
      */
     private int recipeTicks;
+    public int delayTicks;
     @Nonnull
     private RecipeType recipeType = RecipeType.SMELTING;
 
@@ -189,6 +195,17 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
             case CREATIVE -> new int[]{5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
         };
     }
+
+    private static int[] getOutputSlotsWithTier(FactoryTier tier) {
+        return switch (tier) {
+            case BASIC -> new int[]{8, 9, 10, 11, 12, 13};
+            case ADVANCED -> new int[]{10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
+            case ELITE -> new int[]{12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25};
+            case ULTIMATE -> new int[]{14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
+            case CREATIVE -> new int[]{16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37};
+        };
+    }
+
 
     public static ItemStack copyStackWithSize(ItemStack stack, int amount) {
         if (stack.isEmpty() || amount <= 0) return ItemStack.EMPTY;
@@ -306,6 +323,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
                 }
             }
             MachineTypeSwitching();
+        //    Mekanism.EXECUTE_MANAGER.addSyncTask(this::BetterEjectingItem);
             double prev = getEnergy();
             if (tier == FactoryTier.CREATIVE) {
                 energyPerTick = 0;
@@ -1736,4 +1754,78 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
             }
         }
     }
+
+    private void BetterEjectingItem(){
+        if (delayTicks == 0 || MekanismConfig.current().mekce.ItemsEjectWithoutDelay.val()) {
+            outputItems();
+            if (!MekanismConfig.current().mekce.ItemsEjectWithoutDelay.val()) {
+                delayTicks = MekanismConfig.current().mekce.ItemEjectionDelay.val();
+            }
+        } else {
+            delayTicks--;
+        }
+    }
+
+
+    private void outputItems() {
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            EnumFacing side = facing.getOpposite();
+            BlockPos offset = getPos().offset(side);
+            TileEntity te = getWorld().getTileEntity(offset);
+            if (te == null) {
+                continue;
+            }
+            EnumFacing accessingSide = facing.getOpposite();
+            IItemHandler itemHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, accessingSide);
+            if (itemHandler == null) {
+                continue;
+            }
+            try {
+                outputToExternal(itemHandler);
+            } catch (Exception e) {
+                Mekanism.logger.error("Exception when insert item: ", e);
+            }
+        }
+    }
+
+    private synchronized void outputToExternal(IItemHandler external) {
+        for (int externalSlotId = 0; externalSlotId < external.getSlots(); externalSlotId++) {
+            if (!configComponent.isEjecting(TransmissionType.ITEM)) {
+                break;
+            }
+            ItemStack externalStack = external.getStackInSlot(externalSlotId);
+            int slotLimit = external.getSlotLimit(externalSlotId);
+            if (!externalStack.isEmpty() && externalStack.getCount() >= slotLimit) {
+                continue;
+            }
+            for (int internalSlotId : getOutputSlotsWithTier(tier)) {
+                ItemStack internalStack = inventory.get(internalSlotId);
+                if (internalStack.isEmpty()) {
+                    continue;
+                }
+                if (externalStack.isEmpty()) {
+                    ItemStack notInserted = external.insertItem(externalSlotId, internalStack, false);
+                    // Safeguard against Storage Drawers virtual slot
+                    if (notInserted.getCount() == internalStack.getCount()) {
+                        break;
+                    }
+                    inventory.set(internalSlotId, notInserted);
+                    if (notInserted.isEmpty()) {
+                        break;
+                    }
+                    continue;
+                }
+                if (!matchStacks(internalStack, externalStack)) {
+                    continue;
+                }
+                // Extract internal item to external.
+                ItemStack notInserted = external.insertItem(externalSlotId, internalStack, false);
+                inventory.set(internalSlotId, notInserted);
+                if (notInserted.isEmpty()) {
+                    break;
+                }
+            }
+        }
+    }
+
 }

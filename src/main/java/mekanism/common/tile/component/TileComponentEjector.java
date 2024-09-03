@@ -28,8 +28,6 @@ import java.util.*;
 
 public class TileComponentEjector implements ITileComponent {
 
-    private static final int GAS_OUTPUT = MekanismConfig.current().mekce.GasEjectionSpeed.val();
-    private static final int FLUID_OUTPUT = MekanismConfig.current().mekce.FluidEjectionSpeed.val();
     private static final int FAILURE_DELAY = MekanismConfig.current().mekce.EjectionFailureDelay.val();
 
     private TileEntityContainerBlock tileEntity;
@@ -161,7 +159,7 @@ public class TileComponentEjector implements ITileComponent {
             return false;
         }
 
-        GasStack toEmit = tank.getGas().copy().withAmount(Math.min(MekanismConfig.current().mekce.GasEjectionSettings.val() ? tank.getMaxGas() : GAS_OUTPUT, tank.getStored()));
+        GasStack toEmit = tank.getGas().copy().withAmount(Math.min(tank.getMaxGas(), tank.getStored()));
         int emit = GasUtils.emit(toEmit, tileEntity, outputSides);
         if (emit <= 0) {
             return false;
@@ -181,7 +179,7 @@ public class TileComponentEjector implements ITileComponent {
             return false;
         }
 
-        FluidStack toEmit = PipeUtils.copy(tank.getFluid(), Math.min(MekanismConfig.current().mekce.FluidEjectionSettings.val() ? tank.getCapacity() : FLUID_OUTPUT, tank.getFluidAmount()));
+        FluidStack toEmit = PipeUtils.copy(tank.getFluid(), Math.min(tank.getCapacity(), tank.getFluidAmount()));
         int emit = PipeUtils.emit(outputSides, toEmit, tileEntity);
         if (emit <= 0) {
             return false;

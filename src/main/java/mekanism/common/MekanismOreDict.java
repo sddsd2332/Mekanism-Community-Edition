@@ -103,7 +103,7 @@ public class MekanismOreDict {
         OreDictionary.registerOre("dustFluorite", new ItemStack(MekanismItems.OtherDust, 1, 7));
         OreDictionary.registerOre("dustCharcoal", new ItemStack(MekanismItems.OtherDust, 1, 8));
         OreDictionary.registerOre("PlutoniumPellet", new ItemStack(MekanismItems.PlutoniumPellet, 1));
-        OreDictionary.registerOre("AntimatterPellet", new ItemStack(MekanismItems.AntimatterPellet, 1));
+        OreDictionary.registerOre("Antimatter", new ItemStack(MekanismItems.AntimatterPellet, 1));
         OreDictionary.registerOre("ReprocessedFissileFragment", new ItemStack(MekanismItems.ReprocessedFissileFragment, 1));
         OreDictionary.registerOre("PoloniumPellet", new ItemStack(MekanismItems.PoloniumPellet, 1));
     }

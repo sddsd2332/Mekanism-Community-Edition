@@ -68,6 +68,7 @@ public final class MekanismHooks {
     public static final String GTCEU_MOD_ID = "gregtech";
     public static final String LUMENIZED_MOD_ID = "lumenized";
     public static final String NuclearCraft_MOD_ID = "nuclearcraft";
+    public static final String Baubles_MOD_ID = "baubles";
     public boolean AE2Loaded = false;
     public boolean BuildCraftLoaded = false;
     public boolean CCLoaded = false;
@@ -86,6 +87,7 @@ public final class MekanismHooks {
     public boolean LumenizedLoaded = false;
     public boolean Bloom = false;
     public boolean NuclearCraft =false;
+    public boolean Baubles = false;
     public void hookPreInit() {
         AE2Loaded = Loader.isModLoaded(APPLIED_ENERGISTICS_2_MOD_ID);
         BuildCraftLoaded = Loader.isModLoaded(BUILDCRAFT_MOD_ID);
@@ -105,6 +107,7 @@ public final class MekanismHooks {
         LumenizedLoaded = Loader.isModLoaded(LUMENIZED_MOD_ID);
         Bloom = LumenizedLoaded || GTCEULoaded;
         NuclearCraft = Loader.isModLoaded(NuclearCraft_MOD_ID);
+        Baubles = Loader.isModLoaded(Baubles_MOD_ID);
         if (FluxNetWorksLoaded) {
             FluxNetworksIntegration.preInit();
             Mekanism.logger.info("Hooked into Flux Networks successfully.");

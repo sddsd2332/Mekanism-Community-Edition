@@ -3,7 +3,10 @@ package mekanism.client.model.mekasuitarmour;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class ModuleJetpack extends ModelBase {
 
 	public static final  ModuleJetpack jetpacks = new ModuleJetpack();

@@ -44,7 +44,6 @@ public class TileEntityLargeChemicalWasher extends TileEntityMultiblockBasicMach
     public FluidTank fluidTank = new FluidTankSync(FluidTankTier.ULTIMATE.getStorage());
     public GasTank inputTank = new GasTank(GasTankTier.ULTIMATE.getStorage());
     public GasTank outputTank = new GasTank(GasTankTier.ULTIMATE.getStorage());
-    public int output = 512;
     public WasherRecipe cachedRecipe;
     public double clientEnergyUsed;
     public int updateDelay;
@@ -121,7 +120,7 @@ public class TileEntityLargeChemicalWasher extends TileEntityMultiblockBasicMach
 
     private void handleTank(GasTank tank, TileEntity tile, EnumFacing side) {
         if (tank.getGas() != null) {
-            GasStack toSend = new GasStack(tank.getGas().getGas(), Math.min(tank.getStored(), output));
+            GasStack toSend = new GasStack(tank.getGas().getGas(), Math.min(tank.getStored(), tank.getMaxGas()));
             tank.draw(GasUtils.emit(toSend, tile, Collections.singleton(side)), true);
         }
     }

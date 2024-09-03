@@ -1,0 +1,35 @@
+{
+      "result": {
+            "item": "mekanism:moduleupgrade",
+            "data":21
+      },
+      "pattern": [
+            "CDC",
+            "EBE",
+            "AAA"
+      ],
+      "type": "mekanism:ore_shaped",
+      "key": {
+            "A": {
+                  "ore": "Antimatter",
+                  "type": "forge:ore_dict"
+            },
+            "B": {
+                  "item": "mekanism:modulebase"
+            },
+            "C": {
+                  "ore": "alloyUltimate",
+                  "type": "forge:ore_dict"
+            },
+            "D": {
+                  "ore":"netherStar",
+                  "type": "forge:ore_dict"
+            },
+            "E": {
+                  "item": "mekanism:basicblock2",
+                  "data": 4,
+                  "type": "mekanism:item_nbt",
+                  "nbt": {"tier": 3}
+            }
+      }
+}

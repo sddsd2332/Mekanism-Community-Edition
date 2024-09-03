@@ -14,8 +14,8 @@ public class EntityMekaArrow extends EntityArrow{
 
     public EntityMekaArrow(World worldIn, EntityLivingBase shooter){
         super(worldIn, shooter);
-
     }
+
 
     @Override
     protected ItemStack getArrowStack() {

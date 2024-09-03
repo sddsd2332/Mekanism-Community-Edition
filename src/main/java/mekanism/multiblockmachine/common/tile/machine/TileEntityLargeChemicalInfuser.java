@@ -49,7 +49,6 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
     public boolean needsPacket;
     public int numPowering;
     public double clientEnergyUsed;
-    public int output = 512;
     private int currentRedstoneLevel;
     private boolean rendererInitialized = false;
 
@@ -129,7 +128,7 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
 
     private void handleTank(GasTank tank, TileEntity tile) {
         if (tank.getGas() != null) {
-            GasStack toSend = new GasStack(tank.getGas().getGas(), Math.min(tank.getStored(), output));
+            GasStack toSend = new GasStack(tank.getGas().getGas(), Math.min(tank.getStored(), tank.getMaxGas()));
             tank.draw(GasUtils.emit(toSend, tile, EnumSet.of(facing)), true);
         }
     }

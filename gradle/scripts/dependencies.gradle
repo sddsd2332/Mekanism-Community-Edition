@@ -72,7 +72,7 @@ dependencies {
     implementation 'curse.maven:hwyla-253449:2568751'
     implementation 'curse.maven:redstone-flux-270789:2920436'
     implementation rfg.deobf('curse.maven:CTM-267602:2915363')
-    implementation 'curse.maven:industrial-craft-242638:3838713'
+    implementation rfg.deobf('curse.maven:industrial-craft-242638:3838713')
     implementation 'curse.maven:computercraft-67504:2478952'
     implementation 'curse.maven:the-one-probe-245211:2667280'
     implementation rfg.deobf('curse.maven:ae2-extended-life-570458:5378164')
@@ -100,5 +100,6 @@ dependencies {
     implementation rfg.deobf("curse.maven:thermal-foundation-222880:2926428")
     implementation rfg.deobf("curse.maven:thermal-expansion-69163:2926431")
     implementation rfg.deobf("curse.maven:cofh-world-271384:2920434")
-    implementation rfg.deobf("curse.maven:nuclearcraft-overhauled-336895:5446445")
+  //  implementation rfg.deobf("curse.maven:nuclearcraft-overhauled-336895:5446445")
+    implementation rfg.deobf("curse.maven:baubles-227083:2518667")
 }

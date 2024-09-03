@@ -1,10 +1,12 @@
 package mekanism.common.tile;
 
+import baubles.api.BaublesApi;
 import io.netty.buffer.ByteBuf;
 import mekanism.api.TileNetworkList;
 import mekanism.common.Mekanism;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.entity.EntityRobit;
+import mekanism.common.integration.MekanismHooks;
 import mekanism.common.tile.prefab.TileEntityEffectsBlock;
 import mekanism.common.util.ChargeUtils;
 import mekanism.common.util.InventoryUtils;
@@ -21,9 +23,12 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -58,18 +63,19 @@ public class TileEntityChargepad extends TileEntityEffectsBlock {
                         setEnergy(getEnergy() - toGive);
                     } else if (entity instanceof EntityPlayer player) {
                         double prevEnergy = getEnergy();
-                        for (ItemStack itemstack : player.inventory.armorInventory) {
-                            ChargeUtils.charge(itemstack, this);
+                        List<ItemStack> stacks = new ArrayList<>();
+                        stacks.addAll(player.inventory.mainInventory);
+                        stacks.addAll(player.inventory.armorInventory);
+                        if (Mekanism.hooks.Baubles){
+                            stacks.addAll(chargeBaublesInventory(player));
+                        }
+                        for(ItemStack stack : stacks) {
+                            ChargeUtils.charge(stack, this);
                             if (prevEnergy != getEnergy()) {
                                 break;
                             }
                         }
-                        for (ItemStack itemstack : player.inventory.mainInventory) {
-                            ChargeUtils.charge(itemstack, this);
-                            if (prevEnergy != getEnergy()) {
-                                break;
-                            }
-                        }
+
                     }
                 }
             }
@@ -113,6 +119,17 @@ public class TileEntityChargepad extends TileEntityEffectsBlock {
     public void readCustomNBT(NBTTagCompound nbtTags) {
         super.readCustomNBT(nbtTags);
         clientActive = isActive = nbtTags.getBoolean("isActive");
+    }
+
+
+    @Optional.Method(modid = MekanismHooks.Baubles_MOD_ID)
+    public List<ItemStack> chargeBaublesInventory(EntityPlayer player){
+        IItemHandler baubles = BaublesApi.getBaublesHandler(player);
+        List<ItemStack> stacks = new ArrayList<>();
+        for (int i = 0; i < baubles.getSlots(); i++){
+            stacks.add(baubles.getStackInSlot(i));
+        }
+        return stacks;
     }
 
 

@@ -9,7 +9,6 @@ public enum moduleUpgrade {
     //  EMPTY("base",1,),
     EnergyUnit("EnergyUnit", 8),
     ATTACK_AMPLIFICATION_UNIT("attack_damage", 4),
-
     RADIATION_SHIELDING_UNIT("radiation_shielding_unit", 1),
     //head
     SolarRechargingUnit("SolarRechargingUnit", 8),
@@ -35,6 +34,8 @@ public enum moduleUpgrade {
     AUTOFIRE_UNIT("autofire_unit", 1),
     DRAWSPEED_UNIT("drawspeed_unit", 3),
     MultipleArrowsUnit("MultiplearrowsUnit", 4),
+    //Body
+    GRAVITATIONAL_MODULATING_UNIT("gravitational_modulating_unit",1),
     ;
 
 

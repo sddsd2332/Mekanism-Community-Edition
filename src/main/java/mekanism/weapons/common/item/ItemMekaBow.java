@@ -129,7 +129,7 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
                         EntityMekaArrow entityarrow = itemarrow.createArrow(world, itemstack, player);
                         entityarrow.shoot(player, player.rotationPitch, player.rotationYaw, 0.0F, velocity, 1.0F);
                         entityarrow.setDamage(damage);
-                        if (drawArrowSpeedModifier == 1.0F) {
+                        if (drawArrowSpeedModifier >= 1.0F) {
                             entityarrow.setIsCritical(true);
                         }
                         if (power > 0) {
@@ -142,7 +142,7 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
                         if (fire) {
                             entityarrow.setFire(100);
                         }
-                        if (noConsume) {
+                        if (noConsume || ArrowAmount > 0) {
                             entityarrow.pickupStatus = EntityArrow.PickupStatus.CREATIVE_ONLY;
                         }
                         world.spawnEntity(entityarrow);
@@ -273,9 +273,15 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
         }
         setEnergy(fullupgrade, ((IEnergizedItem) fullupgrade.getItem()).getMaxEnergy(fullupgrade));
         list.add(fullupgrade);
-        fullupgrade.addEnchantment(Enchantments.POWER, 5);
-        fullupgrade.addEnchantment(Enchantments.PUNCH, 2);
-        list.add(fullupgrade);
+
+        ItemStack full= new ItemStack(this);
+        for (moduleUpgrade upgrade : getValidModule(full)) {
+            UpgradeHelper.setUpgradeLevel(full, upgrade, upgrade.getMax());
+        }
+        setEnergy(full, ((IEnergizedItem) full.getItem()).getMaxEnergy(full));
+        full.addEnchantment(Enchantments.POWER, 5);
+        full.addEnchantment(Enchantments.PUNCH, 2);
+        list.add(full);
     }
 
 

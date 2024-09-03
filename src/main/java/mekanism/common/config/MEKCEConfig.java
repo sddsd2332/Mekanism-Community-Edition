@@ -43,15 +43,7 @@ public class MEKCEConfig extends BaseConfig {
 
     public final BooleanOption ItemsEjectWithoutDelay = new BooleanOption(this, "mekce", "ItemsEjectWithoutDelay", false, "If true, the Item Ejection Delay is ignored");
 
-    public final IntOption GasEjectionSpeed = new IntOption(this, "mekce", "GasEjectionSpeed", 256, "The speed at which the machine ejects gas", 1, Integer.MAX_VALUE);
-
-    public final IntOption FluidEjectionSpeed = new IntOption(this, "mekce", "FluidEjectionSpeed", 256, "The speed at which the machine ejects fluid", 1, Integer.MAX_VALUE);
-
     public final IntOption EjectionFailureDelay = new IntOption(this, "mekce", "EjectionFailureDelay", 20, "How long to wait and retry if the machine is unable to export its own gas or fluid. Helps optimize performance.", 0, 100);
-
-    public final BooleanOption GasEjectionSettings = new BooleanOption(this, "mekce", "GasEjectionSettings", false, "If true, the gas ejection is based on the number of tanks in the tank");
-
-    public final BooleanOption FluidEjectionSettings = new BooleanOption(this, "mekce", "FluidEjectionSettings", false, "If true, the fluid ejection is based on the number of tanks in the tank");
 
     public final IntOption MAXSpeedUpgrade = new IntOption(this, "mekce", "MAXSpeedUpgrade", 8,
             "The maximum number of speed upgrades that can be installed", 1, Integer.MAX_VALUE).setRequiresGameRestart(true);
