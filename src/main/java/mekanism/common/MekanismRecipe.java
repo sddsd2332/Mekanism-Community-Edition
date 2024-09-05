@@ -336,12 +336,15 @@ public class MekanismRecipe {
         if (MekanismConfig.current().general.machinesManager.isEnabled(BlockStateMachine.MachineType.NUTRITIONAL_LIQUIFIER)) {
             for (Item item : ForgeRegistries.ITEMS) {
                 if (item instanceof ItemFood itemFood) {
-                    ItemStack stack = new ItemStack(itemFood, 1, OreDictionary.WILDCARD_VALUE);
-                    if (itemFood.getHealAmount(stack) > 0) {
-                        RecipeHandler.addNutritionalLiquifierRecipe(stack, new GasStack(MekanismFluids.NutritionalPaste, itemFood.getHealAmount(stack) * 50));
+                    try {
+                        ItemStack stack = new ItemStack(itemFood, 1, OreDictionary.WILDCARD_VALUE);
+                        if (!stack.isEmpty() && itemFood.getHealAmount(stack) > 0) {
+                            RecipeHandler.addNutritionalLiquifierRecipe(stack, new GasStack(MekanismFluids.NutritionalPaste, itemFood.getHealAmount(stack) * 50));
+                        }
+                    } catch (Exception ignored) {
+                        Mekanism.logger.error("Unable to add recipe for Nutritional Liquifier because {} is entered incorrectly",itemFood);
                     }
                 }
-
             }
             RecipeHandler.addNutritionalLiquifierRecipe(new ItemStack(Items.CAKE), new GasStack(MekanismFluids.NutritionalPaste, 6 * 50));
         }
