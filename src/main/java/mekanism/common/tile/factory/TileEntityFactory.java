@@ -105,6 +105,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
      */
 
     public FluidInput waterInput = new FluidInput(new FluidStack(FluidRegistry.WATER, WATER_USAGE));
+    public int delayTicks;
     private boolean machineUsesGAS;
     private boolean isMachineUsesGAS = true;
     private boolean machineUsesFluid;
@@ -118,21 +119,24 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
      * How many recipe ticks have progressed.
      */
     private int recipeTicks;
-    public int delayTicks;
     @Nonnull
     private RecipeType recipeType = RecipeType.SMELTING;
+
+    private static final int[] Input_Output = new int[]{5, 6, 7, 8, 9, 10, 11, 12, 13};
+    private static final boolean[] Input_Output_Enable = new boolean[]{false, false, false, true, true, true, true, true, true};
 
     public TileEntityFactory() {
         this(FactoryTier.BASIC, MachineType.BASIC_FACTORY);
         configComponent = new TileComponentConfig(this, TransmissionType.ITEM, TransmissionType.ENERGY, TransmissionType.GAS, TransmissionType.FLUID);
-
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.NONE, InventoryUtils.EMPTY));
-        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT, new int[]{5, 6, 7}));
-        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.OUTPUT, new int[]{8, 9, 10, 11, 12, 13}));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT, getSlotsWithTier(tier)));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.OUTPUT, getOutputSlotsWithTier(tier)));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.ENERGY, new int[]{1}));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.EXTRA, new int[]{4}));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_EXTRA, new int[]{4, 5, 6, 7}));
-        configComponent.addOutput(TransmissionType.ITEM, new SideData(new int[]{5, 6, 7, 8, 9, 10, 11, 12, 13}, new boolean[]{false, false, false, true, true, true, true, true, true}));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(Input_Output, Input_Output_Enable));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.OUTPUT_ENHANCED, getOutputSlotsWithTier(tier)));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_OUTPUT_ENHANCED, Input_Output, Input_Output_Enable));
         configComponent.setConfig(TransmissionType.ITEM, new byte[]{4, 1, 1, 3, 1, 2});
 
         configComponent.setInputConfig(TransmissionType.FLUID);
@@ -140,6 +144,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.NONE, InventoryUtils.EMPTY));
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.INPUT, new int[]{1}));
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.OUTPUT, new int[]{2}));
+
         configComponent.setConfig(TransmissionType.GAS, new byte[]{1, 1, 1, 1, 1, 2});
 
         configComponent.setInputConfig(TransmissionType.ENERGY);
@@ -186,7 +191,8 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         }
     }
 
-    private static int[] getSlotsWithTier(FactoryTier tier) {
+
+    public static int[] getSlotsWithTier(FactoryTier tier) {
         return switch (tier) {
             case BASIC -> new int[]{5, 6, 7};
             case ADVANCED -> new int[]{5, 6, 7, 8, 9};
@@ -196,7 +202,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         };
     }
 
-    private static int[] getOutputSlotsWithTier(FactoryTier tier) {
+    public static int[] getOutputSlotsWithTier(FactoryTier tier) {
         return switch (tier) {
             case BASIC -> new int[]{8, 9, 10, 11, 12, 13};
             case ADVANCED -> new int[]{10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
@@ -205,6 +211,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
             case CREATIVE -> new int[]{16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37};
         };
     }
+
 
 
     public static ItemStack copyStackWithSize(ItemStack stack, int amount) {
@@ -323,7 +330,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
                 }
             }
             MachineTypeSwitching();
-        //    Mekanism.EXECUTE_MANAGER.addSyncTask(this::BetterEjectingItem);
+            Mekanism.EXECUTE_MANAGER.addSyncTask(this::BetterEjectingItem);
             double prev = getEnergy();
             if (tier == FactoryTier.CREATIVE) {
                 energyPerTick = 0;
@@ -896,7 +903,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         }
 
         if (recipeType == RecipeType.PRC) {
-            if (cachedRecipe[process] instanceof PressurizedRecipe pressurized&& pressurized.getInput().use(inventory, inputSlot, fluidTank, gasTank, false)) {
+            if (cachedRecipe[process] instanceof PressurizedRecipe pressurized && pressurized.getInput().use(inventory, inputSlot, fluidTank, gasTank, false)) {
                 return pressurized.canOperate(inventory, inputSlot, fluidTank, gasTank, gasOutTank, outputSlot);
             }
             PressurizedInput input = new PressurizedInput(inventory.get(inputSlot), fluidTank.getFluid(), gasTank.getGas());
@@ -928,33 +935,33 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         }
 
         if (recipeType.getFuelType() == MachineFuelType.ADVANCED && cachedRecipe[process] instanceof AdvancedMachineRecipe<?> recipe) {
-            recipe.operate(inventory, inputSlot, outputSlot, gasTank, secondaryEnergyThisTick,tier != FactoryTier.CREATIVE);
+            recipe.operate(inventory, inputSlot, outputSlot, gasTank, secondaryEnergyThisTick, tier != FactoryTier.CREATIVE);
         } else if (recipeType.getFuelType() == MachineFuelType.DOUBLE && cachedRecipe[process] instanceof DoubleMachineRecipe<?> recipe) {
-            recipe.operate(inventory, inputSlot, 4, outputSlot,tier != FactoryTier.CREATIVE);
+            recipe.operate(inventory, inputSlot, 4, outputSlot, tier != FactoryTier.CREATIVE);
         } else if (recipeType.getFuelType() == MachineFuelType.CHANCE && cachedRecipe[process] instanceof ChanceMachineRecipe<?> recipe) {
-            recipe.operate(inventory, inputSlot, outputSlot, secondaryOutputSlot,tier != FactoryTier.CREATIVE);
+            recipe.operate(inventory, inputSlot, outputSlot, secondaryOutputSlot, tier != FactoryTier.CREATIVE);
         } else if (recipeType == RecipeType.INFUSING && cachedRecipe[process] instanceof MetallurgicInfuserRecipe recipe) {
-            recipe.operate(inventory, inputSlot, outputSlot, infuseStored,tier != FactoryTier.CREATIVE);
+            recipe.operate(inventory, inputSlot, outputSlot, infuseStored, tier != FactoryTier.CREATIVE);
         } else if (recipeType.getFuelType() == MachineFuelType.FARM && cachedRecipe[process] instanceof FarmMachineRecipe<?> recipe) {
-            recipe.operate(inventory, inputSlot, gasTank, secondaryEnergyThisTick, outputSlot, secondaryOutputSlot,tier != FactoryTier.CREATIVE);
+            recipe.operate(inventory, inputSlot, gasTank, secondaryEnergyThisTick, outputSlot, secondaryOutputSlot, tier != FactoryTier.CREATIVE);
         } else if (recipeType.getFuelType() == MachineFuelType.CHANCE2 && cachedRecipe[process] instanceof Chance2MachineRecipe<?> recipe) {
-            recipe.operate(inventory, inputSlot, outputSlot,tier != FactoryTier.CREATIVE);
+            recipe.operate(inventory, inputSlot, outputSlot, tier != FactoryTier.CREATIVE);
         } else if (recipeType == RecipeType.Crystallizer && cachedRecipe[process] instanceof CrystallizerRecipe recipe) {
-            recipe.operate(gasTank, inventory, outputSlot,tier != FactoryTier.CREATIVE);
+            recipe.operate(gasTank, inventory, outputSlot, tier != FactoryTier.CREATIVE);
         } else if (recipeType == RecipeType.Dissolution && cachedRecipe[process] instanceof DissolutionRecipe recipe) {
-            recipe.operate(inventory, inputSlot, gasOutTank,tier != FactoryTier.CREATIVE);
+            recipe.operate(inventory, inputSlot, gasOutTank, tier != FactoryTier.CREATIVE);
         } else if (recipeType == RecipeType.OXIDIZER && cachedRecipe[process] instanceof OxidationRecipe recipe) {
-            recipe.operate(inventory, inputSlot, gasOutTank,tier != FactoryTier.CREATIVE);
+            recipe.operate(inventory, inputSlot, gasOutTank, tier != FactoryTier.CREATIVE);
         } else if (recipeType == RecipeType.PRC && cachedRecipe[process] instanceof PressurizedRecipe recipe) {
-            recipe.operate(inventory, inputSlot, fluidTank, gasTank, gasOutTank, outputSlot,tier != FactoryTier.CREATIVE);
+            recipe.operate(inventory, inputSlot, fluidTank, gasTank, gasOutTank, outputSlot, tier != FactoryTier.CREATIVE);
         } else if (recipeType == RecipeType.NUCLEOSYNTHESIZER && cachedRecipe[process] instanceof NucleosynthesizerRecipe recipe) {
-            recipe.operate(inventory, inputSlot, gasTank, outputSlot,tier != FactoryTier.CREATIVE);
+            recipe.operate(inventory, inputSlot, gasTank, outputSlot, tier != FactoryTier.CREATIVE);
         } else if (recipeType == RecipeType.WASHER && cachedRecipe[process] instanceof WasherRecipe recipe) {
             int operations = getUpgradedUsage();
-            recipe.operate(gasTank, fluidTank, gasOutTank, operations,tier != FactoryTier.CREATIVE);
+            recipe.operate(gasTank, fluidTank, gasOutTank, operations, tier != FactoryTier.CREATIVE);
         } else {
             BasicMachineRecipe<?> recipe = (BasicMachineRecipe<?>) cachedRecipe[process];
-            recipe.operate(inventory, inputSlot, outputSlot,tier != FactoryTier.CREATIVE);
+            recipe.operate(inventory, inputSlot, outputSlot, tier != FactoryTier.CREATIVE);
         }
         markForUpdateSync();
     }
@@ -1075,8 +1082,8 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         nbtTags.setTag("gasOutTank", gasOutTank.write(new NBTTagCompound()));
         nbtTags.setBoolean("machineUsesGAS", machineUsesGAS);
         nbtTags.setBoolean("isMachineUsesGAS", isMachineUsesGAS);
-        nbtTags.setBoolean("machineUsesFluid",machineUsesFluid);
-        nbtTags.setBoolean("isMachineUsesFluid",isMachineUsesFluid);
+        nbtTags.setBoolean("machineUsesFluid", machineUsesFluid);
+        nbtTags.setBoolean("isMachineUsesFluid", isMachineUsesFluid);
     }
 
     @Override
@@ -1479,12 +1486,12 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         }
 
         if (!inputFluidMachine()) {
-            configComponent.fillConfig(TransmissionType.FLUID,  -1);
+            configComponent.fillConfig(TransmissionType.FLUID, -1);
             machineUsesFluid = false;
             isMachineUsesFluid = true;
-        }else {
-            if (!machineUsesFluid && isMachineUsesFluid){
-                configComponent.fillConfig(TransmissionType.FLUID,  1);
+        } else {
+            if (!machineUsesFluid && isMachineUsesFluid) {
+                configComponent.fillConfig(TransmissionType.FLUID, 1);
                 isMachineUsesFluid = false;
             }
         }
@@ -1528,6 +1535,81 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         }
     }
 
+    private void BetterEjectingItem() {
+        if (delayTicks == 0 || MekanismConfig.current().mekce.ItemsEjectWithoutDelay.val()) {
+            outputItems(7);
+            outputItems(8);
+            if (!MekanismConfig.current().mekce.ItemsEjectWithoutDelay.val()) {
+                delayTicks = MekanismConfig.current().mekce.ItemEjectionDelay.val();
+            }
+        } else {
+            delayTicks--;
+        }
+    }
+
+    private void outputItems(int dataIndex) {
+        SideConfig config = configComponent.getConfig(TransmissionType.ITEM);
+        EnumFacing[] translatedFacings = MekanismUtils.getBaseOrientations(facing);
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            if (config.get(translatedFacings[facing.ordinal()]) == dataIndex) {
+                BlockPos offset = getPos().offset(facing);
+                TileEntity te = getWorld().getTileEntity(offset);
+                if (te == null) {
+                    continue;
+                }
+                IItemHandler itemHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing);
+                if (itemHandler == null) {
+                    continue;
+                }
+                try {
+                    outputToExternal(itemHandler);
+                } catch (Exception e) {
+                    Mekanism.logger.error("Exception when insert item: ", e);
+                }
+            }
+        }
+    }
+
+    private synchronized void outputToExternal(IItemHandler external) {
+        for (int externalSlotId = 0; externalSlotId < external.getSlots(); externalSlotId++) {
+            if (!configComponent.isEjecting(TransmissionType.ITEM)) {
+                break;
+            }
+            ItemStack externalStack = external.getStackInSlot(externalSlotId);
+            int slotLimit = external.getSlotLimit(externalSlotId);
+            if (!externalStack.isEmpty() && externalStack.getCount() >= slotLimit) {
+                continue;
+            }
+            for (int internalSlotId : getOutputSlotsWithTier(tier)) {
+                ItemStack internalStack = inventory.get(internalSlotId);
+                if (internalStack.isEmpty()) {
+                    continue;
+                }
+                if (externalStack.isEmpty()) {
+                    ItemStack notInserted = external.insertItem(externalSlotId, internalStack, false);
+                    // Safeguard against Storage Drawers virtual slot
+                    if (notInserted.getCount() == internalStack.getCount()) {
+                        break;
+                    }
+                    inventory.set(internalSlotId, notInserted);
+                    if (notInserted.isEmpty()) {
+                        break;
+                    }
+                    continue;
+                }
+                if (!matchStacks(internalStack, externalStack)) {
+                    continue;
+                }
+                // Extract internal item to external.
+                ItemStack notInserted = external.insertItem(externalSlotId, internalStack, false);
+                inventory.set(internalSlotId, notInserted);
+                if (notInserted.isEmpty()) {
+                    break;
+                }
+            }
+        }
+
+    }
 
     /**
      * <p>Efficient, intelligent factory sequencing.</p>
@@ -1750,79 +1832,6 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
                     vaildRecipeItemStackList.add(new Tuple<>(recipe, invStack));
                 } else {
                     addItemStackToList(invStack, invaildRecipeItemStackList);
-                }
-            }
-        }
-    }
-
-    private void BetterEjectingItem(){
-        if (delayTicks == 0 || MekanismConfig.current().mekce.ItemsEjectWithoutDelay.val()) {
-            outputItems();
-            if (!MekanismConfig.current().mekce.ItemsEjectWithoutDelay.val()) {
-                delayTicks = MekanismConfig.current().mekce.ItemEjectionDelay.val();
-            }
-        } else {
-            delayTicks--;
-        }
-    }
-
-
-    private void outputItems() {
-        for (EnumFacing facing : EnumFacing.VALUES) {
-            EnumFacing side = facing.getOpposite();
-            BlockPos offset = getPos().offset(side);
-            TileEntity te = getWorld().getTileEntity(offset);
-            if (te == null) {
-                continue;
-            }
-            EnumFacing accessingSide = facing.getOpposite();
-            IItemHandler itemHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, accessingSide);
-            if (itemHandler == null) {
-                continue;
-            }
-            try {
-                outputToExternal(itemHandler);
-            } catch (Exception e) {
-                Mekanism.logger.error("Exception when insert item: ", e);
-            }
-        }
-    }
-
-    private synchronized void outputToExternal(IItemHandler external) {
-        for (int externalSlotId = 0; externalSlotId < external.getSlots(); externalSlotId++) {
-            if (!configComponent.isEjecting(TransmissionType.ITEM)) {
-                break;
-            }
-            ItemStack externalStack = external.getStackInSlot(externalSlotId);
-            int slotLimit = external.getSlotLimit(externalSlotId);
-            if (!externalStack.isEmpty() && externalStack.getCount() >= slotLimit) {
-                continue;
-            }
-            for (int internalSlotId : getOutputSlotsWithTier(tier)) {
-                ItemStack internalStack = inventory.get(internalSlotId);
-                if (internalStack.isEmpty()) {
-                    continue;
-                }
-                if (externalStack.isEmpty()) {
-                    ItemStack notInserted = external.insertItem(externalSlotId, internalStack, false);
-                    // Safeguard against Storage Drawers virtual slot
-                    if (notInserted.getCount() == internalStack.getCount()) {
-                        break;
-                    }
-                    inventory.set(internalSlotId, notInserted);
-                    if (notInserted.isEmpty()) {
-                        break;
-                    }
-                    continue;
-                }
-                if (!matchStacks(internalStack, externalStack)) {
-                    continue;
-                }
-                // Extract internal item to external.
-                ItemStack notInserted = external.insertItem(externalSlotId, internalStack, false);
-                inventory.set(internalSlotId, notInserted);
-                if (notInserted.isEmpty()) {
-                    break;
                 }
             }
         }
