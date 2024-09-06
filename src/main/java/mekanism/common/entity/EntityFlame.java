@@ -132,18 +132,17 @@ public class EntityFlame extends Entity implements IEntityAdditionalSpawnData {
             mop = new RayTraceResult(entity);
         }
 
-        if (mop != null && mop.entityHit instanceof EntityPlayer) {
-            EntityPlayer entityplayer = (EntityPlayer) mop.entityHit;
-            if (entityplayer.capabilities.disableDamage || owner instanceof EntityPlayer && !((EntityPlayer) owner).canAttackPlayer(entityplayer)) {
+        if (mop != null && mop.entityHit instanceof EntityPlayer entityplayer) {
+            if (entityplayer.capabilities.disableDamage || owner instanceof EntityPlayer player && !player.canAttackPlayer(entityplayer)) {
                 mop = null;
             }
         }
 
         if (mop != null) {
             if (mop.typeOfHit == Type.ENTITY && mop.entityHit != null && !mop.entityHit.isImmuneToFire()) {
-                if (mop.entityHit instanceof EntityItem && mode != ItemFlamethrower.FlamethrowerMode.COMBAT) {
+                if (mop.entityHit instanceof EntityItem item && mode != ItemFlamethrower.FlamethrowerMode.COMBAT) {
                     if (mop.entityHit.ticksExisted > 100) {
-                        if (!smeltItem((EntityItem) mop.entityHit)) {
+                        if (!smeltItem(item)) {
                             burn(mop.entityHit);
                         }
                     }

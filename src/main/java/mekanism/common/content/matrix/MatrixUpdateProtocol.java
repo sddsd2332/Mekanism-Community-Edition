@@ -75,10 +75,10 @@ public class MatrixUpdateProtocol extends UpdateProtocol<SynchronizedMatrixData>
     protected boolean canForm(SynchronizedMatrixData structure) {
         for (Coord4D coord : innerNodes) {
             TileEntity tile = coord.getTileEntity(pointer.getWorld());
-            if (tile instanceof TileEntityInductionCell) {
-                structure.addCell(coord, (TileEntityInductionCell) tile);
-            } else if (tile instanceof TileEntityInductionProvider) {
-                structure.addProvider(coord, (TileEntityInductionProvider) tile);
+            if (tile instanceof TileEntityInductionCell cell) {
+                structure.addCell(coord,cell);
+            } else if (tile instanceof TileEntityInductionProvider provider) {
+                structure.addProvider(coord, provider);
             }
         }
         return true;

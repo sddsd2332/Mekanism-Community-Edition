@@ -72,7 +72,7 @@ public class TMaterialFilter extends TransporterFilter implements IMaterialFilte
 
     @Override
     public boolean equals(Object filter) {
-        return super.equals(filter) && filter instanceof TMaterialFilter && ((TMaterialFilter) filter).materialItem.isItemEqual(materialItem);
+        return super.equals(filter) && filter instanceof TMaterialFilter materialFilter && materialFilter.materialItem.isItemEqual(materialItem);
     }
 
     @Override

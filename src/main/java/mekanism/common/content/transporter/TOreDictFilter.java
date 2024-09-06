@@ -58,7 +58,7 @@ public class TOreDictFilter extends TransporterFilter implements IOreDictFilter 
 
     @Override
     public boolean equals(Object filter) {
-        return super.equals(filter) && filter instanceof TOreDictFilter && ((TOreDictFilter) filter).oreDictName.equals(oreDictName);
+        return super.equals(filter) && filter instanceof TOreDictFilter oreDictFilter && oreDictFilter.oreDictName.equals(oreDictName);
     }
 
     @Override

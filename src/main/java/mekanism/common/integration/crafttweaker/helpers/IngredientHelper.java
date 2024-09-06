@@ -43,28 +43,28 @@ public class IngredientHelper {
     }
 
     private static IIngredient getIngredient(Object ingredient) {
-        if (ingredient instanceof ItemStack) {
-            return CraftTweakerMC.getIItemStack((ItemStack) ingredient);
-        } else if (ingredient instanceof GasStack) {
-            return new CraftTweakerGasStack((GasStack) ingredient);
-        } else if (ingredient instanceof Gas) {
-            return new CraftTweakerGasStack(new GasStack((Gas) ingredient, 1));
-        } else if (ingredient instanceof FluidStack) {
-            return CraftTweakerMC.getILiquidStack((FluidStack) ingredient);
-        } else if (ingredient instanceof Fluid) {
-            return CraftTweakerMC.getILiquidStack(new FluidStack((Fluid) ingredient, 1));
+        if (ingredient instanceof ItemStack stack) {
+            return CraftTweakerMC.getIItemStack(stack);
+        } else if (ingredient instanceof GasStack stack) {
+            return new CraftTweakerGasStack(stack);
+        } else if (ingredient instanceof Gas gas) {
+            return new CraftTweakerGasStack(new GasStack(gas, 1));
+        } else if (ingredient instanceof FluidStack stack) {
+            return CraftTweakerMC.getILiquidStack(stack);
+        } else if (ingredient instanceof Fluid fluid) {
+            return CraftTweakerMC.getILiquidStack(new FluidStack(fluid, 1));
         }
         //TODO: Support other types of things like ore dict
         return IngredientAny.INSTANCE;
     }
 
     public static boolean matches(IIngredient input, IIngredient toMatch) {
-        if (input instanceof IGasStack) {
-            return GasHelper.matches(toMatch, (IGasStack) input);
-        } else if (input instanceof IItemStack) {
-            return toMatch != null && toMatch.matches((IItemStack) input);
-        } else if (input instanceof ILiquidStack) {
-            return toMatch != null && toMatch.matches((ILiquidStack) input);
+        if (input instanceof IGasStack stack) {
+            return GasHelper.matches(toMatch,stack);
+        } else if (input instanceof IItemStack stack) {
+            return toMatch != null && toMatch.matches(stack);
+        } else if (input instanceof ILiquidStack liquidStack) {
+            return toMatch != null && toMatch.matches(liquidStack);
         }
         //TODO: Support other types of things like ore dict
         return false;
@@ -75,63 +75,48 @@ public class IngredientHelper {
     }
 
     public static <INPUT extends MachineInput<INPUT>> boolean matches(INPUT in, IngredientWrapper toMatch) {
-        if (in instanceof ItemStackInput) {
-            ItemStackInput input = (ItemStackInput) in;
+        if (in instanceof ItemStackInput input) {
             return matches(input.ingredient, toMatch.getIngredient());
-        } else if (in instanceof GasInput) {
-            GasInput input = (GasInput) in;
+        } else if (in instanceof GasInput input) {
             return matches(input.ingredient, toMatch.getIngredient());
-        } else if (in instanceof FluidInput) {
-            FluidInput input = (FluidInput) in;
+        } else if (in instanceof FluidInput input) {
             return matches(input.ingredient, toMatch.getIngredient());
-        } else if (in instanceof AdvancedMachineInput) {
-            AdvancedMachineInput input = (AdvancedMachineInput) in;
+        } else if (in instanceof AdvancedMachineInput input) {
             return matches(input.itemStack, toMatch.getLeft()) && matches(input.gasType, toMatch.getRight());
-        } else if (in instanceof ChemicalPairInput) {
-            ChemicalPairInput input = (ChemicalPairInput) in;
+        } else if (in instanceof ChemicalPairInput input) {
             return matches(input.leftGas, toMatch.getLeft()) && matches(input.rightGas, toMatch.getRight());
-        } else if (in instanceof DoubleMachineInput) {
-            DoubleMachineInput input = (DoubleMachineInput) in;
+        } else if (in instanceof DoubleMachineInput input) {
             return matches(input.itemStack, toMatch.getLeft()) && matches(input.extraStack, toMatch.getRight());
-        } else if (in instanceof PressurizedInput) {
-            PressurizedInput input = (PressurizedInput) in;
+        } else if (in instanceof PressurizedInput input) {
             return matches(input.getSolid(), toMatch.getLeft()) && matches(input.getFluid(), toMatch.getMiddle()) && matches(input.getGas(), toMatch.getRight());
-        } else if (in instanceof InfusionInput) {
-            InfusionInput input = (InfusionInput) in;
+        } else if (in instanceof InfusionInput input) {
             return matches(input.inputStack, toMatch.getIngredient()) && (toMatch.getInfuseType().isEmpty() || toMatch.getInfuseType().equalsIgnoreCase(input.infuse.getType().name));
-        } else if (in instanceof IntegerInput) {
-            IntegerInput input = (IntegerInput) in;
+        } else if (in instanceof IntegerInput input) {
             return input.ingredient == toMatch.getAmount();
         }
         return false;
     }
 
     public static <OUTPUT extends MachineOutput<OUTPUT>> boolean matches(OUTPUT out, IngredientWrapper toMatch) {
-        if (out instanceof ItemStackOutput) {
-            ItemStackOutput output = (ItemStackOutput) out;
+        if (out instanceof ItemStackOutput output) {
             return matches(output.output, toMatch.getIngredient());
-        } else if (out instanceof GasOutput) {
-            GasOutput output = (GasOutput) out;
+        } else if (out instanceof GasOutput output) {
             return matches(output.output, toMatch.getIngredient());
-        } else if (out instanceof FluidOutput) {
-            FluidOutput output = (FluidOutput) out;
+        } else if (out instanceof FluidOutput output) {
             return matches(output.output, toMatch.getIngredient());
-        } else if (out instanceof ChanceOutput) {
-            ChanceOutput output = (ChanceOutput) out;
+        } else if (out instanceof ChanceOutput output) {
             return matches(output.primaryOutput, toMatch.getLeft()) && matches(output.secondaryOutput, toMatch.getRight());
-        } else if (out instanceof ChemicalPairOutput) {
-            ChemicalPairOutput output = (ChemicalPairOutput) out;
+        } else if (out instanceof ChemicalPairOutput output) {
             return matches(output.leftGas, toMatch.getLeft()) && matches(output.rightGas, toMatch.getRight());
-        } else if (out instanceof PressurizedOutput) {
-            PressurizedOutput output = (PressurizedOutput) out;
+        } else if (out instanceof PressurizedOutput output) {
             return matches(output.getItemOutput(), toMatch.getLeft()) && matches(output.getGasOutput(), toMatch.getRight());
         }
         return false;
     }
 
     public static IMekanismIngredient<ItemStack> getMekanismIngredient(IIngredient ingredient) {
-        if (ingredient instanceof IOreDictEntry) {
-            return new OredictMekIngredient(((IOreDictEntry) ingredient).getName());
+        if (ingredient instanceof IOreDictEntry oreDictEntry) {
+            return new OredictMekIngredient(oreDictEntry.getName());
         } else if (ingredient instanceof IItemStack) {
             return new ItemStackMekIngredient(CraftTweakerMC.getItemStack(ingredient));
         }

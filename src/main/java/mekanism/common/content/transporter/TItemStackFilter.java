@@ -99,8 +99,8 @@ public class TItemStackFilter extends TransporterFilter implements IItemStackFil
 
     @Override
     public boolean equals(Object filter) {
-        return super.equals(filter) && filter instanceof TItemStackFilter && ((TItemStackFilter) filter).itemType.isItemEqual(itemType)
-                && ((TItemStackFilter) filter).sizeMode == sizeMode && ((TItemStackFilter) filter).min == min && ((TItemStackFilter) filter).max == max;
+        return super.equals(filter) && filter instanceof TItemStackFilter stackFilter && stackFilter.itemType.isItemEqual(itemType)
+                && stackFilter.sizeMode == sizeMode && stackFilter.min == min && stackFilter.max == max;
     }
 
     @Override

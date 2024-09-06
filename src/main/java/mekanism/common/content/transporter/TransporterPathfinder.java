@@ -254,7 +254,7 @@ public final class TransporterPathfinder {
 
         @Override
         public boolean equals(Object dest) {
-            return dest instanceof Destination && ((Destination) dest).path.equals(path);
+            return dest instanceof Destination destination && destination.path.equals(path);
         }
 
         @Override

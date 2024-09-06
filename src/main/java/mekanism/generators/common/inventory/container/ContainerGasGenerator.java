@@ -23,8 +23,8 @@ public class ContainerGasGenerator extends ContainerFuelGenerator<TileEntityGasG
 
     @Override
     protected boolean tryFuel(ItemStack slotStack) {
-        if (slotStack.getItem() instanceof IGasItem) {
-            GasStack gasStack = ((IGasItem) slotStack.getItem()).getGas(slotStack);
+        if (slotStack.getItem() instanceof IGasItem gasItem) {
+            GasStack gasStack = gasItem.getGas(slotStack);
             return gasStack != null && FuelHandler.getFuel(gasStack.getGas()) != null;
         }
         return false;

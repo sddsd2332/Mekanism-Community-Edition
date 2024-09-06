@@ -58,7 +58,7 @@ public class TModIDFilter extends TransporterFilter implements IModIDFilter {
 
     @Override
     public boolean equals(Object filter) {
-        return super.equals(filter) && filter instanceof TModIDFilter && ((TModIDFilter) filter).modID.equals(modID);
+        return super.equals(filter) && filter instanceof TModIDFilter tModIDFilter && tModIDFilter.modID.equals(modID);
     }
 
     @Override

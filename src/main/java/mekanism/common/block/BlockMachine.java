@@ -124,17 +124,17 @@ public abstract class BlockMachine extends BlockMekanismContainer {
     @Deprecated
     public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         TileEntity tile = MekanismUtils.getTileEntitySafe(worldIn, pos);
-        if (tile instanceof TileEntityBasicBlock && ((TileEntityBasicBlock) tile).facing != null) {
-            state = state.withProperty(BlockStateFacing.facingProperty, ((TileEntityBasicBlock) tile).facing);
+        if (tile instanceof TileEntityBasicBlock block&& block.facing != null) {
+            state = state.withProperty(BlockStateFacing.facingProperty, block.facing);
         }
-        if (tile instanceof IActiveState) {
-            state = state.withProperty(BlockStateMachine.activeProperty, ((IActiveState) tile).getActive());
+        if (tile instanceof IActiveState activeState) {
+            state = state.withProperty(BlockStateMachine.activeProperty, activeState.getActive());
         }
-        if (tile instanceof TileEntityFluidTank) {
-            state = state.withProperty(BlockStateMachine.tierProperty, ((TileEntityFluidTank) tile).tier.getBaseTier());
+        if (tile instanceof TileEntityFluidTank tank) {
+            state = state.withProperty(BlockStateMachine.tierProperty, tank.tier.getBaseTier());
         }
-        if (tile instanceof TileEntityFactory) {
-            state = state.withProperty(BlockStateMachine.recipeProperty, ((TileEntityFactory) tile).getRecipeType());
+        if (tile instanceof TileEntityFactory factory) {
+            state = state.withProperty(BlockStateMachine.recipeProperty, factory.getRecipeType());
         }
         return state;
     }
@@ -181,16 +181,16 @@ public abstract class BlockMachine extends BlockMekanismContainer {
                 }
             }
         }
-        if (tileEntity instanceof IBoundingBlock) {
-            ((IBoundingBlock) tileEntity).onPlace();
+        if (tileEntity instanceof IBoundingBlock block) {
+            block.onPlace();
         }
     }
 
     @Override
     public void breakBlock(World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         TileEntityBasicBlock tileEntity = (TileEntityBasicBlock) world.getTileEntity(pos);
-        if (tileEntity instanceof IBoundingBlock) {
-            ((IBoundingBlock) tileEntity).onBreak();
+        if (tileEntity instanceof IBoundingBlock block) {
+            block.onBreak();
         }
         super.breakBlock(world, pos, state);
     }
@@ -240,9 +240,9 @@ public abstract class BlockMachine extends BlockMekanismContainer {
     public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
         if (MekanismConfig.current().client.enableAmbientLighting.val()) {
             TileEntity tileEntity = MekanismUtils.getTileEntitySafe(world, pos);
-            if (tileEntity instanceof IActiveState &&
-                    ((IActiveState) tileEntity).lightUpdate() &&
-                    ((IActiveState) tileEntity).wasActiveRecently()) {
+            if (tileEntity instanceof IActiveState activeState&&
+                    activeState.lightUpdate() &&
+                    activeState.wasActiveRecently()) {
                 return MekanismConfig.current().client.ambientLightingLevel.val();
             }
         }
@@ -303,8 +303,8 @@ public abstract class BlockMachine extends BlockMekanismContainer {
                         }
                         if (tileEntity != null) {
                             EnumFacing change = tileEntity.facing.rotateY();
-                            if (tileEntity instanceof TileEntityLogisticalSorter) {
-                                if (!((TileEntityLogisticalSorter) tileEntity).hasInventory()) {
+                            if (tileEntity instanceof TileEntityLogisticalSorter sorter) {
+                                if (!sorter.hasInventory()) {
                                     for (EnumFacing dir : EnumFacing.VALUES) {
                                         TileEntity tile = Coord4D.get(tileEntity).offset(dir).getTileEntity(world);
                                         if (InventoryUtils.isItemHandler(tile, dir)) {
@@ -440,8 +440,8 @@ public abstract class BlockMachine extends BlockMekanismContainer {
     @Deprecated
     public int getComparatorInputOverride(IBlockState state, World world, BlockPos pos) {
         TileEntity tileEntity = world.getTileEntity(pos);
-        if (tileEntity instanceof IComparatorSupport) {
-            return ((IComparatorSupport) tileEntity).getRedstoneLevel();
+        if (tileEntity instanceof IComparatorSupport support) {
+            return support.getRedstoneLevel();
         }
         if (tileEntity instanceof TileEntityLaserAmplifier amplifier) {
             //TODO: Move this over to using IComparatorSupport?
@@ -530,8 +530,8 @@ public abstract class BlockMachine extends BlockMekanismContainer {
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos neighborPos) {
         if (!world.isRemote) {
             TileEntity tileEntity = world.getTileEntity(pos);
-            if (tileEntity instanceof TileEntityBasicBlock) {
-                ((TileEntityBasicBlock) tileEntity).onNeighborChange(neighborBlock);
+            if (tileEntity instanceof TileEntityBasicBlock block) {
+                block.onNeighborChange(neighborBlock);
             }
             if (tileEntity instanceof TileEntityLogisticalSorter sorter) {
                 if (!sorter.hasInventory()) {
@@ -555,52 +555,52 @@ public abstract class BlockMachine extends BlockMekanismContainer {
         if (itemStack.getTagCompound() == null) {
             itemStack.setTagCompound(new NBTTagCompound());
         }
-        if (tileEntity instanceof TileEntityFluidTank) {
+        if (tileEntity instanceof TileEntityFluidTank tank) {
             ITierItem tierItem = (ITierItem) itemStack.getItem();
-            tierItem.setBaseTier(itemStack, ((TileEntityFluidTank) tileEntity).tier.getBaseTier());
+            tierItem.setBaseTier(itemStack, tank.tier.getBaseTier());
         }
-        if (tileEntity instanceof ISecurityTile) {
+        if (tileEntity instanceof ISecurityTile securityTile) {
             ISecurityItem securityItem = (ISecurityItem) itemStack.getItem();
             if (securityItem.hasSecurity(itemStack)) {
-                securityItem.setOwnerUUID(itemStack, ((ISecurityTile) tileEntity).getSecurity().getOwnerUUID());
-                securityItem.setSecurity(itemStack, ((ISecurityTile) tileEntity).getSecurity().getMode());
+                securityItem.setOwnerUUID(itemStack, securityTile.getSecurity().getOwnerUUID());
+                securityItem.setSecurity(itemStack, securityTile.getSecurity().getMode());
             }
         }
-        if (tileEntity instanceof IUpgradeTile) {
-            ((IUpgradeTile) tileEntity).getComponent().write(ItemDataUtils.getDataMap(itemStack));
+        if (tileEntity instanceof IUpgradeTile upgradeTile) {
+            upgradeTile.getComponent().write(ItemDataUtils.getDataMap(itemStack));
         }
         if (tileEntity instanceof ISideConfiguration config) {
             config.getConfig().write(ItemDataUtils.getDataMap(itemStack));
             config.getEjector().write(ItemDataUtils.getDataMap(itemStack));
         }
-        if (tileEntity instanceof ISustainedData) {
-            ((ISustainedData) tileEntity).writeSustainedData(itemStack);
+        if (tileEntity instanceof ISustainedData data) {
+            data.writeSustainedData(itemStack);
         }
         if (tileEntity instanceof IRedstoneControl control) {
             ItemDataUtils.setInt(itemStack, "controlType", control.getControlType().ordinal());
         }
-        if (tileEntity instanceof TileEntityContainerBlock && ((TileEntityContainerBlock) tileEntity).inventory.size() > 0) {
+        if (tileEntity instanceof TileEntityContainerBlock block && !block.inventory.isEmpty()) {
             ISustainedInventory inventory = (ISustainedInventory) itemStack.getItem();
             inventory.setInventory(((ISustainedInventory) tileEntity).getInventory(), itemStack);
         }
         if (((ISustainedTank) itemStack.getItem()).hasTank(itemStack)) {
-            if (tileEntity instanceof ISustainedTank) {
-                if (((ISustainedTank) tileEntity).getFluidStack() != null) {
-                    ((ISustainedTank) itemStack.getItem()).setFluidStack(((ISustainedTank) tileEntity).getFluidStack(), itemStack);
+            if (tileEntity instanceof ISustainedTank tank) {
+                if (tank.getFluidStack() != null) {
+                    ((ISustainedTank) itemStack.getItem()).setFluidStack(tank.getFluidStack(), itemStack);
                 }
             }
         }
-        if (tileEntity instanceof TileEntityFactory) {
+        if (tileEntity instanceof TileEntityFactory factory) {
             IFactory factoryItem = (IFactory) itemStack.getItem();
-            factoryItem.setRecipeType(((TileEntityFactory) tileEntity).getRecipeType().ordinal(), itemStack);
+            factoryItem.setRecipeType(factory.getRecipeType().ordinal(), itemStack);
         }
         //this MUST be done after the factory info is saved, as it caps the energy to max, which is based on the recipe type
-        if (tileEntity instanceof IStrictEnergyStorage) {
+        if (tileEntity instanceof IStrictEnergyStorage storage) {
             IEnergizedItem energizedItem = (IEnergizedItem) itemStack.getItem();
-            energizedItem.setEnergy(itemStack, ((IStrictEnergyStorage) tileEntity).getEnergy());
+            energizedItem.setEnergy(itemStack, storage.getEnergy());
         }
-        if (tileEntity instanceof TileEntityQuantumEntangloporter) {
-            InventoryFrequency frequency = ((TileEntityQuantumEntangloporter) tileEntity).frequency;
+        if (tileEntity instanceof TileEntityQuantumEntangloporter entangloporter) {
+            InventoryFrequency frequency = entangloporter.frequency;
             if (frequency != null) {
                 ItemDataUtils.setCompound(itemStack, "entangleporter_frequency", frequency.getIdentity().serialize());
             }
@@ -645,20 +645,20 @@ public abstract class BlockMachine extends BlockMekanismContainer {
             case FLUID_TANK:
                 return TANK_BOUNDS;
             case LASER:
-                if (tile instanceof TileEntityLaser) {
-                    return MultipartUtils.rotate(LASER_BOUNDS.offset(-0.5, -0.5, -0.5), ((TileEntityLaser) tile).facing).offset(0.5, 0.5, 0.5);
+                if (tile instanceof TileEntityLaser laser) {
+                    return MultipartUtils.rotate(LASER_BOUNDS.offset(-0.5, -0.5, -0.5), laser.facing).offset(0.5, 0.5, 0.5);
                 }
             case LOGISTICAL_SORTER:
-                if (tile instanceof TileEntityLogisticalSorter) {
-                    return MultipartUtils.rotate(LOGISTICAL_SORTER_BOUNDS.offset(-0.5, -0.5, -0.5), ((TileEntityLogisticalSorter) tile).facing).offset(0.5, 0.5, 0.5);
+                if (tile instanceof TileEntityLogisticalSorter sorter) {
+                    return MultipartUtils.rotate(LOGISTICAL_SORTER_BOUNDS.offset(-0.5, -0.5, -0.5), sorter.facing).offset(0.5, 0.5, 0.5);
                 }
             case SUPERCHARGED_COIL:
-                if (tile instanceof TileEntitySuperchargedCoil) {
-                    return MultipartUtils.rotate(SUPERCHARGED_COIL.offset(-0.5, -0.5, -0.5), ((TileEntitySuperchargedCoil) tile).facing).offset(0.5, 0.5, 0.5);
+                if (tile instanceof TileEntitySuperchargedCoil coil) {
+                    return MultipartUtils.rotate(SUPERCHARGED_COIL.offset(-0.5, -0.5, -0.5), coil.facing).offset(0.5, 0.5, 0.5);
                 }
             case INDUSTRIAL_ALARM:
-                if (tile instanceof TileEntityIndustrialAlarm) {
-                    return MultipartUtils.rotate(IndustrialAlarmBOUNDS.offset(-0.5, -0.5, -0.5), ((TileEntityIndustrialAlarm) tile).facing).offset(0.5, 0.5, 0.5);
+                if (tile instanceof TileEntityIndustrialAlarm alarm) {
+                    return MultipartUtils.rotate(IndustrialAlarmBOUNDS.offset(-0.5, -0.5, -0.5),alarm.facing).offset(0.5, 0.5, 0.5);
                 }
             default:
                 return super.getBoundingBox(state, world, pos);
@@ -720,7 +720,6 @@ public abstract class BlockMachine extends BlockMekanismContainer {
     public EnumFacing[] getValidRotations(World world, @Nonnull BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);
         EnumFacing[] valid = new EnumFacing[6];
-
         if (tile instanceof TileEntityBasicBlock basicTile) {
             for (EnumFacing dir : EnumFacing.VALUES) {
                 if (basicTile.canSetFacing(dir)) {
@@ -747,8 +746,8 @@ public abstract class BlockMachine extends BlockMekanismContainer {
     @Deprecated
     public int getWeakPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         TileEntity tile = MekanismUtils.getTileEntitySafe(world, pos);
-        if (tile instanceof TileEntityLaserAmplifier) {
-            return ((TileEntityLaserAmplifier) tile).emittingRedstone ? 15 : 0;
+        if (tile instanceof TileEntityLaserAmplifier amplifier) {
+            return amplifier.emittingRedstone ? 15 : 0;
         }
         return 0;
     }

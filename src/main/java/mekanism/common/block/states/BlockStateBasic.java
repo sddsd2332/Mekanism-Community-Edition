@@ -149,8 +149,8 @@ public class BlockStateBasic extends ExtendedBlockState {
 
         @Nullable
         public static BasicBlockType get(IBlockState state) {
-            if (state.getBlock() instanceof BlockBasic) {
-                return state.getValue(((BlockBasic) state.getBlock()).getTypeProperty());
+            if (state.getBlock() instanceof BlockBasic basic) {
+                return state.getValue(basic.getTypeProperty());
             }
             return null;
         }
@@ -162,8 +162,8 @@ public class BlockStateBasic extends ExtendedBlockState {
 
         @Nullable
         public static BasicBlockType get(Block block, int meta) {
-            if (block instanceof BlockBasic) {
-                return get(((BlockBasic) block).getBasicBlock(), meta);
+            if (block instanceof BlockBasic basic) {
+                return get(basic.getBasicBlock(), meta);
             }
             return null;
         }

@@ -111,7 +111,7 @@ public class Frequency {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof Frequency && ((Frequency) obj).name.equals(name) && ((Frequency) obj).ownerUUID.equals(ownerUUID) && ((Frequency) obj).publicFreq == publicFreq;
+        return obj instanceof Frequency frequency && frequency.name.equals(name) && frequency.ownerUUID.equals(ownerUUID) && frequency.publicFreq == publicFreq;
     }
 
     public Identity getIdentity() {

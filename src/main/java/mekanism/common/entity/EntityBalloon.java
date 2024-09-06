@@ -200,8 +200,7 @@ public class EntityBalloon extends Entity implements IEntityAdditionalSpawnData 
 
     private void findCachedEntity() {
         for (Object obj : world.loadedEntityList) {
-            if (obj instanceof EntityLivingBase) {
-                EntityLivingBase entity = (EntityLivingBase) obj;
+            if (obj instanceof EntityLivingBase entity) {
                 if (entity.getUniqueID().equals(cachedEntityUUID)) {
                     latchedEntity = entity;
                 }

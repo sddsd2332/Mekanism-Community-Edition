@@ -326,9 +326,8 @@ public interface IFactory {
                 return false;
             }
             for (Object obj : recipe.get().entrySet()) {
-                if (((Map.Entry) obj).getKey() instanceof AdvancedMachineInput) {
-                    Map.Entry entry = (Map.Entry) obj;
-                    ItemStack stack = ((AdvancedMachineInput) entry.getKey()).itemStack;
+                if (((Entry<?, ?>) obj).getKey() instanceof AdvancedMachineInput input) {
+                    ItemStack stack = input.itemStack;
                     if (StackUtils.equalsWildcard(stack, itemStack)) {
                         return true;
                     }
@@ -342,9 +341,8 @@ public interface IFactory {
                 return false;
             }
             for (Object obj : recipe.get().entrySet()) {
-                if (((Map.Entry) obj).getKey() instanceof DoubleMachineInput) {
-                    Map.Entry entry = (Map.Entry) obj;
-                    ItemStack stack = ((DoubleMachineInput) entry.getKey()).extraStack;
+                if (((Entry<?, ?>) obj).getKey() instanceof DoubleMachineInput input) {
+                    ItemStack stack = input.extraStack;
                     if (StackUtils.equalsWildcard(stack, extraStack)) {
                         return true;
                     }

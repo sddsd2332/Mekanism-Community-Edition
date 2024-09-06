@@ -96,8 +96,8 @@ public class BlockEnergyCube extends BlockMekanismContainer {
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos neighborPos) {
         if (!world.isRemote) {
             TileEntity tileEntity = world.getTileEntity(pos);
-            if (tileEntity instanceof TileEntityBasicBlock) {
-                ((TileEntityBasicBlock) tileEntity).onNeighborChange(neighborBlock);
+            if (tileEntity instanceof TileEntityBasicBlock block) {
+                block.onNeighborChange(neighborBlock);
             }
         }
     }

@@ -16,16 +16,16 @@ public class DefaultStorageHelper {
 
         @Override
         public NBTBase writeNBT(Capability<T> capability, T instance, EnumFacing side) {
-            if (instance instanceof INBTSerializable) {
-                return ((INBTSerializable<?>) instance).serializeNBT();
+            if (instance instanceof INBTSerializable<?> serializable) {
+                return serializable.serializeNBT();
             }
             return new NBTTagCompound();
         }
 
         @Override
         public void readNBT(Capability<T> capability, T instance, EnumFacing side, NBTBase nbt) {
-            if (instance instanceof INBTSerializable) {
-                Class<? extends NBTBase> nbtClass = ((INBTSerializable<?>) instance).serializeNBT().getClass();
+            if (instance instanceof INBTSerializable<?> serializable) {
+                Class<? extends NBTBase> nbtClass = serializable.serializeNBT().getClass();
                 if (nbtClass.isInstance(nbt)) {
                     ((INBTSerializable) instance).deserializeNBT(nbtClass.cast(nbt));
                 }

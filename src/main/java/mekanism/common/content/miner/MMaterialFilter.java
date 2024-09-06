@@ -70,7 +70,7 @@ public class MMaterialFilter extends MinerFilter implements IMaterialFilter {
 
     @Override
     public boolean equals(Object filter) {
-        return super.equals(filter) && filter instanceof MMaterialFilter && ((MMaterialFilter) filter).materialItem.isItemEqual(materialItem);
+        return super.equals(filter) && filter instanceof MMaterialFilter materialFilter && materialFilter.materialItem.isItemEqual(materialItem);
     }
 
     @Override

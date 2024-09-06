@@ -18,8 +18,8 @@ public class GasHelper {
         if (ingredient == IngredientAny.INSTANCE) {
             return true;
         }
-        if (ingredient instanceof IGasStack) {
-            return toGas((IGasStack) ingredient).isGasEqual(toGas(gasStack));
+        if (ingredient instanceof IGasStack stack) {
+            return toGas(stack).isGasEqual(toGas(gasStack));
         }
         return false;
     }

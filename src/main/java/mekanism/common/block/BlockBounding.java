@@ -30,8 +30,8 @@ public class BlockBounding extends Block {
     @Nullable
     private static BlockPos getMainBlockPos(IBlockAccess world, BlockPos thisPos) {
         TileEntity te = world.getTileEntity(thisPos);
-        if (te instanceof TileEntityBoundingBlock && !thisPos.equals(((TileEntityBoundingBlock) te).getMainPos())) {
-            return ((TileEntityBoundingBlock) te).getMainPos();
+        if (te instanceof TileEntityBoundingBlock block && !thisPos.equals(block.getMainPos())) {
+            return block.getMainPos();
         }
         return null;
     }
@@ -211,8 +211,8 @@ public class BlockBounding extends Block {
         BlockPos mainPos = getMainBlockPos(world, pos);
         if (mainPos != null) {
             TileEntity tile = world.getTileEntity(mainPos);
-            if (tile instanceof IBoundingBlock) {
-                return ((IBoundingBlock) tile).getOffsetBlockFaceShape(face, pos.subtract(mainPos));
+            if (tile instanceof IBoundingBlock block) {
+                return block.getOffsetBlockFaceShape(face, pos.subtract(mainPos));
             }
         }
         return BlockFaceShape.UNDEFINED;

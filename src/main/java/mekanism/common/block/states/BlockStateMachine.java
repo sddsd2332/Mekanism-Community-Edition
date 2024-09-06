@@ -91,6 +91,7 @@ public class BlockStateMachine extends ExtendedBlockState {
         PERSONAL_CHEST(MachineBlock.MACHINE_BLOCK_1, 13, "PersonalChest", 19, TileEntityPersonalChest::new, true, true, false, Plane.HORIZONTAL, false),
         CHARGEPAD(MachineBlock.MACHINE_BLOCK_1, 14, "Chargepad", -1, TileEntityChargepad::new, true, true, false, Plane.HORIZONTAL, false),
         LOGISTICAL_SORTER(MachineBlock.MACHINE_BLOCK_1, 15, "LogisticalSorter", 59, TileEntityLogisticalSorter::new, false, true, false, BlockStateUtils.ALL_FACINGS, true),
+
         ROTARY_CONDENSENTRATOR(MachineBlock.MACHINE_BLOCK_2, 0, "RotaryCondensentrator", 7, TileEntityRotaryCondensentrator::new, true, true, false, Plane.HORIZONTAL, false),
         CHEMICAL_OXIDIZER(MachineBlock.MACHINE_BLOCK_2, 1, "ChemicalOxidizer", 29, TileEntityChemicalOxidizer::new, true, true, true, Plane.HORIZONTAL, true),
         CHEMICAL_INFUSER(MachineBlock.MACHINE_BLOCK_2, 2, "ChemicalInfuser", 30, TileEntityChemicalInfuser::new, true, true, false, Plane.HORIZONTAL, true),
@@ -107,6 +108,7 @@ public class BlockStateMachine extends ExtendedBlockState {
         LASER(MachineBlock.MACHINE_BLOCK_2, 13, "Laser", -1, TileEntityLaser::new, true, true, false, BlockStateUtils.ALL_FACINGS, false),
         LASER_AMPLIFIER(MachineBlock.MACHINE_BLOCK_2, 14, "LaserAmplifier", 44, TileEntityLaserAmplifier::new, false, true, false, BlockStateUtils.ALL_FACINGS, true),
         LASER_TRACTOR_BEAM(MachineBlock.MACHINE_BLOCK_2, 15, "LaserTractorBeam", 45, TileEntityLaserTractorBeam::new, false, true, false, BlockStateUtils.ALL_FACINGS, true),
+
         QUANTUM_ENTANGLOPORTER(MachineBlock.MACHINE_BLOCK_3, 0, "QuantumEntangloporter", 46, TileEntityQuantumEntangloporter::new, true, false, false, BlockStateUtils.ALL_FACINGS, false),
         SOLAR_NEUTRON_ACTIVATOR(MachineBlock.MACHINE_BLOCK_3, 1, "SolarNeutronActivator", 47, TileEntitySolarNeutronActivator::new, false, true, false, Plane.HORIZONTAL, true),
         AMBIENT_ACCUMULATOR(MachineBlock.MACHINE_BLOCK_3, 2, "AmbientAccumulator", 48, TileEntityAmbientAccumulator::new, false, true, false, Plane.HORIZONTAL, true),
@@ -123,13 +125,11 @@ public class BlockStateMachine extends ExtendedBlockState {
         ANTIPROTONIC_NUCLEOSYNTHESIZER(MachineBlock.MACHINE_BLOCK_3, 13, "antiprotonicnucleosynthesizer", 63, TileEntityAntiprotonicNucleosynthesizer::new, true, true, true, Plane.HORIZONTAL, true),
         AMBIENT_ACCUMULATOR_ENERGY(MachineBlock.MACHINE_BLOCK_3, 14, "AmbientAccumulatorEnergy", 73, TileEntityAmbientAccumulatorEnergy::new, true, true, true, Plane.HORIZONTAL, true),
 
-
         STAMPING(MachineBlock.MACHINE_BLOCK_4, 0, "Stamping", 64, TileEntityStamping::new, true, false, true, Plane.HORIZONTAL, true),
         ROLLING(MachineBlock.MACHINE_BLOCK_4, 1, "Rolling", 65, TileEntityRolling::new, true, false, true, Plane.HORIZONTAL, true),
         BRUSHED(MachineBlock.MACHINE_BLOCK_4, 2, "Brushed", 66, TileEntityBrushed::new, true, false, true, Plane.HORIZONTAL, true),
         TURNING(MachineBlock.MACHINE_BLOCK_4, 3, "Turning", 67, TileEntityTurning::new, true, false, true, Plane.HORIZONTAL, true),
         ALLOY(MachineBlock.MACHINE_BLOCK_4, 4, "Alloy", 68, TileEntityAlloy::new, true, false, true, Plane.HORIZONTAL, true),
-        //TODO
         //CELL_CULTIVATE(MachineBlock.MACHINE_BLOCK_4, 5, "CellCultivate", 69, TileEntityCellCultivate::new, true, false, true, Plane.HORIZONTAL, true),
         CELL_EXTRACTOR(MachineBlock.MACHINE_BLOCK_4, 6, "CellExtractor", 70, TileEntityCellExtractor::new, true, false, true, Plane.HORIZONTAL, true),
         CELL_SEPARATOR(MachineBlock.MACHINE_BLOCK_4, 7, "CellSeparator", 71, TileEntityCellSeparator::new, true, false, true, Plane.HORIZONTAL, true),
@@ -183,8 +183,8 @@ public class BlockStateMachine extends ExtendedBlockState {
         }
 
         public static MachineType get(Block block, int meta) {
-            if (block instanceof BlockMachine) {
-                return get(((BlockMachine) block).getMachineBlock(), meta);
+            if (block instanceof BlockMachine machine) {
+                return get(machine.getMachineBlock(), meta);
             }
             return null;
         }

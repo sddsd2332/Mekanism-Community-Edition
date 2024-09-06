@@ -101,6 +101,6 @@ public abstract class TransporterFilter implements IFilter {
 
     @Override
     public boolean equals(Object filter) {
-        return filter instanceof TransporterFilter && ((TransporterFilter) filter).color == color;
+        return filter instanceof TransporterFilter filter1&& filter1.color == color;
     }
 }

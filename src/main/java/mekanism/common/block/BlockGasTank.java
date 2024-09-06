@@ -227,7 +227,6 @@ public class BlockGasTank extends BlockMekanismContainer {
         TileEntity tile = world.getTileEntity(pos);
         EnumFacing[] valid = new EnumFacing[6];
         if (tile instanceof TileEntityBasicBlock basicTile) {
-
             for (EnumFacing dir : EnumFacing.VALUES) {
                 if (basicTile.canSetFacing(dir)) {
                     valid[dir.ordinal()] = dir;
@@ -241,7 +240,6 @@ public class BlockGasTank extends BlockMekanismContainer {
     public boolean rotateBlock(World world, @Nonnull BlockPos pos, @Nonnull EnumFacing axis) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEntityBasicBlock basicTile) {
-
             if (basicTile.canSetFacing(axis)) {
                 basicTile.setFacing(axis);
                 return true;

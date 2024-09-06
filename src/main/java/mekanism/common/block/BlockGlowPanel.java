@@ -69,12 +69,12 @@ public class BlockGlowPanel extends BlockTileDrops implements ITileEntityProvide
     private static TileEntityGlowPanel getTileEntityGlowPanel(IBlockAccess world, BlockPos pos) {
         TileEntity tileEntity = MekanismUtils.getTileEntitySafe(world, pos);
         TileEntityGlowPanel glowPanel = null;
-        if (tileEntity instanceof TileEntityGlowPanel) {
-            glowPanel = (TileEntityGlowPanel) tileEntity;
+        if (tileEntity instanceof TileEntityGlowPanel panel) {
+            glowPanel = panel;
         } else if (Mekanism.hooks.MCMPLoaded) {
             TileEntity childEntity = MultipartMekanism.unwrapTileEntity(world);
-            if (childEntity instanceof TileEntityGlowPanel) {
-                glowPanel = (TileEntityGlowPanel) childEntity;
+            if (childEntity instanceof TileEntityGlowPanel panel) {
+                glowPanel = panel;
             }
         }
         return glowPanel;
@@ -106,8 +106,8 @@ public class BlockGlowPanel extends BlockTileDrops implements ITileEntityProvide
         TileEntityGlowPanel tileEntity = getTileEntityGlowPanel(world, pos);
         if (tileEntity != null) {
             state = state.withProperty(BlockStateFacing.facingProperty, tileEntity.side);
-            if (state instanceof IExtendedBlockState) {
-                return ((IExtendedBlockState) state).withProperty(PropertyColor.INSTANCE, new PropertyColor(tileEntity.colour));
+            if (state instanceof IExtendedBlockState blockState) {
+                return blockState.withProperty(PropertyColor.INSTANCE, new PropertyColor(tileEntity.colour));
             }
         }
         return state;

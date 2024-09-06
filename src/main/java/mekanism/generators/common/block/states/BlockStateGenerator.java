@@ -129,15 +129,15 @@ public class BlockStateGenerator extends ExtendedBlockState {
         }
 
         public static GeneratorType get(IBlockState state) {
-            if (state.getBlock() instanceof BlockGenerator) {
-                return state.getValue(((BlockGenerator) state.getBlock()).getTypeProperty());
+            if (state.getBlock() instanceof BlockGenerator generator) {
+                return state.getValue(generator.getTypeProperty());
             }
             return null;
         }
 
         public static GeneratorType get(Block block, int meta) {
-            if (block instanceof BlockGenerator) {
-                return get(((BlockGenerator) block).getGeneratorBlock(), meta);
+            if (block instanceof BlockGenerator generator) {
+                return get(generator.getGeneratorBlock(), meta);
             }
             return null;
         }

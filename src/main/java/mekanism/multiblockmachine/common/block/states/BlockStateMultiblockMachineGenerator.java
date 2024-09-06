@@ -111,15 +111,15 @@ public class BlockStateMultiblockMachineGenerator extends ExtendedBlockState {
         }
 
         public static MultiblockMachineGeneratorType get(IBlockState state) {
-            if (state.getBlock() instanceof BlockMultiblockMachineGenerator) {
-                return state.getValue(((BlockMultiblockMachineGenerator) state.getBlock()).getTypeProperty());
+            if (state.getBlock() instanceof BlockMultiblockMachineGenerator generator) {
+                return state.getValue(generator.getTypeProperty());
             }
             return null;
         }
 
         public static MultiblockMachineGeneratorType get(Block block, int meta) {
-            if (block instanceof BlockMultiblockMachineGenerator) {
-                return get(((BlockMultiblockMachineGenerator) block).getGeneratorBlock(), meta);
+            if (block instanceof BlockMultiblockMachineGenerator generator) {
+                return get(generator.getGeneratorBlock(), meta);
             }
             return null;
         }

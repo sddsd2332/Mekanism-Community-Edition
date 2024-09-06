@@ -185,34 +185,34 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
                 }
             }
 
-            if (tileEntity instanceof IUpgradeTile) {
+            if (tileEntity instanceof IUpgradeTile upgradeTile) {
                 if (ItemDataUtils.hasData(stack, "upgrades")) {
-                    ((IUpgradeTile) tileEntity).getComponent().read(ItemDataUtils.getDataMap(stack));
+                    upgradeTile.getComponent().read(ItemDataUtils.getDataMap(stack));
                 }
             }
 
-            if (tileEntity instanceof ISustainedData) {
+            if (tileEntity instanceof ISustainedData data) {
                 if (stack.getTagCompound() != null) {
-                    ((ISustainedData) tileEntity).readSustainedData(stack);
+                    data.readSustainedData(stack);
                 }
             }
 
-            if (tileEntity instanceof IRedstoneControl) {
+            if (tileEntity instanceof IRedstoneControl control) {
                 if (ItemDataUtils.hasData(stack, "controlType")) {
-                    ((IRedstoneControl) tileEntity).setControlType(IRedstoneControl.RedstoneControl.values()[ItemDataUtils.getInt(stack, "controlType")]);
+                    control.setControlType(IRedstoneControl.RedstoneControl.values()[ItemDataUtils.getInt(stack, "controlType")]);
                 }
             }
 
-            if (tileEntity instanceof ISustainedTank) {
+            if (tileEntity instanceof ISustainedTank tank) {
                 if (hasTank(stack) && getFluidStack(stack) != null) {
-                    ((ISustainedTank) tileEntity).setFluidStack(getFluidStack(stack));
+                    tank.setFluidStack(getFluidStack(stack));
                 }
             }
-            if (tileEntity instanceof ISustainedInventory) {
-                ((ISustainedInventory) tileEntity).setInventory(getInventory(stack));
+            if (tileEntity instanceof ISustainedInventory inventory) {
+                inventory.setInventory(getInventory(stack));
             }
-            if (tileEntity instanceof TileEntityElectricBlock) {
-                ((TileEntityElectricBlock) tileEntity).electricityStored.set(getEnergy(stack));
+            if (tileEntity instanceof TileEntityElectricBlock entityElectricBlock) {
+                entityElectricBlock.electricityStored.set(getEnergy(stack));
             }
             return true;
         }
@@ -229,15 +229,15 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
 
     @Override
     public void setInventory(NBTTagList nbtTags, Object... data) {
-        if (data[0] instanceof ItemStack) {
-            ItemDataUtils.setList((ItemStack) data[0], "Items", nbtTags);
+        if (data[0] instanceof ItemStack stack) {
+            ItemDataUtils.setList(stack, "Items", nbtTags);
         }
     }
 
     @Override
     public NBTTagList getInventory(Object... data) {
-        if (data[0] instanceof ItemStack) {
-            return ItemDataUtils.getList((ItemStack) data[0], "Items");
+        if (data[0] instanceof ItemStack stack) {
+            return ItemDataUtils.getList(stack, "Items");
         }
         return null;
     }

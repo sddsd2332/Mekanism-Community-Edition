@@ -104,8 +104,8 @@ public class BlockStateMultiblockMachine extends ExtendedBlockState {
 
 
         public static MultiblockMachineType get(Block block, int meta) {
-            if (block instanceof BlockMultiblockMachine) {
-                return get(((BlockMultiblockMachine) block).getMachineBlock(), meta);
+            if (block instanceof BlockMultiblockMachine machine) {
+                return get(machine.getMachineBlock(), meta);
             }
             return null;
         }

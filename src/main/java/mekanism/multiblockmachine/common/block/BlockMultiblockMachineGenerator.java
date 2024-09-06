@@ -90,11 +90,11 @@ public abstract class BlockMultiblockMachineGenerator extends BlockMekanismConta
     @Deprecated
     public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         TileEntity tile = MekanismUtils.getTileEntitySafe(worldIn, pos);
-        if (tile instanceof TileEntityBasicBlock && ((TileEntityBasicBlock) tile).facing != null) {
-            state = state.withProperty(BlockStateFacing.facingProperty, ((TileEntityBasicBlock) tile).facing);
+        if (tile instanceof TileEntityBasicBlock block && block.facing != null) {
+            state = state.withProperty(BlockStateFacing.facingProperty, block.facing);
         }
-        if (tile instanceof IActiveState) {
-            state = state.withProperty(BlockStateMultiblockMachineGenerator.activeProperty, ((IActiveState) tile).getActive());
+        if (tile instanceof IActiveState activeState) {
+            state = state.withProperty(BlockStateMultiblockMachineGenerator.activeProperty, activeState.getActive());
         }
         return state;
     }
@@ -104,8 +104,8 @@ public abstract class BlockMultiblockMachineGenerator extends BlockMekanismConta
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos neighborPos) {
         if (!world.isRemote) {
             final TileEntity tileEntity = MekanismUtils.getTileEntity(world, pos);
-            if (tileEntity instanceof TileEntityBasicBlock) {
-                ((TileEntityBasicBlock) tileEntity).onNeighborChange(neighborBlock);
+            if (tileEntity instanceof TileEntityBasicBlock block) {
+                block.onNeighborChange(neighborBlock);
             }
         }
     }
@@ -136,8 +136,8 @@ public abstract class BlockMultiblockMachineGenerator extends BlockMekanismConta
 
         tileEntity.setFacing(change);
         tileEntity.redstone = world.getRedstonePowerFromNeighbors(pos) > 0;
-        if (tileEntity instanceof IBoundingBlock) {
-            ((IBoundingBlock) tileEntity).onPlace();
+        if (tileEntity instanceof IBoundingBlock block) {
+            block.onPlace();
         }
     }
 
@@ -146,8 +146,8 @@ public abstract class BlockMultiblockMachineGenerator extends BlockMekanismConta
     public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
         if (MekanismConfig.current().client.enableAmbientLighting.val()) {
             TileEntity tileEntity = MekanismUtils.getTileEntitySafe(world, pos);
-            if (tileEntity instanceof IActiveState) {
-                if (((IActiveState) tileEntity).getActive() && ((IActiveState) tileEntity).lightUpdate()) {
+            if (tileEntity instanceof IActiveState activeState) {
+                if (activeState.getActive() && activeState.lightUpdate()) {
                     return MekanismConfig.current().client.ambientLightingLevel.val();
                 }
             }
@@ -180,8 +180,8 @@ public abstract class BlockMultiblockMachineGenerator extends BlockMekanismConta
     @Override
     public void breakBlock(World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         TileEntityBasicBlock tileEntity = (TileEntityBasicBlock) world.getTileEntity(pos);
-        if (tileEntity instanceof IBoundingBlock) {
-            ((IBoundingBlock) tileEntity).onBreak();
+        if (tileEntity instanceof IBoundingBlock block) {
+            block.onBreak();
         }
         super.breakBlock(world, pos, state);
     }
@@ -318,26 +318,26 @@ public abstract class BlockMultiblockMachineGenerator extends BlockMekanismConta
         if (tileEntity == null) {
             return ItemStack.EMPTY;
         }
-        if (tileEntity instanceof ISecurityTile) {
+        if (tileEntity instanceof ISecurityTile tile) {
             ISecurityItem securityItem = (ISecurityItem) itemStack.getItem();
             if (securityItem.hasSecurity(itemStack)) {
-                securityItem.setOwnerUUID(itemStack, ((ISecurityTile) tileEntity).getSecurity().getOwnerUUID());
-                securityItem.setSecurity(itemStack, ((ISecurityTile) tileEntity).getSecurity().getMode());
+                securityItem.setOwnerUUID(itemStack, tile.getSecurity().getOwnerUUID());
+                securityItem.setSecurity(itemStack, tile.getSecurity().getMode());
             }
         }
-        if (tileEntity instanceof TileEntityElectricBlock) {
+        if (tileEntity instanceof TileEntityElectricBlock entityElectricBlock) {
             IEnergizedItem electricItem = (IEnergizedItem) itemStack.getItem();
-            electricItem.setEnergy(itemStack, ((TileEntityElectricBlock) tileEntity).electricityStored.get());
+            electricItem.setEnergy(itemStack, entityElectricBlock.electricityStored.get());
         }
-        if (tileEntity instanceof TileEntityContainerBlock && ((TileEntityContainerBlock) tileEntity).handleInventory()) {
+        if (tileEntity instanceof TileEntityContainerBlock block && block.handleInventory()) {
             ISustainedInventory inventory = (ISustainedInventory) itemStack.getItem();
-            inventory.setInventory(((TileEntityContainerBlock) tileEntity).getInventory(), itemStack);
+            inventory.setInventory(block.getInventory(), itemStack);
         }
-        if (tileEntity instanceof IUpgradeTile) {
-            ((IUpgradeTile) tileEntity).getComponent().write(ItemDataUtils.getDataMap(itemStack));
+        if (tileEntity instanceof IUpgradeTile upgradeTile) {
+            upgradeTile.getComponent().write(ItemDataUtils.getDataMap(itemStack));
         }
-        if (tileEntity instanceof ISustainedData) {
-            ((ISustainedData) tileEntity).writeSustainedData(itemStack);
+        if (tileEntity instanceof ISustainedData data) {
+            data.writeSustainedData(itemStack);
         }
         if (tileEntity instanceof IRedstoneControl control) {
             ItemDataUtils.setInt(itemStack, "controlType", control.getControlType().ordinal());
@@ -362,8 +362,7 @@ public abstract class BlockMultiblockMachineGenerator extends BlockMekanismConta
     public EnumFacing[] getValidRotations(World world, @Nonnull BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);
         EnumFacing[] valid = new EnumFacing[6];
-        if (tile instanceof TileEntityBasicBlock) {
-            TileEntityBasicBlock basicTile = (TileEntityBasicBlock) tile;
+        if (tile instanceof TileEntityBasicBlock basicTile) {
             for (EnumFacing dir : EnumFacing.VALUES) {
                 if (basicTile.canSetFacing(dir)) {
                     valid[dir.ordinal()] = dir;
@@ -408,8 +407,8 @@ public abstract class BlockMultiblockMachineGenerator extends BlockMekanismConta
         MultiblockMachineGeneratorType type = MultiblockMachineGeneratorType.get(blockState);
         if (type != null && type.hasRedstoneOutput) {
             TileEntity tile = worldIn.getTileEntity(pos);
-            if (tile instanceof IComparatorSupport) {
-                return ((IComparatorSupport) tile).getRedstoneLevel();
+            if (tile instanceof IComparatorSupport support) {
+                return support.getRedstoneLevel();
             }
         }
         return 0;

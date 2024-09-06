@@ -77,7 +77,7 @@ public class MItemStackFilter extends MinerFilter implements IItemStackFilter {
 
     @Override
     public boolean equals(Object filter) {
-        return super.equals(filter) && filter instanceof MItemStackFilter && ((MItemStackFilter) filter).itemType.isItemEqual(itemType);
+        return super.equals(filter) && filter instanceof MItemStackFilter stackFilter && stackFilter.itemType.isItemEqual(itemType);
     }
 
     @Override

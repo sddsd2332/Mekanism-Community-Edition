@@ -79,8 +79,8 @@ public class BlockStateReactor extends ExtendedBlockState {
         }
 
         public static ReactorBlockType get(Block block, int meta) {
-            if (block instanceof BlockReactor) {
-                return get(((BlockReactor) block).getReactorBlock(), meta);
+            if (block instanceof BlockReactor reactor) {
+                return get(reactor.getReactorBlock(), meta);
             }
             return null;
         }

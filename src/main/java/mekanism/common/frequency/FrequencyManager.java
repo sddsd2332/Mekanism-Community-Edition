@@ -171,10 +171,10 @@ public class FrequencyManager {
                         iter.remove();
                     } else {
                         TileEntity tile = coord.getTileEntity(world);
-                        if (!(tile instanceof IFrequencyHandler)) {
+                        if (!(tile instanceof IFrequencyHandler frequencyHandler)) {
                             iter.remove();
                         } else {
-                            Frequency freq = ((IFrequencyHandler) tile).getFrequency(this);
+                            Frequency freq = frequencyHandler.getFrequency(this);
                             if (freq == null || !freq.equals(iterFreq)) {
                                 iter.remove();
                             }

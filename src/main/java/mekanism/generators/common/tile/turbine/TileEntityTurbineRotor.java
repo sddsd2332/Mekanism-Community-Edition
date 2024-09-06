@@ -120,8 +120,8 @@ public class TileEntityTurbineRotor extends TileEntityInternalMultiblock {
 
     private TileEntityTurbineRotor nextRotor(BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileEntityTurbineRotor) {
-            return (TileEntityTurbineRotor) tile;
+        if (tile instanceof TileEntityTurbineRotor rotor) {
+            return rotor;
         }
         return null;
     }

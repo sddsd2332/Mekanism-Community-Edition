@@ -19,17 +19,16 @@ public class RecipeInfoHelper {
 
     public static String getRecipeInfo(Entry<? extends MachineInput<?>, ? extends MachineRecipe<?, ?, ?>> recipe) {
         MachineOutput<?> output = recipe.getValue().recipeOutput;
-        if (output instanceof ItemStackOutput) {
-            return getItemName(((ItemStackOutput) output).output);
-        } else if (output instanceof GasOutput) {
-            return getGasName(((GasOutput) output).output);
-        } else if (output instanceof FluidOutput) {
-            return getFluidName(((FluidOutput) output).output);
-        } else if (output instanceof ChemicalPairOutput) {
-            ChemicalPairOutput out = (ChemicalPairOutput) output;
+        if (output instanceof ItemStackOutput stackOutput) {
+            return getItemName(stackOutput.output);
+        } else if (output instanceof GasOutput gasOutput) {
+            return getGasName(gasOutput.output);
+        } else if (output instanceof FluidOutput fluidOutput) {
+            return getFluidName(fluidOutput.output);
+        } else if (output instanceof ChemicalPairOutput out) {
             return "[" + getGasName(out.leftGas) + ", " + getGasName(out.rightGas) + "]";
-        } else if (output instanceof ChanceOutput) {
-            return getItemName(((ChanceOutput) output).primaryOutput);
+        } else if (output instanceof ChanceOutput chanceOutput) {
+            return getItemName(chanceOutput.primaryOutput);
         } else if (output instanceof PressurizedOutput out) {
             return "[" + getItemName(out.getItemOutput()) + ", " + getGasName(out.getGasOutput()) + "]";
         }

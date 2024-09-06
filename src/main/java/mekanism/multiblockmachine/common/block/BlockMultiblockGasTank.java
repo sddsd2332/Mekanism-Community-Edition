@@ -96,16 +96,16 @@ public class BlockMultiblockGasTank extends BlockMekanismContainer {
         }
         tileEntity.setFacing(change);
         tileEntity.redstone = world.getRedstonePowerFromNeighbors(pos) > 0;
-        if (tileEntity instanceof IBoundingBlock) {
-            ((IBoundingBlock) tileEntity).onPlace();
+        if (tileEntity instanceof IBoundingBlock block) {
+            block.onPlace();
         }
     }
 
     @Override
     public void breakBlock(World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         TileEntityBasicBlock tileEntity = (TileEntityBasicBlock) world.getTileEntity(pos);
-        if (tileEntity instanceof IBoundingBlock) {
-            ((IBoundingBlock) tileEntity).onBreak();
+        if (tileEntity instanceof IBoundingBlock block) {
+            block.onBreak();
         }
         super.breakBlock(world, pos, state);
     }

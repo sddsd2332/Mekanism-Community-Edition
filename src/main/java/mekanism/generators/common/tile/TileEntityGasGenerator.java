@@ -51,9 +51,9 @@ public class TileEntityGasGenerator extends TileEntityGenerator implements IGasH
                 Gas gasType = null;
                 if (fuelTank.getGas() != null) {
                     gasType = fuelTank.getGas().getGas();
-                } else if (!inventory.get(0).isEmpty() && inventory.get(0).getItem() instanceof IGasItem) {
-                    if (((IGasItem) inventory.get(0).getItem()).getGas(inventory.get(0)) != null) {
-                        gasType = ((IGasItem) inventory.get(0).getItem()).getGas(inventory.get(0)).getGas();
+                } else if (!inventory.get(0).isEmpty() && inventory.get(0).getItem() instanceof IGasItem gasItem) {
+                    if (gasItem.getGas(inventory.get(0)) != null) {
+                        gasType = gasItem.getGas(inventory.get(0)).getGas();
                     }
                 }
                 if (gasType != null && FuelHandler.getFuel(gasType) != null) {
@@ -124,7 +124,7 @@ public class TileEntityGasGenerator extends TileEntityGenerator implements IGasH
         if (slotID == 1) {
             return ChargeUtils.canBeOutputted(itemstack, true);
         } else if (slotID == 0) {
-            return itemstack.getItem() instanceof IGasItem && ((IGasItem) itemstack.getItem()).getGas(itemstack) == null;
+            return itemstack.getItem() instanceof IGasItem gasItem && gasItem.getGas(itemstack) == null;
         }
         return false;
     }
@@ -132,8 +132,8 @@ public class TileEntityGasGenerator extends TileEntityGenerator implements IGasH
     @Override
     public boolean isItemValidForSlot(int slotID, @Nonnull ItemStack itemstack) {
         if (slotID == 0) {
-            return itemstack.getItem() instanceof IGasItem && ((IGasItem) itemstack.getItem()).getGas(itemstack) != null &&
-                    FuelHandler.getFuel(((IGasItem) itemstack.getItem()).getGas(itemstack).getGas()) != null;
+            return itemstack.getItem() instanceof IGasItem gasItem && gasItem.getGas(itemstack) != null &&
+                    FuelHandler.getFuel(gasItem.getGas(itemstack).getGas()) != null;
         } else if (slotID == 1) {
             return ChargeUtils.canBeCharged(itemstack);
         }

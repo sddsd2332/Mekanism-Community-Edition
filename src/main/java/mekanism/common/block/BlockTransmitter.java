@@ -110,12 +110,12 @@ public class    BlockTransmitter extends BlockTileDrops implements ITileEntityPr
     private static TileEntitySidedPipe getTileEntitySidedPipe(IBlockAccess world, BlockPos pos) {
         TileEntity tileEntity = MekanismUtils.getTileEntitySafe(world, pos);
         TileEntitySidedPipe sidedPipe = null;
-        if (tileEntity instanceof TileEntitySidedPipe) {
-            sidedPipe = (TileEntitySidedPipe) tileEntity;
+        if (tileEntity instanceof TileEntitySidedPipe pipe) {
+            sidedPipe = pipe;
         } else if (Mekanism.hooks.MCMPLoaded) {
             TileEntity childEntity = MultipartMekanism.unwrapTileEntity(world);
-            if (childEntity instanceof TileEntitySidedPipe) {
-                sidedPipe = (TileEntitySidedPipe) childEntity;
+            if (childEntity instanceof TileEntitySidedPipe pipe) {
+                sidedPipe = pipe;
             }
         }
         return sidedPipe;

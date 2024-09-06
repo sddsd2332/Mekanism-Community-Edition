@@ -245,14 +245,14 @@ public abstract class BlockBasic extends BlockTileDrops {
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos fromPos) {
         if (!world.isRemote) {
             TileEntity tileEntity = new Coord4D(pos, world).getTileEntity(world);
-            if (tileEntity instanceof IMultiblock) {
-                ((IMultiblock<?>) tileEntity).doUpdate();
+            if (tileEntity instanceof IMultiblock<?> multiblock) {
+                multiblock.doUpdate();
             }
-            if (tileEntity instanceof TileEntityBasicBlock) {
-                ((TileEntityBasicBlock) tileEntity).onNeighborChange(neighborBlock);
+            if (tileEntity instanceof TileEntityBasicBlock block) {
+                block.onNeighborChange(neighborBlock);
             }
-            if (tileEntity instanceof IStructuralMultiblock) {
-                ((IStructuralMultiblock) tileEntity).doUpdate();
+            if (tileEntity instanceof IStructuralMultiblock block) {
+                block.doUpdate();
             }
             Block newBlock = world.getBlockState(fromPos).getBlock();
             if (BasicBlockType.get(state) == BasicBlockType.REFINED_OBSIDIAN && newBlock instanceof BlockFire) {
@@ -410,8 +410,8 @@ public abstract class BlockBasic extends BlockTileDrops {
                 }
                 return true;
             }
-        } else if (tile instanceof TileEntitySecurityDesk) {
-            UUID ownerUUID = ((TileEntitySecurityDesk) tile).ownerUUID;
+        } else if (tile instanceof TileEntitySecurityDesk desk) {
+            UUID ownerUUID = desk.ownerUUID;
             if (!entityplayer.isSneaking()) {
                 if (!world.isRemote) {
                     if (ownerUUID == null || entityplayer.getUniqueID().equals(ownerUUID)) {
@@ -465,17 +465,17 @@ public abstract class BlockBasic extends BlockTileDrops {
                 }
             }
             return true;
-        } else if (tile instanceof IMultiblock) {
+        } else if (tile instanceof IMultiblock<?> multiblock) {
             if (world.isRemote) {
                 return true;
             }
-            return ((IMultiblock<?>) world.getTileEntity(pos)).onActivate(entityplayer, hand, stack);
-        } else if (tile instanceof IStructuralMultiblock) {
+            return multiblock.onActivate(entityplayer, hand, stack);
+        } else if (tile instanceof IStructuralMultiblock multiblock) {
             if (world.isRemote) {
                 return true;
             }
 
-            return ((IStructuralMultiblock) world.getTileEntity(pos)).onActivate(entityplayer, hand, stack);
+            return multiblock.onActivate(entityplayer, hand, stack);
         }
         return false;
     }
@@ -531,8 +531,8 @@ public abstract class BlockBasic extends BlockTileDrops {
     public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntity tileEntity = MekanismUtils.getTileEntitySafe(world, pos);
         int metadata = state.getBlock().getMetaFromState(state);
-        if (tileEntity instanceof IActiveState) {
-            if (((IActiveState) tileEntity).getActive() && ((IActiveState) tileEntity).lightUpdate()) {
+        if (tileEntity instanceof IActiveState activeState) {
+            if (activeState.getActive() && activeState.lightUpdate()) {
                 return 15;
             }
         }
@@ -600,11 +600,11 @@ public abstract class BlockBasic extends BlockTileDrops {
             tileEntity.setFacing(change);
             tileEntity.redstone = world.getRedstonePowerFromNeighbors(pos) > 0;
 
-            if (tileEntity instanceof TileEntitySecurityDesk) {
-                ((TileEntitySecurityDesk) tileEntity).ownerUUID = placer.getUniqueID();
+            if (tileEntity instanceof TileEntitySecurityDesk desk) {
+                desk.ownerUUID = placer.getUniqueID();
             }
-            if (tileEntity instanceof IBoundingBlock) {
-                ((IBoundingBlock) tileEntity).onPlace();
+            if (tileEntity instanceof IBoundingBlock block) {
+                block.onPlace();
             }
         }
 
@@ -613,11 +613,11 @@ public abstract class BlockBasic extends BlockTileDrops {
         world.checkLightFor(EnumSkyBlock.SKY, pos);
 
         if (!world.isRemote && te != null) {
-            if (te instanceof IMultiblock) {
-                ((IMultiblock<?>) te).doUpdate();
+            if (te instanceof IMultiblock<?> multiblock) {
+                multiblock.doUpdate();
             }
-            if (te instanceof IStructuralMultiblock) {
-                ((IStructuralMultiblock) te).doUpdate();
+            if (te instanceof IStructuralMultiblock multiblock) {
+                multiblock.doUpdate();
             }
         }
     }
@@ -625,8 +625,8 @@ public abstract class BlockBasic extends BlockTileDrops {
     @Override
     public void breakBlock(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         TileEntity tileEntity = world.getTileEntity(pos);
-        if (tileEntity instanceof IBoundingBlock) {
-            ((IBoundingBlock) tileEntity).onBreak();
+        if (tileEntity instanceof IBoundingBlock block) {
+            block.onBreak();
         }
         super.breakBlock(world, pos, state);
     }
@@ -654,9 +654,9 @@ public abstract class BlockBasic extends BlockTileDrops {
         }
 
         TileEntity tileEntity = world.getTileEntity(pos);
-        if (tileEntity instanceof IStrictEnergyStorage) {
+        if (tileEntity instanceof IStrictEnergyStorage energyStorage) {
             IEnergizedItem energizedItem = (IEnergizedItem) ret.getItem();
-            energizedItem.setEnergy(ret, ((IStrictEnergyStorage) tileEntity).getEnergy());
+            energizedItem.setEnergy(ret,energyStorage.getEnergy());
         }
         return ret;
     }
@@ -718,8 +718,8 @@ public abstract class BlockBasic extends BlockTileDrops {
         BasicBlockType basicBlockType = BasicBlockType.get(blockState);
         if (basicBlockType != null && basicBlockType.hasRedstoneOutput) {
             TileEntity tile = worldIn.getTileEntity(pos);
-            if (tile instanceof IComparatorSupport) {
-                return ((IComparatorSupport) tile).getRedstoneLevel();
+            if (tile instanceof IComparatorSupport support) {
+                return support.getRedstoneLevel();
             }
         }
         return 0;

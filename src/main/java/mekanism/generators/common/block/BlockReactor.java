@@ -62,8 +62,8 @@ public abstract class BlockReactor extends Block implements ITileEntityProvider 
         if (tile instanceof TileEntityReactorController) {
             state = state.withProperty(BlockStateReactor.activeProperty, ((IActiveState) tile).getActive());
         }
-        if (tile instanceof TileEntityReactorPort) {
-            state = state.withProperty(BlockStateReactor.activeProperty, ((TileEntityReactorPort) tile).fluidEject);
+        if (tile instanceof TileEntityReactorPort port) {
+            state = state.withProperty(BlockStateReactor.activeProperty, port.fluidEject);
         }
         return state;
     }
@@ -97,8 +97,8 @@ public abstract class BlockReactor extends Block implements ITileEntityProvider 
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos neighborPos) {
         if (!world.isRemote) {
             TileEntity tileEntity = world.getTileEntity(pos);
-            if (tileEntity instanceof TileEntityBasicBlock) {
-                ((TileEntityBasicBlock) tileEntity).onNeighborChange(neighborBlock);
+            if (tileEntity instanceof TileEntityBasicBlock block) {
+                block.onNeighborChange(neighborBlock);
             }
         }
     }
@@ -212,8 +212,8 @@ public abstract class BlockReactor extends Block implements ITileEntityProvider 
     @Deprecated
     public int getWeakPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         TileEntity tile = MekanismUtils.getTileEntitySafe(world, pos);
-        if (tile instanceof TileEntityReactorLogicAdapter) {
-            return ((TileEntityReactorLogicAdapter) tile).checkMode() ? 15 : 0;
+        if (tile instanceof TileEntityReactorLogicAdapter adapter) {
+            return adapter.checkMode() ? 15 : 0;
         }
         return 0;
     }

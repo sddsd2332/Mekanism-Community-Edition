@@ -130,7 +130,7 @@ public enum ToolsItem {
     @Nonnull
     public ItemStack getRepairStack() {
         //All cases currently implement IHasRepairType but just in case we decide to add some eventually that doesn't
-        return item instanceof IHasRepairType ? ((IHasRepairType) item).getRepairStack() : ItemStack.EMPTY;
+        return item instanceof IHasRepairType type ? type.getRepairStack() : ItemStack.EMPTY;
     }
 
     @Nonnull

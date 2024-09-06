@@ -62,16 +62,16 @@ public abstract class EnergyAcceptorWrapper implements IStrictEnergyAcceptor {
         if (wrapper != null) {
             return wrapper;
         }
-        if (MekanismUtils.useRF() && tileEntity instanceof IEnergyReceiver) {
-            wrapper = new RFAcceptor((IEnergyReceiver) tileEntity);
+        if (MekanismUtils.useRF() && tileEntity instanceof IEnergyReceiver energyReceiver) {
+            wrapper = new RFAcceptor(energyReceiver);
         }
         if (wrapper != null) {
             return wrapper;
         }
         if (MekanismUtils.useIC2()) {
             IEnergyTile tile = EnergyNet.instance.getSubTile(tileEntity.getWorld(), tileEntity.getPos());
-            if (tile instanceof IEnergySink) {
-                wrapper = new IC2Acceptor((IEnergySink) tile);
+            if (tile instanceof IEnergySink sink) {
+                wrapper = new IC2Acceptor(sink);
             }
         }
         if (wrapper != null) {

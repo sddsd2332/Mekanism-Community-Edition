@@ -80,7 +80,7 @@ public class SynchronizedTankData extends SynchronizedData<SynchronizedTankData>
 
         @Override
         public boolean equals(Object obj) {
-            return obj instanceof ValveData && ((ValveData) obj).side == side && ((ValveData) obj).location.equals(location);
+            return obj instanceof ValveData data && data.side == side && data.location.equals(location);
         }
     }
 }

@@ -88,11 +88,11 @@ public abstract class BlockMultiblockMachine extends BlockMekanismContainer {
     @Deprecated
     public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         TileEntity tile = MekanismUtils.getTileEntitySafe(worldIn, pos);
-        if (tile instanceof TileEntityBasicBlock && ((TileEntityBasicBlock) tile).facing != null) {
-            state = state.withProperty(BlockStateFacing.facingProperty, ((TileEntityBasicBlock) tile).facing);
+        if (tile instanceof TileEntityBasicBlock block && block.facing != null) {
+            state = state.withProperty(BlockStateFacing.facingProperty, block.facing);
         }
-        if (tile instanceof IActiveState) {
-            state = state.withProperty(BlockStateMultiblockMachine.activeProperty, ((IActiveState) tile).getActive());
+        if (tile instanceof IActiveState activeState) {
+            state = state.withProperty(BlockStateMultiblockMachine.activeProperty, activeState.getActive());
         }
         return state;
     }
@@ -125,16 +125,16 @@ public abstract class BlockMultiblockMachine extends BlockMekanismContainer {
         }
         tileEntity.setFacing(change);
         tileEntity.redstone = world.getRedstonePowerFromNeighbors(pos) > 0;
-        if (tileEntity instanceof IBoundingBlock) {
-            ((IBoundingBlock) tileEntity).onPlace();
+        if (tileEntity instanceof IBoundingBlock block) {
+            block.onPlace();
         }
     }
 
     @Override
     public void breakBlock(World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         TileEntityBasicBlock tileEntity = (TileEntityBasicBlock) world.getTileEntity(pos);
-        if (tileEntity instanceof IBoundingBlock) {
-            ((IBoundingBlock) tileEntity).onBreak();
+        if (tileEntity instanceof IBoundingBlock block) {
+            block.onBreak();
         }
         super.breakBlock(world, pos, state);
     }
@@ -143,9 +143,9 @@ public abstract class BlockMultiblockMachine extends BlockMekanismContainer {
     public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
         if (MekanismConfig.current().client.enableAmbientLighting.val()) {
             TileEntity tileEntity = MekanismUtils.getTileEntitySafe(world, pos);
-            if (tileEntity instanceof IActiveState &&
-                    ((IActiveState) tileEntity).lightUpdate() &&
-                    ((IActiveState) tileEntity).wasActiveRecently()) {
+            if (tileEntity instanceof IActiveState activeState &&
+                    activeState.lightUpdate() &&
+                    activeState.wasActiveRecently()) {
                 return MekanismConfig.current().client.ambientLightingLevel.val();
             }
         }
@@ -271,8 +271,8 @@ public abstract class BlockMultiblockMachine extends BlockMekanismContainer {
     @Deprecated
     public int getComparatorInputOverride(IBlockState state, World world, BlockPos pos) {
         TileEntity tileEntity = world.getTileEntity(pos);
-        if (tileEntity instanceof IComparatorSupport) {
-            return ((IComparatorSupport) tileEntity).getRedstoneLevel();
+        if (tileEntity instanceof IComparatorSupport comparatorSupport) {
+            return comparatorSupport.getRedstoneLevel();
         }
         return 0;
     }
@@ -282,8 +282,8 @@ public abstract class BlockMultiblockMachine extends BlockMekanismContainer {
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock, BlockPos neighborPos) {
         if (!world.isRemote) {
             TileEntity tileEntity = world.getTileEntity(pos);
-            if (tileEntity instanceof TileEntityBasicBlock) {
-                ((TileEntityBasicBlock) tileEntity).onNeighborChange(neighborBlock);
+            if (tileEntity instanceof TileEntityBasicBlock block) {
+                block.onNeighborChange(neighborBlock);
             }
         }
     }
@@ -296,36 +296,36 @@ public abstract class BlockMultiblockMachine extends BlockMekanismContainer {
         if (itemStack.getTagCompound() == null) {
             itemStack.setTagCompound(new NBTTagCompound());
         }
-        if (tileEntity instanceof ISecurityTile) {
+        if (tileEntity instanceof ISecurityTile tile) {
             ISecurityItem securityItem = (ISecurityItem) itemStack.getItem();
             if (securityItem.hasSecurity(itemStack)) {
-                securityItem.setOwnerUUID(itemStack, ((ISecurityTile) tileEntity).getSecurity().getOwnerUUID());
-                securityItem.setSecurity(itemStack, ((ISecurityTile) tileEntity).getSecurity().getMode());
+                securityItem.setOwnerUUID(itemStack, tile.getSecurity().getOwnerUUID());
+                securityItem.setSecurity(itemStack, tile.getSecurity().getMode());
             }
         }
-        if (tileEntity instanceof IUpgradeTile) {
-            ((IUpgradeTile) tileEntity).getComponent().write(ItemDataUtils.getDataMap(itemStack));
+        if (tileEntity instanceof IUpgradeTile upgradeTile) {
+            upgradeTile.getComponent().write(ItemDataUtils.getDataMap(itemStack));
         }
-        if (tileEntity instanceof ISustainedData) {
-            ((ISustainedData) tileEntity).writeSustainedData(itemStack);
+        if (tileEntity instanceof ISustainedData data) {
+            data.writeSustainedData(itemStack);
         }
         if (tileEntity instanceof IRedstoneControl control) {
             ItemDataUtils.setInt(itemStack, "controlType", control.getControlType().ordinal());
         }
-        if (tileEntity instanceof TileEntityContainerBlock && ((TileEntityContainerBlock) tileEntity).inventory.size() > 0) {
+        if (tileEntity instanceof TileEntityContainerBlock block && !block.inventory.isEmpty()) {
             ISustainedInventory inventory = (ISustainedInventory) itemStack.getItem();
             inventory.setInventory(((ISustainedInventory) tileEntity).getInventory(), itemStack);
         }
         if (((ISustainedTank) itemStack.getItem()).hasTank(itemStack)) {
-            if (tileEntity instanceof ISustainedTank) {
-                if (((ISustainedTank) tileEntity).getFluidStack() != null) {
-                    ((ISustainedTank) itemStack.getItem()).setFluidStack(((ISustainedTank) tileEntity).getFluidStack(), itemStack);
+            if (tileEntity instanceof ISustainedTank tank) {
+                if (tank.getFluidStack() != null) {
+                    ((ISustainedTank) itemStack.getItem()).setFluidStack(tank.getFluidStack(), itemStack);
                 }
             }
         }
-        if (tileEntity instanceof IStrictEnergyStorage) {
+        if (tileEntity instanceof IStrictEnergyStorage storage) {
             IEnergizedItem energizedItem = (IEnergizedItem) itemStack.getItem();
-            energizedItem.setEnergy(itemStack, ((IStrictEnergyStorage) tileEntity).getEnergy());
+            energizedItem.setEnergy(itemStack, storage.getEnergy());
         }
         return itemStack;
     }

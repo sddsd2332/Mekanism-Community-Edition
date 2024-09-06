@@ -28,15 +28,15 @@ public class IC2Integration {
     @Method(modid = MekanismHooks.IC2_MOD_ID)
     public static boolean isOutputter(TileEntity tileEntity, EnumFacing side) {
         IEnergyTile tile = EnergyNet.instance.getSubTile(tileEntity.getWorld(), tileEntity.getPos());
-        return tile instanceof IEnergySource && ((IEnergySource) tile).emitsEnergyTo(null, side.getOpposite());
+        return tile instanceof IEnergySource source&& source.emitsEnergyTo(null, side.getOpposite());
 
     }
 
     @Method(modid = MekanismHooks.IC2_MOD_ID)
     public static boolean isAcceptor(TileEntity tileEntity, EnumFacing side) {
         IEnergyTile tile = EnergyNet.instance.getSubTile(tileEntity.getWorld(), tileEntity.getPos());
-        if (tile instanceof IEnergySink) {
-            return ((IEnergySink) tile).acceptsEnergyFrom(null, side.getOpposite());
+        if (tile instanceof IEnergySink sink) {
+            return sink.acceptsEnergyFrom(null, side.getOpposite());
         }
         return false;
     }
