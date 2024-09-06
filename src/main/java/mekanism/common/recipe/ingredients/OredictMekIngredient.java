@@ -32,6 +32,6 @@ public class OredictMekIngredient implements IMekanismIngredient<ItemStack> {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof OredictMekIngredient && oreDict.equals(((OredictMekIngredient) obj).oreDict);
+        return obj instanceof OredictMekIngredient ore && oreDict.equals(ore.oreDict);
     }
 }

@@ -174,8 +174,8 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
     }
 
     public static ItemStack getRecipeInput(MachineRecipe<?, ?, ?> recipe) {
-        if (recipe.recipeInput instanceof ItemStackInput) {
-            return ((ItemStackInput) recipe.recipeInput).ingredient;
+        if (recipe.recipeInput instanceof ItemStackInput input) {
+            return input.ingredient;
         } else if (recipe.recipeInput instanceof AdvancedMachineInput advancedInput) {
             return advancedInput.itemStack;
         } else if (recipe.recipeInput instanceof DoubleMachineInput doubleMachineInput) {
@@ -533,8 +533,8 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         } else {
             ItemStack recipeInput = ItemStack.EMPTY;
             boolean secondaryMatch = true;
-            if (cached.recipeInput instanceof ItemStackInput) {
-                recipeInput = ((ItemStackInput) cached.recipeInput).ingredient;
+            if (cached.recipeInput instanceof ItemStackInput input) {
+                recipeInput =input.ingredient;
             } else if (cached.recipeInput instanceof AdvancedMachineInput advancedInput) {
                 recipeInput = advancedInput.itemStack;
                 secondaryMatch = gasTank.getGasType() == null || advancedInput.gasType == gasTank.getGasType();
@@ -566,12 +566,12 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         //If there is no recipe found
         if (cached != null) {
             ItemStack recipeOutput = ItemStack.EMPTY;
-            if (cached.recipeOutput instanceof ItemStackOutput) {
-                recipeOutput = ((ItemStackOutput) cached.recipeOutput).output;
-            } else if (cached.recipeOutput instanceof ChanceOutput2) {
-                recipeOutput = ((ChanceOutput2) cached.recipeOutput).primaryOutput;
-            } else if (cached.recipeOutput instanceof PressurizedOutput) {
-                recipeOutput = ((PressurizedOutput) cached.recipeOutput).getItemOutput();
+            if (cached.recipeOutput instanceof ItemStackOutput stackOutput) {
+                recipeOutput = stackOutput.output;
+            } else if (cached.recipeOutput instanceof ChanceOutput2 stackOutput) {
+                recipeOutput = stackOutput.primaryOutput;
+            } else if (cached.recipeOutput instanceof PressurizedOutput stackOutput) {
+                recipeOutput = stackOutput.getItemOutput();
             }
             if (!recipeOutput.isEmpty()) {
                 return ItemStack.areItemsEqual(recipeOutput, output);
@@ -1417,8 +1417,8 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         } else {
             ItemStack recipeInput = ItemStack.EMPTY;
             boolean secondaryMatch = true;
-            if (cached.recipeInput instanceof ItemStackInput) {
-                recipeInput = ((ItemStackInput) cached.recipeInput).ingredient;
+            if (cached.recipeInput instanceof ItemStackInput input) {
+                recipeInput = input.ingredient;
             } else if (cached.recipeInput instanceof AdvancedMachineInput advancedInput) {
                 recipeInput = advancedInput.itemStack;
                 secondaryMatch = gasTank.getGasType() == null || advancedInput.gasType == gasTank.getGasType();
@@ -1449,14 +1449,14 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         }
         if (cached != null) {
             ItemStack recipeOutput = ItemStack.EMPTY;
-            if (cached.recipeOutput instanceof ItemStackOutput) {
-                recipeOutput = ((ItemStackOutput) cached.recipeOutput).output;
-            } else if (cached.recipeOutput instanceof ChanceOutput) {
-                recipeOutput = ((ChanceOutput) cached.recipeOutput).primaryOutput;
-            } else if (cached.recipeOutput instanceof ChanceOutput2) {
-                recipeOutput = ((ChanceOutput2) cached.recipeOutput).primaryOutput;
-            } else if (cached.recipeOutput instanceof PressurizedOutput) {
-                recipeOutput = ((PressurizedOutput) cached.recipeOutput).getItemOutput();
+            if (cached.recipeOutput instanceof ItemStackOutput stackOutput) {
+                recipeOutput = stackOutput.output;
+            } else if (cached.recipeOutput instanceof ChanceOutput stackOutput) {
+                recipeOutput = stackOutput.primaryOutput;
+            } else if (cached.recipeOutput instanceof ChanceOutput2 stackOutput) {
+                recipeOutput = stackOutput.primaryOutput;
+            } else if (cached.recipeOutput instanceof PressurizedOutput stackOutput) {
+                recipeOutput = stackOutput.getItemOutput();
             }
             if (!recipeOutput.isEmpty()) {
                 InventoryUtils.areItemsStackable(recipeOutput, output);

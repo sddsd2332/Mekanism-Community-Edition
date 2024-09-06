@@ -113,30 +113,30 @@ public class ItemConfigurationCard extends ItemMekanism {
 
     private NBTTagCompound getBaseData(TileEntity tile) {
         NBTTagCompound nbtTags = new NBTTagCompound();
-        if (tile instanceof IRedstoneControl) {
-            nbtTags.setInteger("controlType", ((IRedstoneControl) tile).getControlType().ordinal());
+        if (tile instanceof IRedstoneControl control) {
+            nbtTags.setInteger("controlType", control.getControlType().ordinal());
         }
-        if (tile instanceof ISideConfiguration) {
-            ((ISideConfiguration) tile).getConfig().write(nbtTags);
-            ((ISideConfiguration) tile).getEjector().write(nbtTags);
+        if (tile instanceof ISideConfiguration configuration) {
+            configuration.getConfig().write(nbtTags);
+            configuration.getEjector().write(nbtTags);
         }
         return nbtTags;
     }
 
     private void setBaseData(NBTTagCompound nbtTags, TileEntity tile) {
-        if (tile instanceof IRedstoneControl) {
-            ((IRedstoneControl) tile).setControlType(RedstoneControl.values()[nbtTags.getInteger("controlType")]);
+        if (tile instanceof IRedstoneControl control) {
+            control.setControlType(RedstoneControl.values()[nbtTags.getInteger("controlType")]);
         }
-        if (tile instanceof ISideConfiguration) {
-            ((ISideConfiguration) tile).getConfig().read(nbtTags);
-            ((ISideConfiguration) tile).getEjector().read(nbtTags);
+        if (tile instanceof ISideConfiguration configuration) {
+            configuration.getConfig().read(nbtTags);
+            configuration.getEjector().read(nbtTags);
         }
     }
 
     private String getNameFromTile(TileEntity tile, EnumFacing side) {
         String ret = Integer.toString(tile.hashCode());
-        if (tile instanceof TileEntityContainerBlock) {
-            ret = ((TileEntityContainerBlock) tile).getName();
+        if (tile instanceof TileEntityContainerBlock block) {
+            ret = block.getName();
         }
         if (CapabilityUtils.hasCapability(tile, Capabilities.SPECIAL_CONFIG_DATA_CAPABILITY, side)) {
             ISpecialConfigData special = CapabilityUtils.getCapability(tile, Capabilities.SPECIAL_CONFIG_DATA_CAPABILITY, side);

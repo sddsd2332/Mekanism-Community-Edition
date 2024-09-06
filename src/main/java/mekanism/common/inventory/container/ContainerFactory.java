@@ -242,44 +242,38 @@ public class ContainerFactory extends ContainerMekanism<TileEntityFactory> {
         private boolean isInputItem(ItemStack itemstack){
             if (!tileEntity.NoItemInputMachine()){
                 for(Object obj : tileEntity.getRecipeType().getrecipe().get().entrySet()){
-                    if (((Map.Entry<?, ?>) obj).getKey() instanceof AdvancedMachineInput) {
-                        Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
-                        ItemStack stack = ((AdvancedMachineInput) entry.getKey()).itemStack;
+                    if (((Map.Entry<?, ?>) obj).getKey() instanceof AdvancedMachineInput input) {
+                        ItemStack stack = input.itemStack;
                         if (ItemHandlerHelper.canItemStacksStack(stack, itemstack)) {
                             return true;
                         }
                     }
-                    if (((Map.Entry<?, ?>) obj).getKey() instanceof ItemStackInput){
-                        Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
-                        ItemStack stack = ((ItemStackInput) entry.getKey()).ingredient;
+                    if (((Map.Entry<?, ?>) obj).getKey() instanceof ItemStackInput input){
+                        ItemStack stack = input.ingredient;
                         if (StackUtils.equalsWildcardWithNBT(stack, itemstack)) {
                             return true;
                         }
                     }
-                    if (((Map.Entry<?, ?>) obj).getKey() instanceof DoubleMachineInput){
-                        Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
-                        ItemStack stack = ((DoubleMachineInput) entry.getKey()).itemStack;
+                    if (((Map.Entry<?, ?>) obj).getKey() instanceof DoubleMachineInput input){
+                        ItemStack stack = input.itemStack;
                         if (ItemHandlerHelper.canItemStacksStack(stack, itemstack)) {
                             return true;
                         }
                     }
-                    if (((Map.Entry<?, ?>) obj).getKey() instanceof InfusionInput){
-                        Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
-                        ItemStack stack = ((InfusionInput) entry.getKey()).inputStack;
+                    if (((Map.Entry<?, ?>) obj).getKey() instanceof InfusionInput input){
+                        ItemStack stack =input.inputStack;
                         if (ItemHandlerHelper.canItemStacksStack(stack, itemstack)) {
                             return true;
                         }
                     }
-                    if (((Map.Entry<?, ?>) obj).getKey() instanceof NucleosynthesizerInput){
-                        Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
-                        ItemStack stack = ((NucleosynthesizerInput) entry.getKey()).getSolid();
+                    if (((Map.Entry<?, ?>) obj).getKey() instanceof NucleosynthesizerInput input){
+                        ItemStack stack = input.getSolid();
                         if (ItemHandlerHelper.canItemStacksStack(stack, itemstack)) {
                             return true;
                         }
                     }
-                    if (((Map.Entry<?, ?>) obj).getKey() instanceof PressurizedInput){
-                        Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
-                        ItemStack stack = ((PressurizedInput) entry.getKey()).getSolid();
+                    if (((Map.Entry<?, ?>) obj).getKey() instanceof PressurizedInput input){
+                        ItemStack stack = input.getSolid();
                         if (ItemHandlerHelper.canItemStacksStack(stack, itemstack)) {
                             return true;
                         }

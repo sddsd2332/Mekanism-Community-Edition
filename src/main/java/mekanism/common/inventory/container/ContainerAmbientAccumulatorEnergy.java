@@ -26,9 +26,9 @@ public class ContainerAmbientAccumulatorEnergy extends ContainerMekanism<TileEnt
         if (currentSlot != null && currentSlot.getHasStack()) {
             ItemStack slotStack = currentSlot.getStack();
             stack = slotStack.copy();
-            if (slotStack.getItem() instanceof IGasItem) {
+            if (slotStack.getItem() instanceof IGasItem gasItem) {
                 if (slotID != 0) {
-                    if (((IGasItem) slotStack.getItem()).canReceiveGas(slotStack, tileEntity.outputTank.getGas() != null ? tileEntity.outputTank.getGas().getGas() : null)) {
+                    if (gasItem.canReceiveGas(slotStack, tileEntity.outputTank.getGas() != null ? tileEntity.outputTank.getGas().getGas() : null)) {
                         if (!mergeItemStack(slotStack, 0, 1, false)) {
                             return ItemStack.EMPTY;
                         }

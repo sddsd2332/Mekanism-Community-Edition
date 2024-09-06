@@ -237,8 +237,8 @@ public class TileEntityChemicalCrystallizer extends TileEntityUpgradeableMachine
     @Override
     public boolean isItemValidForSlot(int slotID, @Nonnull ItemStack itemstack) {
         if (slotID == 0) {
-            return !itemstack.isEmpty() && itemstack.getItem() instanceof IGasItem && ((IGasItem) itemstack.getItem()).getGas(itemstack) != null &&
-                    Recipe.CHEMICAL_CRYSTALLIZER.containsRecipe(((IGasItem) itemstack.getItem()).getGas(itemstack).getGas());
+            return !itemstack.isEmpty() && itemstack.getItem() instanceof IGasItem  gasItem && gasItem.getGas(itemstack) != null &&
+                    Recipe.CHEMICAL_CRYSTALLIZER.containsRecipe(gasItem.getGas(itemstack).getGas());
         } else if (slotID == 2) {
             return ChargeUtils.canBeDischarged(itemstack);
         }
@@ -248,7 +248,7 @@ public class TileEntityChemicalCrystallizer extends TileEntityUpgradeableMachine
     @Override
     public boolean canExtractItem(int slotID, @Nonnull ItemStack itemstack, @Nonnull EnumFacing side) {
         if (slotID == 0) {
-            return !itemstack.isEmpty() && itemstack.getItem() instanceof IGasItem && ((IGasItem) itemstack.getItem()).getGas(itemstack) == null;
+            return !itemstack.isEmpty() && itemstack.getItem() instanceof IGasItem gasItem && gasItem.getGas(itemstack) == null;
         } else if (slotID == 1) {
             return true;
         } else if (slotID == 2) {

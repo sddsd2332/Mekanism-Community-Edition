@@ -351,11 +351,11 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
                     tank.setFluidStack(getFluidStack(stack));
                 }
             }
-            if (tileEntity instanceof ISustainedInventory block) {
-                block.setInventory(getInventory(stack));
+            if (tileEntity instanceof ISustainedInventory inventory) {
+                inventory.setInventory(getInventory(stack));
             }
-            if (tileEntity instanceof TileEntityElectricBlock block) {
-                block.electricityStored.set(getEnergy(stack));
+            if (tileEntity instanceof TileEntityElectricBlock entityElectricBlock) {
+                entityElectricBlock.electricityStored.set(getEnergy(stack));
             }
             if (!world.isRemote && tileEntity instanceof TileEntityQuantumEntangloporter quantum && ItemDataUtils.hasData(stack, "entangleporter_frequency")) {
                 Frequency.Identity freq = Frequency.Identity.load(ItemDataUtils.getCompound(stack, "entangleporter_frequency"));
@@ -490,15 +490,15 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
 
     @Override
     public void setInventory(NBTTagList nbtTags, Object... data) {
-        if (data[0] instanceof ItemStack) {
-            ItemDataUtils.setList((ItemStack) data[0], "Items", nbtTags);
+        if (data[0] instanceof ItemStack stack) {
+            ItemDataUtils.setList(stack, "Items", nbtTags);
         }
     }
 
     @Override
     public NBTTagList getInventory(Object... data) {
-        if (data[0] instanceof ItemStack) {
-            return ItemDataUtils.getList((ItemStack) data[0], "Items");
+        if (data[0] instanceof ItemStack stack) {
+            return ItemDataUtils.getList(stack, "Items");
         }
         return null;
     }
@@ -527,10 +527,10 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
 
     @Override
     public boolean hasTank(Object... data) {
-        if (!(data[0] instanceof ItemStack) || !(((ItemStack) data[0]).getItem() instanceof ISustainedTank)) {
+        if (!(data[0] instanceof ItemStack stack) || !(stack.getItem() instanceof ISustainedTank)) {
             return false;
         }
-        MachineType type = MachineType.get((ItemStack) data[0]);
+        MachineType type = MachineType.get(stack);
         return type == MachineType.ELECTRIC_PUMP || type == MachineType.FLUID_TANK || type == MachineType.FLUIDIC_PLENISHER;
     }
 

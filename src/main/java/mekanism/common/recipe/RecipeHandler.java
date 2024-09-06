@@ -784,17 +784,17 @@ public final class RecipeHandler {
         public boolean containsRecipe(ItemStack input) {
             //TODO: Support other input types
             for (Entry<INPUT, RECIPE> entry : recipes.entrySet()) {
-                if (entry.getKey() instanceof ItemStackInput) {
-                    ItemStack stack = ((ItemStackInput) entry.getKey()).ingredient;
+                if (entry.getKey() instanceof ItemStackInput itemStackInput) {
+                    ItemStack stack = itemStackInput.ingredient;
                     if (StackUtils.equalsWildcard(stack, input)) {
                         return true;
                     }
-                } else if (entry.getKey() instanceof FluidInput) {
-                    if (((FluidInput) entry.getKey()).ingredient.isFluidEqual(input)) {
+                } else if (entry.getKey() instanceof FluidInput fluidInput) {
+                    if (fluidInput.ingredient.isFluidEqual(input)) {
                         return true;
                     }
-                } else if (entry.getKey() instanceof AdvancedMachineInput) {
-                    ItemStack stack = ((AdvancedMachineInput) entry.getKey()).itemStack;
+                } else if (entry.getKey() instanceof AdvancedMachineInput advancedMachineInput) {
+                    ItemStack stack = advancedMachineInput.itemStack;
                     if (StackUtils.equalsWildcard(stack, input)) {
                         return true;
                     }
@@ -806,8 +806,8 @@ public final class RecipeHandler {
         public boolean containsRecipe(Fluid input) {
             //TODO: Support other input types
             for (Entry<INPUT, RECIPE> entry : recipes.entrySet()) {
-                if (entry.getKey() instanceof FluidInput) {
-                    if (((FluidInput) entry.getKey()).ingredient.getFluid() == input) {
+                if (entry.getKey() instanceof FluidInput fluidInput) {
+                    if (fluidInput.ingredient.getFluid() == input) {
                         return true;
                     }
                 } else if (entry.getKey() instanceof CompositeInput compositeInput) {
@@ -823,12 +823,12 @@ public final class RecipeHandler {
             //TODO: Support other input types
             for (Entry<INPUT, RECIPE> entry : recipes.entrySet()) {
                 Gas toCheck = null;
-                if (entry.getKey() instanceof GasInput) {
-                    toCheck = ((GasInput) entry.getKey()).ingredient.getGas();
-                } else if (entry.getKey() instanceof AdvancedMachineInput) {
-                    toCheck = ((AdvancedMachineInput) entry.getKey()).gasType;
-                } else if (entry.getKey() instanceof PressurizedInput) {
-                    toCheck = ((PressurizedInput) entry.getKey()).getGas().getGas();
+                if (entry.getKey() instanceof GasInput gasInput) {
+                    toCheck = gasInput.ingredient.getGas();
+                } else if (entry.getKey() instanceof AdvancedMachineInput advancedMachineInput) {
+                    toCheck = advancedMachineInput.gasType;
+                } else if (entry.getKey() instanceof PressurizedInput pressurizedInput) {
+                    toCheck = pressurizedInput.getGas().getGas();
                 } else if (entry.getKey() instanceof CompositeInput compositeInput) {
                     toCheck = compositeInput.gasInput.getGas();
                 }

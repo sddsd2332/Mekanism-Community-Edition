@@ -34,8 +34,8 @@ public class PacketScubaTankData implements IMessageHandler<ScubaTankDataMessage
             } else if (message.packetType == ScubaTankPacket.MODE) {
                 // Use has changed the mode of their gasmask; update it
                 ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-                if (!stack.isEmpty() && stack.getItem() instanceof ItemScubaTank) {
-                    ((ItemScubaTank) stack.getItem()).toggleFlowing(stack);
+                if (!stack.isEmpty() && stack.getItem() instanceof ItemScubaTank tank) {
+                    tank.toggleFlowing(stack);
                 }
             } else if (message.packetType == ScubaTankPacket.FULL) {
                 // This is a full sync; merge into our player state

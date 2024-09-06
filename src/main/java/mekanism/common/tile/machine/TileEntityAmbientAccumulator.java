@@ -111,7 +111,7 @@ public class TileEntityAmbientAccumulator extends TileEntityContainerBlock imple
     @Override
     public boolean canExtractItem(int slotID, @Nonnull ItemStack itemstack, @Nonnull EnumFacing side) {
         if (slotID == 0) {
-            return !itemstack.isEmpty() && itemstack.getItem() instanceof IGasItem && ((IGasItem) itemstack.getItem()).canProvideGas(itemstack, null);
+            return !itemstack.isEmpty() && itemstack.getItem() instanceof IGasItem gasItem&& gasItem.canProvideGas(itemstack, null);
         }
         return false;
     }

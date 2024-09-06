@@ -55,8 +55,8 @@ public class ItemUpgrade extends ItemMekanism implements IUpgradeItem {
             TileEntity tile = world.getTileEntity(pos);
             ItemStack stack = player.getHeldItem(hand);
             Upgrade type = getUpgradeType(stack);
-            if (tile instanceof IUpgradeTile) {
-                TileComponentUpgrade component = ((IUpgradeTile) tile).getComponent();
+            if (tile instanceof IUpgradeTile upgradeTile) {
+                TileComponentUpgrade component = upgradeTile.getComponent();
                 if (component.supports(type)) {
                     if (!world.isRemote && component.getUpgrades(type) < type.getMax()) {
                         int added = component.addUpgrades(type, stack.getCount());

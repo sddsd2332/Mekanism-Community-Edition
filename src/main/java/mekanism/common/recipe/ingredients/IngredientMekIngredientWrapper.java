@@ -33,6 +33,6 @@ public class IngredientMekIngredientWrapper implements IMekanismIngredient<ItemS
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof IngredientMekIngredientWrapper && ingredient.equals(((IngredientMekIngredientWrapper) obj).ingredient);
+        return obj instanceof IngredientMekIngredientWrapper wrapper && ingredient.equals(wrapper.ingredient);
     }
 }

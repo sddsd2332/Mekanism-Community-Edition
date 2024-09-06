@@ -376,15 +376,15 @@ public class TileEntityThermalEvaporationController extends TileEntityThermalEva
     }
 
     public boolean addTankPart(TileEntity tile) {
-        if (tile instanceof TileEntityThermalEvaporationBlock && (tile == this || !(tile instanceof TileEntityThermalEvaporationController))) {
+        if (tile instanceof TileEntityThermalEvaporationBlock block && (tile == this || !(tile instanceof TileEntityThermalEvaporationController))) {
             if (tile != this) {
-                ((TileEntityThermalEvaporationBlock) tile).addToStructure(Coord4D.get(this));
+                block.addToStructure(Coord4D.get(this));
                 tankParts.add(Coord4D.get(tile));
             }
             return true;
-        } else if (tile instanceof TileEntityStructuralGlass && (tile == this || !(tile instanceof TileEntityThermalEvaporationController)) && MekanismConfig.current().mekce.EnableGlassInThermal.val()) {
+        } else if (tile instanceof TileEntityStructuralGlass glass && (tile == this || !(tile instanceof TileEntityThermalEvaporationController)) && MekanismConfig.current().mekce.EnableGlassInThermal.val()) {
             if (tile != this) {
-                ((TileEntityStructuralGlass) tile).setController(Coord4D.get(this));
+                glass.setController(Coord4D.get(this));
                 tankParts.add(Coord4D.get(tile));
             }
             return true;

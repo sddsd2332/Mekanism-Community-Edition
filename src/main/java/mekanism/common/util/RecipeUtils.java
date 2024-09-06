@@ -38,17 +38,17 @@ public class RecipeUtils {
         if (target.getItemDamage() != input.getItemDamage() && target.getItemDamage() != OreDictionary.WILDCARD_VALUE) {
             return false;
         }
-        if (target.getItem() instanceof ITierItem && input.getItem() instanceof ITierItem) {
-            if (((ITierItem) target.getItem()).getBaseTier(target) != ((ITierItem) input.getItem()).getBaseTier(input)) {
+        if (target.getItem() instanceof ITierItem targetItem && input.getItem() instanceof ITierItem inputItem) {
+            if (targetItem.getBaseTier(target) != inputItem.getBaseTier(input)) {
                 return false;
             }
         }
 
-        if (target.getItem() instanceof IFactory && input.getItem() instanceof IFactory) {
+        if (target.getItem() instanceof IFactory targetFactory && input.getItem() instanceof IFactory inputFactory) {
             if (isFactory(target) && isFactory(input)) {
-                RecipeType recipeTypeInput = ((IFactory) input.getItem()).getRecipeTypeOrNull(input);
+                RecipeType recipeTypeInput = inputFactory.getRecipeTypeOrNull(input);
                 //If either factory has invalid NBT don't crash it
-                return recipeTypeInput != null && ((IFactory) target.getItem()).getRecipeTypeOrNull(target) == recipeTypeInput;
+                return recipeTypeInput != null && targetFactory.getRecipeTypeOrNull(target) == recipeTypeInput;
             }
         }
         return true;
@@ -60,28 +60,28 @@ public class RecipeUtils {
 
     public static ItemStack getCraftingResult(InventoryCrafting inv, ItemStack toReturn) {
         int invLength = inv.getSizeInventory();
-        if (toReturn.getItem() instanceof IEnergizedItem) {
+        if (toReturn.getItem() instanceof IEnergizedItem toReturnItem) {
             double energyFound = 0;
             for (int i = 0; i < invLength; i++) {
                 ItemStack itemstack = inv.getStackInSlot(i);
-                if (!itemstack.isEmpty() && itemstack.getItem() instanceof IEnergizedItem) {
-                    energyFound += ((IEnergizedItem) itemstack.getItem()).getEnergy(itemstack);
+                if (!itemstack.isEmpty() && itemstack.getItem() instanceof IEnergizedItem item) {
+                    energyFound += item.getEnergy(itemstack);
                 }
             }
-            double energyToSet = Math.min(((IEnergizedItem) toReturn.getItem()).getMaxEnergy(toReturn), energyFound);
+            double energyToSet = Math.min(toReturnItem.getMaxEnergy(toReturn), energyFound);
             if (energyToSet > 0) {
-                ((IEnergizedItem) toReturn.getItem()).setEnergy(toReturn, energyToSet);
+                toReturnItem.setEnergy(toReturn, energyToSet);
             }
         }
 
-        if (toReturn.getItem() instanceof IGasItem) {
+        if (toReturn.getItem() instanceof IGasItem toReturnItem) {
             GasStack gasFound = null;
             for (int i = 0; i < invLength; i++) {
                 ItemStack itemstack = inv.getStackInSlot(i);
-                if (!itemstack.isEmpty() && itemstack.getItem() instanceof IGasItem) {
-                    GasStack stored = ((IGasItem) itemstack.getItem()).getGas(itemstack);
+                if (!itemstack.isEmpty() && itemstack.getItem() instanceof IGasItem item) {
+                    GasStack stored = item.getGas(itemstack);
                     if (stored != null) {
-                        if (!((IGasItem) toReturn.getItem()).canReceiveGas(toReturn, stored.getGas())) {
+                        if (!toReturnItem.canReceiveGas(toReturn, stored.getGas())) {
                             return ItemStack.EMPTY;
                         }
                         if (gasFound == null) {
@@ -97,17 +97,17 @@ public class RecipeUtils {
             }
 
             if (gasFound != null) {
-                gasFound.amount = Math.min(((IGasItem) toReturn.getItem()).getMaxGas(toReturn), gasFound.amount);
-                ((IGasItem) toReturn.getItem()).setGas(toReturn, gasFound);
+                gasFound.amount = Math.min(toReturnItem.getMaxGas(toReturn), gasFound.amount);
+                toReturnItem.setGas(toReturn, gasFound);
             }
         }
 
-        if (toReturn.getItem() instanceof ISecurityItem) {
+        if (toReturn.getItem() instanceof ISecurityItem toReturnItem) {
             for (int i = 0; i < invLength; i++) {
                 ItemStack itemstack = inv.getStackInSlot(i);
-                if (!itemstack.isEmpty() && itemstack.getItem() instanceof ISecurityItem) {
-                    ((ISecurityItem) toReturn.getItem()).setOwnerUUID(toReturn, ((ISecurityItem) itemstack.getItem()).getOwnerUUID(itemstack));
-                    ((ISecurityItem) toReturn.getItem()).setSecurity(toReturn, ((ISecurityItem) itemstack.getItem()).getSecurity(itemstack));
+                if (!itemstack.isEmpty() && itemstack.getItem() instanceof ISecurityItem item) {
+                    toReturnItem.setOwnerUUID(toReturn, item.getOwnerUUID(itemstack));
+                    toReturnItem.setSecurity(toReturn, item.getSecurity(itemstack));
                     break;
                 }
             }

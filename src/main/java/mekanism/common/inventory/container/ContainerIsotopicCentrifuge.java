@@ -26,13 +26,13 @@ public class ContainerIsotopicCentrifuge extends ContainerMekanism<TileEntityIso
         if (currentSlot != null && currentSlot.getHasStack()) {
             ItemStack slotStack = currentSlot.getStack();
             stack = slotStack.copy();
-            if (slotStack.getItem() instanceof IGasItem) {
+            if (slotStack.getItem() instanceof IGasItem gasItem) {
                 if (slotID != 0 && slotID != 1) {
-                    if (((IGasItem) slotStack.getItem()).canProvideGas(slotStack, tileEntity.inputTank.getGas() != null ? tileEntity.inputTank.getGas().getGas() : null)) {
+                    if (gasItem.canProvideGas(slotStack, tileEntity.inputTank.getGas() != null ? tileEntity.inputTank.getGas().getGas() : null)) {
                         if (!mergeItemStack(slotStack, 0, 1, false)) {
                             return ItemStack.EMPTY;
                         }
-                    } else if (((IGasItem) slotStack.getItem()).canReceiveGas(slotStack, tileEntity.outputTank.getGas() != null ? tileEntity.outputTank.getGas().getGas() : null)) {
+                    } else if (gasItem.canReceiveGas(slotStack, tileEntity.outputTank.getGas() != null ? tileEntity.outputTank.getGas().getGas() : null)) {
                         if (!mergeItemStack(slotStack, 1, 2, false)) {
                             return ItemStack.EMPTY;
                         }

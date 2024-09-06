@@ -22,8 +22,8 @@ public final class SecurityUtils {
         if (!MekanismConfig.current().general.allowProtection.val()) {
             return true;
         }
-        if (!(stack.getItem() instanceof ISecurityItem) && stack.getItem() instanceof IOwnerItem) {
-            UUID owner = ((IOwnerItem) stack.getItem()).getOwnerUUID(stack);
+        if (!(stack.getItem() instanceof ISecurityItem) && stack.getItem() instanceof IOwnerItem iOwnerItem) {
+            UUID owner = iOwnerItem.getOwnerUUID(stack);
             return owner == null || owner.equals(player.getUniqueID());
         }
         if (stack.isEmpty() || !(stack.getItem() instanceof ISecurityItem security)) {
@@ -71,8 +71,8 @@ public final class SecurityUtils {
     public static SecurityFrequency getFrequency(UUID uuid) {
         if (uuid != null) {
             for (Frequency f : Mekanism.securityFrequencies.getFrequencies()) {
-                if (f instanceof SecurityFrequency && f.ownerUUID.equals(uuid)) {
-                    return (SecurityFrequency) f;
+                if (f instanceof SecurityFrequency frequency && f.ownerUUID.equals(uuid)) {
+                    return frequency;
                 }
             }
         }

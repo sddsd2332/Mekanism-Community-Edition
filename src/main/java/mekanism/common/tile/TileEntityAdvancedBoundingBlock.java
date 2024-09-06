@@ -317,14 +317,14 @@ public class TileEntityAdvancedBoundingBlock extends TileEntityBoundingBlock imp
         if (tile == null) {
             return null;
         }
-        if (!(tile instanceof IAdvancedBoundingBlock)) {
+        if (!(tile instanceof IAdvancedBoundingBlock block)) {
             // On the off chance that another block got placed there (which seems only likely with corruption,
             // go ahead and log what we found.
             Mekanism.logger.error("Found tile {} instead of an IAdvancedBoundingBlock, at {}. Multiblock cannot function", tile, getMainPos());
             //world.setBlockToAir(mainPos);
             return null;
         }
-        return (IAdvancedBoundingBlock) tile;
+        return block;
     }
 
     @Override

@@ -39,6 +39,6 @@ public class ItemStackMekIngredient implements IMekanismIngredient<ItemStack> {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof ItemStackMekIngredient && ItemStack.areItemStacksEqual(stack, ((ItemStackMekIngredient) obj).stack);
+        return obj instanceof ItemStackMekIngredient ingredient && ItemStack.areItemStacksEqual(stack, ingredient.stack);
     }
 }

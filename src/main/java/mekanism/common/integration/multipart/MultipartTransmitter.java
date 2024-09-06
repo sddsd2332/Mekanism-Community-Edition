@@ -33,25 +33,25 @@ public class MultipartTransmitter implements IMultipart {
     @Override
     public void onAdded(IPartInfo part) {
         TileEntity tile = part.getTile().getTileEntity();
-        if (tile instanceof TileEntitySidedPipe) {
-            ((TileEntitySidedPipe) tile).onAdded();
+        if (tile instanceof TileEntitySidedPipe pipe) {
+            pipe.onAdded();
         }
     }
 
     @Override
     public void onPartAdded(IPartInfo part, IPartInfo otherPart) {
         TileEntity tile = part.getTile().getTileEntity();
-        if (tile instanceof TileEntitySidedPipe) {
+        if (tile instanceof TileEntitySidedPipe pipe) {
             tile.validate();
-            ((TileEntitySidedPipe) tile).notifyTileChange();
+            pipe.notifyTileChange();
         }
     }
 
     @Override
     public void onPartChanged(IPartInfo part, IPartInfo otherPart) {
         TileEntity tile = part.getTile().getTileEntity();
-        if (tile instanceof TileEntitySidedPipe) {
-            ((TileEntitySidedPipe) tile).onPartChanged(otherPart.getPart());
+        if (tile instanceof TileEntitySidedPipe pipe) {
+            pipe.onPartChanged(otherPart.getPart());
         }
     }
 
@@ -68,12 +68,12 @@ public class MultipartTransmitter implements IMultipart {
     @Override
     public void onPartPlacedBy(IPartInfo part, EntityLivingBase placer, ItemStack stack) {
         TileEntity tile = part.getTile().getTileEntity();
-        if (tile instanceof TileEntitySidedPipe) {
+        if (tile instanceof TileEntitySidedPipe pipe) {
             BaseTier baseTier = BaseTier.BASIC;
             if (stack.hasTagCompound()) {
                 baseTier = BaseTier.values()[stack.getTagCompound().getInteger("tier")];
             }
-            ((TileEntitySidedPipe) tile).setBaseTier(baseTier);
+            pipe.setBaseTier(baseTier);
         }
     }
 

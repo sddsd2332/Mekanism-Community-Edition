@@ -29,8 +29,8 @@ public class PacketDataRequest implements IMessageHandler<DataRequestMessage, IM
             World worldServer = DimensionManager.getWorld(message.coord4D.dimensionId);
             if (worldServer != null) {
                 TileEntity tileEntity = message.coord4D.getTileEntity(worldServer);
-                if (tileEntity instanceof TileEntityMultiblock) {
-                    ((TileEntityMultiblock<?>) tileEntity).sendStructure = true;
+                if (tileEntity instanceof TileEntityMultiblock<?> multiblock) {
+                    multiblock.sendStructure = true;
                 }
                 if (CapabilityUtils.hasCapability(tileEntity, Capabilities.GRID_TRANSMITTER_CAPABILITY, null)) {
                     IGridTransmitter<?, ?, ?> transmitter = CapabilityUtils.getCapability(tileEntity, Capabilities.GRID_TRANSMITTER_CAPABILITY, null);

@@ -196,11 +196,11 @@ public class TileEntityPressurizedTube extends TileEntityTransmitter<IGasHandler
         if (!super.isValidTransmitter(tileEntity)) {
             return false;
         }
-        if (!(tileEntity instanceof TileEntityPressurizedTube)) {
+        if (!(tileEntity instanceof TileEntityPressurizedTube tube)) {
             return true;
         }
         GasStack buffer = getBufferWithFallback();
-        GasStack otherBuffer = ((TileEntityPressurizedTube) tileEntity).getBufferWithFallback();
+        GasStack otherBuffer = tube.getBufferWithFallback();
         return buffer == null || otherBuffer == null || buffer.isGasEqual(otherBuffer);
     }
 

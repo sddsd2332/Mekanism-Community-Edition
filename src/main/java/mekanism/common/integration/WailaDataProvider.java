@@ -54,25 +54,25 @@ public class WailaDataProvider implements IWailaDataProvider {
     public List<String> getWailaHead(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         TileEntity tile = accessor.getTileEntity();
 
-        if (tile instanceof TileEntityInductionCell) {
-            currenttip.set(0, EnumColor.WHITE + ((TileEntityInductionCell) tile).getName());
-        } else if (tile instanceof TileEntityInductionProvider) {
-            currenttip.set(0, EnumColor.WHITE + ((TileEntityInductionProvider) tile).getName());
-        } else if (tile instanceof TileEntityFactory) {
-            currenttip.set(0, EnumColor.WHITE + ((TileEntityFactory) tile).getName());
-        } else if (tile instanceof TileEntityFluidTank) {
-            currenttip.set(0, EnumColor.WHITE + ((TileEntityFluidTank) tile).getName());
-        } else if (tile instanceof TileEntityGasTank) {
-            currenttip.set(0, EnumColor.WHITE + ((TileEntityGasTank) tile).getName());
-        } else if (tile instanceof TileEntityBin) {
-            currenttip.set(0, EnumColor.WHITE + ((TileEntityBin) tile).getName());
-        } else if (tile instanceof TileEntityEnergyCube) {
-            currenttip.set(0, EnumColor.WHITE + ((TileEntityEnergyCube) tile).getName());
+        if (tile instanceof TileEntityInductionCell cell) {
+            currenttip.set(0, EnumColor.WHITE + cell.getName());
+        } else if (tile instanceof TileEntityInductionProvider provider) {
+            currenttip.set(0, EnumColor.WHITE + provider.getName());
+        } else if (tile instanceof TileEntityFactory factory) {
+            currenttip.set(0, EnumColor.WHITE + factory.getName());
+        } else if (tile instanceof TileEntityFluidTank tank) {
+            currenttip.set(0, EnumColor.WHITE + tank.getName());
+        } else if (tile instanceof TileEntityGasTank gasTank) {
+            currenttip.set(0, EnumColor.WHITE + gasTank.getName());
+        } else if (tile instanceof TileEntityBin bin) {
+            currenttip.set(0, EnumColor.WHITE + bin.getName());
+        } else if (tile instanceof TileEntityEnergyCube cube) {
+            currenttip.set(0, EnumColor.WHITE + cube.getName());
         } else if (tile instanceof TileEntityBoundingBlock bound) {
             Coord4D coord = new Coord4D(bound.getPos(), tile.getWorld());
             //TODO: Switch to a smarter way to get the main tile's name - i.e. block name
-            if (bound.receivedCoords && coord.getTileEntity(tile.getWorld()) instanceof IInventory) {
-                currenttip.set(0, EnumColor.WHITE + ((IInventory) coord.getTileEntity(tile.getWorld())).getName());
+            if (bound.receivedCoords && coord.getTileEntity(tile.getWorld()) instanceof IInventory inventory) {
+                currenttip.set(0, EnumColor.WHITE + inventory.getName());
             }
         }
         return currenttip;

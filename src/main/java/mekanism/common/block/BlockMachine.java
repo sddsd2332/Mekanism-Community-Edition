@@ -124,7 +124,7 @@ public abstract class BlockMachine extends BlockMekanismContainer {
     @Deprecated
     public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         TileEntity tile = MekanismUtils.getTileEntitySafe(worldIn, pos);
-        if (tile instanceof TileEntityBasicBlock block&& block.facing != null) {
+        if (tile instanceof TileEntityBasicBlock block && block.facing != null) {
             state = state.withProperty(BlockStateFacing.facingProperty, block.facing);
         }
         if (tile instanceof IActiveState activeState) {
@@ -240,7 +240,7 @@ public abstract class BlockMachine extends BlockMekanismContainer {
     public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
         if (MekanismConfig.current().client.enableAmbientLighting.val()) {
             TileEntity tileEntity = MekanismUtils.getTileEntitySafe(world, pos);
-            if (tileEntity instanceof IActiveState activeState&&
+            if (tileEntity instanceof IActiveState activeState &&
                     activeState.lightUpdate() &&
                     activeState.wasActiveRecently()) {
                 return MekanismConfig.current().client.ambientLightingLevel.val();
@@ -658,7 +658,7 @@ public abstract class BlockMachine extends BlockMekanismContainer {
                 }
             case INDUSTRIAL_ALARM:
                 if (tile instanceof TileEntityIndustrialAlarm alarm) {
-                    return MultipartUtils.rotate(IndustrialAlarmBOUNDS.offset(-0.5, -0.5, -0.5),alarm.facing).offset(0.5, 0.5, 0.5);
+                    return MultipartUtils.rotate(IndustrialAlarmBOUNDS.offset(-0.5, -0.5, -0.5), alarm.facing).offset(0.5, 0.5, 0.5);
                 }
             default:
                 return super.getBoundingBox(state, world, pos);

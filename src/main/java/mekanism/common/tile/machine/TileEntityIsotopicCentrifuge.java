@@ -84,7 +84,7 @@ public class TileEntityIsotopicCentrifuge extends TileEntityBasicMachine<GasInpu
                 }
             }
             ChargeUtils.discharge(2, this);
-            if (!inventory.get(0).isEmpty() && inventory.get(0).getItem() instanceof IGasItem && ((IGasItem) inventory.get(0).getItem()).getGas(inventory.get(0)) != null && RecipeHandler.Recipe.ISOTOPIC_CENTRIFUGE.containsRecipe(((IGasItem) inventory.get(0).getItem()).getGas(inventory.get(0)).getGas())) {
+            if (!inventory.get(0).isEmpty() && inventory.get(0).getItem() instanceof IGasItem  gasItem&& gasItem.getGas(inventory.get(0)) != null && RecipeHandler.Recipe.ISOTOPIC_CENTRIFUGE.containsRecipe(gasItem.getGas(inventory.get(0)).getGas())) {
                 TileUtils.receiveGasItem(inventory.get(0), inputTank);
             }
             TileUtils.drawGas(inventory.get(1), outputTank);
@@ -247,7 +247,7 @@ public class TileEntityIsotopicCentrifuge extends TileEntityBasicMachine<GasInpu
     @Override
     public boolean canExtractItem(int slotID, @Nonnull ItemStack itemstack, @Nonnull EnumFacing side) {
         if (slotID == 1) {
-            return !itemstack.isEmpty() && itemstack.getItem() instanceof IGasItem && ((IGasItem) itemstack.getItem()).canProvideGas(itemstack, null);
+            return !itemstack.isEmpty() && itemstack.getItem() instanceof IGasItem gasItem && gasItem.canProvideGas(itemstack, null);
         } else if (slotID == 2) {
             return ChargeUtils.canBeOutputted(itemstack, false);
         }

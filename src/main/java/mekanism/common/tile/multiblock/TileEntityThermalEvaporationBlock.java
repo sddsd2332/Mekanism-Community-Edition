@@ -87,8 +87,8 @@ public class TileEntityThermalEvaporationBlock extends TileEntityContainerBlock 
                 BlockPos checkPos = pos.offset(side);
                 TileEntity check = MekanismUtils.getTileEntity(world, checkPos);
                 if (check instanceof TileEntityThermalEvaporationBlock) {
-                    if (check instanceof TileEntityThermalEvaporationController) {
-                        ((TileEntityThermalEvaporationController) check).refresh();
+                    if (check instanceof TileEntityThermalEvaporationController controller) {
+                        controller.refresh();
                         return;
                     }
                 }
@@ -103,8 +103,8 @@ public class TileEntityThermalEvaporationBlock extends TileEntityContainerBlock 
     public TileEntityThermalEvaporationController getController() {
         if (master != null) {
             TileEntity tile = master.getTileEntity(world);
-            if (tile instanceof TileEntityThermalEvaporationController) {
-                return (TileEntityThermalEvaporationController) tile;
+            if (tile instanceof TileEntityThermalEvaporationController controller) {
+                return controller;
             }
         }
         return null;
@@ -164,13 +164,13 @@ public class TileEntityThermalEvaporationBlock extends TileEntityContainerBlock 
                 iterated.add(checkPos);
 
                 TileEntity te = MekanismUtils.getTileEntity(world, checkPos);
-                if (te instanceof TileEntityThermalEvaporationController) {
-                    found = (TileEntityThermalEvaporationController) te;
+                if (te instanceof TileEntityThermalEvaporationController controller) {
+                    found = controller;
                     return;
                 }
 
-                if (te instanceof TileEntityThermalEvaporationBlock) {
-                    ((TileEntityThermalEvaporationBlock) te).attempted = true;
+                if (te instanceof TileEntityThermalEvaporationBlock block) {
+                    block.attempted = true;
                     for (EnumFacing side : EnumFacing.VALUES) {
                         BlockPos coord = checkPos.offset(side);
                         if (!iterated.contains(coord)) {

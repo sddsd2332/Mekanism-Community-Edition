@@ -95,20 +95,20 @@ public class PacketEditFilter implements IMessageHandler<EditFilterMessage, IMes
             coord4D = coord;
             delete = deletion;
 
-            if (filter instanceof TransporterFilter) {
-                tFilter = (TransporterFilter) filter;
+            if (filter instanceof TransporterFilter transporterFilter) {
+                tFilter = transporterFilter;
                 if (!delete) {
                     tEdited = (TransporterFilter) edited;
                 }
                 type = 0;
-            } else if (filter instanceof MinerFilter) {
-                mFilter = (MinerFilter) filter;
+            } else if (filter instanceof MinerFilter minerFilter) {
+                mFilter = minerFilter;
                 if (!delete) {
                     mEdited = (MinerFilter) edited;
                 }
                 type = 1;
-            } else if (filter instanceof OredictionificatorFilter) {
-                oFilter = (OredictionificatorFilter) filter;
+            } else if (filter instanceof OredictionificatorFilter oredictionificatorFilter) {
+                oFilter = oredictionificatorFilter;
                 if (!delete) {
                     oEdited = (OredictionificatorFilter) edited;
                 }

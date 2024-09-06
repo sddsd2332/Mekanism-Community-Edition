@@ -34,8 +34,8 @@ public final class InventoryUtils {
     }
 
     public static TransitResponse putStackInInventory(TileEntity tile, TransitRequest request, EnumFacing side, boolean force) {
-        if (force && tile instanceof TileEntityLogisticalSorter) {
-            return ((TileEntityLogisticalSorter) tile).sendHome(request.getSingleStack());
+        if (force && tile instanceof TileEntityLogisticalSorter sorter) {
+            return sorter.sendHome(request.getSingleStack());
         }
         for (Entry<HashedItem, Pair<Integer, Int2IntOpenHashMap>> requestEntry : request.getItemMap().entrySet()) {
             ItemStack origInsert = StackUtils.size(requestEntry.getKey().getStack(), requestEntry.getValue().getLeft());
@@ -107,8 +107,8 @@ public final class InventoryUtils {
     }
 
     public static boolean canInsert(TileEntity tileEntity, EnumColor color, ItemStack itemStack, EnumFacing side, boolean force) {
-        if (force && tileEntity instanceof TileEntityLogisticalSorter) {
-            return ((TileEntityLogisticalSorter) tileEntity).canSendHome(itemStack);
+        if (force && tileEntity instanceof TileEntityLogisticalSorter sorter) {
+            return sorter.canSendHome(itemStack);
         }
         if (!force && tileEntity instanceof ISideConfiguration config) {
             if (config.getEjector().hasStrictInput()) {

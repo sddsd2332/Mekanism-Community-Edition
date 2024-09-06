@@ -74,8 +74,8 @@ public class GuiChemicalCrystallizer extends GuiMekanismTile<TileEntityChemicalC
         fontRenderer.drawString(tileEntity.getName(), (xSize / 2) - (fontRenderer.getStringWidth(tileEntity.getName()) / 2), 4, 0x404040);
         if (tileEntity.inputTank.getGas() != null) {
             fontRenderer.drawString(tileEntity.inputTank.getGas().getGas().getLocalizedName(), 29, 15, 0x00CD00);
-            if (tileEntity.inputTank.getGas().getGas() instanceof OreGas) {
-                fontRenderer.drawString("(" + ((OreGas) tileEntity.inputTank.getGas().getGas()).getOreName() + ")", 29, 24, 0x00CD00);
+            if (tileEntity.inputTank.getGas().getGas() instanceof OreGas oreGas) {
+                fontRenderer.drawString("(" + oreGas.getOreName() + ")", 29, 24, 0x00CD00);
             } else {
                 CrystallizerRecipe recipe = tileEntity.getRecipe();
                 if (recipe == null) {
@@ -140,7 +140,7 @@ public class GuiChemicalCrystallizer extends GuiMekanismTile<TileEntityChemicalC
         if (prevGas != getInputGas()) {
             prevGas = getInputGas();
             boolean reset = false;
-            if (prevGas == null || !(prevGas instanceof OreGas) || !((OreGas) prevGas).isClean()) {
+            if (prevGas == null || !(prevGas instanceof OreGas oreGas) || !oreGas.isClean()) {
                 reset = true;
                 resetStacks();
             }

@@ -33,18 +33,18 @@ public class ContainerElectrolyticSeparator extends ContainerMekanism<TileEntity
                     if (!mergeItemStack(slotStack, 0, 1, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (slotStack.getItem() instanceof IGasItem) {
-                    if (((IGasItem) slotStack.getItem()).getGas(slotStack) != null) {
-                        if (((IGasItem) slotStack.getItem()).getGas(slotStack).getGas() == MekanismFluids.Hydrogen) {
+                } else if (slotStack.getItem() instanceof IGasItem gasItem) {
+                    if (gasItem.getGas(slotStack) != null) {
+                        if (gasItem.getGas(slotStack).getGas() == MekanismFluids.Hydrogen) {
                             if (!mergeItemStack(slotStack, 1, 2, false)) {
                                 return ItemStack.EMPTY;
                             }
-                        } else if (((IGasItem) slotStack.getItem()).getGas(slotStack).getGas() == MekanismFluids.Oxygen) {
+                        } else if (gasItem.getGas(slotStack).getGas() == MekanismFluids.Oxygen) {
                             if (!mergeItemStack(slotStack, 2, 3, false)) {
                                 return ItemStack.EMPTY;
                             }
                         }
-                    } else if (((IGasItem) slotStack.getItem()).getGas(slotStack) == null) {
+                    } else if (gasItem.getGas(slotStack) == null) {
                         if (!mergeItemStack(slotStack, 1, 2, false)) {
                             if (!mergeItemStack(slotStack, 2, 3, false)) {
                                 return ItemStack.EMPTY;

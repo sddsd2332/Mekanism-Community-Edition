@@ -78,40 +78,40 @@ public class PacketHandler {
      */
     public static void encode(Object[] dataValues, ByteBuf output) {
         for (Object data : dataValues) {
-            if (data instanceof Byte) {
-                output.writeByte((Byte) data);
-            } else if (data instanceof Integer) {
-                output.writeInt((Integer) data);
-            } else if (data instanceof Short) {
-                output.writeShort((Short) data);
-            } else if (data instanceof Long) {
-                output.writeLong((Long) data);
-            } else if (data instanceof Boolean) {
-                output.writeBoolean((Boolean) data);
-            } else if (data instanceof Double) {
-                output.writeDouble((Double) data);
-            } else if (data instanceof Float) {
-                output.writeFloat((Float) data);
-            } else if (data instanceof String) {
-                writeString(output, (String) data);
-            } else if (data instanceof EnumFacing) {
-                output.writeInt(((EnumFacing) data).ordinal());
-            } else if (data instanceof ItemStack) {
-                writeStack(output, (ItemStack) data);
-            } else if (data instanceof NBTTagCompound) {
-                writeNBT(output, (NBTTagCompound) data);
-            } else if (data instanceof int[]) {
-                for (int i : (int[]) data) {
+            if (data instanceof Byte b) {
+                output.writeByte(b);
+            } else if (data instanceof Integer i) {
+                output.writeInt(i);
+            } else if (data instanceof Short s) {
+                output.writeShort(s);
+            } else if (data instanceof Long l) {
+                output.writeLong(l);
+            } else if (data instanceof Boolean b) {
+                output.writeBoolean(b);
+            } else if (data instanceof Double d) {
+                output.writeDouble(d);
+            } else if (data instanceof Float f) {
+                output.writeFloat(f);
+            } else if (data instanceof String s) {
+                writeString(output, s);
+            } else if (data instanceof EnumFacing f) {
+                output.writeInt(f.ordinal());
+            } else if (data instanceof ItemStack s) {
+                writeStack(output, s);
+            } else if (data instanceof NBTTagCompound nbt) {
+                writeNBT(output, nbt);
+            } else if (data instanceof int[] d) {
+                for (int i : d) {
                     output.writeInt(i);
                 }
-            } else if (data instanceof byte[]) {
-                for (byte b : (byte[]) data) {
+            } else if (data instanceof byte[] d) {
+                for (byte b :d) {
                     output.writeByte(b);
                 }
-            } else if (data instanceof ArrayList) {
-                encode(((ArrayList<?>) data).toArray(), output);
-            } else if (data instanceof NonNullList) {
-                encode(((NonNullList) data).toArray(), output);
+            } else if (data instanceof ArrayList<?> a) {
+                encode(a.toArray(), output);
+            } else if (data instanceof NonNullList<?> d ) {
+                encode(d.toArray(), output);
             } else {
                 throw new RuntimeException("Un-encodable data passed to encode(): " + data + ", full data: " + Arrays.toString(dataValues));
             }

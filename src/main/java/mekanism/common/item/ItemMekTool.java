@@ -93,21 +93,21 @@ public class ItemMekTool extends ItemEnergized implements IItemNetwork, IItemHUD
             percent = energy / energyCost;
         }
         float damage = (float) (minDamage + damageDifference * percent);
-        if (attacker instanceof EntityPlayer) {
+        if (attacker instanceof EntityPlayer player) {
             if (energy > MekanismConfig.current().general.toolBatteryCapacity.val() * 0.9) {
                 if (target.getHealth() / target.getMaxHealth() > 0.1) {
                     target.setHealth(0.1F);
                 } else {
-                    target.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) attacker), damage * 8096);
+                    target.attackEntityFrom(DamageSource.causePlayerDamage(player), damage * 8096);
                 }
             } else if (energy > MekanismConfig.current().general.toolBatteryCapacity.val() * 0.75) {
-                target.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) attacker), damage * 4096);
+                target.attackEntityFrom(DamageSource.causePlayerDamage(player), damage * 4096);
             } else if (energy > MekanismConfig.current().general.toolBatteryCapacity.val() * 0.5) {
-                target.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) attacker), damage * 2048);
+                target.attackEntityFrom(DamageSource.causePlayerDamage(player), damage * 2048);
             } else if (energy > MekanismConfig.current().general.toolBatteryCapacity.val() * 0.25) {
-                target.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) attacker), damage * 1024);
+                target.attackEntityFrom(DamageSource.causePlayerDamage(player), damage * 1024);
             } else {
-                target.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) attacker), damage);
+                target.attackEntityFrom(DamageSource.causePlayerDamage(player), damage);
             }
         } else {
             if (energy > MekanismConfig.current().general.toolBatteryCapacity.val() * 0.75) {

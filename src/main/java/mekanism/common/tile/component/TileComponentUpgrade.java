@@ -76,8 +76,8 @@ public class TileComponentUpgrade implements ITileComponent {
     @Override
     public void tick() {
         if (!tileEntity.getWorld().isRemote) {
-            if (!tileEntity.inventory.get(upgradeSlot).isEmpty() && tileEntity.inventory.get(upgradeSlot).getItem() instanceof IUpgradeItem) {
-                Upgrade type = ((IUpgradeItem) tileEntity.inventory.get(upgradeSlot).getItem()).getUpgradeType(tileEntity.inventory.get(upgradeSlot));
+            if (!tileEntity.inventory.get(upgradeSlot).isEmpty() && tileEntity.inventory.get(upgradeSlot).getItem() instanceof IUpgradeItem upgradeItem) {
+                Upgrade type = upgradeItem.getUpgradeType(tileEntity.inventory.get(upgradeSlot));
 
                 if (supports(type) && getUpgrades(type) < type.getMax()) {
                     if (upgradeTicks < UPGRADE_TICKS_REQUIRED) {

@@ -79,8 +79,8 @@ public class SideData {
             return infos.toArray(new FluidTankInfo[]{});
         }
         for (int slot : availableSlots) {
-            if (slot <= tanks.length - 1 && tanks[slot] instanceof IFluidTank) {
-                infos.add(((IFluidTank) tanks[slot]).getInfo());
+            if (slot <= tanks.length - 1 && tanks[slot] instanceof IFluidTank tank) {
+                infos.add(tank.getInfo());
             }
         }
         return infos.toArray(new FluidTankInfo[]{});
@@ -88,10 +88,10 @@ public class SideData {
 
     public GasTank getGasTank(ITankManager manager) {
         Object[] tanks = manager.getTanks();
-        if (tanks == null || tanks.length < 1 || !(tanks[0] instanceof GasTank)) {
+        if (tanks == null || tanks.length < 1 || !(tanks[0] instanceof GasTank gasTank)) {
             return null;
         }
-        return (GasTank) tanks[0];
+        return gasTank;
     }
 
     public enum IOState {

@@ -325,15 +325,15 @@ public class TileEntityDigitalMiner extends TileEntityElectricBlock implements I
         //if its a shulker box, remove it TE so it can't drop itself in breakBlock - we've already captured its itemblock
         TileEntity te = world.getTileEntity(pos);
         TileEntityShulkerBox tileEntityShulkerBox = null;
-        if (te instanceof TileEntityShulkerBox) {
-            tileEntityShulkerBox = (TileEntityShulkerBox) te;
+        if (te instanceof TileEntityShulkerBox box) {
+            tileEntityShulkerBox = box;
             world.removeTileEntity(pos);
         }
 
         if (!stack.isEmpty()) {
             world.setBlockState(pos, StackUtils.getStateForPlacement(stack, world, pos, fakePlayer), 3);
             IBlockState s = obj.getBlockState(world);
-            if (s.getBlock() instanceof BlockBush && !((BlockBush) s.getBlock()).canBlockStay(world, pos, s)) {
+            if (s.getBlock() instanceof BlockBush blockBush && !blockBush.canBlockStay(world, pos, s)) {
                 s.getBlock().dropBlockAsItem(world, pos, s, 1);
                 world.setBlockToAir(pos);
             }

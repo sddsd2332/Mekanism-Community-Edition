@@ -116,7 +116,7 @@ public class TileEntitySynchronized extends TileEntity {
         }
         world.markBlockRangeForRenderUpdate(pos, pos);
         TileEntity tileEntity = world.getTileEntity(pos);
-        if (!(tileEntity instanceof IActiveState) || ((IActiveState) tileEntity).lightUpdate() && MekanismConfig.current().client.machineEffects.val()) {
+        if (!(tileEntity instanceof IActiveState state) || state.lightUpdate() && MekanismConfig.current().client.machineEffects.val()) {
             MekanismUtils.updateAllLightTypes(world, pos);
         }
         requireUpdateLight = false;

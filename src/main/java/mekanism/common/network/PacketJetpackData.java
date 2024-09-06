@@ -36,11 +36,11 @@ public class PacketJetpackData implements IMessageHandler<JetpackDataMessage, IM
             } else if (message.packetType == JetpackPacket.MODE) {
                 // Use has changed the mode of their jetpack; update it
                 ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-                if (!stack.isEmpty() && stack.getItem() instanceof IJetpackItem) {
+                if (!stack.isEmpty() && stack.getItem() instanceof IJetpackItem jetpackItem) {
                     if (!message.value) {
-                        ((IJetpackItem) stack.getItem()).incrementMode(stack);
+                        jetpackItem.incrementMode(stack);
                     } else {
-                        ((IJetpackItem) stack.getItem()).setMode(stack, JetpackMode.DISABLED);
+                        jetpackItem.setMode(stack, JetpackMode.DISABLED);
                     }
                 }
             } else if (message.packetType == JetpackPacket.FULL) {

@@ -120,9 +120,9 @@ public class TileEntityUniversalCable extends TileEntityTransmitter<EnergyAccept
                     rfProvider.extractEnergy(side.getOpposite(), RFIntegration.toRF(received), false);
                 } else if (MekanismUtils.useIC2()) {
                     IEnergyTile tile = EnergyNet.instance.getSubTile(outputter.getWorld(), outputter.getPos());
-                    if (tile instanceof IEnergySource) {
-                        double received = draw(Math.min(IC2Integration.fromEU(((IEnergySource) tile).getOfferedEnergy()), maxDraw));
-                        ((IEnergySource) tile).drawEnergy(IC2Integration.toEU(received));
+                    if (tile instanceof IEnergySource source) {
+                        double received = draw(Math.min(IC2Integration.fromEU(source.getOfferedEnergy()), maxDraw));
+                        source.drawEnergy(IC2Integration.toEU(received));
                     }
                 }
             }

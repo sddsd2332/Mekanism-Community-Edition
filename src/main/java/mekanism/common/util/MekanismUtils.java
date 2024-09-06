@@ -145,8 +145,8 @@ public final class MekanismUtils {
     public static boolean isActive(IBlockAccess world, BlockPos pos) {
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity != null) {
-            if (tileEntity instanceof IActiveState) {
-                return ((IActiveState) tileEntity).getActive();
+            if (tileEntity instanceof IActiveState state) {
+                return state.getActive();
             }
         }
         return false;
@@ -530,7 +530,7 @@ public final class MekanismUtils {
         // anyways here in case IActiveState#renderUpdate() is false and we just had the block rotate.
         // For example the laser, or charge pad.
         world.markBlockRangeForRenderUpdate(pos, pos);
-        if (!(tileEntity instanceof IActiveState) || ((IActiveState) tileEntity).lightUpdate() && MekanismConfig.current().client.machineEffects.val()) {
+        if (!(tileEntity instanceof IActiveState activeState) || activeState.lightUpdate() && MekanismConfig.current().client.machineEffects.val()) {
             updateAllLightTypes(world, pos);
         }
     }
@@ -1009,7 +1009,7 @@ public final class MekanismUtils {
         if (tool.isEmpty()) {
             return false;
         }
-        if (tool.getItem() instanceof IMekWrench && ((IMekWrench) tool.getItem()).canUseWrench(tool, player, pos)) {
+        if (tool.getItem() instanceof IMekWrench wrench && wrench.canUseWrench(tool, player, pos)) {
             return true;
         }
         try {
@@ -1041,7 +1041,7 @@ public final class MekanismUtils {
     }
 
     public static TileEntity getTileEntitySafe(IBlockAccess worldIn, BlockPos pos) {
-        return worldIn instanceof ChunkCache ? ((ChunkCache) worldIn).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) : worldIn.getTileEntity(pos);
+        return worldIn instanceof ChunkCache chunkCache ? chunkCache.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) : worldIn.getTileEntity(pos);
     }
 
     public static <T extends TileEntity> T getTileEntitySafe(IBlockAccess worldIn, BlockPos pos, Class<T> expectedClass) {

@@ -69,8 +69,8 @@ public class PacketSecurityUpdate implements IMessageHandler<SecurityUpdateMessa
             } else if (packetType == SecurityPacket.FULL) {
                 List<SecurityFrequency> frequencies = new ArrayList<>();
                 for (Frequency frequency : Mekanism.securityFrequencies.getFrequencies()) {
-                    if (frequency instanceof SecurityFrequency) {
-                        frequencies.add((SecurityFrequency) frequency);
+                    if (frequency instanceof SecurityFrequency securityFrequency) {
+                        frequencies.add(securityFrequency);
                     }
                 }
                 dataStream.writeInt(frequencies.size());

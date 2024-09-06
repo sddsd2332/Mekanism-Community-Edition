@@ -224,8 +224,8 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
         } else if (slotID == 0) {
             return FluidUtil.getFluidContained(itemstack) == null;
         } else if (slotID == 1 || slotID == 2) {
-            return itemstack.getItem() instanceof IGasItem && ((IGasItem) itemstack.getItem()).getGas(itemstack) != null
-                    && ((IGasItem) itemstack.getItem()).getGas(itemstack).amount == ((IGasItem) itemstack.getItem()).getMaxGas(itemstack);
+            return itemstack.getItem() instanceof IGasItem gasItem && gasItem.getGas(itemstack) != null
+                    &&gasItem.getGas(itemstack).amount ==gasItem.getMaxGas(itemstack);
         }
         return false;
     }
@@ -235,11 +235,11 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
         if (slotID == 0) {
             return Recipe.ELECTROLYTIC_SEPARATOR.containsRecipe(itemstack);
         } else if (slotID == 1) {
-            return itemstack.getItem() instanceof IGasItem &&
-                    (((IGasItem) itemstack.getItem()).getGas(itemstack) == null || ((IGasItem) itemstack.getItem()).getGas(itemstack).getGas() == MekanismFluids.Hydrogen);
+            return itemstack.getItem() instanceof IGasItem gasItem &&
+                    (gasItem.getGas(itemstack) == null || gasItem.getGas(itemstack).getGas() == MekanismFluids.Hydrogen);
         } else if (slotID == 2) {
-            return itemstack.getItem() instanceof IGasItem &&
-                    (((IGasItem) itemstack.getItem()).getGas(itemstack) == null || ((IGasItem) itemstack.getItem()).getGas(itemstack).getGas() == MekanismFluids.Oxygen);
+            return itemstack.getItem() instanceof IGasItem gasItem &&
+                    (gasItem.getGas(itemstack) == null || gasItem.getGas(itemstack).getGas() == MekanismFluids.Oxygen);
         } else if (slotID == 3) {
             return ChargeUtils.canBeDischarged(itemstack);
         }

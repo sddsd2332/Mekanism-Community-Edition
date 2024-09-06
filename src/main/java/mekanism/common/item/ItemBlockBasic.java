@@ -191,8 +191,8 @@ public class ItemBlockBasic extends ItemBlock implements IEnergizedItem, ITierIt
                 }
             }
             TileEntity tileEntity = world.getTileEntity(pos);
-            if (tileEntity instanceof IStrictEnergyStorage && !(tileEntity instanceof TileEntityMultiblock<?>)) {
-                ((IStrictEnergyStorage) tileEntity).setEnergy(getEnergy(stack));
+            if (tileEntity instanceof IStrictEnergyStorage storage && !(tileEntity instanceof TileEntityMultiblock<?>)) {
+                storage.setEnergy(getEnergy(stack));
             }
         }
         return place;

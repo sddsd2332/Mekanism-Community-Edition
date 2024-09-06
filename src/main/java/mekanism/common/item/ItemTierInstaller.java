@@ -36,13 +36,13 @@ public class ItemTierInstaller extends ItemMekanism implements IMetaItem {
         TileEntity tile = world.getTileEntity(pos);
         ItemStack stack = player.getHeldItem(hand);
         BaseTier tier = BaseTier.values()[stack.getItemDamage()];
-        if (tile instanceof ITierUpgradeable) {
-            if (tile instanceof TileEntityBasicBlock && ((TileEntityBasicBlock) tile).playersUsing.size() > 0) {
+        if (tile instanceof ITierUpgradeable upgradeable) {
+            if (tile instanceof TileEntityBasicBlock basicBlock && !basicBlock.playersUsing.isEmpty()) {
                 return EnumActionResult.FAIL;
             }
-            if (((ITierUpgradeable) tile).upgrade(tier) && ((ITierUpgradeable) tile).UpgradeAmount() <= stack.getCount()) {
+            if (upgradeable.upgrade(tier) && upgradeable.UpgradeAmount() <= stack.getCount()) {
                 if (!player.capabilities.isCreativeMode) {
-                    stack.shrink(((ITierUpgradeable) tile).UpgradeAmount());
+                    stack.shrink(upgradeable.UpgradeAmount());
                 }
                 return EnumActionResult.SUCCESS;
             }

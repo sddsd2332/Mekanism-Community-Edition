@@ -61,8 +61,8 @@ public class MultipartMekanism implements IMCMPAddon {
     public static boolean hasConnectionWith(TileEntity tile, EnumFacing side) {
         if (tile != null && tile.hasCapability(MCMPCapabilities.MULTIPART_TILE, null)) {
             IMultipartTile multipartTile = tile.getCapability(MCMPCapabilities.MULTIPART_TILE, null);
-            if (multipartTile instanceof MultipartTile && ((MultipartTile) multipartTile).getID().equals("transmitter")) {
-                IPartInfo partInfo = ((MultipartTile) multipartTile).getInfo();
+            if (multipartTile instanceof MultipartTile partTile && partTile.getID().equals("transmitter")) {
+                IPartInfo partInfo = partTile.getInfo();
                 if (partInfo != null) {
                     for (IPartInfo info : partInfo.getContainer().getParts().values()) {
                         IMultipart multipart = info.getPart();
@@ -78,8 +78,7 @@ public class MultipartMekanism implements IMCMPAddon {
     }
 
     public static Collection<AxisAlignedBB> getTransmitterSideBounds(IMultipartTile tile, EnumFacing side) {
-        if (tile.getTileEntity() instanceof TileEntityTransmitter) {
-            TileEntityTransmitter transmitter = (TileEntityTransmitter) tile.getTileEntity();
+        if (tile.getTileEntity() instanceof TileEntityTransmitter<?,?,?> transmitter) {
             boolean large = transmitter.getTransmitterType().getSize() == Size.LARGE;
             AxisAlignedBB ret = large ? BlockTransmitter.largeSides[side.ordinal()] : BlockTransmitter.smallSides[side.ordinal()];
             return Collections.singletonList(ret);
@@ -89,12 +88,12 @@ public class MultipartMekanism implements IMCMPAddon {
 
     static IMultipartContainer getContainer(IBlockAccess world, BlockPos pos) {
         IMultipartContainer container = null;
-        if (world instanceof IMultipartBlockAccess) {
-            container = ((IMultipartBlockAccess) world).getPartInfo().getContainer();
+        if (world instanceof IMultipartBlockAccess access) {
+            container = access.getPartInfo().getContainer();
         } else {
             TileEntity possibleContainer = world.getTileEntity(pos);
-            if (possibleContainer instanceof IMultipartContainer) {
-                container = (IMultipartContainer) possibleContainer;
+            if (possibleContainer instanceof IMultipartContainer multipartContainer) {
+                container = multipartContainer;
             }
         }
         return container;
@@ -111,8 +110,8 @@ public class MultipartMekanism implements IMCMPAddon {
 
     public static TileEntity unwrapTileEntity(IBlockAccess world) {
         TileEntity tile = null;
-        if (world instanceof IMultipartBlockAccess) {
-            tile = ((IMultipartBlockAccess) world).getPartInfo().getTile().getTileEntity();
+        if (world instanceof IMultipartBlockAccess access) {
+            tile = access.getPartInfo().getTile().getTileEntity();
         }
         return tile;
     }

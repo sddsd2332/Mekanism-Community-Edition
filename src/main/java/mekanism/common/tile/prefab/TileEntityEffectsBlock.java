@@ -84,8 +84,8 @@ public abstract class TileEntityEffectsBlock extends TileEntityElectricBlock imp
             // Fixes a bug with factories created by using installers not informing the client that the factory has a sound
             // Note: This should not be needed in 1.14 as the different factory types know what sound they produce
             // rather than passing "null" to this class and having to later call setSoundEvent
-            if (this instanceof TileEntityFactory) {
-                setSoundEvent(((TileEntityFactory) this).getRecipeType().getSound());
+            if (this instanceof TileEntityFactory factory) {
+                setSoundEvent(factory.getRecipeType().getSound());
             }
             return;
         }

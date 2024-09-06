@@ -2,6 +2,7 @@ package mekanism.multiblockmachine.client.render.generator;
 
 import mekanism.client.Utils.RenderTileEntityTime;
 import mekanism.client.render.MekanismRenderer;
+import mekanism.common.config.MekanismConfig;
 import mekanism.multiblockmachine.client.model.generator.ModelLargeWindGenerator;
 import mekanism.multiblockmachine.common.tile.generator.TileEntityLargeWindGenerator;
 import mekanism.multiblockmachine.common.util.MekanismMultiblockMachineUtils;
@@ -39,7 +40,7 @@ public class RenderLargeWindGenerator extends RenderTileEntityTime<TileEntityLar
 
     @Override
     public boolean isGlobalRenderer(TileEntityLargeWindGenerator te) {
-        return true;
+        return MekanismConfig.current().client.largeWindGeneratorisGlobalRenderer.val();
     }
 
 }

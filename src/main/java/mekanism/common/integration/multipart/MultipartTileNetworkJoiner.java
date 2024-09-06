@@ -44,12 +44,12 @@ public class MultipartTileNetworkJoiner implements ITileNetwork {
 
         TileEntity first = (TileEntity) tileList.get(0);
         IBlockAccess world = first.getWorld();
-        if (world instanceof IMultipartBlockAccess) {
-            container = ((IMultipartBlockAccess) world).getPartInfo().getContainer();
+        if (world instanceof IMultipartBlockAccess access) {
+            container = access.getPartInfo().getContainer();
         } else {
             TileEntity worldTile = first.getWorld().getTileEntity(first.getPos());
-            if (worldTile instanceof IMultipartContainer) {
-                container = (IMultipartContainer) worldTile;
+            if (worldTile instanceof IMultipartContainer containers) {
+                container = containers;
             }
         }
         if (container != null) {
@@ -58,7 +58,7 @@ public class MultipartTileNetworkJoiner implements ITileNetwork {
                 if (partTile.isPresent()) {
                     int tileIndex = tileList.indexOf(partTile.get().getTileEntity());
                     if (tileIndex >= 0) {
-                        byte slotValue = slot instanceof EnumFaceSlot ? (byte) ((EnumFaceSlot) slot).ordinal() : 6;
+                        byte slotValue = slot instanceof EnumFaceSlot enumFaceSlot? (byte) enumFaceSlot.ordinal() : 6;
                         tileSideMap.put(slotValue, tileList.get(tileIndex));
                     }
                 }

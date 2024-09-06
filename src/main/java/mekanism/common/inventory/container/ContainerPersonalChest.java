@@ -95,8 +95,8 @@ public class ContainerPersonalChest extends ContainerMekanism<TileEntityPersonal
             return super.canInteractWith(entityplayer);
         }
         final ItemStack currentItem = entityplayer.getHeldItemMainhand();
-        if (itemInventory instanceof InventoryPersonalChest) {
-            final ItemStack stack = ((InventoryPersonalChest) itemInventory).getStack();
+        if (itemInventory instanceof InventoryPersonalChest chest) {
+            final ItemStack stack = chest.getStack();
             return super.canInteractWith(entityplayer) && !stack.isEmpty() && currentItem == stack && MachineType.get(stack) == MachineType.PERSONAL_CHEST;
         }
         return false;

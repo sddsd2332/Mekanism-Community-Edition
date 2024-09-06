@@ -286,15 +286,15 @@ public class ItemBlockGasTank extends ItemBlock implements IGasItem, ISustainedI
 
     @Override
     public void setInventory(NBTTagList nbtTags, Object... data) {
-        if (data[0] instanceof ItemStack) {
-            ItemDataUtils.setList((ItemStack) data[0], "Items", nbtTags);
+        if (data[0] instanceof ItemStack stack) {
+            ItemDataUtils.setList(stack, "Items", nbtTags);
         }
     }
 
     @Override
     public NBTTagList getInventory(Object... data) {
-        if (data[0] instanceof ItemStack) {
-            return ItemDataUtils.getList((ItemStack) data[0], "Items");
+        if (data[0] instanceof ItemStack stack) {
+            return ItemDataUtils.getList(stack, "Items");
         }
         return null;
     }

@@ -426,8 +426,8 @@ public abstract class TileEntitySidedPipe extends TileEntityRestrictedTick imple
         for (EnumFacing side : EnumFacing.VALUES) {
             if (connectionMapContainsSide(newlyEnabledTransmitters, side)) {
                 TileEntity tileEntity = MekanismUtils.getTileEntity(world, getPos().offset(side));
-                if (tileEntity instanceof TileEntitySidedPipe) {
-                    ((TileEntitySidedPipe) tileEntity).refreshConnections();
+                if (tileEntity instanceof TileEntitySidedPipe pipe) {
+                    pipe.refreshConnections();
                 }
             }
         }

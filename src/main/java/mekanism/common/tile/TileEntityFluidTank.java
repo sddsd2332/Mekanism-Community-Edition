@@ -410,8 +410,8 @@ public class TileEntityFluidTank extends TileEntityContainerBlock implements IAc
         if (tier == FluidTankTier.CREATIVE) {
             return true;
         }
-        if (isActive && tile instanceof TileEntityFluidTank) { // Only fill if tanks underneath have same fluid.
-            return fluidTank.getFluid() == null ? ((TileEntityFluidTank) tile).canFill(EnumFacing.UP, fluid) : fluidTank.getFluid().isFluidEqual(fluid);
+        if (isActive && tile instanceof TileEntityFluidTank tank) { // Only fill if tanks underneath have same fluid.
+            return fluidTank.getFluid() == null ? tank.canFill(EnumFacing.UP, fluid) : fluidTank.getFluid().isFluidEqual(fluid);
         }
         return FluidContainerUtils.canFill(fluidTank.getFluid(), fluid);
     }

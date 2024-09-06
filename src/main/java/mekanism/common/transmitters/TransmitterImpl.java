@@ -55,8 +55,8 @@ public class TransmitterImpl<ACCEPTOR, NETWORK extends DynamicNetwork<ACCEPTOR, 
 
     @Override
     public boolean isCompatibleWith(IGridTransmitter<ACCEPTOR, NETWORK, BUFFER> other) {
-        if (other instanceof TransmitterImpl) {
-            return containingTile.isValidTransmitter(((TransmitterImpl) other).containingTile);
+        if (other instanceof TransmitterImpl<?,?,?> transmitter) {
+            return containingTile.isValidTransmitter(transmitter.containingTile);
         }
         return true;//allow non-Transmitter impls to connect?
     }

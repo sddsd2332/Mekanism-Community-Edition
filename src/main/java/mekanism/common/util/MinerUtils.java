@@ -55,16 +55,14 @@ public final class MinerUtils {
             TileEntity tileentity = world.getTileEntity(coord.getPos());
 
             //copied from BlockShulkerBox.breakBlock
-            if (tileentity instanceof TileEntityShulkerBox) {
-                TileEntityShulkerBox tileentityshulkerbox = (TileEntityShulkerBox) tileentity;
-
-                if (!tileentityshulkerbox.isCleared() && tileentityshulkerbox.shouldDrop()) {
+            if (tileentity instanceof TileEntityShulkerBox box) {
+                if (!box.isCleared() && box.shouldDrop()) {
                     NBTTagCompound itemTag = new NBTTagCompound();
                     NBTTagCompound nbtBlockEntity = new NBTTagCompound();
-                    itemTag.setTag("BlockEntityTag", ((TileEntityShulkerBox) tileentity).saveToNbt(nbtBlockEntity));
+                    itemTag.setTag("BlockEntityTag", box.saveToNbt(nbtBlockEntity));
                     shulkerBoxItem.setTagCompound(itemTag);
-                    if (tileentityshulkerbox.hasCustomName()) {
-                        shulkerBoxItem.setStackDisplayName(tileentityshulkerbox.getName());
+                    if (box.hasCustomName()) {
+                        shulkerBoxItem.setStackDisplayName(box.getName());
                     }
                 }
             }
@@ -79,8 +77,8 @@ public final class MinerUtils {
                 }
             }
             List<ItemStack> ret = new ArrayList<>();
-            if (it instanceof ItemStack && !((ItemStack) it).isEmpty()) {
-                ret.add((ItemStack) it);
+            if (it instanceof ItemStack stack && !stack.isEmpty()) {
+                ret.add(stack);
             } else {
                 //silk touch drop is empty or failed to call/find getSilkTouchDrop method
                 // Fallback to grabbing an itemblock
@@ -89,14 +87,14 @@ public final class MinerUtils {
                     ret.add(new ItemStack(item, 1, item.getHasSubtypes() ? block.getMetaFromState(state) : 0));
                 }
             }
-            if (ret.size() > 0) {
+            if (!ret.isEmpty()) {
                 ForgeEventFactory.fireBlockHarvesting(ret, world, coord.getPos(), state, 0, 1.0F, true, fakePlayer);
                 return ret;
             }
         } else {
             @SuppressWarnings("deprecation")//needed for backwards compatibility
             List<ItemStack> blockDrops = block.getDrops(world, coord.getPos(), state, 0);
-            if (blockDrops.size() > 0) {
+            if (!blockDrops.isEmpty()) {
                 ForgeEventFactory.fireBlockHarvesting(blockDrops, world, coord.getPos(), state, 0, 1.0F, false, fakePlayer);
             } else if (block == Blocks.CHORUS_FLOWER) {
                 //Chorus flower returns AIR for itemDropped... and for silkTouchDrop.

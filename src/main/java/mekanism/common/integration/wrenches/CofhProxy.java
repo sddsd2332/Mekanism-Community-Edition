@@ -22,13 +22,13 @@ public class CofhProxy implements MekWrenchProxy, IMekWrench {
 
     @Override
     public boolean canUseWrench(ItemStack stack, EntityPlayer player, BlockPos pos) {
-        return stack.getItem() instanceof IToolHammer && ((IToolHammer) stack.getItem()).isUsable(stack, player, pos);
+        return stack.getItem() instanceof IToolHammer toolHammer && toolHammer.isUsable(stack, player, pos);
     }
 
     @Override
     public void wrenchUsed(EntityPlayer player, EnumHand hand, ItemStack wrench, RayTraceResult rayTrace) {
-        if (wrench.getItem() instanceof IToolHammer) {
-            ((IToolHammer) wrench.getItem()).toolUsed(wrench, player, rayTrace.getBlockPos());
+        if (wrench.getItem() instanceof IToolHammer toolHammer) {
+            toolHammer.toolUsed(wrench, player, rayTrace.getBlockPos());
         }
     }
 }

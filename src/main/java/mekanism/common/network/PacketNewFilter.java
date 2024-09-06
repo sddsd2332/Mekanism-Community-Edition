@@ -66,14 +66,14 @@ public class PacketNewFilter implements IMessageHandler<NewFilterMessage, IMessa
         public NewFilterMessage(Coord4D coord, Object filter) {
             coord4D = coord;
 
-            if (filter instanceof TransporterFilter) {
-                tFilter = (TransporterFilter) filter;
+            if (filter instanceof TransporterFilter transporterFilter) {
+                tFilter = transporterFilter;
                 type = 0;
-            } else if (filter instanceof MinerFilter) {
-                mFilter = (MinerFilter) filter;
+            } else if (filter instanceof MinerFilter minerFilter) {
+                mFilter = minerFilter;
                 type = 1;
-            } else if (filter instanceof OredictionificatorFilter) {
-                oFilter = (OredictionificatorFilter) filter;
+            } else if (filter instanceof OredictionificatorFilter oredictionificatorFilter) {
+                oFilter = oredictionificatorFilter;
                 type = 2;
             }
         }

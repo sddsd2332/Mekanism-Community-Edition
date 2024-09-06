@@ -43,7 +43,7 @@ public final class CableUtils {
             return false;
         }
         return isAcceptor(cableEntity, tile, side) || isOutputter(cableEntity, tile, side) ||
-                (MekanismUtils.useRF() && tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite())) ||
+                (MekanismUtils.useRF() && tile instanceof IEnergyConnection connection && connection.canConnectEnergy(side.getOpposite())) ||
                 (MekanismUtils.useForge() && CapabilityUtils.hasCapability(tile, CapabilityEnergy.ENERGY, side.getOpposite()));
     }
 
@@ -99,7 +99,7 @@ public final class CableUtils {
         if (MekanismUtils.useForge() && (forgeStorage = CapabilityUtils.getCapability(tileEntity, CapabilityEnergy.ENERGY, opposite)) != null) {
             return forgeStorage.canExtract();
         }
-        if (MekanismUtils.useRF() && tileEntity instanceof IEnergyProvider && ((IEnergyConnection) tileEntity).canConnectEnergy(opposite)) {
+        if (MekanismUtils.useRF() && tileEntity instanceof IEnergyProvider provider&& provider.canConnectEnergy(opposite)) {
             return true;
         }
         return MekanismUtils.useIC2() && IC2Integration.isOutputter(tileEntity, side);
@@ -121,8 +121,8 @@ public final class CableUtils {
         if (MekanismUtils.useForge() && (energyStorage = CapabilityUtils.getCapability(tileEntity, CapabilityEnergy.ENERGY, side.getOpposite())) != null) {
             return energyStorage.canReceive();
         }
-        if (MekanismUtils.useRF() && tileEntity instanceof IEnergyReceiver) {
-            return ((IEnergyReceiver) tileEntity).canConnectEnergy(side.getOpposite());
+        if (MekanismUtils.useRF() && tileEntity instanceof IEnergyReceiver receiver) {
+            return receiver.canConnectEnergy(side.getOpposite());
         }
         return MekanismUtils.useIC2() && IC2Integration.isAcceptor(tileEntity, side);
     }
@@ -162,9 +162,9 @@ public final class CableUtils {
                      */
                     double sent = EmitUtils.sendToAcceptors(java.util.Collections.singleton(target), curHandlers, energyToSend);
                     // Firestarter end
-                    if (emitter instanceof TileEntityInductionPort) {
+                    if (emitter instanceof TileEntityInductionPort port) {
                         //Streamline sideless removal method for induction port.
-                        ((TileEntityInductionPort) emitter).removeEnergy(sent, false);
+                        port.removeEnergy(sent, false);
                     } else {
                         emitter.setEnergy(emitter.getEnergy() - sent);
                     }

@@ -109,11 +109,11 @@ public enum Upgrade {
 
     public List<String> getInfo(TileEntity tile) {
         List<String> ret = new ArrayList<>();
-        if (tile instanceof IUpgradeTile) {
-            if (tile instanceof IUpgradeInfoHandler) {
-                return ((IUpgradeInfoHandler) tile).getInfo(this);
+        if (tile instanceof IUpgradeTile upgradeTile) {
+            if (tile instanceof IUpgradeInfoHandler handler) {
+                return handler.getInfo(this);
             } else {
-                ret = getMultScaledInfo((IUpgradeTile) tile);
+                ret = getMultScaledInfo(upgradeTile);
             }
         }
         return ret;

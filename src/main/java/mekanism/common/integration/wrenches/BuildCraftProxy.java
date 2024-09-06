@@ -27,13 +27,13 @@ public class BuildCraftProxy implements MekWrenchProxy, IMekWrench {
 
     @Override
     public boolean canUseWrench(EntityPlayer player, EnumHand hand, ItemStack stack, RayTraceResult rayTrace) {
-        return stack.getItem() instanceof IToolWrench && ((IToolWrench) stack.getItem()).canWrench(player, hand, stack, rayTrace);
+        return stack.getItem() instanceof IToolWrench wrench && wrench.canWrench(player, hand, stack, rayTrace);
     }
 
     @Override
     public void wrenchUsed(EntityPlayer player, EnumHand hand, ItemStack stack, RayTraceResult rayTrace) {
-        if (stack.getItem() instanceof IToolWrench) {
-            ((IToolWrench) stack.getItem()).wrenchUsed(player, hand, stack, rayTrace);
+        if (stack.getItem() instanceof IToolWrench wrench) {
+            wrench.wrenchUsed(player, hand, stack, rayTrace);
         }
     }
 }

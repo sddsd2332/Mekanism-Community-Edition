@@ -25,17 +25,17 @@ public class PacketSecurityMode implements IMessageHandler<SecurityModeMessage, 
         PacketHandler.handlePacket(() -> {
             if (message.packetType == SecurityPacketType.BLOCK) {
                 TileEntity tileEntity = message.coord4D.getTileEntity(player.world);
-                if (tileEntity instanceof ISecurityTile) {
-                    UUID owner = ((ISecurityTile) tileEntity).getSecurity().getOwnerUUID();
+                if (tileEntity instanceof ISecurityTile securityTile) {
+                    UUID owner = securityTile.getSecurity().getOwnerUUID();
                     if (owner != null && player.getUniqueID().equals(owner)) {
-                        ((ISecurityTile) tileEntity).getSecurity().setMode(message.value);
+                        securityTile.getSecurity().setMode(message.value);
                         tileEntity.markDirty();
                     }
                 }
             } else {
                 ItemStack stack = player.getHeldItem(message.currentHand);
-                if (stack.getItem() instanceof ISecurityItem) {
-                    ((ISecurityItem) stack.getItem()).setSecurity(stack, message.value);
+                if (stack.getItem() instanceof ISecurityItem item) {
+                    item.setSecurity(stack, message.value);
                 }
             }
         }, player);

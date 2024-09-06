@@ -637,7 +637,7 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
 
     @SideOnly(Side.CLIENT)
     public double getMaxRenderDistanceSquared() {
-        return 16384.0D;
+        return MekanismConfig.current().client.largeWindGeneratorMaxRenderDistanceSquared.val();
     }
 
     @Override

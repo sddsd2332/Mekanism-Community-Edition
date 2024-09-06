@@ -328,9 +328,9 @@ public class TileEntityTeleporter extends TileEntityElectricBlock implements ICo
             if (teleporter != null) {
                 teleporter.didTeleport.add(entity.getPersistentID());
                 teleporter.teleDelay = 5;
-                if (entity instanceof EntityPlayerMP) {
-                    teleportPlayerTo((EntityPlayerMP) entity, closestCoords, teleporter);
-                    alignPlayer((EntityPlayerMP) entity, closestCoords);
+                if (entity instanceof EntityPlayerMP mp) {
+                    teleportPlayerTo(mp, closestCoords, teleporter);
+                    alignPlayer(mp, closestCoords);
                 } else {
                     teleportEntityTo(entity, closestCoords, teleporter);
                 }

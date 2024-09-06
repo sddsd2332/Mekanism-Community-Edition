@@ -25,8 +25,8 @@ public class ContainerUpgradeManagement extends Container {
 
         //Bit of a hack I guess, but we need to give it access to the inventory list, not the Frequency
         IInventory upgradeInv;
-        if (tileEntity instanceof TileEntityQuantumEntangloporter) {
-            upgradeInv = new InventoryList(((TileEntityQuantumEntangloporter) tileEntity).inventory, (TileEntity) tileEntity);
+        if (tileEntity instanceof TileEntityQuantumEntangloporter quantumEntangloporter) {
+            upgradeInv = new InventoryList(quantumEntangloporter.inventory, (TileEntity) tileEntity);
         } else {
             upgradeInv = (TileEntityContainerBlock) tile;
         }

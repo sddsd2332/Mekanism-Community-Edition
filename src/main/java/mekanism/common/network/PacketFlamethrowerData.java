@@ -33,8 +33,8 @@ public class PacketFlamethrowerData implements IMessageHandler<FlamethrowerDataM
                 }
             } else if (message.packetType == FlamethrowerPacket.MODE) {
                 ItemStack stack = player.getHeldItem(message.currentHand);
-                if (!stack.isEmpty() && stack.getItem() instanceof ItemFlamethrower) {
-                    ((ItemFlamethrower) stack.getItem()).incrementMode(stack);
+                if (!stack.isEmpty() && stack.getItem() instanceof ItemFlamethrower flamethrower) {
+                    flamethrower.incrementMode(stack);
                 }
             } else if (message.packetType == FlamethrowerPacket.FULL) {
                 // This is a full sync; merge into our player state

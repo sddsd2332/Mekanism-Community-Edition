@@ -79,8 +79,8 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemNetwor
             percent = energy / energyCost;
         }
         float damage = (float) (minDamage + damageDifference * percent);
-        if (attacker instanceof EntityPlayer) {
-            target.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) attacker), damage);
+        if (attacker instanceof EntityPlayer player) {
+            target.attackEntityFrom(DamageSource.causePlayerDamage(player), damage);
         } else {
             target.attackEntityFrom(DamageSource.causeMobDamage(attacker), damage);
         }
@@ -148,7 +148,8 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemNetwor
                         block2.onBlockHarvested(player.world, coord.getPos(), state, player);
                         player.world.playEvent(WorldEvents.BREAK_BLOCK_EFFECTS, coord.getPos(), Block.getStateId(state));
                         block2.dropBlockAsItem(player.world, coord.getPos(), state, 0);
-                        player.world.setBlockToAir(coord.getPos());;
+                        player.world.setBlockToAir(coord.getPos());
+                        ;
                         setEnergy(itemstack, getEnergy(itemstack) - destroyEnergy);
                     }
                 }

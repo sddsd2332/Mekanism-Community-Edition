@@ -82,14 +82,14 @@ public class PacketPortableTeleporter implements IMessageHandler<PortableTelepor
                                     teleporter.didTeleport.add(player.getPersistentID());
                                     teleporter.teleDelay = 5;
                                     item.setEnergy(itemstack, item.getEnergy(itemstack) - ItemPortableTeleporter.calculateEnergyCost(player, coords));
-                                    if (player instanceof EntityPlayerMP) {
-                                        ((EntityPlayerMP) player).connection.floatingTickCount = 0;
+                                    if (player instanceof EntityPlayerMP mp) {
+                                        mp.connection.floatingTickCount = 0;
                                     }
                                     player.closeScreen();
                                     Mekanism.packetHandler.sendToAllTracking(new PortalFXMessage(new Coord4D(player)), coords);
-                                    if (player instanceof EntityPlayerMP) {
-                                        TileEntityTeleporter.teleportPlayerTo((EntityPlayerMP) player, coords, teleporter);
-                                        TileEntityTeleporter.alignPlayer((EntityPlayerMP) player, coords);
+                                    if (player instanceof EntityPlayerMP mp) {
+                                        TileEntityTeleporter.teleportPlayerTo(mp, coords, teleporter);
+                                        TileEntityTeleporter.alignPlayer(mp, coords);
                                     }
                                     world.playSound(player, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
                                     Mekanism.packetHandler.sendToAllTracking(new PortalFXMessage(coords), coords);

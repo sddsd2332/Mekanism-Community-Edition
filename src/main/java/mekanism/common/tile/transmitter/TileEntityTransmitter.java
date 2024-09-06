@@ -152,22 +152,22 @@ public abstract class TileEntityTransmitter<A, N extends DynamicNetwork<A, N, BU
         N network = getTransmitter().getTransmitterNetwork();
         network.queueClientUpdate(network.getTransmitters());
         //Copy values into an array so that we don't risk a CME
-        IGridTransmitter[] transmitters = network.getTransmitters().toArray(new IGridTransmitter[0]);
+        IGridTransmitter<?,?,?>[] transmitters = network.getTransmitters().toArray(new IGridTransmitter[0]);
         //TODO: Make some better way of refreshing the connections, given we only need to refresh
         // connections to ourself anyways
         // The best way to do this is probably by making a method that updates the values for
         // the valid transmitters manually if the network is the same object.
-        for (IGridTransmitter transmitter : transmitters) {
-            if (transmitter instanceof TransmitterImpl) {
+        for (IGridTransmitter<?,?,?> transmitter : transmitters) {
+            if (transmitter instanceof TransmitterImpl<?,?,?> imp) {
                 //Refresh the connections because otherwise sometimes they need to wait for a block update
-                ((TransmitterImpl) transmitter).containingTile.refreshConnections();
+                imp.containingTile.refreshConnections();
             }
         }
     }
 
     private boolean recheckConnectionPrechecked(EnumFacing side) {
         final TileEntity tileEntity = MekanismUtils.getTileEntity(world, getPos().offset(side));
-        if (tileEntity instanceof TileEntityTransmitter other) {
+        if (tileEntity instanceof TileEntityTransmitter<?,?,?> other) {
             N network = getTransmitter().getTransmitterNetwork();
             //The other one should always have the same incompatible networks state as us
             // But just in case it doesn't just check the boolean
@@ -238,8 +238,8 @@ public abstract class TileEntityTransmitter<A, N extends DynamicNetwork<A, N, BU
                 return 0;
             });
             for (IGridTransmitter<A, N, BUFFER> iter : list) {
-                if (iter instanceof TransmitterImpl) {
-                    TileEntityTransmitter t = ((TransmitterImpl) iter).containingTile;
+                if (iter instanceof TransmitterImpl<?,?,?> transmitter) {
+                    TileEntityTransmitter<?,?,?> t = transmitter.containingTile;
                     if (t.upgrade(tierOrdinal)) {
                         upgraded++;
                         if (upgraded == 8) {
