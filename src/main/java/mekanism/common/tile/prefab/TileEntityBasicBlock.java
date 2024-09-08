@@ -272,7 +272,9 @@ import java.util.Set;
      * Called when block is placed in world
      */
     public void onAdded() {
-        updatePower();
+        if (!world.isRemote) {
+            updatePower();
+        }
     }
 
 }
