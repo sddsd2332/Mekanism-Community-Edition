@@ -17,6 +17,7 @@ import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.particle.Particle;
@@ -27,6 +28,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
@@ -42,11 +44,11 @@ import java.util.function.Consumer;
 @SideOnly(Side.CLIENT)
 public class RenderTickHandler {
 
+    private static final EntityEquipmentSlot[] EQUIPMENT_ORDER = {EntityEquipmentSlot.OFFHAND, EntityEquipmentSlot.MAINHAND, EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS,
+            EntityEquipmentSlot.FEET};
     public static int modeSwitchTimer = 0;
     public Random rand = new Random();
     public Minecraft mc = Minecraft.getMinecraft();
-    private static final EntityEquipmentSlot[] EQUIPMENT_ORDER = {EntityEquipmentSlot.OFFHAND, EntityEquipmentSlot.MAINHAND, EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS,
-            EntityEquipmentSlot.FEET};
 
     @SubscribeEvent
     public void tickEnd(RenderTickEvent event) {
@@ -126,7 +128,7 @@ public class RenderTickHandler {
                                 //Align text to right if hud is reversed, otherwise align to the left
                                 //Note: that we always offset by 2 pixels from the edge of the screen regardless of how it is aligned
                                 int x = reverseHud ? xScale - textWidth - 2 : 2;
-                                font.drawStringWithShadow(text, x, y, 0xFFC8C8C8);
+                                font.drawStringWithShadow(text, MekanismConfig.current().client.hudX.val() + x, MekanismConfig.current().client.hudY.val() + y, 0xFFC8C8C8);
                                 y += 9;
                             }
                             y += 2;
@@ -266,4 +268,5 @@ public class RenderTickHandler {
         }
         return size;
     }
+
 }

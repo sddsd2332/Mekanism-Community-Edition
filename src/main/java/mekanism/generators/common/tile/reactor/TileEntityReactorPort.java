@@ -363,6 +363,9 @@ public class TileEntityReactorPort extends TileEntityReactorBlock implements IFl
 
     @Override
     public EnumActionResult onRightClick(EntityPlayer player, EnumFacing side) {
+        if (!world.isRemote && player.isCreative() && getReactor() != null) {
+            getReactor().setPlasmaTemp(1_000_000_000);
+        }
         return EnumActionResult.PASS;
     }
 }

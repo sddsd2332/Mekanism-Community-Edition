@@ -99,7 +99,6 @@ public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor implements IItemHU
                     if (armour.getEnergy(feetStack) > 500D) {
                         if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FROST_WALKER, feetStack) == 0) {
                             feetStack.addEnchantment(Enchantments.FROST_WALKER, UpgradeHelper.getUpgradeLevel(feetStack, moduleUpgrade.FROST_WALKER_UNIT));
-                            hasEffect(feetStack);
                             armour.setEnergy(feetStack, armour.getEnergy(feetStack) - 500D);
                         }
                     } else {

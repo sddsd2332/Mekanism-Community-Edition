@@ -61,6 +61,10 @@ public class ClientConfig extends BaseConfig {
 
     public final FloatOption hudScale = new FloatOption(this,"client","hudScale",0.6F,"Scale of the text displayed on the HUD.",0.25F,1F);
 
+    public final IntOption hudX = new IntOption(this,"client","hudX",0,"The HUD is offset to the left and right of the screen.");
+
+    public final IntOption hudY = new IntOption(this,"client","hudY",0,"The HUD is offset up and down the screen.");
+
     public final BooleanOption enableBloom = new BooleanOption(this, "client", "enableBloom", false,
             "Enable the glow texture of MeKCEu, which may cause a performance penalty. (GTCEu or Lumenized installation required)");
 

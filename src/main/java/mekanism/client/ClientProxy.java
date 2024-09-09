@@ -10,6 +10,7 @@ import mekanism.client.gui.*;
 import mekanism.client.gui.chemical.*;
 import mekanism.client.gui.robit.*;
 import mekanism.client.render.MekanismRenderer;
+import mekanism.client.render.RenderFirstPersonMekaSuitArms;
 import mekanism.client.render.RenderTickHandler;
 import mekanism.client.render.entity.RenderBalloon;
 import mekanism.client.render.entity.RenderFlame;
@@ -850,6 +851,7 @@ public class ClientProxy extends CommonProxy {
         MinecraftForge.EVENT_BUS.register(new ClientConnectionHandler());
         MinecraftForge.EVENT_BUS.register(new ClientPlayerTracker());
         MinecraftForge.EVENT_BUS.register(new ClientTickHandler());
+       // MinecraftForge.EVENT_BUS.register(new RenderFirstPersonMekaSuitArms());
         MinecraftForge.EVENT_BUS.register(new RenderTickHandler());
         MinecraftForge.EVENT_BUS.register(SoundHandler.class);
 
