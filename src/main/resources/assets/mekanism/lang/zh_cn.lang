@@ -1114,6 +1114,7 @@ tooltip.Hybrid_Storage=可以同时存储120种物品，2种气体，1种流体�
 # Side data
 sideData.None=无
 sideData.Input=输入
+sideData.Input_Enhance=增强输入
 sideData.Input_1=输入（1）
 sideData.Input_2=输入（2）
 sideData.Output=输出
@@ -1122,6 +1123,7 @@ sideData.Output_2=输出（2）
 sideData.Output_Enhance=增强输出
 sideData.Input_Output=输入/输出
 sideData.Input_Output_Enhance=输入/增强输出
+sideData.Input_Enhance_Output_Enhance=增强输入/增强输出
 sideData.Input_Extra=额外-输入
 sideData.Energy=能量
 sideData.Gas=气体

@@ -5,6 +5,7 @@ import mekanism.api.EnumColor;
 public enum DataType {
     NONE("None", EnumColor.GREY),
     INPUT("Input", EnumColor.RED),
+    INPUT_ENHANCED("Input_Enhance", EnumColor.RED),
     INPUT_1("Input_1", EnumColor.DARK_RED),
     INPUT_2("Input_2", EnumColor.ORANGE),
     OUTPUT("Output", EnumColor.INDIGO),
@@ -13,6 +14,7 @@ public enum DataType {
     OUTPUT_ENHANCED("Output_Enhance",EnumColor.INDIGO),
     INPUT_OUTPUT("Input_Output", EnumColor.PURPLE),
     INPUT_OUTPUT_ENHANCED("Input_Output_Enhance", EnumColor.PURPLE),
+    INPUT_ENHANCED_OUTPUT_ENHANCED("Input_Enhance_Output_Enhance", EnumColor.PURPLE),
     INPUT_EXTRA("Input_Extra", EnumColor.ORANGE),
     ENERGY("Energy", EnumColor.BRIGHT_GREEN),
     EXTRA("Extra", EnumColor.YELLOW),

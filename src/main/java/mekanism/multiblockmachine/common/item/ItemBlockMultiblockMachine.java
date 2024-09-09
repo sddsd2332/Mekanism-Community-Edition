@@ -131,6 +131,9 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
 
     @Override
     public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, World world, @Nonnull BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull IBlockState state) {
+        if (stack.getCount() >1){
+            return false;
+        }
         boolean place = true;
         MultiblockMachineType type = MultiblockMachineType.get(stack);
         if (type == MultiblockMachineType.LARGE_ELECTROLYTIC_SEPARATOR || type == MultiblockMachineType.LARGE_CHEMICAL_INFUSER) {

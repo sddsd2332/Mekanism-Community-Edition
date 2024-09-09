@@ -42,12 +42,10 @@ import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Optional.InterfaceList({
         @Optional.Interface(iface = "ic2.api.item.ISpecialElectricItem", modid = MekanismHooks.IC2_MOD_ID),
@@ -249,7 +247,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
 
         ItemStack fullUpgrade = new ItemStack(this);
         for (moduleUpgrade upgrade : getValidModule(fullUpgrade)) {
-            UpgradeHelper.setUpgradeLevel(fullUpgrade,upgrade,upgrade.getMax());
+            UpgradeHelper.setUpgradeLevel(fullUpgrade, upgrade, upgrade.getMax());
         }
 
         setEnergy(fullUpgrade, ((IEnergizedItem) fullUpgrade.getItem()).getMaxEnergy(fullUpgrade));
@@ -438,4 +436,5 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     public String getItemStackDisplayName(@Nonnull ItemStack itemstack) {
         return EnumColor.ORANGE + super.getItemStackDisplayName(itemstack);
     }
+
 }

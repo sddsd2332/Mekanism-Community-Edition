@@ -1,6 +1,7 @@
 package mekanism.common.tile.prefab;
 
 import mekanism.api.transmitters.TransmissionType;
+import mekanism.common.Mekanism;
 import mekanism.common.MekanismItems;
 import mekanism.common.SideData;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
@@ -42,6 +43,8 @@ public abstract class TileEntityChanceMachine2<RECIPE extends Chance2MachineReci
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.ENERGY, new int[]{1}));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.OUTPUT, new int[]{2}));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(new int[]{0, 2}, new boolean[]{false, true}));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_ENHANCED, new int[]{0}));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_ENHANCED_OUTPUT_ENHANCED, new int[]{0, 2}, new boolean[]{false, true}));
 
         configComponent.setConfig(TransmissionType.ITEM, new byte[]{2, 1, 0, 0, 0, 3});
         configComponent.setInputConfig(TransmissionType.ENERGY);
@@ -66,6 +69,11 @@ public abstract class TileEntityChanceMachine2<RECIPE extends Chance2MachineReci
         super.onUpdate();
         if (!world.isRemote) {
             ChargeUtils.discharge(1, this);
+            Mekanism.EXECUTE_MANAGER.addSyncTask(() ->{
+                AutomaticallyExtractItems(5, 0);
+                AutomaticallyExtractItems(6, 0);
+                BetterEjectingItem(6,2);
+            });
             RECIPE recipe = getRecipe();
             if (canOperate(recipe) && MekanismUtils.canFunction(this) && getEnergy() >= energyPerTick) {
                 setActive(true);

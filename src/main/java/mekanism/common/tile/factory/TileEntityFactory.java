@@ -119,6 +119,11 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
      * How many recipe ticks have progressed.
      */
     private int recipeTicks;
+
+
+    protected int successCounter = 0;
+    protected boolean inventoryChanged = false;
+
     @Nonnull
     private RecipeType recipeType = RecipeType.SMELTING;
 
@@ -128,6 +133,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
     public TileEntityFactory() {
         this(FactoryTier.BASIC, MachineType.BASIC_FACTORY);
         configComponent = new TileComponentConfig(this, TransmissionType.ITEM, TransmissionType.ENERGY, TransmissionType.GAS, TransmissionType.FLUID);
+
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.NONE, InventoryUtils.EMPTY));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT, getSlotsWithTier(tier)));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.OUTPUT, getOutputSlotsWithTier(tier)));
@@ -136,6 +142,8 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_EXTRA, new int[]{4, 5, 6, 7}));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(Input_Output, Input_Output_Enable));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.OUTPUT_ENHANCED, getOutputSlotsWithTier(tier)));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_OUTPUT_ENHANCED, Input_Output, Input_Output_Enable));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_ENHANCED, getSlotsWithTier(tier)));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_OUTPUT_ENHANCED, Input_Output, Input_Output_Enable));
         configComponent.setConfig(TransmissionType.ITEM, new byte[]{4, 1, 1, 3, 1, 2});
 
@@ -330,7 +338,11 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
                 }
             }
             MachineTypeSwitching();
-            Mekanism.EXECUTE_MANAGER.addSyncTask(this::BetterEjectingItem);
+            Mekanism.EXECUTE_MANAGER.addSyncTask(() ->{
+                AutomaticallyExtractItems(9);
+                AutomaticallyExtractItems(10);
+                BetterEjectingItem();
+            });
             double prev = getEnergy();
             if (tier == FactoryTier.CREATIVE) {
                 energyPerTick = 0;
@@ -1535,10 +1547,116 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         }
     }
 
+
+    protected void AutomaticallyExtractItems(int dataIndex) {
+        if (getWorld().isRemote || !canWork(5, 60)) {
+            return;
+        }
+        InputItems(dataIndex);
+    }
+
+    private void InputItems(int dataIndex) {
+        SideConfig config = configComponent.getConfig(TransmissionType.ITEM);
+        EnumFacing[] translatedFacings = MekanismUtils.getBaseOrientations(facing);
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            if (config.get(translatedFacings[facing.ordinal()]) == dataIndex) {
+                BlockPos offset = getPos().offset(facing);
+                TileEntity te = getWorld().getTileEntity(offset);
+                if (te == null) {
+                    continue;
+                }
+                IItemHandler itemHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing);
+                if (itemHandler == null) {
+                    continue;
+                }
+                inputFromExternal(itemHandler);
+            }
+        }
+    }
+
+    private synchronized void inputFromExternal(IItemHandler external) {
+        boolean successAtLeastOnce = false;
+
+        external:
+        for (int externalSlotId = 0; externalSlotId < external.getSlots(); externalSlotId++) {
+            ItemStack externalStack = external.getStackInSlot(externalSlotId);
+            if (externalStack.isEmpty()) {
+                continue;
+            }
+
+            for (int internalSlotId : getSlotsWithTier(tier)) {
+                ItemStack internalStack = inventory.get(internalSlotId);
+                int maxCanExtract = Math.min(externalStack.getCount(), externalStack.getMaxStackSize());
+                if (internalStack.isEmpty()) {
+                    // Extract external item and insert to internal.
+                    ItemStack extracted = external.extractItem(externalSlotId, maxCanExtract, false);
+                    inventory.set(internalSlotId, extracted);
+                    successAtLeastOnce = true;
+                    // If there are no more items in the current slot, check the next external slot.
+                    if (external.getStackInSlot(externalSlotId).isEmpty()) {
+                        continue external;
+                    }
+                    continue;
+                }
+
+                if (internalStack.getCount() >= internalStack.getMaxStackSize() || matchStacks(internalStack, externalStack)) {
+                    continue;
+                }
+
+                int extractAmt = Math.min(
+                        internalStack.getMaxStackSize() - internalStack.getCount(),
+                        maxCanExtract);
+
+                // Extract external item and insert to internal.
+                ItemStack extracted = external.extractItem(externalSlotId, extractAmt, false);
+                inventory.set(internalSlotId, copyStackWithSize(extracted, internalStack.getCount() + extracted.getCount()));
+                successAtLeastOnce = true;
+                // If there are no more items in the current slot, check the next external slot.
+                if (external.getStackInSlot(externalSlotId).isEmpty()) {
+                    continue external;
+                }
+            }
+        }
+
+        if (successAtLeastOnce) {
+            incrementSuccessCounter(60, 5);
+            markNoUpdate();
+        } else {
+            decrementSuccessCounter();
+        }
+    }
+
+    protected boolean canWork(int minWorkDelay, int maxWorkDelay) {
+        if (inventoryChanged) {
+            inventoryChanged = false;
+            return true;
+        }
+
+        if (successCounter <= 0) {
+            return ticksExisted % maxWorkDelay == 0;
+        }
+        int workDelay = Math.max(minWorkDelay, maxWorkDelay - (successCounter * 5));
+        return ticksExisted % workDelay == 0;
+    }
+
+    protected void incrementSuccessCounter(int maxWorkDelay, int minWorkDelay) {
+        int max = (maxWorkDelay - minWorkDelay) / 5;
+        if (successCounter < max) {
+            successCounter++;
+        }
+    }
+
+    protected void decrementSuccessCounter() {
+        if (successCounter > 0) {
+            successCounter--;
+        }
+    }
+
     private void BetterEjectingItem() {
         if (delayTicks == 0 || MekanismConfig.current().mekce.ItemsEjectWithoutDelay.val()) {
             outputItems(7);
             outputItems(8);
+            outputItems(10);
             if (!MekanismConfig.current().mekce.ItemsEjectWithoutDelay.val()) {
                 delayTicks = MekanismConfig.current().mekce.ItemEjectionDelay.val();
             }

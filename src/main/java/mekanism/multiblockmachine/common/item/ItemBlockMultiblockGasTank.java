@@ -87,6 +87,9 @@ public class ItemBlockMultiblockGasTank extends ItemBlock implements IGasItem, I
     @Override
     public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, World world, @Nonnull BlockPos pos, EnumFacing side, float hitX, float hitY,
                                 float hitZ, @Nonnull IBlockState state) {
+        if (stack.getCount() >1){
+            return false;
+        }
         boolean place = true;
         Block block = world.getBlockState(pos).getBlock();
         if (stack.getItem() instanceof ItemBlockMultiblockGasTank) {

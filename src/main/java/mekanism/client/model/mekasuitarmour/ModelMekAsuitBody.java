@@ -3,6 +3,7 @@ package mekanism.client.model.mekasuitarmour;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.entity.EntityLiving;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -256,11 +257,20 @@ public class ModelMekAsuitBody extends ModelBiped {
         legs_chest_exo.render(size);
     }
 
+    public void leftArmRender(float size) {
+        left_arm_armor.rotateAngleX = 0.0F;
+        left_arm_armor.render(size);
+    }
+    public void rightArmRender(float size) {
+        right_arm_armor.rotateAngleX = 0.0F;
+        right_arm_armor.render(size);
+    }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
         modelRenderer.rotateAngleX = x;
         modelRenderer.rotateAngleY = y;
         modelRenderer.rotateAngleZ = z;
     }
+
 
 }

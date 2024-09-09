@@ -7,6 +7,7 @@ import mekanism.common.Upgrade;
 import mekanism.common.base.IFactory.RecipeType;
 import mekanism.common.base.ITierUpgradeable;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
+import mekanism.common.config.MekanismConfig;
 import mekanism.common.recipe.inputs.MachineInput;
 import mekanism.common.recipe.machines.MachineRecipe;
 import mekanism.common.recipe.outputs.MachineOutput;
@@ -22,6 +23,7 @@ import java.util.Objects;
 public abstract class TileEntityUpgradeableMachine<INPUT extends MachineInput<INPUT>, OUTPUT extends MachineOutput<OUTPUT>, RECIPE extends MachineRecipe<INPUT, OUTPUT, RECIPE>> extends
         TileEntityBasicMachine<INPUT, OUTPUT, RECIPE> implements ITierUpgradeable {
 
+
     /**
      * The foundation of all machines - a simple tile entity with a facing, active state, initialized state, sound effect, and animated texture.
      *
@@ -32,6 +34,7 @@ public abstract class TileEntityUpgradeableMachine<INPUT extends MachineInput<IN
     public TileEntityUpgradeableMachine(String soundPath, MachineType type, int upgradeSlot, int baseTicksRequired) {
         super(soundPath, type, upgradeSlot, baseTicksRequired);
     }
+
 
     @Override
     public boolean upgrade(BaseTier upgradeTier) {
@@ -88,5 +91,7 @@ public abstract class TileEntityUpgradeableMachine<INPUT extends MachineInput<IN
     }
 
     protected abstract void upgradeInventory(TileEntityFactory factory);
+
+
 
 }

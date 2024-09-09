@@ -851,7 +851,7 @@ public class ClientProxy extends CommonProxy {
         MinecraftForge.EVENT_BUS.register(new ClientConnectionHandler());
         MinecraftForge.EVENT_BUS.register(new ClientPlayerTracker());
         MinecraftForge.EVENT_BUS.register(new ClientTickHandler());
-       // MinecraftForge.EVENT_BUS.register(new RenderFirstPersonMekaSuitArms());
+        MinecraftForge.EVENT_BUS.register(new RenderFirstPersonMekaSuitArms());
         MinecraftForge.EVENT_BUS.register(new RenderTickHandler());
         MinecraftForge.EVENT_BUS.register(SoundHandler.class);
 

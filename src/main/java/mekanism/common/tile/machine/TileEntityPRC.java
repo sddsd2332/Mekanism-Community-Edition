@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mekanism.api.TileNetworkList;
 import mekanism.api.gas.*;
 import mekanism.api.transmitters.TransmissionType;
+import mekanism.common.Mekanism;
 import mekanism.common.SideData;
 import mekanism.common.Upgrade;
 import mekanism.common.base.FluidHandlerWrapper;
@@ -54,6 +55,8 @@ public class TileEntityPRC extends TileEntityUpgradeableMachine<PressurizedInput
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.ENERGY, new int[]{1}));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.OUTPUT, new int[]{2}));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(new int[]{0, 2}, new boolean[]{false, true}));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_ENHANCED, new int[]{0}));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_ENHANCED_OUTPUT_ENHANCED, new int[]{0, 2}, new boolean[]{false, true}));
         configComponent.setConfig(TransmissionType.ITEM, new byte[]{1, 1, 1, 2, 1, 3});
 
         configComponent.setInputConfig(TransmissionType.FLUID);
@@ -79,6 +82,11 @@ public class TileEntityPRC extends TileEntityUpgradeableMachine<PressurizedInput
     public void onUpdate() {
         super.onUpdate();
         if (!world.isRemote) {
+            Mekanism.EXECUTE_MANAGER.addSyncTask(() ->{
+                AutomaticallyExtractItems(5, 0);
+                AutomaticallyExtractItems(6, 0);
+                BetterEjectingItem(6,2);
+            });
             PressurizedRecipe recipe = getRecipe();
             ChargeUtils.discharge(1, this);
             if (canOperate(recipe) && MekanismUtils.canFunction(this) && getEnergy() >= MekanismUtils.getEnergyPerTick(this, BASE_ENERGY_PER_TICK + recipe.extraEnergy)) {

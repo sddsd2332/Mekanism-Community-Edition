@@ -29,7 +29,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import javax.annotation.Nonnull;
 import java.util.Map;
 
-public class TileEntityNutritionalLiquifier extends TileEntityBasicMachine<ItemStackInput, GasOutput,NutritionalRecipe> implements ISustainedData, ITankManager, IGasHandler {
+public class TileEntityNutritionalLiquifier extends TileEntityBasicMachine<ItemStackInput, GasOutput, NutritionalRecipe> implements ISustainedData, ITankManager, IGasHandler {
     public static final int MAX_GAS = 10000;
     public GasTank gasTank = new GasTank(MAX_GAS);
     public NutritionalRecipe cachedRecipe;
@@ -45,6 +45,7 @@ public class TileEntityNutritionalLiquifier extends TileEntityBasicMachine<ItemS
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT, new int[]{0}));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.ENERGY, new int[]{1}));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.GAS, new int[]{2}));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_ENHANCED, new int[]{0}));
         configComponent.setConfig(TransmissionType.ITEM, new byte[]{2, 2, 1, 2, 4, 3});
         configComponent.setCanEject(TransmissionType.ITEM, false);
 
@@ -71,6 +72,7 @@ public class TileEntityNutritionalLiquifier extends TileEntityBasicMachine<ItemS
                 }
             }
             ChargeUtils.discharge(1, this);
+            Mekanism.EXECUTE_MANAGER.addSyncTask(() -> AutomaticallyExtractItems(4, 0));
             TileUtils.drawGas(inventory.get(2), gasTank);
             NutritionalRecipe recipe = getRecipe();
             if (canOperate(recipe) && getEnergy() >= energyPerTick && MekanismUtils.canFunction(this)) {
@@ -91,7 +93,7 @@ public class TileEntityNutritionalLiquifier extends TileEntityBasicMachine<ItemS
                 Mekanism.packetHandler.sendUpdatePacket(this);
             }
             needsPacket = false;
-        }else {
+        } else {
             if (updateDelay > 0) {
                 updateDelay--;
                 if (updateDelay == 0) {
@@ -178,7 +180,7 @@ public class TileEntityNutritionalLiquifier extends TileEntityBasicMachine<ItemS
 
 
     @Override
-   public void writeCustomNBT(NBTTagCompound nbtTags) {
+    public void writeCustomNBT(NBTTagCompound nbtTags) {
         super.writeCustomNBT(nbtTags);
         nbtTags.setTag("gasTank", gasTank.write(new NBTTagCompound()));
     }

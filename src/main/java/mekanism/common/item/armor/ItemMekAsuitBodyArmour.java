@@ -20,6 +20,7 @@ import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.UpgradeHelper;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -33,6 +34,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.UUID;
 
@@ -74,6 +76,11 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
             }
         }
         return armorModel;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public ModelMekAsuitBody getGearModel() {
+        return ModelMekAsuitBody.armorModel;
     }
 
 
@@ -271,4 +278,6 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
             list.add(LangUtils.localize("tooltip.meka_body.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
         }
     }
+
+
 }

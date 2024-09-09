@@ -93,7 +93,7 @@ public class ItemConfigurationCard extends ItemMekanism {
                 ItemStack stack = player.getHeldItem(hand);
                 if (player.isSneaking()) {
                     if (stack.getTagCompound() != null) {
-                        stack.getTagCompound().removeTag(ItemDataUtils.DATA_ID);
+                        stack.setTagCompound(null);
                     }
                     return EnumActionResult.SUCCESS;
                 }

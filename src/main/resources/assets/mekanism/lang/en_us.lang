@@ -1114,6 +1114,7 @@ tooltip.Hybrid_Storage=Blocks that can store 120 items, 2 gases, 1 fluid, and en
 # Side data
 sideData.None=None
 sideData.Input=Input
+sideData.Input_Enhance=Enhance Input
 sideData.Input_1=Input (1)
 sideData.Input_2=Input (2)
 sideData.Output=Output
@@ -1122,6 +1123,7 @@ sideData.Output_2=Output (2)
 sideData.Output_Enhance=Enhance Output
 sideData.Input_Output=Input/Output
 sideData.Input_Output_Enhance=Input/Enhance Output
+sideData.Input_Enhance_Output_Enhance=Enhance Input/Enhance Output
 sideData.Input_Extra=Extra-Input
 sideData.Energy=Energy
 sideData.Gas=Gas

@@ -28,6 +28,8 @@ public class TileEntityUltimateFactory extends TileEntityFactory {
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.OUTPUT_ENHANCED, getOutputSlotsWithTier(tier)));
         configComponent.setConfig(TransmissionType.ITEM, new byte[]{4, 1, 1, 3, 1, 2});
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_OUTPUT_ENHANCED, Input_Output, Input_Output_Enable));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_ENHANCED, getSlotsWithTier(tier)));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_OUTPUT_ENHANCED, Input_Output, Input_Output_Enable));
         configComponent.setInputConfig(TransmissionType.FLUID);
 
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.NONE, InventoryUtils.EMPTY));

@@ -65,6 +65,8 @@ public class ClientConfig extends BaseConfig {
 
     public final IntOption hudY = new IntOption(this,"client","hudY",0,"The HUD is offset up and down the screen.");
 
+    public final BooleanOption enableFirstPersonMekaSuitArms = new BooleanOption(this,"client","enableFirstPersonMekaSuitArms",false,"Whether to enable the first-person arm of MekaSuitArms ? (It is currently in WIP status)");
+
     public final BooleanOption enableBloom = new BooleanOption(this, "client", "enableBloom", false,
             "Enable the glow texture of MeKCEu, which may cause a performance penalty. (GTCEu or Lumenized installation required)");
 

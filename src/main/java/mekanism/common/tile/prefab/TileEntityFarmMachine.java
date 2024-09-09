@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mekanism.api.TileNetworkList;
 import mekanism.api.gas.*;
 import mekanism.api.transmitters.TransmissionType;
+import mekanism.common.Mekanism;
 import mekanism.common.MekanismItems;
 import mekanism.common.SideData;
 import mekanism.common.Upgrade;
@@ -67,7 +68,8 @@ public abstract class TileEntityFarmMachine<RECIPE extends FarmMachineRecipe<REC
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.ENERGY, new int[]{2}));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.EXTRA, new int[]{1}));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(new int[]{0, 3, 4}, new boolean[]{false, true, true}));
-
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_ENHANCED, new int[]{0}));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_ENHANCED_OUTPUT_ENHANCED, new int[]{0, 3, 4}, new boolean[]{false, true, true}));
         configComponent.setConfig(TransmissionType.ITEM, new byte[]{2, 1, 0, 0, 0, 3});
         configComponent.setInputConfig(TransmissionType.ENERGY);
 
@@ -109,6 +111,12 @@ public abstract class TileEntityFarmMachine<RECIPE extends FarmMachineRecipe<REC
         super.onUpdate();
         if (!world.isRemote) {
             ChargeUtils.discharge(2, this);
+            Mekanism.EXECUTE_MANAGER.addSyncTask(() ->{
+                AutomaticallyExtractItems(6, 0);
+                AutomaticallyExtractItems(7, 0);
+                BetterEjectingItem(7,3);
+                BetterEjectingItem(7,4);
+            });
             handleSecondaryFuel();
             boolean inactive = false;
             RECIPE recipe = getRecipe();

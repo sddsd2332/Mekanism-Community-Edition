@@ -1,6 +1,7 @@
 package mekanism.common.tile.prefab;
 
 import mekanism.api.transmitters.TransmissionType;
+import mekanism.common.Mekanism;
 import mekanism.common.MekanismItems;
 import mekanism.common.SideData;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
@@ -49,6 +50,9 @@ public abstract class TileEntityDoubleElectricMachine<RECIPE extends DoubleMachi
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.EXTRA, new int[]{1}));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_EXTRA, new int[]{1, 0}));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(new int[]{0, 2}, new boolean[]{false, true}));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_ENHANCED, new int[]{0}));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_ENHANCED_OUTPUT_ENHANCED, new int[]{0, 2}, new boolean[]{false, true}));
+
         configComponent.setConfig(TransmissionType.ITEM, new byte[]{4, 1, 1, 3, 1, 2});
         configComponent.setInputConfig(TransmissionType.ENERGY);
 
@@ -75,6 +79,11 @@ public abstract class TileEntityDoubleElectricMachine<RECIPE extends DoubleMachi
         super.onUpdate();
         if (!world.isRemote) {
             ChargeUtils.discharge(3, this);
+            Mekanism.EXECUTE_MANAGER.addSyncTask(() ->{
+                AutomaticallyExtractItems(7, 0);
+                AutomaticallyExtractItems(8, 0);
+                BetterEjectingItem(8,2);
+            });
             boolean inactive = false;
             RECIPE recipe = getRecipe();
             if (canOperate(recipe) && MekanismUtils.canFunction(this) && getEnergy() >= energyPerTick) {

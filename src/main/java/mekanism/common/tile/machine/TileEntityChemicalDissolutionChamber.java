@@ -58,6 +58,7 @@ public class TileEntityChemicalDissolutionChamber extends TileEntityUpgradeableM
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT, new int[]{1}));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.OUTPUT, new int[]{2}));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.ENERGY, new int[]{3}));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_ENHANCED, new int[]{1}));
         configComponent.setConfig(TransmissionType.ITEM, new byte[]{1, 2, 2, 4, 2, 3});
 
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.NONE, InventoryUtils.EMPTY));
@@ -85,6 +86,8 @@ public class TileEntityChemicalDissolutionChamber extends TileEntityUpgradeableM
                 }
             }
             ChargeUtils.discharge(3, this);
+            Mekanism.EXECUTE_MANAGER.addSyncTask(() -> AutomaticallyExtractItems(5, 1));
+
             TileUtils.receiveGasItem(inventory.get(0), injectTank, MekanismFluids.SulfuricAcid);
             TileUtils.drawGas(inventory.get(2), outputTank);
             boolean changed = false;

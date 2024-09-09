@@ -254,6 +254,9 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
+        if (stack.getCount() > 1) {
+            return  EnumActionResult.PASS;
+        }
         MachineType type = MachineType.get(stack);
         if (type == MachineType.FLUID_TANK && getBucketMode(stack)) {
             return EnumActionResult.PASS;
@@ -262,8 +265,10 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
     }
 
     @Override
-    public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, World world, @Nonnull BlockPos pos, EnumFacing side, float hitX, float hitY,
-                                float hitZ, @Nonnull IBlockState state) {
+    public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, World world, @Nonnull BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull IBlockState state) {
+        if (stack.getCount() > 1) {
+            return false;
+        }
         boolean place = true;
         MachineType type = MachineType.get(stack);
         if (type == MachineType.DIGITAL_MINER || type == MachineType.MODIFICATION_STATION) {
@@ -397,6 +402,9 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer entityplayer, @Nonnull EnumHand hand) {
         ItemStack itemstack = entityplayer.getHeldItem(hand);
+        if (itemstack.getCount() > 1) {
+            return new ActionResult<>(EnumActionResult.PASS, itemstack);
+        }
         MachineType type = MachineType.get(itemstack);
         if (MachineType.get(itemstack) == MachineType.PERSONAL_CHEST) {
             if (!world.isRemote) {
@@ -800,7 +808,7 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
         MachineType type = MachineType.get(stack);
-        if (type == MachineType.CREATIVE_FACTORY){
+        if (type == MachineType.CREATIVE_FACTORY) {
             return false;
         }
         return getEnergy(stack) > 0;

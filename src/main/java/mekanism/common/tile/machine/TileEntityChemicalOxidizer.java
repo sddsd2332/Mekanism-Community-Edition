@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mekanism.api.TileNetworkList;
 import mekanism.api.gas.*;
 import mekanism.api.transmitters.TransmissionType;
+import mekanism.common.Mekanism;
 import mekanism.common.SideData;
 import mekanism.common.base.ISustainedData;
 import mekanism.common.base.ITankManager;
@@ -45,6 +46,7 @@ public class TileEntityChemicalOxidizer extends TileEntityUpgradeableMachine<Ite
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT, new int[]{0}));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.ENERGY, new int[]{1}));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.GAS, new int[]{2}));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_ENHANCED, new int[]{0}));
         configComponent.setConfig(TransmissionType.ITEM, new byte[]{2, 2, 1, 2, 4, 3});
         configComponent.setCanEject(TransmissionType.ITEM, false);
 
@@ -65,6 +67,7 @@ public class TileEntityChemicalOxidizer extends TileEntityUpgradeableMachine<Ite
         super.onUpdate();
         if (!world.isRemote) {
             ChargeUtils.discharge(1, this);
+            Mekanism.EXECUTE_MANAGER.addSyncTask(() -> AutomaticallyExtractItems(4, 0));
             TileUtils.drawGas(inventory.get(2), gasTank);
             OxidationRecipe recipe = getRecipe();
             if (canOperate(recipe) && getEnergy() >= energyPerTick && MekanismUtils.canFunction(this)) {

@@ -5,10 +5,7 @@ import mekanism.api.TileNetworkList;
 import mekanism.api.infuse.InfuseObject;
 import mekanism.api.infuse.InfuseRegistry;
 import mekanism.api.transmitters.TransmissionType;
-import mekanism.common.InfuseStorage;
-import mekanism.common.MekanismItems;
-import mekanism.common.PacketHandler;
-import mekanism.common.SideData;
+import mekanism.common.*;
 import mekanism.common.base.ISustainedData;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.recipe.RecipeHandler;
@@ -57,6 +54,8 @@ public class TileEntityMetallurgicInfuser extends TileEntityUpgradeableMachine<I
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.EXTRA, new int[]{1}));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_EXTRA, new int[]{1, 2}));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(new int[]{2, 3}, new boolean[]{false, true}));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_ENHANCED, new int[]{2}));
+        configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT_ENHANCED_OUTPUT_ENHANCED, new int[]{2, 3}, new boolean[]{false, true}));
         configComponent.setConfig(TransmissionType.ITEM, new byte[]{4, 1, 1, 3, 1, 2});
 
         configComponent.setInputConfig(TransmissionType.ENERGY);
@@ -72,6 +71,11 @@ public class TileEntityMetallurgicInfuser extends TileEntityUpgradeableMachine<I
         super.onUpdate();
         if (!world.isRemote) {
             ChargeUtils.discharge(4, this);
+            Mekanism.EXECUTE_MANAGER.addSyncTask(() ->{
+                AutomaticallyExtractItems(7, 2);
+                AutomaticallyExtractItems(8, 2);
+                BetterEjectingItem(8,3);
+            });
             ItemStack infuseInput = inventory.get(1);
             if (!infuseInput.isEmpty()) {
                 InfuseObject pendingInfuseInput = InfuseRegistry.getObject(infuseInput);
