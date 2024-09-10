@@ -78,10 +78,6 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
         return armorModel;
     }
 
-    @SideOnly(Side.CLIENT)
-    public ModelMekAsuitBody getGearModel() {
-        return ModelMekAsuitBody.armorModel;
-    }
 
 
     @Override
