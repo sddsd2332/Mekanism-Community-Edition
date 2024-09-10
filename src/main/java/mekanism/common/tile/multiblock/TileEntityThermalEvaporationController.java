@@ -294,7 +294,7 @@ public class TileEntityThermalEvaporationController extends TileEntityThermalEva
             return false;
         }
         structured = true;
-        markForUpdateSync();
+        markNoUpdateSync();
         return true;
     }
 

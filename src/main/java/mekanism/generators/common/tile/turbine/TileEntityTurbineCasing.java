@@ -47,7 +47,7 @@ public class TileEntityTurbineCasing extends TileEntityMultiblock<SynchronizedTu
             if (structure != null) {
                 if (structure.fluidStored != null && structure.fluidStored.amount <= 0) {
                     structure.fluidStored = null;
-                    markForUpdateSync();
+                    markNoUpdateSync();
                 }
 
                 if (isRendering) {

@@ -9,6 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import javax.annotation.Nonnull;
@@ -149,7 +150,11 @@ public class TileEntitySynchronized extends TileEntity {
         if (world == null) {
             return;
         }
-        world.markChunkDirty(pos, this);
+        // Prevent extra chunk loading and checks.
+        Chunk loadedChunk = world.getChunkProvider().getLoadedChunk(pos.getX() >> 4, pos.getZ() >> 4);
+        if (loadedChunk != null) {
+            loadedChunk.markDirty();
+        }
     }
 
     /**

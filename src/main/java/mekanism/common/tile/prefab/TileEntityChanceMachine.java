@@ -106,7 +106,7 @@ public abstract class TileEntityChanceMachine<RECIPE extends ChanceMachineRecipe
     @Override
     public void operate(RECIPE recipe) {
         recipe.operate(inventory, 0, 2, 4);
-        markForUpdateSync();
+        markNoUpdateSync();
     }
 
     @Override

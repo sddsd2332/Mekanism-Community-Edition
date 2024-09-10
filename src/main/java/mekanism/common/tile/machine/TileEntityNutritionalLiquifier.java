@@ -81,7 +81,7 @@ public class TileEntityNutritionalLiquifier extends TileEntityBasicMachine<ItemS
                 } else {
                     operate(recipe);
                     operatingTicks = 0;
-                    markForUpdateSync();
+                    markNoUpdateSync();
                 }
             } else if (prevEnergy >= getEnergy()) {
                 setActive(false);
@@ -142,7 +142,7 @@ public class TileEntityNutritionalLiquifier extends TileEntityBasicMachine<ItemS
 
     public void operate(NutritionalRecipe recipe) {
         recipe.operate(inventory, gasTank);
-        markForUpdateSync();
+        markNoUpdateSync();
     }
 
     @Override

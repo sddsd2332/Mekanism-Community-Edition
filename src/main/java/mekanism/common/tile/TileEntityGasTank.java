@@ -114,7 +114,7 @@ public class TileEntityGasTank extends TileEntityContainerBlock implements IGasH
             currentGasAmount = newGasAmount;
             int newRedstoneLevel = getRedstoneLevel();
             if (newRedstoneLevel != currentRedstoneLevel) {
-                markForUpdateSync();
+                markNoUpdateSync();
                 currentRedstoneLevel = newRedstoneLevel;
             }
         }
@@ -128,7 +128,7 @@ public class TileEntityGasTank extends TileEntityContainerBlock implements IGasH
         tier = GasTankTier.values()[upgradeTier.ordinal()];
         gasTank.setMaxGas(tier.getStorage());
         Mekanism.packetHandler.sendUpdatePacket(this);
-        markForUpdateSync();
+        markNoUpdateSync();
         return true;
     }
 

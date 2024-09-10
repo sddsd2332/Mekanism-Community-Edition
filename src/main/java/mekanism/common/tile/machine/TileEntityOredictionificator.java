@@ -95,7 +95,7 @@ public class TileEntityOredictionificator extends TileEntityContainerBlock imple
                         outputStack.grow(1);
                         didProcess = true;
                     }
-                    markForUpdateSync();
+                    markNoUpdateSync();
                 }
             }
         }

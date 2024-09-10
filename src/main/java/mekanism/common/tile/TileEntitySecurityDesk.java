@@ -124,7 +124,7 @@ public class TileEntitySecurityDesk extends TileEntityContainerBlock implements 
         manager.addFrequency(freq);
         frequency = (SecurityFrequency) freq;
 //        MekanismUtils.saveChunk(this);
-        markForUpdateSync();
+        markNoUpdateSync();
     }
 
     @Override

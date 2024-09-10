@@ -89,7 +89,7 @@ public class TileComponentUpgrade implements ITileComponent {
                             tileEntity.inventory.get(upgradeSlot).shrink(added);
                         }
                         Mekanism.packetHandler.sendUpdatePacket(tileEntity);
-                        tileEntity.markForUpdateSync();
+                        tileEntity.markNoUpdateSync();
                     }
                 } else {
                     upgradeTicks = 0;
@@ -128,7 +128,7 @@ public class TileComponentUpgrade implements ITileComponent {
                     //Send an update packet to the client to update the number of muffling upgrades installed
                     tileEntity.doRestrictedTick();
                 }
-                tileEntity.markForUpdateSync();
+                tileEntity.markNoUpdateSync();
                 return toAdd;
             }
         }

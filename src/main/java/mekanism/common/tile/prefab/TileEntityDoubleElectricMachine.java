@@ -137,7 +137,7 @@ public abstract class TileEntityDoubleElectricMachine<RECIPE extends DoubleMachi
     @Override
     public void operate(RECIPE recipe) {
         recipe.operate(inventory, 0, 1, 2);
-        markForUpdateSync();
+        markNoUpdateSync();
     }
 
     @Override

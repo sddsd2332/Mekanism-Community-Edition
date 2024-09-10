@@ -197,7 +197,7 @@ public abstract class TileEntityFarmMachine<RECIPE extends FarmMachineRecipe<REC
     @Override
     public void operate(RECIPE recipe) {
         recipe.operate(inventory, 0, gasTank, secondaryEnergyThisTick, 3, 4);
-        markForUpdateSync();
+        markNoUpdateSync();
     }
 
     @Override

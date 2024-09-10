@@ -133,7 +133,7 @@ public class TileEntityChemicalInfuser extends TileEntityBasicMachine<ChemicalPa
     public void operate(ChemicalInfuserRecipe recipe) {
         int operations = getUpgradedUsage(recipe);
         recipe.operate(leftTank, rightTank, centerTank, operations);
-        markForUpdateSync();
+        markNoUpdateSync();
     }
 
     @Override

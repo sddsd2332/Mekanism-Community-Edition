@@ -81,19 +81,19 @@ public class TileEntityFissionCasing extends TileEntityMultiblock<SynchronizedFi
             if (structure != null) {
                 if (structure.waterStored != null && structure.waterStored.amount <= 0) {
                     structure.waterStored = null;
-                    markForUpdateSync();
+                    markNoUpdateSync();
                 }
                 if (structure.steamStored != null && structure.steamStored.amount <= 0) {
                     structure.steamStored = null;
-                    markForUpdateSync();
+                    markNoUpdateSync();
                 }
                 if (structure.InputGas != null && structure.InputGas.amount <= 0) {
                     structure.InputGas = null;
-                    markForUpdateSync();
+                    markNoUpdateSync();
                 }
                 if (structure.OutputGas != null && structure.OutputGas.amount <= 0) {
                     structure.OutputGas = null;
-                    markForUpdateSync();
+                    markNoUpdateSync();
                 }
 
                 if (isRendering) {

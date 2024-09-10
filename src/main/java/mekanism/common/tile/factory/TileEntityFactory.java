@@ -304,7 +304,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
         }
 
         factory.upgraded = true;
-        factory.markForUpdateSync();
+        factory.markNoUpdateSync();
         Mekanism.packetHandler.sendUpdatePacket(factory);
         return true;
     }
@@ -963,7 +963,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
             BasicMachineRecipe<?> recipe = (BasicMachineRecipe<?>) cachedRecipe[process];
             recipe.operate(inventory, inputSlot, outputSlot, tier != FactoryTier.CREATIVE);
         }
-        markForUpdateSync();
+        markNoUpdateSync();
     }
 
     public int getUpgradedUsage() {
@@ -1028,7 +1028,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
             TileUtils.readTankData(dataStream, gasTank);
             TileUtils.readTankData(dataStream, gasOutTank);
             if (upgraded) {
-                markForUpdateSync();
+                markNoUpdateSync();
                 MekanismUtils.updateBlock(world, getPos());
                 upgraded = false;
             }
@@ -1528,7 +1528,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
                     ItemStack newStack = stack.isEmpty() ? checkStack : stack;
                     inventory.set(slotID, StackUtils.size(newStack, (total + 1) / 2));
                     inventory.set(checkSlotID, StackUtils.size(newStack, total / 2));
-                    markForUpdateSync();
+                    markNoUpdateSync();
                     return;
                 }
             }
@@ -1762,7 +1762,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
                 index++;
             }
             sorted.clear();
-            factory.markForUpdateSync();
+            factory.markNoUpdateSync();
         }
 
         /**

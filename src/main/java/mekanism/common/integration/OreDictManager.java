@@ -40,6 +40,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @EventBusSubscriber(modid = Mekanism.MODID)
 public final class OreDictManager {
@@ -483,20 +484,22 @@ public final class OreDictManager {
             tempCrafting.setInventorySlotContents(i, ItemStack.EMPTY);
         }
 
-        for (ItemStack logEntry : OreDictionary.getOres("logWood", false)) {
+        final DummyWorld finalDummyWorld = dummyWorld;
+        OreDictionary.getOres("logWood", false).parallelStream().forEach(logEntry -> {
             if (logEntry.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
-                for (int j = 0; j < 16; j++) {
-                    addSawmillLog(tempCrafting, new ItemStack(logEntry.getItem(), 1, j), dummyWorld);
-                }
+                IntStream.range(0, 16).parallel()
+                        .forEach(j -> addSawmillLog(tempCrafting, new ItemStack(logEntry.getItem(), 1, j), finalDummyWorld));
             } else {
-                addSawmillLog(tempCrafting, StackUtils.size(logEntry, 1), dummyWorld);
+                addSawmillLog(tempCrafting, StackUtils.size(logEntry, 1), finalDummyWorld);
             }
-            RecipeHandler.addPRCRecipe(StackUtils.size(logEntry, 1), new FluidStack(FluidRegistry.WATER, 100), new GasStack(MekanismFluids.Oxygen, 100), ItemStack.EMPTY,
-                    new GasStack(MekanismFluids.Hydrogen, 100), 0, 150);
-        }
+            synchronized (Recipe.PRESSURIZED_REACTION_CHAMBER) {
+                RecipeHandler.addPRCRecipe(StackUtils.size(logEntry, 1), new FluidStack(FluidRegistry.WATER, 100), new GasStack(MekanismFluids.Oxygen, 100), ItemStack.EMPTY,
+                        new GasStack(MekanismFluids.Hydrogen, 100), 0, 150);
+            }
+        });
     }
 
-    private static void addSawmillLog(InventoryCrafting tempCrafting, ItemStack log, DummyWorld world) {
+    private static synchronized void addSawmillLog(InventoryCrafting tempCrafting, ItemStack log, DummyWorld world) {
         tempCrafting.setInventorySlotContents(0, log);
         IRecipe matchingRecipe = CraftingManager.findMatchingRecipe(tempCrafting, world);
         ItemStack resultEntry = matchingRecipe != null ? matchingRecipe.getRecipeOutput() : ItemStack.EMPTY;

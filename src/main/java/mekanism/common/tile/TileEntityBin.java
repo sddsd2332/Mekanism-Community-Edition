@@ -75,7 +75,7 @@ public class TileEntityBin extends TileEntityBasicBlock implements ISidedInvento
         }
         tier = BinTier.values()[upgradeTier.ordinal()];
         Mekanism.packetHandler.sendUpdatePacket(this);
-        markForUpdateSync();
+        markNoUpdateSync();
         return true;
     }
 
@@ -182,7 +182,7 @@ public class TileEntityBin extends TileEntityBasicBlock implements ISidedInvento
         if (count == 0) {
             setItemType(ItemStack.EMPTY);
         }
-        markForUpdateSync();
+        markNoUpdateSync();
     }
 
     @Override
@@ -192,7 +192,7 @@ public class TileEntityBin extends TileEntityBasicBlock implements ISidedInvento
             delayTicks = Math.max(0, delayTicks - 1);
             sortStacks();
             if (getItemCount() != prevCount) {
-                markForUpdateSync();
+                markNoUpdateSync();
                 MekanismUtils.saveChunk(this);
             }
 

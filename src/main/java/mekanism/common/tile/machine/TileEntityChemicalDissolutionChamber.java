@@ -183,7 +183,7 @@ public class TileEntityChemicalDissolutionChamber extends TileEntityUpgradeableM
 
     public void operate(DissolutionRecipe recipe) {
         recipe.operate(inventory, 1, outputTank);
-        markForUpdateSync();
+        markNoUpdateSync();
     }
 
     public void minorOperate() {

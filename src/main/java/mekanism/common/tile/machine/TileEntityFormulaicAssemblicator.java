@@ -265,7 +265,7 @@ public class TileEntityFormulaicAssemblicator extends TileEntityElectricBlock im
             if (formula != null) {
                 moveItemsToGrid();
             }
-            markForUpdateSync();
+            markNoUpdateSync();
             return true;
         }
         return false;
@@ -296,7 +296,7 @@ public class TileEntityFormulaicAssemblicator extends TileEntityElectricBlock im
             if (!recipeStack.isEmpty()) {
                 //Update recipeStack as well so we can check if it is empty without having to get it again
                 inventory.set(i, recipeStack = tryMoveToInput(recipeStack));
-                markForUpdateSync();
+                markNoUpdateSync();
                 if (!recipeStack.isEmpty()) {
                     ret = false;
                 }
@@ -308,7 +308,7 @@ public class TileEntityFormulaicAssemblicator extends TileEntityElectricBlock im
                     if (!stockStack.isEmpty() && formula.isIngredientInPos(world, stockStack, i - SLOT_CRAFT_MATRIX_FIRST)) {
                         inventory.set(i, StackUtils.size(stockStack, 1));
                         stockStack.shrink(1);
-                        markForUpdateSync();
+                        markNoUpdateSync();
                         found = true;
                         break;
                     }
@@ -333,7 +333,7 @@ public class TileEntityFormulaicAssemblicator extends TileEntityElectricBlock im
                 inventory.set(i, tryMoveToInput(recipeStack));
             }
         }
-        markForUpdateSync();
+        markNoUpdateSync();
     }
 
     private void toggleAutoMode() {
@@ -344,7 +344,7 @@ public class TileEntityFormulaicAssemblicator extends TileEntityElectricBlock im
             moveItemsToInput(false);
             autoMode = true;
         }
-        markForUpdateSync();
+        markNoUpdateSync();
     }
 
     private void toggleStockControl() {
@@ -365,14 +365,14 @@ public class TileEntityFormulaicAssemblicator extends TileEntityElectricBlock im
                     if (compareStack.isEmpty()) {
                         inventory.set(j, stockStack);
                         inventory.set(i, ItemStack.EMPTY);
-                        markForUpdateSync();
+                        markNoUpdateSync();
                         return;
                     } else if (compareStack.getCount() < compareStack.getMaxStackSize()) {
                         if (InventoryUtils.areItemsStackable(stockStack, compareStack)) {
                             int newCount = compareStack.getCount() + stockStack.getCount();
                             compareStack.setCount(Math.min(compareStack.getMaxStackSize(), newCount));
                             stockStack.setCount(Math.max(0, newCount - compareStack.getMaxStackSize()));
-                            markForUpdateSync();
+                            markNoUpdateSync();
                             return;
                         }
                     }
@@ -430,7 +430,7 @@ public class TileEntityFormulaicAssemblicator extends TileEntityElectricBlock im
                 RecipeFormula formula = new RecipeFormula(world, inventory, SLOT_CRAFT_MATRIX_FIRST);
                 if (formula.isValidFormula(world)) {
                     item.setInventory(formulaStack, formula.input);
-                    markForUpdateSync();
+                    markNoUpdateSync();
                 }
             }
         }

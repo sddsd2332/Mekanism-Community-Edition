@@ -103,7 +103,7 @@ public class TileEntityEnergyCube extends TileEntityElectricBlock implements ICo
         }
         tier = EnergyCubeTier.values()[upgradeTier.ordinal()];
         Mekanism.packetHandler.sendUpdatePacket(this);
-        markForUpdateSync();
+        markNoUpdateSync();
         return true;
     }
 
@@ -221,7 +221,7 @@ public class TileEntityEnergyCube extends TileEntityElectricBlock implements ICo
         super.setEnergy(energy);
         int newRedstoneLevel = getRedstoneLevel();
         if (newRedstoneLevel != currentRedstoneLevel) {
-            markForUpdateSync();
+            markNoUpdateSync();
             currentRedstoneLevel = newRedstoneLevel;
         }
     }

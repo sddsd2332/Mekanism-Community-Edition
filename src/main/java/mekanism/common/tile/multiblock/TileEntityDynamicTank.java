@@ -79,10 +79,10 @@ public class TileEntityDynamicTank extends TileEntityMultiblock<SynchronizedTank
         } else if (structure != null) {
             if (structure.fluidStored != null && structure.fluidStored.amount <= 0) {
                 structure.fluidStored = null;
-                markForUpdateSync();
+                markNoUpdateSync();
             } else if (structure.gasstored != null && structure.gasstored.amount <= 0) {
                 structure.gasstored = null;
-                markForUpdateSync();
+                markNoUpdateSync();
             }
             if (isRendering) {
                 boolean needsValveUpdate = false;

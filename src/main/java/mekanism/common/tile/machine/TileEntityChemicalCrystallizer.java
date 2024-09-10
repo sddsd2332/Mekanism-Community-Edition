@@ -140,7 +140,7 @@ public class TileEntityChemicalCrystallizer extends TileEntityUpgradeableMachine
 
     public void operate(CrystallizerRecipe recipe) {
         recipe.operate(inputTank, inventory, 1);
-        markForUpdateSync();
+        markNoUpdateSync();
     }
 
     @Override

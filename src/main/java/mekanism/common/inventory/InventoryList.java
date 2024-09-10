@@ -140,7 +140,7 @@ public class InventoryList implements IInventory {
     @Override
     public void markDirty() {
         if (te instanceof TileEntitySynchronized teSync) {
-            teSync.markForUpdateSync();
+            teSync.markNoUpdateSync();
         } else {
             this.te.markDirty();
         }

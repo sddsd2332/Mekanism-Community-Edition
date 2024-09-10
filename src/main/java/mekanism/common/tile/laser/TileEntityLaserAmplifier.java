@@ -142,7 +142,7 @@ public class TileEntityLaserAmplifier extends TileEntityContainerBlock implement
             }
             int newRedstoneLevel = getRedstoneLevel();
             if (newRedstoneLevel != currentRedstoneLevel) {
-                markForUpdateSync();
+                markNoUpdateSync();
                 currentRedstoneLevel = newRedstoneLevel;
             }
             if (emittingRedstone != prevRedstone) {
