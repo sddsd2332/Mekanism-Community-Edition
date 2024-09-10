@@ -301,7 +301,7 @@ public abstract class TileEntitySidedPipe extends TileEntityRestrictedTick imple
             for (int i = 0; i < 6; i++) {
                 connectionTypes[i] = ConnectionType.values()[dataStream.readInt()];
             }
-            markForUpdateSync();
+            markNoUpdateSync();
             MekanismUtils.updateBlock(world, pos);
         }
     }
@@ -446,7 +446,7 @@ public abstract class TileEntitySidedPipe extends TileEntityRestrictedTick imple
         if (getPossibleTransmitterConnections() != currentTransmitterConnections) {
             markDirtyTransmitters();
         }
-        markForUpdateSync();
+        markNoUpdateSync();
     }
 
     protected void markDirtyTransmitters() {

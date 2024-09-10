@@ -85,7 +85,7 @@ public abstract class TileEntityUpgradeableMachine<INPUT extends MachineInput<IN
         }
 
         factory.upgraded = true;
-        factory.markForUpdateSync();
+        factory.markNoUpdateSync();
         Mekanism.packetHandler.sendUpdatePacket(factory);
         return true;
     }

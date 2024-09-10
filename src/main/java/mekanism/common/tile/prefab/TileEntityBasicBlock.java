@@ -227,7 +227,7 @@ import java.util.Set;
         }
         if (facing != clientFacing && !world.isRemote) {
             Mekanism.packetHandler.sendUpdatePacket(this);
-            markForUpdateSync();
+            markNoUpdateSync();
             clientFacing = facing;
         }
     }

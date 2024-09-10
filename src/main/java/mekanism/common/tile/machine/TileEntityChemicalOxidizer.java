@@ -78,7 +78,7 @@ public class TileEntityChemicalOxidizer extends TileEntityUpgradeableMachine<Ite
                 } else {
                     operate(recipe);
                     operatingTicks = 0;
-                    markForUpdateSync();
+                    markNoUpdateSync();
                 }
             } else if (prevEnergy >= getEnergy()) {
                 setActive(false);
@@ -136,7 +136,7 @@ public class TileEntityChemicalOxidizer extends TileEntityUpgradeableMachine<Ite
 
     public void operate(OxidationRecipe recipe) {
         recipe.operate(inventory, 0, gasTank);
-        markForUpdateSync();
+        markNoUpdateSync();
     }
 
     @Override

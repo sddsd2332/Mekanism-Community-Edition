@@ -159,7 +159,7 @@ public abstract class TileEntityContainerBlock extends TileEntityBasicBlock impl
             if (!itemstack.isEmpty() && itemstack.getCount() > getInventoryStackLimit()) {
                 itemstack.setCount(getInventoryStackLimit());
             }
-            markForUpdateSync();
+            markNoUpdateSync();
         }
     }
 

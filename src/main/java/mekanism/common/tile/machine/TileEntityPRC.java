@@ -158,7 +158,7 @@ public class TileEntityPRC extends TileEntityUpgradeableMachine<PressurizedInput
     @Override
     public void operate(PressurizedRecipe recipe) {
         recipe.operate(inventory, 0, inputFluidTank, inputGasTank, outputGasTank, 2);
-        markForUpdateSync();
+        markNoUpdateSync();
     }
 
     @Override

@@ -228,7 +228,7 @@ public abstract class TileEntityAdvancedElectricMachine<RECIPE extends AdvancedM
     @Override
     public void operate(RECIPE recipe) {
         recipe.operate(inventory, 0, 2, gasTank, secondaryEnergyThisTick);
-        markForUpdateSync();
+        markNoUpdateSync();
     }
 
     @Override

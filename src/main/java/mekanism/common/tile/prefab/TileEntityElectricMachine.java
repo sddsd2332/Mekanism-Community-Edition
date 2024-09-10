@@ -136,7 +136,7 @@ public abstract class TileEntityElectricMachine<RECIPE extends BasicMachineRecip
     @Override
     public void operate(RECIPE recipe) {
         recipe.operate(inventory, 0, 2);
-        markForUpdateSync();
+        markNoUpdateSync();
     }
 
     @Override

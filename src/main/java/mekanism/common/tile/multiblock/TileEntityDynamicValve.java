@@ -233,7 +233,7 @@ public class TileEntityDynamicValve extends TileEntityDynamicTank implements IFl
             player.sendMessage(new TextComponentString(EnumColor.DARK_BLUE + Mekanism.LOG_TAG + " " + EnumColor.GREY +
                     LangUtils.localize("tooltip.configurator.reactorPortEject") + modeText));
             Mekanism.packetHandler.sendUpdatePacket(this);
-            markForUpdateSync();
+            markNoUpdateSync();
         }
         return EnumActionResult.SUCCESS;
     }

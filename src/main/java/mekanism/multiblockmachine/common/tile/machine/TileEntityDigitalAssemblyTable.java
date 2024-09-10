@@ -233,7 +233,7 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
     @Override
     public void operate(DigitalAssemblyTableRecipe recipe) {
         recipe.operate(inventory, 2, 3, 4, 5, 6, 7, 8, 9, 10, inputFluidTank, inputGasTank, 14, outputFluidTank, outputGasTank);
-        markForUpdateSync();
+        markNoUpdateSync();
     }
 
     @Override

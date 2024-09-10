@@ -120,19 +120,19 @@ public class TileEntityQuantumEntangloporter extends TileEntityElectricBlock imp
             if (manager != null) {
                 if (frequency != null && !frequency.valid) {
                     frequency = (InventoryFrequency) manager.validateFrequency(securityComponent.getOwnerUUID(), Coord4D.get(this), frequency);
-                    markForUpdateSync();
+                    markNoUpdateSync();
                 }
 
                 if (frequency != null) {
                     frequency = (InventoryFrequency) manager.update(Coord4D.get(this), frequency);
                     if (frequency == null) {
-                        markForUpdateSync();
+                        markNoUpdateSync();
                     }
                 }
             } else {
                 frequency = null;
                 if (lastFreq != null) {
-                    markForUpdateSync();
+                    markNoUpdateSync();
                 }
             }
         }
@@ -189,7 +189,7 @@ public class TileEntityQuantumEntangloporter extends TileEntityElectricBlock imp
             if (freq.name.equals(name)) {
                 frequency = (InventoryFrequency) freq;
                 frequency.activeCoords.add(Coord4D.get(this));
-                markForUpdateSync();
+                markNoUpdateSync();
                 return;
             }
         }
@@ -199,7 +199,7 @@ public class TileEntityQuantumEntangloporter extends TileEntityElectricBlock imp
         manager.addFrequency(freq);
         frequency = (InventoryFrequency) freq;
 //        MekanismUtils.saveChunk(this);
-        markForUpdateSync();
+        markNoUpdateSync();
     }
 
     @Override

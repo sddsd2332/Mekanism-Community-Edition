@@ -91,7 +91,7 @@ public class TileEntityMidsizeGasTank extends TileEntityContainerBlock implement
             currentGasAmount = newGasAmount;
             int newRedstoneLevel = getRedstoneLevel();
             if (newRedstoneLevel != currentRedstoneLevel) {
-                markForUpdateSync();
+                markNoUpdateSync();
                 currentRedstoneLevel = newRedstoneLevel;
             }
         }

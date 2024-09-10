@@ -129,7 +129,7 @@ public class TileEntityAntiprotonicNucleosynthesizer extends TileEntityUpgradeab
     @Override
     public void operate(NucleosynthesizerRecipe recipe) {
         recipe.operate(inventory, 0, inputGasTank, 2);
-        markForUpdateSync();
+        markNoUpdateSync();
     }
 
     @Override
