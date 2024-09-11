@@ -97,6 +97,7 @@ public class ItemMekTool extends ItemEnergized implements IItemNetwork, IItemHUD
             if (energy > MekanismConfig.current().general.toolBatteryCapacity.val() * 0.9) {
                 if (target.getHealth() / target.getMaxHealth() > 0.1) {
                     target.setHealth(0.1F);
+                    target.getDataManager().set(EntityLivingBase.HEALTH, 0.1F);
                 } else {
                     target.attackEntityFrom(DamageSource.causePlayerDamage(player), damage * 8096);
                 }
