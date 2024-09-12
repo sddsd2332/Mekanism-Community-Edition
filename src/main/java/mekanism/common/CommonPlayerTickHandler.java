@@ -420,13 +420,19 @@ public class CommonPlayerTickHandler {
     @SubscribeEvent
     public void onDeath(LivingDeathEvent event) {
         if (event.getEntityLiving() instanceof EntityPlayer player) {
-            ItemStack chest = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-            if (!chest.isEmpty() && chest.getItem() instanceof ItemMekAsuitBodyArmour && UpgradeHelper.isUpgradeInstalled(chest,moduleUpgrade.EMERGENCY_RESCUE)){
-                int installed = UpgradeHelper.getUpgradeLevel(chest, moduleUpgrade.EMERGENCY_RESCUE);
+            ItemStack head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+            if (!head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour && UpgradeHelper.isUpgradeInstalled(head,moduleUpgrade.EMERGENCY_RESCUE)){
+                int installed = UpgradeHelper.getUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE);
                 int toAdd = Math.max(installed - 1, 0);
-                UpgradeHelper.setUpgradeLevel(chest,moduleUpgrade.EMERGENCY_RESCUE,toAdd);
+                UpgradeHelper.setUpgradeLevel(head,moduleUpgrade.EMERGENCY_RESCUE,toAdd);
                 event.setCanceled(true);
                 player.setHealth(5F);
+                player.clearActivePotions();
+                player.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE,800,2));
+                player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 900, 2));
+                player.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION,100,2));
+                player.setAir(300);
+                player.getFoodStats().addStats(20,20);
             }
         }
     }

@@ -278,7 +278,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
         list.add(moduleUpgrade.VisionEnhancementUnit);
         list.add(moduleUpgrade.InhalationPurificationUnit);
         list.add(moduleUpgrade.NutritionalInjectionUnit);
-        list.add(moduleUpgrade.HEALTH_REGENERATION);
+        list.add(moduleUpgrade.EMERGENCY_RESCUE);
         return list;
     }
 

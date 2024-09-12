@@ -6,7 +6,7 @@ import java.util.Locale;
 
 public enum moduleUpgrade {
 
-    //  EMPTY("base",1,),
+    //EMPTY("base",1,),
     EnergyUnit("EnergyUnit", 8),
     ATTACK_AMPLIFICATION_UNIT("attack_damage", 4),
     RADIATION_SHIELDING_UNIT("radiation_shielding_unit", 1),
@@ -36,10 +36,12 @@ public enum moduleUpgrade {
     MultipleArrowsUnit("MultiplearrowsUnit", 4),
     //Body
     GRAVITATIONAL_MODULATING_UNIT("gravitational_modulating_unit", 1),
-    EMERGENCY_RESCUE("Emergency_rescue", 10),
-    //head
     HEALTH_REGENERATION("Health_regeneration", 10),
+    //head
+    EMERGENCY_RESCUE("Emergency_rescue", 10),
     ;
+    //ALL
+
 
 
     private String name;

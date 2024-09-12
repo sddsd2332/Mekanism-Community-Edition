@@ -42,6 +42,8 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
         super(EntityEquipmentSlot.CHEST);
     }
 
+    public int ArmourTick;
+
     @Override
     public boolean isValidArmor(ItemStack stack, EntityEquipmentSlot armorType, Entity entity) {
         return armorType == EntityEquipmentSlot.CHEST;
@@ -113,7 +115,7 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
         list.add(moduleUpgrade.JETPACK_UNIT);
         list.add(moduleUpgrade.CHARGE_DISTRIBUTION_UNIT);
         list.add(moduleUpgrade.GRAVITATIONAL_MODULATING_UNIT);
-        list.add(moduleUpgrade.EMERGENCY_RESCUE);
+        list.add(moduleUpgrade.HEALTH_REGENERATION);
         return list;
     }
 
@@ -252,6 +254,13 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
             if (chestStack.getItem() instanceof ItemMekAsuitBodyArmour) {
                 if (UpgradeHelper.isUpgradeInstalled(chestStack, moduleUpgrade.CHARGE_DISTRIBUTION_UNIT)) {
                     chargeSuit(player);
+                }
+                if (UpgradeHelper.isUpgradeInstalled(chestStack, moduleUpgrade.HEALTH_REGENERATION)) {
+                    ArmourTick++;
+                    if (player.getHealth() < player.getMaxHealth() && ArmourTick % 20 == 0) {
+                        player.heal(UpgradeHelper.getUpgradeLevel(chestStack, moduleUpgrade.HEALTH_REGENERATION));
+                        ArmourTick = 0;
+                    }
                 }
             }
         }
