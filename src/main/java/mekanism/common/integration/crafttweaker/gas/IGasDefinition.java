@@ -1,10 +1,8 @@
 package mekanism.common.integration.crafttweaker.gas;
 
 import crafttweaker.annotations.ZenRegister;
-import stanhebben.zenscript.annotations.OperatorType;
-import stanhebben.zenscript.annotations.ZenClass;
-import stanhebben.zenscript.annotations.ZenGetter;
-import stanhebben.zenscript.annotations.ZenOperator;
+import crafttweaker.api.liquid.ILiquidDefinition;
+import stanhebben.zenscript.annotations.*;
 
 @ZenClass("mod.mekanism.gas.IGasDefinition")
 @ZenRegister
@@ -18,4 +16,16 @@ public interface IGasDefinition {
 
     @ZenGetter("displayName")
     String getDisplayName();
+
+    @ZenGetter("liquid")
+    ILiquidDefinition getLiquid();
+
+    @ZenSetter("liquid")
+    void setLiquid(ILiquidDefinition liquid);
+
+    @ZenGetter("tint")
+    int getTint();
+
+    @ZenSetter("tint")
+    void setTint(int tint);
 }

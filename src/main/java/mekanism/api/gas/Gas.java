@@ -309,6 +309,11 @@ public class Gas {
         return registerFluid(getName());
     }
 
+    public void setFluid(Fluid fluid) {
+        this.fluid = fluid;
+        this.isRegisterFluid = fluid != null;
+    }
+
     @Override
     public String toString() {
         return name;
