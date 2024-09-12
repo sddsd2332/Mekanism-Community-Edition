@@ -81,8 +81,9 @@ public class RenderFirstPersonMekaSuitArms {
         GlStateManager.rotate(200.0F, 1.0F, 0.0F, 0.0F);
         GlStateManager.rotate(f * -135.0F, 0.0F, 1.0F, 0.0F);
         GlStateManager.translate(f * 5.6F, 0.0F, 0.0F);
+        GlStateManager.disableCull();
         renderArm(rightHand, player);
-        GlStateManager.popMatrix();
+        GlStateManager.enableCull();
     }
 
 }

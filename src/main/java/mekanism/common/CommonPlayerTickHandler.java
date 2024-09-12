@@ -23,10 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -417,5 +414,20 @@ public class CommonPlayerTickHandler {
 
     @Desugar
     private record FallEnergyInfo(ItemStack stack, float damageRatio, float energyCost) {
+    }
+
+
+    @SubscribeEvent
+    public void onDeath(LivingDeathEvent event) {
+        if (event.getEntityLiving() instanceof EntityPlayer player) {
+            ItemStack chest = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+            if (!chest.isEmpty() && chest.getItem() instanceof ItemMekAsuitBodyArmour && UpgradeHelper.isUpgradeInstalled(chest,moduleUpgrade.EMERGENCY_RESCUE)){
+                int installed = UpgradeHelper.getUpgradeLevel(chest, moduleUpgrade.EMERGENCY_RESCUE);
+                int toAdd = Math.max(installed - 1, 0);
+                UpgradeHelper.setUpgradeLevel(chest,moduleUpgrade.EMERGENCY_RESCUE,toAdd);
+                event.setCanceled(true);
+                player.setHealth(5F);
+            }
+        }
     }
 }

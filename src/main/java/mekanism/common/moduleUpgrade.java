@@ -35,7 +35,10 @@ public enum moduleUpgrade {
     DRAWSPEED_UNIT("drawspeed_unit", 3),
     MultipleArrowsUnit("MultiplearrowsUnit", 4),
     //Body
-    GRAVITATIONAL_MODULATING_UNIT("gravitational_modulating_unit",1),
+    GRAVITATIONAL_MODULATING_UNIT("gravitational_modulating_unit", 1),
+    EMERGENCY_RESCUE("Emergency_rescue", 10),
+    //head
+    HEALTH_REGENERATION("Health_regeneration", 10),
     ;
 
 

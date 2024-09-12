@@ -25,7 +25,11 @@ public class UpgradeHelper extends ItemDataUtils {
 
     public static void setUpgradeLevel(ItemStack stack, moduleUpgrade upgrade, int level) {
         NBTTagCompound upgradeTag = stack.getOrCreateSubCompound(DATA_ID);
-        upgradeTag.setByte(upgrade.getName(), (byte) level);
+        if (level >= 1){
+            upgradeTag.setByte(upgrade.getName(), (byte) level);
+        }else {
+            upgradeTag.removeTag(upgrade.getName());
+        }
     }
 
 

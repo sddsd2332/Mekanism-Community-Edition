@@ -41,13 +41,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class ItemMekTool extends ItemEnergized implements IItemNetwork, IItemHUDProvider {
+    private  Random rand = new Random();
 
     public ItemMekTool() {
         super(MekanismConfig.current().general.toolBatteryCapacity.val());
@@ -85,8 +83,6 @@ public class ItemMekTool extends ItemEnergized implements IItemNetwork, IItemHUD
         int energyCost = MekanismConfig.current().general.toolEnergyUsageWeapon.val();
         int minDamage = MekanismConfig.current().general.toolDamageMin.val();
         int damageDifference = MekanismConfig.current().general.toolDamageMax.val() - minDamage;
-
-
         //If we don't have enough power use it at a reduced power level
         double percent = 1;
         if (energy < energyCost && energyCost != 0) {
@@ -94,28 +90,33 @@ public class ItemMekTool extends ItemEnergized implements IItemNetwork, IItemHUD
         }
         float damage = (float) (minDamage + damageDifference * percent);
         if (attacker instanceof EntityPlayer player) {
-            if (energy > MekanismConfig.current().general.toolBatteryCapacity.val() * 0.9) {
+            if (energy > getMaxEnergy(itemstack) * 0.9) {
                 if (target.getHealth() / target.getMaxHealth() > 0.1) {
-                    target.setHealth(0.1F);
-                    target.getDataManager().set(EntityLivingBase.HEALTH, 0.1F);
+                    if (rand.nextDouble() <= 0.1D){
+                        target.setHealth(0.0F);
+                        target.getDataManager().set(EntityLivingBase.HEALTH, 0.0F);
+                    }else {
+                        target.setHealth(0.1F);
+                        target.getDataManager().set(EntityLivingBase.HEALTH, 0.1F);
+                    }
                 } else {
                     target.attackEntityFrom(DamageSource.causePlayerDamage(player), damage * 8096);
                 }
-            } else if (energy > MekanismConfig.current().general.toolBatteryCapacity.val() * 0.75) {
+            } else if (energy > getMaxEnergy(itemstack) * 0.75) {
                 target.attackEntityFrom(DamageSource.causePlayerDamage(player), damage * 4096);
-            } else if (energy > MekanismConfig.current().general.toolBatteryCapacity.val() * 0.5) {
+            } else if (energy > getMaxEnergy(itemstack) * 0.5) {
                 target.attackEntityFrom(DamageSource.causePlayerDamage(player), damage * 2048);
-            } else if (energy > MekanismConfig.current().general.toolBatteryCapacity.val() * 0.25) {
+            } else if (energy > getMaxEnergy(itemstack) * 0.25) {
                 target.attackEntityFrom(DamageSource.causePlayerDamage(player), damage * 1024);
             } else {
                 target.attackEntityFrom(DamageSource.causePlayerDamage(player), damage);
             }
         } else {
-            if (energy > MekanismConfig.current().general.toolBatteryCapacity.val() * 0.75) {
+            if (energy > getMaxEnergy(itemstack) * 0.75) {
                 target.attackEntityFrom(DamageSource.causeMobDamage(attacker), damage * 4096);
-            } else if (energy > MekanismConfig.current().general.toolBatteryCapacity.val() * 0.5) {
+            } else if (energy > getMaxEnergy(itemstack) * 0.5) {
                 target.attackEntityFrom(DamageSource.causeMobDamage(attacker), damage * 2048);
-            } else if (energy > MekanismConfig.current().general.toolBatteryCapacity.val() * 0.25) {
+            } else if (energy > getMaxEnergy(itemstack) * 0.25) {
                 target.attackEntityFrom(DamageSource.causeMobDamage(attacker), damage * 1024);
             } else {
                 target.attackEntityFrom(DamageSource.causeMobDamage(attacker), damage);

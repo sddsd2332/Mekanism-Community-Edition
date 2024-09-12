@@ -20,7 +20,6 @@ import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.UpgradeHelper;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -34,7 +33,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,7 +54,7 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
         ModuleJetpack jetpack = ModuleJetpack.jetpacks;
         ModuleGravitational gravitational = ModuleGravitational.gravitational;
 
-        if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.JETPACK_UNIT) && getJetpackMode(itemStack)!= JetpackMode.DISABLED) {
+        if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.JETPACK_UNIT) && getJetpackMode(itemStack) != JetpackMode.DISABLED) {
             if (!armorModel.bipedBody.childModels.contains(jetpack.jetpack)) {
                 armorModel.bipedBody.addChild(jetpack.jetpack);
             }
@@ -77,7 +75,6 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
         }
         return armorModel;
     }
-
 
 
     @Override
@@ -116,6 +113,7 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
         list.add(moduleUpgrade.JETPACK_UNIT);
         list.add(moduleUpgrade.CHARGE_DISTRIBUTION_UNIT);
         list.add(moduleUpgrade.GRAVITATIONAL_MODULATING_UNIT);
+        list.add(moduleUpgrade.EMERGENCY_RESCUE);
         return list;
     }
 
