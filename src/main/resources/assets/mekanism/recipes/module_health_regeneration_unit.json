@@ -1,0 +1,32 @@
+{
+      "result": {
+            "item": "mekanism:moduleupgrade",
+            "data": 22
+      },
+      "pattern": [
+            "CCC",
+            "ABA",
+            "DED"
+      ],
+      "type": "mekanism:ore_shaped",
+      "key": {
+            "C": {
+                  "ore": "netherStar",
+                  "type": "forge:ore_dict"
+            },
+            "A": {
+                  "item": "mekanism:canteen"
+            },
+            "B": {
+                  "item": "mekanism:modulebase"
+            },
+            "D": {
+                  "ore": "alloyUltimate",
+                  "type": "forge:ore_dict"
+            },
+            "E": {
+                  "ore": "circuitUltimate",
+                  "type": "forge:ore_dict"
+            }
+      }
+}

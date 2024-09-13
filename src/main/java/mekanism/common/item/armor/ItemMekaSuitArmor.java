@@ -437,12 +437,5 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         return EnumColor.ORANGE + super.getItemStackDisplayName(itemstack);
     }
 
-//TODO
-/*
-    @Override
-    public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player) {
-        return false;
-    }
-	*/
 
 }

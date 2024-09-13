@@ -289,6 +289,9 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
             if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.NutritionalInjectionUnit)) {
                 list.add(LangUtils.localize("tooltip.autoeatgas.stored") + " " + EnumColor.ORANGE + (getStored(stack) > 0 ? getStored(stack) : LangUtils.localize("tooltip.noGas")));
             }
+            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.EMERGENCY_RESCUE)) {
+                list.add(LangUtils.localize("tooltip.meka_head.Emergency_rescue") + " " + UpgradeHelper.getUpgradeLevel(stack, moduleUpgrade.EMERGENCY_RESCUE));
+            }
             list.add(LangUtils.localize("tooltip.meka_head.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
         }
     }

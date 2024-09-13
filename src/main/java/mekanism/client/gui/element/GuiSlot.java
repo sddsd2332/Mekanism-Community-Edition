@@ -105,6 +105,7 @@ public class GuiSlot extends GuiElement {
         CHECK(18, 18, 0, 36),
         FORMULA(18, 18, 36, 36),
         UPGRADE(18, 18, 54, 36),
+        MODULE(18, 18,72,36),
         WIND_OFF(12, 12, 0, 88),
         WIND_ON(12, 12, 12, 88),
         NO_SUN(12, 12, 24, 88),

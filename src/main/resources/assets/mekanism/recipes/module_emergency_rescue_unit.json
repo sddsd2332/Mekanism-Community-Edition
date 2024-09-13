@@ -1,0 +1,36 @@
+{
+      "result": {
+            "item": "mekanism:moduleupgrade",
+            "data": 23
+      },
+      "pattern": [
+            "BAB",
+            "DCD",
+            "EFE"
+      ],
+      "type": "mekanism:ore_shaped",
+      "key": {
+            "A": {
+                  "ore": "PoloniumPellet",
+                  "type": "forge:ore_dict"
+            },
+            "B": {
+                  "ore": "netherStar",
+                  "type": "forge:ore_dict"
+            },
+            "C": {
+                  "item": "mekanism:modulebase"
+            },
+            "D": {
+                  "item": "minecraft:totem_of_undying"
+            },
+            "E": {
+                  "ore": "circuitUltimate",
+                  "type": "forge:ore_dict"
+            },
+            "F": {
+                  "ore": "alloyUltimate",
+                  "type": "forge:ore_dict"
+            }
+      }
+}

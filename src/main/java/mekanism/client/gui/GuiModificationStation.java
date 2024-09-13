@@ -21,7 +21,7 @@ public class GuiModificationStation extends GuiMekanismTile<TileEntityModificati
             return Arrays.asList(LangUtils.localize("gui.using") + ": " + multiplier + "/t",
                     LangUtils.localize("gui.needed") + ": " + MekanismUtils.getEnergyDisplay(tileEntity.getMaxEnergy() - tileEntity.getEnergy()));
         }, this, resource));
-        addGuiElement(new GuiSlot(GuiSlot.SlotType.INPUT, this, resource, 25, 33));
+        addGuiElement(new GuiSlot(GuiSlot.SlotType.INPUT, this, resource, 25, 33).with(GuiSlot.SlotOverlay.MODULE));
         addGuiElement(new GuiSlot(GuiSlot.SlotType.POWER, this, resource, 140, 33).with(GuiSlot.SlotOverlay.POWER));
         addGuiElement(new GuiSlot(GuiSlot.SlotType.OUTPUT, this, resource, 115, 33));
         addGuiElement(new GuiProgress(new GuiProgress.IProgressInfoHandler() {
