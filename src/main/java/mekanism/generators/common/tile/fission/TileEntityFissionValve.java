@@ -41,9 +41,8 @@ public class TileEntityFissionValve extends TileEntityFissionCasing implements I
     public FissionTank steamTank;
     public FissionGasTank inputTank;
     public FissionGasTank outputTank;
-    private int currentRedstoneLevel;
-
     public boolean Eject;
+    private int currentRedstoneLevel;
 
     public TileEntityFissionValve() {
         super("FissionValve");
@@ -86,7 +85,7 @@ public class TileEntityFissionValve extends TileEntityFissionCasing implements I
                 }
                 if (outputTank.getGas() != null && outputTank.getGas().getGas() != null && Eject) {
                     Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
-                        GasStack toSend = new GasStack(outputTank.getGas().getGas(), Math.min(outputTank.getMaxGas(), outputTank.getGasAmount()));
+                        GasStack toSend = outputTank.getGas().copy().withAmount(Math.min(outputTank.getMaxGas(), outputTank.getGasAmount()));
                         outputTank.output(GasUtils.emit(toSend, this, EnumSet.allOf(EnumFacing.class)), true);
                     });
 

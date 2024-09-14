@@ -25,7 +25,7 @@ public class TileUtils {
     private static final NBTTagCompound EMPTY_TAG_COMPOUND = new NBTTagCompound();
 
     public static void addTankData(TileNetworkList data, GasTank tank) {
-        addGasStack(data,tank.getGas());
+        addGasStack(data, tank.getGas());
     }
 
     public static void addTankData(TileNetworkList data, FluidTank tank) {
@@ -74,10 +74,10 @@ public class TileUtils {
     }
 
     public static void receiveGasItem(ItemStack stack, GasTank tank) {
-        receiveGasItem(stack,tank,true);
+        receiveGasItem(stack, tank, true);
     }
 
-    public static void receiveGasItem(ItemStack stack, GasTank tank,boolean doReceive) {
+    public static void receiveGasItem(ItemStack stack, GasTank tank, boolean doReceive) {
         if (!stack.isEmpty() && tank.getNeeded() > 0 && stack.getItem() instanceof IGasItem item) {
             GasStack gasStack = item.getGas(stack);
             if (gasStack != null && item.canProvideGas(stack, gasStack.getGas())) {
@@ -112,8 +112,8 @@ public class TileUtils {
     }
 
     public static void emitGas(TileEntityBasicBlock tile, GasTank tank, int gasOutput, EnumFacing facing) {
-        if (tank.getGas() != null) {
-            GasStack toSend = new GasStack(tank.getGas().getGas(), Math.min(tank.getStored(), gasOutput));
+        if (tank.getGas() != null && tank.getGas().getGas() != null) {
+            GasStack toSend = tank.getGas().copy().withAmount(Math.min(tank.getStored(), gasOutput));
             tank.draw(GasUtils.emit(toSend, tile, EnumSet.of(facing)), true);
         }
     }

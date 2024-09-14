@@ -155,7 +155,7 @@ public class TileComponentEjector implements ITileComponent {
      * @return return false if ejection is failed.
      */
     private boolean ejectGas(Set<EnumFacing> outputSides, GasTank tank) {
-        if (tank.getGas() == null || tank.getStored() <= 0) {
+        if (tank.getGas() == null || tank.getStored() <= 0  || tank.getGas().getGas() == null) {
             return false;
         }
 

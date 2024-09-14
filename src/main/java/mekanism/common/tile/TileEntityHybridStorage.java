@@ -117,10 +117,12 @@ public class TileEntityHybridStorage extends TileEntityElectricBlock implements 
     }
 
     private void handleGasTank(GasTank tank, Set<EnumFacing> side, boolean isGas) {
-        if (tank.getGas() != null) {
+        if (tank.getGas() != null && tank.getGas().getGas() != null) {
             if (configComponent.isEjecting(TransmissionType.GAS) && (MekanismUtils.canFunction(this) && isGas)) {
-                GasStack toSend = new GasStack(tank.getGas().getGas(), tank.getStored());
-                tank.draw(GasUtils.emit(toSend, this, side), true);
+                if (tank.getGas().getGas() != null) {
+                    GasStack toSend = tank.getGas().copy().withAmount(tank.getStored());
+                    tank.draw(GasUtils.emit(toSend, this, side), true);
+                }
             }
         }
     }

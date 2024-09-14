@@ -127,8 +127,8 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
     }
 
     private void handleTank(GasTank tank, TileEntity tile) {
-        if (tank.getGas() != null) {
-            GasStack toSend = new GasStack(tank.getGas().getGas(), Math.min(tank.getStored(), tank.getMaxGas()));
+        if (tank.getGas() != null && tank.getGas().getGas() !=null) {
+            GasStack toSend = tank.getGas().copy().withAmount(Math.min(tank.getStored(), tank.getMaxGas()));
             tank.draw(GasUtils.emit(toSend, tile, EnumSet.of(facing)), true);
         }
     }

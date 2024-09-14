@@ -272,8 +272,8 @@ public class TileEntityMidsizeGasTank extends TileEntityContainerBlock implement
     }
 
     private void handleTank(GasTank tank, TileEntity tile) {
-        if (tank.getGas() != null) {
-            GasStack toSend = new GasStack(tank.getGas().getGas(), Math.min(tank.getStored(), GasOut));
+        if (tank.getGas() != null && tank.getGas().getGas() != null) {
+            GasStack toSend = tank.getGas().copy().withAmount(Math.min(tank.getStored(), GasOut));
             tank.draw(GasUtils.emit(toSend, tile, Collections.singleton(facing)), true);
         }
     }

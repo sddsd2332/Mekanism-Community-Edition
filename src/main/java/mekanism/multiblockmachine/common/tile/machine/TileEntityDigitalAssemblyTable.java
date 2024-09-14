@@ -62,8 +62,6 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
     public boolean needsPacket;
     public int numPowering;
     public int DoorHeight;
-    private int currentRedstoneLevel;
-    private boolean rendererInitialized = false;
     public float inputGasScale;
     public float outputGasScale;
     public float inputFluidScale;
@@ -73,6 +71,8 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
     public int lastOutputGas;
     public int lastOutputFluid;
     public int lastoperatingTicks;
+    private int currentRedstoneLevel;
+    private boolean rendererInitialized = false;
 
     public TileEntityDigitalAssemblyTable() {
         super("digitalassemblytable", BlockStateMultiblockMachine.MultiblockMachineType.DIGITAL_ASSEMBLY_TABLE, 200, 0);
@@ -120,7 +120,7 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
             if (!canOperate(recipe)) {
                 operatingTicks = 0;
             }
-            if (prevEnergy != getEnergy() || lastInputFluid != inputFluidTank.getFluidAmount() || lastInputGas != inputGasTank.getStored() || lastOutputGas != outputGasTank.getStored() || lastOutputFluid != outputFluidTank.getFluidAmount() ||  lastoperatingTicks != operatingTicks) {
+            if (prevEnergy != getEnergy() || lastInputFluid != inputFluidTank.getFluidAmount() || lastInputGas != inputGasTank.getStored() || lastOutputGas != outputGasTank.getStored() || lastOutputFluid != outputFluidTank.getFluidAmount() || lastoperatingTicks != operatingTicks) {
                 SPacketUpdateTileEntity packet = this.getUpdatePacket();
                 PlayerChunkMapEntry trackingEntry = ((WorldServer) this.world).getPlayerChunkMap().getEntry(this.pos.getX() >> 4, this.pos.getZ() >> 4);
                 if (trackingEntry != null) {
@@ -212,8 +212,8 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
     }
 
     private void handleGasTank(GasTank tank, TileEntity tile) {
-        if (tank.getGas() != null) {
-            GasStack toSend = new GasStack(tank.getGas().getGas(), Math.min(tank.getStored(), tank.getMaxGas()));
+        if (tank.getGas() != null && tank.getGas().getGas() != null) {
+            GasStack toSend = tank.getGas().copy().withAmount(Math.min(tank.getStored(), tank.getMaxGas()));
             tank.draw(GasUtils.emit(toSend, tile, Collections.singleton(EnumFacing.UP)), true);
         }
     }

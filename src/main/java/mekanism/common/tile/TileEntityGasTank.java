@@ -92,8 +92,10 @@ public class TileEntityGasTank extends TileEntityContainerBlock implements IGasH
             if (gasTank.getGas() != null && MekanismUtils.canFunction(this) && (tier == GasTankTier.CREATIVE || dumping != GasMode.DUMPING)) {
                 if (configComponent.isEjecting(TransmissionType.GAS)) {
                     Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
-                        GasStack toSend = new GasStack(gasTank.getGas().getGas(), Math.min(gasTank.getStored(), tier.getOutput()));
-                        gasTank.draw(GasUtils.emit(toSend, this, configComponent.getSidesForData(TransmissionType.GAS, facing, 2)), tier != GasTankTier.CREATIVE);
+                        if (gasTank.getGas().getGas() != null) {
+                            GasStack toSend = gasTank.getGas().copy().withAmount(Math.min(gasTank.getStored(), tier.getOutput()));
+                            gasTank.draw(GasUtils.emit(toSend, this, configComponent.getSidesForData(TransmissionType.GAS, facing, 2)), tier != GasTankTier.CREATIVE);
+                        }
                     });
                 }
             }
@@ -149,7 +151,7 @@ public class TileEntityGasTank extends TileEntityContainerBlock implements IGasH
             }
         } else if (slotID == 0) {
             return item instanceof IGasItem gasItem && gasItem.getGas(itemstack) != null &&
-                   gasItem.getGas(itemstack).amount == gasItem.getMaxGas(itemstack);
+                    gasItem.getGas(itemstack).amount == gasItem.getMaxGas(itemstack);
         }
         return false;
     }
@@ -158,7 +160,7 @@ public class TileEntityGasTank extends TileEntityContainerBlock implements IGasH
     public boolean isItemValidForSlot(int slotID, @Nonnull ItemStack itemstack) {
         Item item = itemstack.getItem();
         if (slotID == 0) {
-            return item instanceof IGasItem gasItem&& (gasTank.getGas() == null ||gasItem.canReceiveGas(itemstack, gasTank.getGas().getGas()));
+            return item instanceof IGasItem gasItem && (gasTank.getGas() == null || gasItem.canReceiveGas(itemstack, gasTank.getGas().getGas()));
         } else if (slotID == 1) {
             if (tier == GasTankTier.CREATIVE) {
                 return item instanceof IGasItem gasItem && (gasTank.getGas() == null || gasItem.canProvideGas(itemstack, gasTank.getGas().getGas()));
