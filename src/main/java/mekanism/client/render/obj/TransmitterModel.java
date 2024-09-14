@@ -42,6 +42,7 @@ import javax.annotation.Nonnull;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TransmitterModel extends OBJBakedModelBase {
 
@@ -62,7 +63,7 @@ public class TransmitterModel extends OBJBakedModelBase {
     private static TextureAtlasSprite[] transporter_center_color = new TextureAtlasSprite[2];
     private static TextureAtlasSprite[] transporter_side = new TextureAtlasSprite[2];
     private static TextureAtlasSprite[] transporter_side_color = new TextureAtlasSprite[2];
-    private Int2ObjectMap<List<BakedQuad>> modelCache = new Int2ObjectOpenHashMap<>();
+    private Map<Integer, List<BakedQuad>> modelCache = new ConcurrentHashMap<>();
     private TransmitterModel itemCache;
     private IBlockState tempState;
     private ItemStack tempStack;
