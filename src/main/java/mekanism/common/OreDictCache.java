@@ -1,6 +1,5 @@
 package mekanism.common;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import mekanism.api.util.ItemInfo;
 import mekanism.common.util.ItemRegistryUtils;
 import net.minecraft.item.ItemBlock;
@@ -10,12 +9,13 @@ import net.minecraftforge.oredict.OreDictionary;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class OreDictCache {
 
-    public static Map<ItemInfo, List<String>> cachedKeys = new Object2ObjectOpenHashMap<>();
-    public static Map<String, List<ItemStack>> oreDictStacks = new Object2ObjectOpenHashMap<>();
-    public static Map<String, List<ItemStack>> modIDStacks = new Object2ObjectOpenHashMap<>();
+    public static Map<ItemInfo, List<String>> cachedKeys = new ConcurrentHashMap<>();
+    public static Map<String, List<ItemStack>> oreDictStacks = new ConcurrentHashMap<>();
+    public static Map<String, List<ItemStack>> modIDStacks = new ConcurrentHashMap<>();
 
     public static List<String> getOreDictName(ItemStack check) {
         if (check.isEmpty()) {
