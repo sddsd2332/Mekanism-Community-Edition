@@ -107,7 +107,6 @@ public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor implements IItemHU
                     if (player.isInsideOfMaterial(Material.WATER) && !player.canBreatheUnderwater() && armour.getEnergy(legStack) > 500D) {
                         if (EnchantmentHelper.getEnchantmentLevel(Enchantments.DEPTH_STRIDER, legStack) == 0) {
                             legStack.addEnchantment(Enchantments.DEPTH_STRIDER, UpgradeHelper.getUpgradeLevel(legStack, moduleUpgrade.HYDROSTATIC_REPULSOR_UNIT));
-                            hasEffect(legStack);
                         }
                         armour.setEnergy(legStack, armour.getEnergy(legStack) - 500D);
                     } else {
