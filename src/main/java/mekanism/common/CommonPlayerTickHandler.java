@@ -10,6 +10,7 @@ import mekanism.common.item.ItemScubaTank;
 import mekanism.common.item.armor.*;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.item.interfaces.IJetpackItem.JetpackMode;
+import mekanism.common.util.TextComponentGroup;
 import mekanism.common.util.UpgradeHelper;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -23,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -433,6 +435,7 @@ public class CommonPlayerTickHandler {
                 player.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION,100,2));
                 player.setAir(300);
                 player.getFoodStats().addStats(20,20);
+                player.sendMessage(new TextComponentGroup(TextFormatting.GRAY).string("[",TextFormatting.RED).translation("item.module.emergency_rescue.name",TextFormatting.RED).string("]",TextFormatting.RED).string(":").translation("module.emergency_rescue.use",TextFormatting.YELLOW));
             }
         }
     }

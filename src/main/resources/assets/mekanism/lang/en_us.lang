@@ -1763,3 +1763,4 @@ item.module.health_regeneration.name=Health Regeneration Unit
 module.Health_regeneration.desc=Automatically restores HP
 item.module.emergency_rescue.name=Emergency rescue unit
 module.Emergency_rescue.desc=When close to death, the consumption will be automatically triggered and the state will be restored
+module.emergency_rescue.use=Warn! The user has been hit hard! Intercepted!
