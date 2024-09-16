@@ -100,4 +100,6 @@ public class MEKCEConfig extends BaseConfig {
     public final BooleanOption BinRecipeClosed = new BooleanOption(this,"mekce","BinRecipeClosed",false,"Turn off the BIN synthesis recipe").setRequiresGameRestart(true);
 
     public final BooleanOption BinRecipeRemovesItem = new BooleanOption(this,"mekce","BinRecipeRemovesItem",false,"Close Bin to remove items").setRequiresGameRestart(true);
+    public final BooleanOption MekAsuitOverloadProtection = new BooleanOption(this,"mekce","MekAsuitOverloadProtection",true,"Allows MekAsuit to intercept direct setHealth with Emergency Rescue installed");
+
 }

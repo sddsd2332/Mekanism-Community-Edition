@@ -2,6 +2,7 @@ package mekanism.common;
 
 import com.github.bsideup.jabel.Desugar;
 import mekanism.api.gas.GasStack;
+import mekanism.common.config.MekanismConfig;
 import mekanism.common.entity.EntityFlame;
 import mekanism.common.item.ItemFlamethrower;
 import mekanism.common.item.ItemFreeRunners;
@@ -25,7 +26,12 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -106,7 +112,6 @@ public class CommonPlayerTickHandler {
         if (event.phase == Phase.START) {
             isMekAsuitArmorFlying(event.player);
         }
-
     }
 
     public void tickEnd(EntityPlayer player) {
@@ -368,7 +373,7 @@ public class CommonPlayerTickHandler {
     }
 
     @SubscribeEvent
-    public void onLivingJump(LivingEvent.LivingJumpEvent event) {
+    public void onLivingJump(LivingJumpEvent event) {
         if (event.getEntity() instanceof EntityPlayer player) {
             ItemStack feet = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
             if (!feet.isEmpty() && feet.getItem() instanceof ItemMekAsuitFeetArmour feetArmor) {
@@ -418,24 +423,51 @@ public class CommonPlayerTickHandler {
     private record FallEnergyInfo(ItemStack stack, float damageRatio, float energyCost) {
     }
 
-
+    //When the player dies
     @SubscribeEvent
     public void onDeath(LivingDeathEvent event) {
         if (event.getEntityLiving() instanceof EntityPlayer player) {
             ItemStack head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-            if (!head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour && UpgradeHelper.isUpgradeInstalled(head,moduleUpgrade.EMERGENCY_RESCUE)){
+            if (!head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour && UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.EMERGENCY_RESCUE)) {
+                event.setCanceled(true);
                 int installed = UpgradeHelper.getUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE);
                 int toAdd = Math.max(installed - 1, 0);
-                UpgradeHelper.setUpgradeLevel(head,moduleUpgrade.EMERGENCY_RESCUE,toAdd);
-                event.setCanceled(true);
+                UpgradeHelper.setUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE, toAdd);
                 player.setHealth(5F);
                 player.clearActivePotions();
-                player.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE,800,2));
+                player.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 800, 2));
                 player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 900, 2));
-                player.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION,100,2));
+                player.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION, 100, 2));
                 player.setAir(300);
-                player.getFoodStats().addStats(20,20);
-                player.sendMessage(new TextComponentGroup(TextFormatting.GRAY).string("[",TextFormatting.RED).translation("item.module.emergency_rescue.name",TextFormatting.RED).string("]",TextFormatting.RED).string(":").translation("module.emergency_rescue.use",TextFormatting.YELLOW));
+                player.getFoodStats().addStats(20, 20);
+                player.sendMessage(new TextComponentGroup(TextFormatting.GRAY).string("[", TextFormatting.RED).translation("item.module.emergency_rescue.name", TextFormatting.RED).string("]", TextFormatting.RED).string(":").translation("module.emergency_rescue.use", TextFormatting.YELLOW));
+            }
+        }
+    }
+
+
+    @SubscribeEvent
+    public void onLivingUpdate(LivingUpdateEvent event) {
+        //If the player is affected by setHealth
+        //What? Why do you want to go straight to setHealth?
+        if (MekanismConfig.current().mekce.MekAsuitOverloadProtection.val()){
+            if (event.getEntityLiving() instanceof EntityPlayer player) {
+                ItemStack head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+                if (!player.isEntityAlive() && !head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour && UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.EMERGENCY_RESCUE)) {
+                    player.hurtResistantTime = 20;
+                    player.deathTime = 0;
+                    player.isDead = false;
+                    player.setHealth(5F);
+                    player.clearActivePotions();
+                    player.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 800, 2));
+                    player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 900, 2));
+                    player.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION, 100, 2));
+                    player.setAir(300);
+                    player.getFoodStats().addStats(20, 20);
+                    int installed = UpgradeHelper.getUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE);
+                    int toAdd = Math.max(installed - 1, 0);
+                    UpgradeHelper.setUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE, toAdd);
+                }
             }
         }
     }

@@ -16,16 +16,21 @@ import mekanism.common.item.ItemConfigurator.ConfiguratorMode;
 import mekanism.common.item.ItemFlamethrower.FlamethrowerMode;
 import mekanism.common.item.ItemMekTool.MekToolMode;
 import mekanism.common.item.armor.ItemMekAsuitFeetArmour;
+import mekanism.common.item.armor.ItemMekAsuitHeadArmour;
 import mekanism.common.item.armor.ItemMekaSuitArmor;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.item.interfaces.IJetpackItem.JetpackMode;
+import mekanism.common.moduleUpgrade;
 import mekanism.common.network.PacketFreeRunnerData;
 import mekanism.common.network.PacketItemStack.ItemStackMessage;
 import mekanism.common.network.PacketJumpBoostData;
 import mekanism.common.network.PacketPortableTeleporter.PortableTeleporterMessage;
 import mekanism.common.network.PacketPortableTeleporter.PortableTeleporterPacketType;
 import mekanism.common.network.PacketStepAssistData;
+import mekanism.common.util.UpgradeHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.GuiGameOver;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,6 +39,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -439,4 +445,20 @@ public class ClientTickHandler {
             teleportTime = t;
         }
     }
+
+    @SubscribeEvent
+    public void GuiScreenEvent(GuiOpenEvent event) {
+        if (event.getGui() instanceof GuiGameOver) {
+            if (mc.world.getWorldInfo().isHardcoreModeEnabled()) {
+                return;
+            }
+            if (mc.player instanceof EntityPlayerSP) {
+                ItemStack head = mc.player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+                if (!mc.player.isEntityAlive() && !head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour && UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.EMERGENCY_RESCUE)) {
+                    event.setCanceled(true);
+                }
+            }
+        }
+    }
+
 }
