@@ -57,7 +57,7 @@ public class TileEntityDynamicValve extends TileEntityDynamicTank implements IFl
 
 
     @Override
-   public void writeCustomNBT(NBTTagCompound nbtTags) {
+    public void writeCustomNBT(NBTTagCompound nbtTags) {
         super.writeCustomNBT(nbtTags);
         nbtTags.setBoolean("eject", eject);
     }
@@ -84,13 +84,12 @@ public class TileEntityDynamicValve extends TileEntityDynamicTank implements IFl
                         }
                     });
                 }
-                if (gasTank.getGas() != null && gasTank.getGas().getGas() != null) {
-                    Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
+                Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
+                    if (gasTank.getGas() != null && gasTank.getGas().getGas() != null) {
                         GasStack toSend = gasTank.getGas().copy().withAmount(Math.min(gasTank.getMaxGas(), gasTank.getGasAmount()));
                         gasTank.output(GasUtils.emit(toSend, this, EnumSet.allOf(EnumFacing.class)), true);
-                    });
-
-                }
+                    }
+                });
             }
         }
     }
@@ -145,7 +144,7 @@ public class TileEntityDynamicValve extends TileEntityDynamicTank implements IFl
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing side) {
         if ((!world.isRemote && structure != null) || (world.isRemote && clientHasStructure)) {
-            if (capability == Capabilities.CONFIGURABLE_CAPABILITY || capability == Capabilities.GAS_HANDLER_CAPABILITY){
+            if (capability == Capabilities.CONFIGURABLE_CAPABILITY || capability == Capabilities.GAS_HANDLER_CAPABILITY) {
                 return (T) this;
             }
             if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {

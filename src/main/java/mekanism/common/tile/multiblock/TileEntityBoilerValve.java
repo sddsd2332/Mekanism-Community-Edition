@@ -84,12 +84,14 @@ public class TileEntityBoilerValve extends TileEntityBoilerCasing implements IFl
                         }
                     });
                 }
-                if (outputTank.getGas() != null && outputTank.getGas().getGas() != null && Eject) {
-                    Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
+
+                Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
+                    if (outputTank.getGas() != null && outputTank.getGas().getGas() != null && Eject) {
                         GasStack toSend = outputTank.getGas().copy().withAmount(Math.min(outputTank.getMaxGas(), outputTank.getGasAmount()));
                         outputTank.output(GasUtils.emit(toSend, this, EnumSet.allOf(EnumFacing.class)), true);
-                    });
-                }
+                    }
+                });
+
 
                 int newRedstoneLevel = getRedstoneLevel();
                 if (newRedstoneLevel != currentRedstoneLevel) {

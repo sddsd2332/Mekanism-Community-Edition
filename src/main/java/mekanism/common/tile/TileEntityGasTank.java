@@ -89,26 +89,7 @@ public class TileEntityGasTank extends TileEntityContainerBlock implements IGasH
             if (TileUtils.receiveGas(inventory.get(1), gasTank) && tier == GasTankTier.CREATIVE && gasTank.getGas() != null) {
                 gasTank.getGas().amount = Integer.MAX_VALUE;
             }
-            if (gasTank.getGas() != null && MekanismUtils.canFunction(this) && (tier == GasTankTier.CREATIVE || dumping != GasMode.DUMPING)) {
-                if (configComponent.isEjecting(TransmissionType.GAS)) {
-                    Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
-                        if (gasTank.getGas().getGas() != null) {
-                            GasStack toSend = gasTank.getGas().copy().withAmount(Math.min(gasTank.getStored(), tier.getOutput()));
-                            gasTank.draw(GasUtils.emit(toSend, this, configComponent.getSidesForData(TransmissionType.GAS, facing, 2)), tier != GasTankTier.CREATIVE);
-                        }
-                    });
-                }
-            }
-
-            if (tier != GasTankTier.CREATIVE) {
-                if (dumping == GasMode.DUMPING) {
-                    gasTank.draw(tier.getStorage() / 400, true);
-                }
-                if (dumping == GasMode.DUMPING_EXCESS && gasTank.getNeeded() < tier.getOutput()) {
-                    gasTank.draw(tier.getOutput() - gasTank.getNeeded(), true);
-                }
-            }
-
+            Mekanism.EXECUTE_MANAGER.addSyncTask(this::handTank);
             int newGasAmount = gasTank.getStored();
             if (newGasAmount != currentGasAmount) {
                 MekanismUtils.saveChunk(this);
@@ -118,6 +99,25 @@ public class TileEntityGasTank extends TileEntityContainerBlock implements IGasH
             if (newRedstoneLevel != currentRedstoneLevel) {
                 markNoUpdateSync();
                 currentRedstoneLevel = newRedstoneLevel;
+            }
+        }
+    }
+
+    public void handTank() {
+        if (gasTank.getGas() != null && MekanismUtils.canFunction(this) && (tier == GasTankTier.CREATIVE || dumping != GasMode.DUMPING)) {
+            if (configComponent.isEjecting(TransmissionType.GAS)) {
+                if (gasTank.getGas().getGas() != null) {
+                    GasStack toSend = gasTank.getGas().copy().withAmount(Math.min(gasTank.getStored(), tier.getOutput()));
+                    gasTank.draw(GasUtils.emit(toSend, this, configComponent.getSidesForData(TransmissionType.GAS, facing, 2)), tier != GasTankTier.CREATIVE);
+                }
+            }
+        }
+        if (tier != GasTankTier.CREATIVE) {
+            if (dumping == GasMode.DUMPING) {
+                gasTank.draw(tier.getStorage() / 400, true);
+            }
+            if (dumping == GasMode.DUMPING_EXCESS && gasTank.getNeeded() < tier.getOutput()) {
+                gasTank.draw(tier.getOutput() - gasTank.getNeeded(), true);
             }
         }
     }
