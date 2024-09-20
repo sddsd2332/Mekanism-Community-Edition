@@ -102,4 +102,9 @@ dependencies {
     implementation rfg.deobf("curse.maven:cofh-world-271384:2920434")
   //  implementation rfg.deobf("curse.maven:nuclearcraft-overhauled-336895:5446445")
     implementation rfg.deobf("curse.maven:baubles-227083:2518667")
+    implementation rfg.deobf("curse.maven:botania-225643:3330934")
+    implementation rfg.deobf("curse.maven:extrabotany-299086:3112313")
+  //  implementation rfg.deobf("curse.maven:brandons-core-231382:3408276")
+   // implementation 'curse.maven:draconic-evolution-223565:3431261'
+  //  implementation 'curse.maven:draconic-additions-314515:3514704'
 }

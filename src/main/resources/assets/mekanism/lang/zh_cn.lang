@@ -1741,3 +1741,4 @@ module.Health_regeneration.desc=自动恢复血量
 item.module.emergency_rescue.name=紧急救援单元
 module.Emergency_rescue.desc=当接近死亡时，将自动触发消耗并恢复状态
 module.emergency_rescue.use=警告！使用者遭到强大的打击！已进行拦截！
+tooltip.install.DR=需要安装Draconic Evolution才能工作。

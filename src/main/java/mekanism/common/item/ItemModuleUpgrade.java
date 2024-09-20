@@ -1,8 +1,10 @@
 package mekanism.common.item;
 
 import mekanism.api.EnumColor;
+import mekanism.common.Mekanism;
 import mekanism.common.base.IMetaItem;
 import mekanism.common.base.IModuleUpgradeItem;
+import mekanism.common.integration.MekanismHooks;
 import mekanism.common.moduleUpgrade;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
@@ -53,6 +55,9 @@ public class ItemModuleUpgrade extends ItemMekanism implements IMetaItem, IModul
             list.add(LangUtils.localize("tooltip.hold") + " " + EnumColor.AQUA + "shift" + EnumColor.GREY + " " + LangUtils.localize("tooltip.forDetails"));
         } else {
             list.addAll(MekanismUtils.splitTooltip(moduleUpgrade.values()[itemstack.getItemDamage()].getDescription(), itemstack));
+            if (!Mekanism.hooks.DraconicEvolution && moduleUpgrade.values()[itemstack.getItemDamage()] == moduleUpgrade.ENERGY_SHIELD_UNIT){
+                list.add(EnumColor.AQUA + LangUtils.localize("tooltip.install.DR"));
+            }
         }
     }
 

@@ -39,10 +39,8 @@ public enum moduleUpgrade {
     HEALTH_REGENERATION("Health_regeneration", 10),
     //head
     EMERGENCY_RESCUE("Emergency_rescue", 10),
-    ;
     //ALL
-
-
+    ENERGY_SHIELD_UNIT("Energy_shield_unit", 10);
 
     private String name;
     private int maxStack;

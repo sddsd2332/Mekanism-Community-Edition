@@ -2,6 +2,7 @@ package mekanism.common.item.armor;
 
 
 import cofh.redstoneflux.api.IEnergyContainerItem;
+import com.brandon3055.draconicevolution.items.armor.ICustomArmor;
 import ic2.api.item.IElectricItemManager;
 import ic2.api.item.IHazmatLike;
 import ic2.api.item.ISpecialElectricItem;
@@ -50,9 +51,11 @@ import java.util.List;
 @Optional.InterfaceList({
         @Optional.Interface(iface = "ic2.api.item.ISpecialElectricItem", modid = MekanismHooks.IC2_MOD_ID),
         @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyContainerItem", modid = MekanismHooks.REDSTONEFLUX_MOD_ID),
-        @Optional.Interface(iface = "ic2.api.item.IHazmatLike", modid = MekanismHooks.IC2_MOD_ID)
+        @Optional.Interface(iface = "ic2.api.item.IHazmatLike", modid = MekanismHooks.IC2_MOD_ID),
+        @Optional.Interface(iface = "com.brandon3055.draconicevolution.items.armor.ICustomArmor", modid = MekanismHooks.DraconicEvolution_MOD_ID)
 })
-public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedItem, ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor, IModuleUpgrade, IHazmatLike {
+public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedItem,
+        ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor, IModuleUpgrade, IHazmatLike, ICustomArmor {
 
     private final float absorption;
 
@@ -341,6 +344,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         return new ArrayList<>() {{
             add(moduleUpgrade.EnergyUnit);
             add(moduleUpgrade.RADIATION_SHIELDING_UNIT);
+            add(moduleUpgrade.ENERGY_SHIELD_UNIT);
         }};
     }
 
@@ -386,31 +390,6 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
 
     abstract double getShieldingByArmor();
 
-    private static class FoundArmorDetails {
-
-        private final EnergyUsageInfo usageInfo;
-        private final ItemMekaSuitArmor armor;
-        private double energyContainer;
-
-        public FoundArmorDetails(double energyContainer, ItemMekaSuitArmor armor) {
-            this.energyContainer = energyContainer;
-            this.usageInfo = new EnergyUsageInfo(energyContainer);
-            this.armor = armor;
-        }
-
-    }
-
-    private static class EnergyUsageInfo {
-
-        private double energyAvailable;
-        private double energyUsed = 0;
-
-        public EnergyUsageInfo(double energyAvailable) {
-            //Copy it so we can just use minusEquals without worry
-            this.energyAvailable = energyAvailable;
-        }
-    }
-
     @Override
     public boolean handleUnblockableDamage(EntityLivingBase entity, @Nonnull ItemStack armor, DamageSource source, double damage, int slot) {
         if (UpgradeHelper.isUpgradeInstalled(armor, moduleUpgrade.RADIATION_SHIELDING_UNIT)) {
@@ -437,5 +416,122 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         return EnumColor.ORANGE + super.getItemStackDisplayName(itemstack);
     }
 
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public float getProtectionPoints(ItemStack stack) {
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.ENERGY_SHIELD_UNIT)) {
+            int upgradeLevel = UpgradeHelper.getUpgradeLevel(stack, moduleUpgrade.ENERGY_SHIELD_UNIT);
+            return 1000F * getProtectionShare() * (int) Math.pow(2, upgradeLevel);
+        } else {
+            return 0.0F;
+        }
+    }
 
+    private float getProtectionShare() {
+        return switch (armorType) {
+            case HEAD, FEET -> 0.15F;
+            case CHEST -> 0.40F;
+            case LEGS -> 0.30F;
+            default -> 0;
+        };
+    }
+
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public float getRecoveryRate(ItemStack stack) {
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.ENERGY_SHIELD_UNIT)) {
+            int upgradeLevel = UpgradeHelper.getUpgradeLevel(stack, moduleUpgrade.ENERGY_SHIELD_UNIT);
+            return 10F * (int) Math.pow(2, upgradeLevel);
+        } else {
+            return 0.0F;
+        }
+    }
+
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public float getSpeedModifier(ItemStack stack, EntityPlayer player) {
+        return 0.0F;
+    }
+
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public float getJumpModifier(ItemStack stack, EntityPlayer player) {
+        return 0.0F;
+    }
+
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean hasHillStep(ItemStack stack, EntityPlayer player) {
+        return false;
+    }
+
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public float getFireResistance(ItemStack stack) {
+        return 0.0F;
+    }
+
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean[] hasFlight(ItemStack stack) {
+        return new boolean[]{false, false, false};
+    }
+
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public float getFlightSpeedModifier(ItemStack stack, EntityPlayer player) {
+        return 0;
+    }
+
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public float getFlightVModifier(ItemStack stack, EntityPlayer player) {
+        return 0;
+    }
+
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public int getEnergyPerProtectionPoint() {
+        return 500;
+    }
+
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public void modifyEnergy(ItemStack stack, int modify) {
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.ENERGY_SHIELD_UNIT)) {
+            double energy = getEnergy(stack);
+            energy += modify;
+            if (energy > getMaxEnergy(stack)) {
+                energy = getMaxEnergy(stack);
+            } else if (energy < 0) {
+                energy = 0;
+            }
+            setEnergy(stack, energy);
+        }
+    }
+
+    private static class FoundArmorDetails {
+
+        private final EnergyUsageInfo usageInfo;
+        private final ItemMekaSuitArmor armor;
+        private double energyContainer;
+
+        public FoundArmorDetails(double energyContainer, ItemMekaSuitArmor armor) {
+            this.energyContainer = energyContainer;
+            this.usageInfo = new EnergyUsageInfo(energyContainer);
+            this.armor = armor;
+        }
+
+    }
+
+    private static class EnergyUsageInfo {
+
+        private double energyAvailable;
+        private double energyUsed = 0;
+
+        public EnergyUsageInfo(double energyAvailable) {
+            //Copy it so we can just use minusEquals without worry
+            this.energyAvailable = energyAvailable;
+        }
+    }
 }
