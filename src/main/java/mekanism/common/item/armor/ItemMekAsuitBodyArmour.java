@@ -8,6 +8,7 @@ import mekanism.api.gas.IGasItem;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitBody;
 import mekanism.client.model.mekasuitarmour.ModuleGravitational;
 import mekanism.client.model.mekasuitarmour.ModuleJetpack;
+import mekanism.common.Mekanism;
 import mekanism.common.MekanismFluids;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
@@ -278,7 +279,9 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
                 list.add(LangUtils.localize("tooltip.jetpack.mode") + " " + getMode(stack).getName());
                 list.add(LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + (getStored(stack) > 0 ? getStored(stack) : LangUtils.localize("tooltip.noGas")));
             }
-            list.add(LangUtils.localize("tooltip.meka_body.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
+            if (!Mekanism.hooks.DraconicEvolution) {
+                list.add(LangUtils.localize("tooltip.meka_body.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
+            }
         }
     }
 

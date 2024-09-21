@@ -2,6 +2,7 @@ package mekanism.common.item.armor;
 
 import com.google.common.collect.Multimap;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitLeg;
+import mekanism.common.Mekanism;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.item.interfaces.IItemHUDProvider;
@@ -133,7 +134,9 @@ public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor implements IItemHU
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
         if (slotType == getEquipmentSlot()) {
-            list.add(LangUtils.localize("tooltip.meka_legs.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
+            if (!Mekanism.hooks.DraconicEvolution){
+                list.add(LangUtils.localize("tooltip.meka_legs.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
+            }
         }
     }
 }

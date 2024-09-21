@@ -2,6 +2,7 @@ package mekanism.common.item.armor;
 
 import com.google.common.collect.Multimap;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitBoot;
+import mekanism.common.Mekanism;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.item.interfaces.IItemHUDProvider;
@@ -159,7 +160,9 @@ public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor implements IItemHU
                 list.add(LangUtils.localize("tooltip.module.jump_boost.name") + " " + getJumpBoostMode(stack).getBoost());
                 list.add(LangUtils.localize("tooltip.module.step_assist.name") + " " + getStepAssistMode(stack).getHeight());
             }
-            list.add(LangUtils.localize("tooltip.meka_feet.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
+            if (!Mekanism.hooks.DraconicEvolution) {
+                list.add(LangUtils.localize("tooltip.meka_feet.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
+            }
         }
     }
 

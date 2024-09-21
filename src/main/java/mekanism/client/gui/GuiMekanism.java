@@ -85,10 +85,6 @@ public abstract class GuiMekanism extends GuiContainer implements IGuiWrapper {
         guiElements.forEach(element -> element.renderForeground(xAxis, yAxis));
     }
 
-    protected boolean isMouseOverSlot(Slot slot, int mouseX, int mouseY) {
-        return isPointInRegion(slot.xPos, slot.yPos, 16, 16, mouseX, mouseY);
-    }
-
     protected void drawGuiContainerBackgroundLayer(int xAxis, int yAxis) {
     }
 

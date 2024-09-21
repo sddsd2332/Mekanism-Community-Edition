@@ -1765,3 +1765,5 @@ item.module.emergency_rescue.name=Emergency rescue unit
 module.Emergency_rescue.desc=When close to death, the consumption will be automatically triggered and the state will be restored
 module.emergency_rescue.use=Warn! The user has been hit hard! Intercepted!
 tooltip.install.DR=Draconic Evolution needs to be installed to work.
+item.module.energy_shield_unit.name=Energy shield unit
+module.Energy_shield_unit.desc=Use Draconic Evolution's shield to block damage

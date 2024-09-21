@@ -9,6 +9,7 @@ import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitHead;
 import mekanism.client.model.mekasuitarmour.ModuleSolarHelmet;
+import mekanism.common.Mekanism;
 import mekanism.common.MekanismFluids;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
@@ -292,7 +293,9 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
             if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.EMERGENCY_RESCUE)) {
                 list.add(LangUtils.localize("tooltip.meka_head.Emergency_rescue") + " " + UpgradeHelper.getUpgradeLevel(stack, moduleUpgrade.EMERGENCY_RESCUE));
             }
-            list.add(LangUtils.localize("tooltip.meka_head.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
+            if (!Mekanism.hooks.DraconicEvolution) {
+                list.add(LangUtils.localize("tooltip.meka_head.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
+            }
         }
     }
 }
