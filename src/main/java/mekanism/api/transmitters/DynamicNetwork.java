@@ -269,6 +269,12 @@ public abstract class DynamicNetwork<ACCEPTOR, NETWORK extends DynamicNetwork<AC
         return world;
     }
 
+    public void onParallelTick() {
+    }
+
+    public void preTick() {
+    }
+
     public void tick() {
         onUpdate();
     }
