@@ -83,9 +83,9 @@ public class TransmitterNetworkRegistry {
         removeInvalidTransmitters();
         assignOrphans();
         commitChanges();
-        for (DynamicNetwork<?, ?, ?> net : networks) {
-            net.tick();
-        }
+        networks.forEach(DynamicNetwork::preTick);
+        networks.parallelStream().forEach(DynamicNetwork::onParallelTick);
+        networks.forEach(DynamicNetwork::tick);
     }
 
     public void removeInvalidTransmitters() {

@@ -92,7 +92,7 @@ public class TileEntityGasTank extends TileEntityContainerBlock implements IGasH
             if (gasTank.getGas() != null && MekanismUtils.canFunction(this) && (tier == GasTankTier.CREATIVE || dumping != GasMode.DUMPING)) {
                 if (configComponent.isEjecting(TransmissionType.GAS)) {
                     Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
-                        if (gasTank.getGas().getGas() != null) {
+                        if (gasTank.getGas() != null) {
                             GasStack toSend = gasTank.getGas().copy().withAmount(Math.min(gasTank.getStored(), tier.getOutput()));
                             gasTank.draw(GasUtils.emit(toSend, this, configComponent.getSidesForData(TransmissionType.GAS, facing, 2)), tier != GasTankTier.CREATIVE);
                         }

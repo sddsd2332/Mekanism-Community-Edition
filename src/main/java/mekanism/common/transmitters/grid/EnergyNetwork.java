@@ -28,6 +28,9 @@ public class EnergyNetwork extends DynamicNetwork<EnergyAcceptorWrapper, EnergyN
     private double joulesTransmitted = 0;
     private double jouleBufferLastTick = 0;
 
+    private final ReferenceSet<EnergyAcceptorTarget> targets = new ReferenceOpenHashSet<>();
+    private volatile int totalHandlers = 0;
+
     public EnergyNetwork() {
     }
 
@@ -87,8 +90,65 @@ public class EnergyNetwork extends DynamicNetwork<EnergyAcceptorWrapper, EnergyN
         return getCapacityAsDouble() - buffer.amount;
     }
 
+    public double emit(double energyToSend, boolean doEmit) {
+        double toUse = Math.min(getEnergyNeeded(), energyToSend);
+        if (doEmit) {
+            buffer.amount += toUse;
+        }
+        return energyToSend - toUse;
+    }
+
+    @Override
+    public String toString() {
+        return "[EnergyNetwork] " + transmitters.size() + " transmitters, " + possibleAcceptors.size() + " acceptors.";
+    }
+
+    @Override
+    public void preTick() {
+        super.onUpdate();
+        clearJoulesTransmitted();
+
+        if (!FMLCommonHandler.instance().getEffectiveSide().isServer()) {
+            return;
+        }
+
+        double currentPowerScale = getPowerScale();
+        if (Math.abs(currentPowerScale - lastPowerScale) > 0.01 || (currentPowerScale != lastPowerScale && (currentPowerScale == 0 || currentPowerScale == 1))) {
+            needsUpdate = true;
+        }
+        if (needsUpdate) {
+            MinecraftForge.EVENT_BUS.post(new EnergyTransferEvent(this, currentPowerScale));
+            lastPowerScale = currentPowerScale;
+            needsUpdate = false;
+        }
+    }
+
+    @Override
+    public void onParallelTick() {
+        if (!FMLCommonHandler.instance().getEffectiveSide().isServer()) {
+            return;
+        }
+        collectTargets();
+    }
+
+    @Override
+    public void onUpdate() {
+        if (!FMLCommonHandler.instance().getEffectiveSide().isServer()) {
+            return;
+        }
+        if (buffer.amount > 0) {
+            joulesTransmitted = tickEmit(buffer.amount);
+            buffer.amount -= joulesTransmitted;
+        }
+    }
+
     private double tickEmit(double energyToSend) {
-        ReferenceSet<EnergyAcceptorTarget> targets = new ReferenceOpenHashSet<>();
+        return EmitUtils.sendToAcceptors(targets, totalHandlers, energyToSend);
+    }
+
+    private void collectTargets() {
+        ReferenceSet<EnergyAcceptorTarget> targets = this.targets;
+        targets.clear();
         int totalHandlers = 0;
         for (Coord4D coord : possibleAcceptors) {
             EnumSet<EnumFacing> sides = acceptorDirections.get(coord);
@@ -112,42 +172,7 @@ public class EnergyNetwork extends DynamicNetwork<EnergyAcceptorWrapper, EnergyN
                 totalHandlers += curHandlers;
             }
         }
-        return EmitUtils.sendToAcceptors(targets, totalHandlers, energyToSend);
-    }
-
-    public double emit(double energyToSend, boolean doEmit) {
-        double toUse = Math.min(getEnergyNeeded(), energyToSend);
-        if (doEmit) {
-            buffer.amount += toUse;
-        }
-        return energyToSend - toUse;
-    }
-
-    @Override
-    public String toString() {
-        return "[EnergyNetwork] " + transmitters.size() + " transmitters, " + possibleAcceptors.size() + " acceptors.";
-    }
-
-    @Override
-    public void onUpdate() {
-        super.onUpdate();
-        clearJoulesTransmitted();
-
-        double currentPowerScale = getPowerScale();
-        if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
-            if (Math.abs(currentPowerScale - lastPowerScale) > 0.01 || (currentPowerScale != lastPowerScale && (currentPowerScale == 0 || currentPowerScale == 1))) {
-                needsUpdate = true;
-            }
-            if (needsUpdate) {
-                MinecraftForge.EVENT_BUS.post(new EnergyTransferEvent(this, currentPowerScale));
-                lastPowerScale = currentPowerScale;
-                needsUpdate = false;
-            }
-            if (buffer.amount > 0) {
-                joulesTransmitted = tickEmit(buffer.amount);
-                buffer.amount -= joulesTransmitted;
-            }
-        }
+        this.totalHandlers = totalHandlers;
     }
 
     public double getPowerScale() {

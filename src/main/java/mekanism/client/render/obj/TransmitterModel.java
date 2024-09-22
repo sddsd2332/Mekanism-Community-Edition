@@ -58,7 +58,7 @@ public class TransmitterModel extends OBJBakedModelBase {
             .put(TransformType.FIXED, get(0, 0, 0, 0, 0, 0, 1))
             .put(TransformType.NONE, get(0, 0, 0, 0, 0, 0, 0))
             .build();
-    private static Set<TransmitterModel> modelInstances = new ObjectOpenHashSet<>();
+    private static Set<TransmitterModel> modelInstances = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private static TextureAtlasSprite[] transporter_center = new TextureAtlasSprite[2];
     private static TextureAtlasSprite[] transporter_center_color = new TextureAtlasSprite[2];
     private static TextureAtlasSprite[] transporter_side = new TextureAtlasSprite[2];
