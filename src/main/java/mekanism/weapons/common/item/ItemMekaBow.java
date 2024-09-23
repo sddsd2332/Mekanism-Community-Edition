@@ -142,8 +142,9 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
                         if (fire) {
                             entityarrow.setFire(100);
                         }
+                        entityarrow.setPicked(!isUpgradeInstalled(itemstack, moduleUpgrade.ARROWENERGY_UNIT));
                         if (noConsume || ArrowAmount > 0) {
-                            entityarrow.pickupStatus = EntityArrow.PickupStatus.CREATIVE_ONLY;
+                            entityarrow.pickupStatus = EntityMekaArrow.PickupStatus.CREATIVE_ONLY;
                         }
                         world.spawnEntity(entityarrow);
                     }
@@ -346,8 +347,8 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
         if (amount == 0) {
             NBTTagCompound dataMap = ItemDataUtils.getDataMap(itemStack);
             dataMap.removeTag("energyStored");
-            if (dataMap.isEmpty()) {
-                itemStack.setTagCompound(null);
+            if (dataMap.isEmpty() && itemStack.getTagCompound() != null) {
+                itemStack.getTagCompound().removeTag(ItemDataUtils.DATA_ID);
             }
         } else {
             ItemDataUtils.setDouble(itemStack, "energyStored", Math.max(Math.min(amount, getMaxEnergy(itemStack)), 0));

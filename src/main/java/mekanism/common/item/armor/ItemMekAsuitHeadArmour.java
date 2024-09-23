@@ -296,6 +296,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
             if (!Mekanism.hooks.DraconicEvolution) {
                 list.add(LangUtils.localize("tooltip.meka_head.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
             }
+
         }
     }
 }

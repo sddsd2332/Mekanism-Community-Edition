@@ -91,8 +91,8 @@ public class ItemMekaTana extends ItemMekaEnergyBase implements IModuleUpgrade {
         int numUpgrades = UpgradeHelper.getUpgradeLevel(itemStack, moduleUpgrade.ATTACK_AMPLIFICATION_UNIT);
         if (numUpgrades == 0) {
             NBTTagCompound dataMap = ItemDataUtils.getDataMap(itemStack);
-            if (dataMap.isEmpty()) {
-                itemStack.setTagCompound(null);
+            if (dataMap.isEmpty() && itemStack.getTagCompound() != null) {
+                itemStack.getTagCompound().removeTag(ItemDataUtils.DATA_ID);
             }
         }
         for (int i = 0; i < numUpgrades; i++) {
