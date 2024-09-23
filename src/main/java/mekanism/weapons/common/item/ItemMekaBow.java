@@ -142,7 +142,7 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
                         if (fire) {
                             entityarrow.setFire(100);
                         }
-                        entityarrow.setPicked(!isUpgradeInstalled(itemstack, moduleUpgrade.ARROWENERGY_UNIT));
+                        entityarrow.setPicked(!isUpgradeInstalled(itemstack, moduleUpgrade.ARROWENERGY_UNIT) || EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, itemstack) < 0);
                         if (noConsume || ArrowAmount > 0) {
                             entityarrow.pickupStatus = EntityMekaArrow.PickupStatus.CREATIVE_ONLY;
                         }

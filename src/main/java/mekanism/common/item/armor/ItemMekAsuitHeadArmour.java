@@ -280,6 +280,9 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
         list.add(moduleUpgrade.InhalationPurificationUnit);
         list.add(moduleUpgrade.NutritionalInjectionUnit);
         list.add(moduleUpgrade.EMERGENCY_RESCUE);
+        if (UpgradeHelper.getUpgradeLevel(stack,moduleUpgrade.EMERGENCY_RESCUE) == moduleUpgrade.EMERGENCY_RESCUE.getMax() && UpgradeHelper.getUpgradeLevel(stack,moduleUpgrade.ENERGY_SHIELD_UNIT) == moduleUpgrade.ENERGY_SHIELD_UNIT.getMax()){
+            list.add(moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT);
+        }
         return list;
     }
 

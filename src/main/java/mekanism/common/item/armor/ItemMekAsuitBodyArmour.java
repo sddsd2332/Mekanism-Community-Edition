@@ -252,15 +252,22 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
         super.onArmorTick(world, player, itemStack);
         if (!world.isRemote) {
             ItemStack chestStack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+            ItemStack headStack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
             if (chestStack.getItem() instanceof ItemMekAsuitBodyArmour) {
                 if (UpgradeHelper.isUpgradeInstalled(chestStack, moduleUpgrade.CHARGE_DISTRIBUTION_UNIT)) {
                     chargeSuit(player);
                 }
                 if (UpgradeHelper.isUpgradeInstalled(chestStack, moduleUpgrade.HEALTH_REGENERATION)) {
-                    ArmourTick++;
-                    if (player.getHealth() < player.getMaxHealth() && ArmourTick % 20 == 0) {
-                        player.heal(UpgradeHelper.getUpgradeLevel(chestStack, moduleUpgrade.HEALTH_REGENERATION));
-                        ArmourTick = 0;
+                    if (!UpgradeHelper.isUpgradeInstalled(headStack, moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT)) {
+                        ArmourTick++;
+                        if (player.getHealth() < player.getMaxHealth() && ArmourTick % 20 == 0) {
+                            player.heal(UpgradeHelper.getUpgradeLevel(chestStack, moduleUpgrade.HEALTH_REGENERATION));
+                            ArmourTick = 0;
+                        }
+                    } else {
+                        if (player.getHealth() < player.getMaxHealth()) {
+                            player.heal(player.getMaxHealth());
+                        }
                     }
                 }
             }

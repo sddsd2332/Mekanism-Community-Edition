@@ -430,9 +430,11 @@ public class CommonPlayerTickHandler {
             ItemStack head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
             if (!head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour && UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.EMERGENCY_RESCUE)) {
                 event.setCanceled(true);
-                int installed = UpgradeHelper.getUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE);
-                int toAdd = Math.max(installed - 1, 0);
-                UpgradeHelper.setUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE, toAdd);
+                if (!UpgradeHelper.isUpgradeInstalled(head,moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT)){
+                    int installed = UpgradeHelper.getUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE);
+                    int toAdd = Math.max(installed - 1, 0);
+                    UpgradeHelper.setUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE, toAdd);
+                }
                 player.setHealth(5F);
                 player.clearActivePotions();
                 player.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 800, 2));
@@ -464,9 +466,11 @@ public class CommonPlayerTickHandler {
                     player.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION, 100, 2));
                     player.setAir(300);
                     player.getFoodStats().addStats(20, 20);
-                    int installed = UpgradeHelper.getUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE);
-                    int toAdd = Math.max(installed - 1, 0);
-                    UpgradeHelper.setUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE, toAdd);
+                    if (!UpgradeHelper.isUpgradeInstalled(head,moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT)){
+                        int installed = UpgradeHelper.getUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE);
+                        int toAdd = Math.max(installed - 1, 0);
+                        UpgradeHelper.setUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE, toAdd);
+                    }
                 }
             }
         }

@@ -1,5 +1,9 @@
 package mekanism.common;
 
+import com.brandon3055.draconicevolution.DEFeatures;
+import com.brandon3055.draconicevolution.api.fusioncrafting.IFusionRecipe;
+import com.brandon3055.draconicevolution.api.fusioncrafting.SimpleFusionRecipe;
+import com.brandon3055.draconicevolution.lib.RecipeManager;
 import mekanism.api.EnumColor;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasRegistry;
@@ -10,15 +14,21 @@ import mekanism.api.infuse.InfuseRegistry;
 import mekanism.api.infuse.InfuseType;
 import mekanism.common.block.states.BlockStateMachine;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.integration.MekanismHooks;
 import mekanism.common.recipe.RecipeHandler;
+import mekanism.common.tier.InductionCellTier;
+import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.StackUtils;
+import net.foxmcloud.draconicadditions.DAFeatures;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
@@ -342,7 +352,7 @@ public class MekanismRecipe {
                             RecipeHandler.addNutritionalLiquifierRecipe(stack, new GasStack(MekanismFluids.NutritionalPaste, itemFood.getHealAmount(stack) * 50));
                         }
                     } catch (Exception ignored) {
-                        Mekanism.logger.error("Unable to add recipe for Nutritional Liquifier because {} is entered incorrectly",itemFood);
+                        Mekanism.logger.error("Unable to add recipe for Nutritional Liquifier because {} is entered incorrectly", itemFood);
                     }
                 }
             }
@@ -423,5 +433,60 @@ public class MekanismRecipe {
         /**
          * ADD END
          */
+        if (Mekanism.hooks.DraconicEvolution) {
+            addDRrecipes();
+            if (Mekanism.hooks.DraconicAdditions) {
+                addDRAdditionsrecipes();
+            }
+        }
     }
+
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public static void addDRrecipes() {
+        addDRSimpleFusionRecipe(new ItemStack(MekanismItems.ModuleUpgrade, 1, 24), new ItemStack(MekanismItems.ModuleBase), 256000000L, 3,
+                DEFeatures.chaoticCore, "PoloniumPellet", new ItemStack(MekanismItems.Polyethene, 1, 2), DEFeatures.chaosShard, new ItemStack(MekanismItems.Polyethene, 1, 2), "PoloniumPellet", DEFeatures.chaoticCore,
+                "PoloniumPellet", MekanismItems.CosmicMatter, "alloyUltimate", "circuitUltimate", "alloyUltimate", MekanismItems.CosmicMatter, "PoloniumPellet",
+                new ItemStack(MekanismItems.Polyethene, 1, 2), "alloyUltimate", "PlutoniumPellet", new ItemStack(DEFeatures.toolUpgrade, 1, 8), "PlutoniumPellet", "alloyUltimate", new ItemStack(MekanismItems.Polyethene, 1, 2),
+                DEFeatures.chaosShard, "circuitUltimate", new ItemStack(DEFeatures.toolUpgrade, 1, 9), new ItemStack(DEFeatures.toolUpgrade, 1, 9), "circuitUltimate", DEFeatures.chaosShard,
+                new ItemStack(MekanismItems.Polyethene, 1, 2), "alloyUltimate", "PlutoniumPellet", new ItemStack(DEFeatures.toolUpgrade, 1, 8), "PlutoniumPellet", "alloyUltimate", new ItemStack(MekanismItems.Polyethene, 1, 2),
+                "PoloniumPellet", MekanismItems.CosmicMatter, "alloyUltimate", "circuitUltimate", "alloyUltimate", MekanismItems.CosmicMatter, "PoloniumPellet",
+                DEFeatures.chaoticCore, "PoloniumPellet", new ItemStack(MekanismItems.Polyethene, 1, 2), DEFeatures.chaosShard, new ItemStack(MekanismItems.Polyethene, 1, 2), "PoloniumPellet", DEFeatures.chaoticCore);
+    }
+
+    @Optional.Method(modid = MekanismHooks.DraconicAdditions_MOD_ID)
+    public static void addDRAdditionsrecipes() {
+        ItemStack inductionCell = new ItemStack(MekanismBlocks.BasicBlock2, 1, 3);
+        if (!inductionCell.hasTagCompound()) {
+            inductionCell.setTagCompound(new NBTTagCompound());
+        }
+        inductionCell.getTagCompound().setInteger("tier", 3);
+        inductionCell.getTagCompound().setTag("mekData", new NBTTagCompound());
+        ItemDataUtils.setDouble(inductionCell, "energyStored", InductionCellTier.ULTIMATE.getBaseMaxEnergy());
+
+        ItemStack chaosCrystalStable = new ItemStack(DAFeatures.chaosCrystalStable);
+        if (!chaosCrystalStable.hasTagCompound()) {
+            chaosCrystalStable.setTagCompound(new NBTTagCompound());
+        }
+        chaosCrystalStable.getTagCompound().setBoolean("isStable", true);
+
+        addDRSimpleFusionRecipe(new ItemStack(MekanismItems.ModuleUpgrade, 1, 25), new ItemStack(MekanismItems.ModuleBase), Integer.MAX_VALUE * 53L, 3,
+                DAFeatures.chaosHeart, inductionCell, DAFeatures.chaosStabilizerCore, inductionCell, DAFeatures.chaosHeart,
+                DAFeatures.chaosHeart, chaosCrystalStable, "PlutoniumPellet", chaosCrystalStable, DAFeatures.chaosHeart,
+                inductionCell, MekanismItems.CosmicMatter, "PoloniumPellet", new ItemStack(MekanismItems.ModuleUpgrade, 1, 23), "PoloniumPellet", MekanismItems.CosmicMatter, inductionCell,
+                "PoloniumPellet", new ItemStack(MekanismItems.ModuleUpgrade, 1, 23), new ItemStack(MekanismItems.ModuleUpgrade, 1, 24), new ItemStack(MekanismItems.ModuleUpgrade, 1, 23), "PoloniumPellet",
+                DAFeatures.chaosStabilizerCore, "PlutoniumPellet", new ItemStack(MekanismItems.ModuleUpgrade, 1, 23), new ItemStack(MekanismItems.ModuleUpgrade, 1, 24), "circuitUltimate", new ItemStack(MekanismItems.ModuleUpgrade, 1, 24), new ItemStack(MekanismItems.ModuleUpgrade, 1, 23), "PlutoniumPellet", DAFeatures.chaosStabilizerCore,
+                "PoloniumPellet", new ItemStack(MekanismItems.ModuleUpgrade, 1, 23), new ItemStack(MekanismItems.ModuleUpgrade, 1, 24), new ItemStack(MekanismItems.ModuleUpgrade, 1, 23), "PoloniumPellet",
+                inductionCell, MekanismItems.CosmicMatter, "PoloniumPellet", new ItemStack(MekanismItems.ModuleUpgrade, 1, 23), "PoloniumPellet", MekanismItems.CosmicMatter, inductionCell,
+                DAFeatures.chaosHeart, chaosCrystalStable, "PlutoniumPellet", chaosCrystalStable, DAFeatures.chaosHeart,
+                DAFeatures.chaosHeart, inductionCell, DAFeatures.chaosStabilizerCore, inductionCell, DAFeatures.chaosHeart
+        );
+    }
+
+
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public static void addDRSimpleFusionRecipe(ItemStack out, ItemStack input, long energyCost, int craftingTier, Object... ingredients) {
+        IFusionRecipe recipe = new SimpleFusionRecipe(out, input, energyCost, craftingTier, ingredients);
+        RecipeManager.FUSION_REGISTRY.add(recipe);
+    }
+
 }

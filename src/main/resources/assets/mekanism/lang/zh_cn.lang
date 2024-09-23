@@ -1744,3 +1744,6 @@ module.emergency_rescue.use=警告！使用者遭到强大的打击！已进行�
 tooltip.install.DR=需要安装Draconic Evolution才能工作。
 item.module.energy_shield_unit.name=能量护盾单元
 module.Energy_shield_unit.desc=使用Draconic Evolution护盾来抵挡伤害
+item.module.advanced_interception_system_unit.name=先进能量护盾拦截救援系统单元
+module.Advanced_interception_system_unit.desc=不在受伤
+tooltip.install.DR2=需要安装Draconic Additions才能工作。

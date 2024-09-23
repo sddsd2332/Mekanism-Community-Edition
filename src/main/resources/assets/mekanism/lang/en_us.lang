@@ -1767,3 +1767,6 @@ module.emergency_rescue.use=Warn! The user has been hit hard! Intercepted!
 tooltip.install.DR=Draconic Evolution needs to be installed to work.
 item.module.energy_shield_unit.name=Energy shield unit
 module.Energy_shield_unit.desc=Use Draconic Evolution's shield to block damage
+item.module.advanced_interception_system_unit.name=Advanced Energy Shield Interception and Rescue System Unit
+module.Advanced_interception_system_unit.desc=Not hurting
+tooltip.install.DR2=Draconic Additionsneeds to be installed to work.

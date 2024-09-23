@@ -40,7 +40,8 @@ public enum moduleUpgrade {
     //head
     EMERGENCY_RESCUE("Emergency_rescue", 10),
     //ALL
-    ENERGY_SHIELD_UNIT("Energy_shield_unit", 10);
+    ENERGY_SHIELD_UNIT("Energy_shield_unit", 10),
+    ADVANCED_INTERCEPTION_SYSTEM_UNIT("Advanced_interception_system_unit",1);
 
     private String name;
     private int maxStack;

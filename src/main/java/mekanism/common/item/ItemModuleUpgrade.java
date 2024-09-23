@@ -58,6 +58,10 @@ public class ItemModuleUpgrade extends ItemMekanism implements IMetaItem, IModul
             if (!Mekanism.hooks.DraconicEvolution && moduleUpgrade.values()[itemstack.getItemDamage()] == moduleUpgrade.ENERGY_SHIELD_UNIT){
                 list.add(EnumColor.AQUA + LangUtils.localize("tooltip.install.DR"));
             }
+            if (!Mekanism.hooks.DraconicEvolution && !Mekanism.hooks.DraconicAdditions && moduleUpgrade.values()[itemstack.getItemDamage()] == moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT){
+                list.add(EnumColor.AQUA + LangUtils.localize("tooltip.install.DR"));
+                list.add(EnumColor.AQUA + LangUtils.localize("tooltip.install.DR2"));
+            }
         }
     }
 
