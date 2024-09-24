@@ -28,6 +28,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.List;
 
 public class TileEntityMechanicalPipe extends TileEntityTransmitter<IFluidHandler, FluidNetwork, FluidStack> implements IFluidHandlerWrapper {
 
@@ -55,29 +56,42 @@ public class TileEntityMechanicalPipe extends TileEntityTransmitter<IFluidHandle
 
     @Override
     public void doRestrictedTick() {
-        if (!getWorld().isRemote) {
-            updateShare();
-            if (nextTransfer <= 0) {
-                IFluidHandler[] connectedAcceptors = PipeUtils.getConnectedAcceptors(getPos(), getWorld());
-                boolean successAtLeaseOnce = false;
-                for (EnumFacing side : getConnections(ConnectionType.PULL)) {
-                    IFluidHandler container = connectedAcceptors[side.ordinal()];
-                    if (container != null) {
-                        FluidStack received = container.drain(getAvailablePull(), false);
-                        if (received != null && received.amount != 0 && takeFluid(received, false) == received.amount) {
-                            container.drain(takeFluid(received, true), true);
-                            successAtLeaseOnce = true;
-                        }
-                    }
-                }
-                if (!successAtLeaseOnce) {
-                    nextTransfer = 20;
-                }
-            } else {
-                nextTransfer--;
+        super.doRestrictedTick();
+
+        if (getWorld().isRemote) {
+            return;
+        }
+
+        updateShare();
+
+        if (nextTransfer > 0) {
+            nextTransfer--;
+            return;
+        }
+
+        List<EnumFacing> connections = getConnections(ConnectionType.PULL);
+        if (connections.isEmpty()) {
+            nextTransfer = 40;
+            return;
+        }
+
+        IFluidHandler[] connectedAcceptors = PipeUtils.getConnectedAcceptors(connections, getPos(), getWorld());
+        boolean successAtLeaseOnce = false;
+        for (EnumFacing side : connections) {
+            IFluidHandler container = connectedAcceptors[side.ordinal()];
+            if (container == null) {
+                continue;
+            }
+            FluidStack received = container.drain(getAvailablePull(), false);
+            if (received != null && received.amount != 0 && takeFluid(received, false) == received.amount) {
+                container.drain(takeFluid(received, true), true);
+                successAtLeaseOnce = true;
             }
         }
-        super.doRestrictedTick();
+
+        if (!successAtLeaseOnce) {
+            nextTransfer = 20;
+        }
     }
 
     @Override

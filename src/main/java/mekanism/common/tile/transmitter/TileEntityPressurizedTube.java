@@ -20,6 +20,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.List;
 
 public class TileEntityPressurizedTube extends TileEntityTransmitter<IGasHandler, GasNetwork, GasStack> implements IGasHandler {
 
@@ -75,34 +76,46 @@ public class TileEntityPressurizedTube extends TileEntityTransmitter<IGasHandler
 
     @Override
     public void doRestrictedTick() {
-        if (!getWorld().isRemote) {
-            updateShare();
-            if (nextTransfer <= 0) {
-                IGasHandler[] connectedAcceptors = GasUtils.getConnectedAcceptors(getPos(), getWorld());
-                boolean successAtLeaseOnce = false;
-                for (EnumFacing side : getConnections(ConnectionType.PULL)) {
-                    IGasHandler container = connectedAcceptors[side.ordinal()];
-                    if (container != null) {
-                        GasStack received = container.drawGas(side.getOpposite(), getAvailablePull(), false);
-                        if (received != null && received.amount != 0 && takeGas(received, false) == received.amount) {
-                            container.drawGas(side.getOpposite(), takeGas(received, true), true);
-                            successAtLeaseOnce = true;
-                        }
-                    }
-                }
-                if (!successAtLeaseOnce) {
-                    nextTransfer = 20;
-                }
-            } else {
-                nextTransfer--;
-            }
-        } else {
+        super.doRestrictedTick();
+
+        if (getWorld().isRemote) {
             float targetScale = getTransmitter().hasTransmitterNetwork() ? getTransmitter().getTransmitterNetwork().gasScale : (float) buffer.getStored() / (float) buffer.getMaxGas();
             if (Math.abs(currentScale - targetScale) > 0.01) {
                 currentScale = (9 * currentScale + targetScale) / 10;
             }
+            return;
         }
-        super.doRestrictedTick();
+
+        updateShare();
+
+        if (nextTransfer > 0) {
+            nextTransfer--;
+            return;
+        }
+
+        List<EnumFacing> connections = getConnections(ConnectionType.PULL);
+        if (connections.isEmpty()) {
+            nextTransfer = 40;
+            return;
+        }
+
+        IGasHandler[] connectedAcceptors = GasUtils.getConnectedAcceptors(getPos(), getWorld(), connections);
+        boolean successAtLeaseOnce = false;
+        for (EnumFacing side : connections) {
+            IGasHandler container = connectedAcceptors[side.ordinal()];
+            if (container == null) {
+                continue;
+            }
+            GasStack received = container.drawGas(side.getOpposite(), getAvailablePull(), false);
+            if (received != null && received.amount != 0 && takeGas(received, false) == received.amount) {
+                container.drawGas(side.getOpposite(), takeGas(received, true), true);
+                successAtLeaseOnce = true;
+            }
+        }
+
+        if (!successAtLeaseOnce) {
+            nextTransfer = 10;
+        }
     }
 
     public int getAvailablePull() {

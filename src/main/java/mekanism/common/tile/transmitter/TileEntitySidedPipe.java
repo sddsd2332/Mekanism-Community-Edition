@@ -514,7 +514,7 @@ public abstract class TileEntitySidedPipe extends TileEntityRestrictedTick imple
     }
 
     public List<EnumFacing> getConnections(ConnectionType type) {
-        List<EnumFacing> sides = new ArrayList<>();
+        List<EnumFacing> sides = new ArrayList<>(EnumFacing.VALUES.length + 1);
         for (EnumFacing side : EnumFacing.VALUES) {
             if (getConnectionType(side) == type) {
                 sides.add(side);

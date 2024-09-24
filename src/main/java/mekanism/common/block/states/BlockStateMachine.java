@@ -1,5 +1,9 @@
 package mekanism.common.block.states;
 
+import it.unimi.dsi.fastutil.ints.Int2ReferenceMap;
+import it.unimi.dsi.fastutil.ints.Int2ReferenceOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import mekanism.common.Mekanism;
 import mekanism.common.MekanismBlocks;
 import mekanism.common.base.IBlockType;
@@ -32,10 +36,7 @@ import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -139,6 +140,11 @@ public class BlockStateMachine extends ExtendedBlockState {
         MODIFICATION_STATION(MachineBlock.MACHINE_BLOCK_4,11,"Modification_Station",75,TileEntityModificationStation::new,true, true, true, Plane.HORIZONTAL, false,false,false),
         RADIOACTIVE_WASTE_BARREL(MachineBlock.MACHINE_BLOCK_4,12,"radioactive_waste_barrel",-1,TileEntityRadioactiveWasteBarrel::new,false,false,false, Plane.HORIZONTAL,false,false,false);
 
+        private static final Map<MachineBlock, Int2ReferenceMap<MachineType>> VALID_METAS = new EnumMap<>(MachineBlock.class);
+
+        static {
+            Arrays.stream(values()).forEach(MachineType::registerType);
+        }
 
         public MachineBlock typeBlock;
         public int meta;
@@ -176,6 +182,10 @@ public class BlockStateMachine extends ExtendedBlockState {
             isOpaqueCube = opaque;
         }
 
+        private void registerType() {
+            VALID_METAS.computeIfAbsent(typeBlock, k -> new Int2ReferenceOpenHashMap<>()).put(meta, this);
+        }
+
         private static final List<MachineType> VALID_MACHINES = new ArrayList<>();
 
         static {
@@ -201,14 +211,12 @@ public class BlockStateMachine extends ExtendedBlockState {
         }
 
         public static MachineType get(MachineBlock block, int meta) {
-            for (MachineType type : values()) {
-                if (type.meta == meta && type.typeBlock == block) {
-                    return type;
-                }
+            Int2ReferenceMap<MachineType> meta2Type = VALID_METAS.get(block);
+            if (meta2Type == null) {
+                return null;
             }
-            return null;
+            return meta2Type.get(meta);
         }
-
 
         public static MachineType get(ItemStack stack) {
             return get(Block.getBlockFromItem(stack.getItem()), stack.getItemDamage());
