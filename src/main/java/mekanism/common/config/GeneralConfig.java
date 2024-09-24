@@ -303,22 +303,7 @@ public class GeneralConfig extends BaseConfig {
             "The max Atomic Disassembler Vein Mining Block Count.");
     public final BooleanOption blacklistFlux = new BooleanOption(this, "general", "BlacklistFluxPower", false,
             "Disables Flux Networks power integration. Requires world restart (server-side option in SMP).");
-    public final DoubleOption MekaSuitHelmetDamageRatio = new DoubleOption(this, "general", "MekaSuitHelmetDamageRatio", 0.15F,
-            "Damage absorb ratio of the MekaSuit Helmet.");
-    public final IntOption MekaSuitHelmetDamageMax = new IntOption(this, "general", "MekaSuitHelmetDamageMax", 115,
-            "Max damage the MekaSuit Helmet can absorb.");
-    public final DoubleOption MekaSuitBodyarmorDamageRatio = new DoubleOption(this, "general", "MekaSuitBodyarmorDamageRatio", 0.4F,
-            "Damage absorb ratio of the MekaSuit Bodyarmor.");
-    public final IntOption MekaSuitBodyarmorDamageMax = new IntOption(this, "general", "MekaSuitBodyarmorDamageMax", 115,
-            "Max damage the  MekaSuit Bodyarmor can absorb.");
-    public final DoubleOption MekaSuitPantsDamageRatio = new DoubleOption(this, "general", "MekaSuitPantsDamageRatio", 0.3F,
-            "Damage absorb ratio of the MekaSuit Pants.");
-    public final IntOption MekaSuitPantsDamageMax = new IntOption(this, "general", "MekaSuitPantsDamageMax", 115,
-            "Max damage the  MekaSuit Pants can absorb.");
-    public final DoubleOption MekaSuitBootsDamageRatio = new DoubleOption(this, "general", "MekaSuitBootsDamageRatio", 0.15F,
-            "Damage absorb ratio of the MekaSuit Boots.");
-    public final IntOption MekaSuitBootsDamageMax = new IntOption(this, "general", "MekaSuitBootsDamageMax", 115,
-            "Max damage the  MekaSuit Boots can absorb.");
+
 
     public final TypeConfigManager<MachineType> machinesManager = new TypeConfigManager<>(this, "machines", MachineType.class, MachineType::getValidMachines, MachineType::getBlockName);
     public final EnumMap<BaseTier, TierConfig> tiers = TierConfig.create(this);

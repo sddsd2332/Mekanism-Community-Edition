@@ -84,8 +84,8 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
     public ArmorProperties getProperties(EntityLivingBase player, @NotNull ItemStack armor, DamageSource source, double damage, int slot) {
         ArmorProperties properties = new ArmorProperties(0, 0, 0);
         if (this == MekanismItems.MekAsuitChestplate) {
-            properties = new ArmorProperties(1, MekanismConfig.current().general.MekaSuitBodyarmorDamageRatio.val(), MekanismConfig.current().general.MekaSuitBodyarmorDamageMax.val());
-            properties.Toughness = 3.0F;
+            properties = new ArmorProperties(1, MekanismConfig.current().meka.MekaSuitBodyarmorDamageRatio.val(), MekanismConfig.current().meka.MekaSuitBodyarmorDamageMax.val());
+            properties.Toughness =  MekanismConfig.current().meka.mekaSuitToughness.val();;
         }
 
         return properties;
@@ -104,7 +104,7 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
     @Override
     public int getArmorDisplay(EntityPlayer player, @NotNull ItemStack armor, int slot) {
         if (armor.getItem() == MekanismItems.MekAsuitChestplate) {
-            return 8;
+            return MekanismConfig.current().meka.mekaSuitBodyArmorArmor.val();
         }
         return 0;
     }
@@ -189,7 +189,7 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
 
     @Override
     public int getRate(ItemStack itemstack) {
-        return 256;
+        return MekanismConfig.current().meka.mekaSuitJetpackTransferRate.val();
     }
 
     @Override
@@ -238,7 +238,7 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
 
     @Override
     public int getMaxGas(ItemStack itemstack) {
-        return 48000;
+        return MekanismConfig.current().meka.mekaSuitJetpackMaxStorage.val();
     }
 
     @Override

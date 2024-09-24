@@ -67,8 +67,8 @@ public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor implements IItemHU
     public ArmorProperties getProperties(EntityLivingBase player, @NotNull ItemStack armor, DamageSource source, double damage, int slot) {
         ArmorProperties properties = new ArmorProperties(0, 0, 0);
         if (this == MekanismItems.MekAsuitLeggings) {
-            properties = new ArmorProperties(1, MekanismConfig.current().general.MekaSuitPantsDamageRatio.val(), MekanismConfig.current().general.MekaSuitPantsDamageMax.val());
-            properties.Toughness = 3.0F;
+            properties = new ArmorProperties(1, MekanismConfig.current().meka.MekaSuitPantsDamageRatio.val(), MekanismConfig.current().meka.MekaSuitPantsDamageMax.val());
+            properties.Toughness = MekanismConfig.current().meka.mekaSuitToughness.val();
         }
 
         return properties;
@@ -77,7 +77,7 @@ public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor implements IItemHU
     @Override
     public int getArmorDisplay(EntityPlayer player, @NotNull ItemStack armor, int slot) {
         if (armor.getItem() == MekanismItems.MekAsuitLeggings) {
-            return 6;
+            return MekanismConfig.current().meka.mekaSuitPantsArmor.val();
         }
         return 0;
     }
@@ -101,15 +101,15 @@ public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor implements IItemHU
             if (legStack.getItem() instanceof ItemMekAsuitLegsArmour armour) {
                 if (isUpgradeInstalled(legStack, moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT)) {
                     if (player.isInLava() || player.isBurning()) {
-                        armour.setEnergy(legStack, armour.getEnergy(legStack) + 10.5 * UpgradeHelper.getUpgradeLevel(legStack, moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT) * 200);
+                        armour.setEnergy(legStack, armour.getEnergy(legStack) + MekanismConfig.current().meka.mekaSuitGeothermalChargingRate.val() * UpgradeHelper.getUpgradeLevel(legStack, moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT) * 200);
                     }
                 }
                 if (isUpgradeInstalled(legStack, moduleUpgrade.HYDROSTATIC_REPULSOR_UNIT)) {
-                    if (player.isInsideOfMaterial(Material.WATER) && !player.canBreatheUnderwater() && armour.getEnergy(legStack) > 500D) {
+                    if (player.isInsideOfMaterial(Material.WATER) && !player.canBreatheUnderwater() && armour.getEnergy(legStack) > MekanismConfig.current().meka.mekaSuitEnergyUsageHydrostaticRepulsion.val()) {
                         if (EnchantmentHelper.getEnchantmentLevel(Enchantments.DEPTH_STRIDER, legStack) == 0) {
                             legStack.addEnchantment(Enchantments.DEPTH_STRIDER, UpgradeHelper.getUpgradeLevel(legStack, moduleUpgrade.HYDROSTATIC_REPULSOR_UNIT));
                         }
-                        armour.setEnergy(legStack, armour.getEnergy(legStack) - 500D);
+                        armour.setEnergy(legStack, armour.getEnergy(legStack) - MekanismConfig.current().meka.mekaSuitEnergyUsageHydrostaticRepulsion.val());
                     } else {
                         NBTTagList list = legStack.getEnchantmentTagList();
                         for (int i = 0; i < list.tagCount(); i++) {
@@ -134,7 +134,7 @@ public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor implements IItemHU
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
         if (slotType == getEquipmentSlot()) {
-            if (!Mekanism.hooks.DraconicEvolution){
+            if (!Mekanism.hooks.DraconicEvolution) {
                 list.add(LangUtils.localize("tooltip.meka_legs.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
             }
         }

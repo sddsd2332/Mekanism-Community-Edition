@@ -40,9 +40,9 @@ import java.util.Map;
 public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMachine<ChemicalPairInput, GasOutput, ChemicalInfuserRecipe>
         implements IGasHandler, ISustainedData, Upgrade.IUpgradeInfoHandler, ITankManager, IAdvancedBoundingBlock {
 
-    public GasTank leftTank = new GasTank(GasTankTier.ULTIMATE.getStorage());
-    public GasTank rightTank = new GasTank(GasTankTier.ULTIMATE.getStorage());
-    public GasTank centerTank = new GasTank(GasTankTier.ULTIMATE.getStorage());
+    public GasTank leftTank = new GasTank(8192000);
+    public GasTank rightTank = new GasTank(8192000);
+    public GasTank centerTank = new GasTank(8192000);
     public int gasOutput = 256;
     public ChemicalInfuserRecipe cachedRecipe;
     public int updateDelay;

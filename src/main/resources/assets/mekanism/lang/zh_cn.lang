@@ -542,6 +542,7 @@ mekanism.configgui.ctgy.tier=机器层设定
 mekanism.configgui.ctgy.usage=能耗设定
 mekanism.configgui.ctgy.client=客户端设定
 mekanism.configgui.ctgy.storage=能量存储设定
+mekanism.configgui.ctgy.meka=MekaSuit设定
 
 # Config Tooltips
 mekanism.configgui.ctgy.general.tooltip=通用机械及其下所有模块的常规设定

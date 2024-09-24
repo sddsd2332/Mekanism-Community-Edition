@@ -11,6 +11,7 @@ import mekanism.api.energy.IEnergizedItem;
 import mekanism.common.Mekanism;
 import mekanism.common.base.IModuleUpgrade;
 import mekanism.common.capabilities.ItemCapabilityWrapper;
+import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.MekanismHooks;
 import mekanism.common.integration.forgeenergy.ForgeEnergyItemWrapper;
 import mekanism.common.integration.ic2.IC2ItemManager;
@@ -101,11 +102,11 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
                     for (moduleUpgrade upgrade : details.armor.getValidModule(stack)) {
                         float absorption;
                         if (upgrade == moduleUpgrade.InhalationPurificationUnit && UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.InhalationPurificationUnit)) {
-                            absorption = 1F;
-                            ratioAbsorbed += absorbDamage(details.usageInfo, amount, absorption, ratioAbsorbed, 1000D);
+                            absorption = MekanismConfig.current().meka.mekaSuitMagicDamageRatio.val();
+                            ratioAbsorbed += absorbDamage(details.usageInfo, amount, absorption, ratioAbsorbed, MekanismConfig.current().meka.mekaSuitEnergyUsageMagicReduce.val());
                         }
                         if (upgrade == moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT && UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT)) {
-                            absorption = (float) (0.8 * ((double) UpgradeHelper.getUpgradeLevel(stack, moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT) / 8));
+                            absorption = (float) (MekanismConfig.current().meka.mekaSuitHeatDamageReductionRatio.val() * ((double) UpgradeHelper.getUpgradeLevel(stack, moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT) / 8));
                             ratioAbsorbed += absorbDamage(details.usageInfo, amount, absorption, ratioAbsorbed, 0);
                         }
                         if (ratioAbsorbed >= 1) {
@@ -131,10 +132,10 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
                         absorbRatio = 0.75F;
                     }
                     if (absorbRatio == null) {
-                        absorbRatio = 1F;
+                        absorbRatio = MekanismConfig.current().meka.mekaSuitUnspecifiedDamageRatio.val();
                     }
                     float absorption = details.armor.absorption * absorbRatio;
-                    ratioAbsorbed += absorbDamage(details.usageInfo, amount, absorption, ratioAbsorbed, 100000D);
+                    ratioAbsorbed += absorbDamage(details.usageInfo, amount, absorption, ratioAbsorbed, MekanismConfig.current().meka.mekaSuitEnergyUsageDamage.val());
                     if (ratioAbsorbed >= 1) {
                         //If we have fully absorbed the damage, stop checking/trying to absorb more
                         break;
@@ -232,8 +233,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
 
     @Override
     public double getMaxEnergy(ItemStack itemStack) {
-        //  return 4096000000D;
-        return MekanismUtils.getModuleMaxEnergy(itemStack, 16000000D);
+        return MekanismUtils.getModuleMaxEnergy(itemStack, MekanismConfig.current().meka.mekaSuitBaseEnergyCapacity.val());
     }
 
     @Override
@@ -260,7 +260,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
 
     @Override
     public double getMaxTransfer(ItemStack itemStack) {
-        return getMaxEnergy(itemStack) * 0.005;
+        return MekanismUtils.getModuleMaxEnergy(itemStack, MekanismConfig.current().meka.mekaSuitBaseChargeRate.val());
     }
 
     @Override
@@ -421,7 +421,11 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     public float getProtectionPoints(ItemStack stack) {
         if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.ENERGY_SHIELD_UNIT)) {
             int upgradeLevel = UpgradeHelper.getUpgradeLevel(stack, moduleUpgrade.ENERGY_SHIELD_UNIT);
-            return 1000F * getProtectionShare() * (int) Math.pow(2, upgradeLevel);
+            if (MekanismConfig.current().meka.mekaSuitShield.val()) {
+                return MekanismConfig.current().meka.mekaSuitShieldCapacity.val() * getProtectionShare() * (int) Math.pow(2, upgradeLevel);
+            } else {
+                return MekanismConfig.current().meka.mekaSuitShieldCapacity.val() * this.getProtectionShare() * upgradeLevel;
+            }
         } else {
             return 0.0F;
         }
@@ -441,7 +445,11 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     public float getRecoveryRate(ItemStack stack) {
         if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.ENERGY_SHIELD_UNIT)) {
             int upgradeLevel = UpgradeHelper.getUpgradeLevel(stack, moduleUpgrade.ENERGY_SHIELD_UNIT);
-            return 10F * (int) Math.pow(2, upgradeLevel);
+            if (MekanismConfig.current().meka.mekaSuitRecovery.val()) {
+                return MekanismConfig.current().meka.mekaSuitRecoveryRate.val() * (int) Math.pow(2, upgradeLevel);
+            } else {
+                return MekanismConfig.current().meka.mekaSuitRecoveryRate.val() * (1.0F + upgradeLevel);
+            }
         } else {
             return 0.0F;
         }
@@ -492,7 +500,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     @Override
     @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
     public int getEnergyPerProtectionPoint() {
-        return 500;
+        return MekanismConfig.current().meka.mekaSuitShieldRestoresEnergy.val();
     }
 
     @Override

@@ -53,10 +53,10 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
         implements IGasHandler, IFluidHandlerWrapper, ITankManager, ISustainedData, IAdvancedBoundingBlock {
 
     private static Random Rand = new Random();
-    public FluidTank inputFluidTank = new FluidTankSync(FluidTankTier.ULTIMATE.getStorage());
-    public FluidTank outputFluidTank = new FluidTankSync(FluidTankTier.ULTIMATE.getStorage());
-    public GasTank inputGasTank = new GasTank(GasTankTier.ULTIMATE.getStorage());
-    public GasTank outputGasTank = new GasTank(GasTankTier.ULTIMATE.getStorage());
+    public FluidTank inputFluidTank = new FluidTankSync(5120000);
+    public FluidTank outputFluidTank = new FluidTankSync(5120000);
+    public GasTank inputGasTank = new GasTank(8192000);
+    public GasTank outputGasTank = new GasTank(8192000);
     public DigitalAssemblyTableRecipe cachedRecipe;
     public int updateDelay;
     public boolean needsPacket;

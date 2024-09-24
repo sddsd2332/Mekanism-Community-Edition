@@ -47,9 +47,9 @@ public class TileEntityHybridStorage extends TileEntityElectricBlock implements 
     public TileComponentEjector ejectorComponent;
     public TileComponentConfig configComponent;
     public TileComponentSecurity securityComponent;
-    public GasTank gasTank1 = new GasTank(GasTankTier.ULTIMATE.getStorage());
-    public GasTank gasTank2 = new GasTank(GasTankTier.ULTIMATE.getStorage());
-    public FluidTank fluidTank = new FluidTankSync(FluidTankTier.ULTIMATE.getStorage());
+    public GasTank gasTank1 = new GasTank(8192000);
+    public GasTank gasTank2 = new GasTank(8192000);
+    public FluidTank fluidTank = new FluidTankSync(512000);
     public RedstoneControl controlType;
     public ContainerEditMode editMode = ContainerEditMode.BOTH;
 

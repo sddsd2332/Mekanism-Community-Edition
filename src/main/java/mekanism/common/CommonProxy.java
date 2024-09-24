@@ -87,11 +87,15 @@ public class CommonProxy implements IGuiProvider {
         MekanismConfig.local().mekce.load(Mekanism.configurationce);
         MekanismConfig.local().usage.load(Mekanism.configuration);
         MekanismConfig.local().storage.load(Mekanism.configuration);
+        MekanismConfig.local().meka.load(Mekanism.configurationMeka);
         if (Mekanism.configuration.hasChanged()) {
             Mekanism.configuration.save();
         }
         if (Mekanism.configurationce.hasChanged()) {
             Mekanism.configurationce.save();
+        }
+        if (Mekanism.configurationMeka.hasChanged()) {
+            Mekanism.configurationMeka.save();
         }
     }
 

@@ -539,6 +539,7 @@ mekanism.configgui.ctgy.tier=Tier Settings
 mekanism.configgui.ctgy.usage=Usage Settings
 mekanism.configgui.ctgy.client=Client Settings
 mekanism.configgui.ctgy.storage=Energy Storage Settings
+mekanism.configgui.ctgy.meka=MekaSuit Settings
 
 # Config Tooltips
 mekanism.configgui.ctgy.general.tooltip=General settings regarding Mekanism and all its modules

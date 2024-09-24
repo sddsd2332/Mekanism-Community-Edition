@@ -51,11 +51,11 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
     private static final String[] methods = new String[]{"getEnergy", "getOutput", "getMaxEnergy", "getEnergyNeeded", "getWater", "getWaterNeeded", "getHydrogen",
             "getHydrogenNeeded", "getOxygen", "getOxygenNeeded"};
 
-    public FluidTank fluidTank = new FluidTankSync(FluidTankTier.ULTIMATE.getStorage());
+    public FluidTank fluidTank = new FluidTankSync(5120000);
 
-    public GasTank leftTank = new GasTank(GasTankTier.ULTIMATE.getStorage());
+    public GasTank leftTank = new GasTank(8192000);
 
-    public GasTank rightTank = new GasTank(GasTankTier.ULTIMATE.getStorage());
+    public GasTank rightTank = new GasTank(8192000);
 
     public int output = 512;
 

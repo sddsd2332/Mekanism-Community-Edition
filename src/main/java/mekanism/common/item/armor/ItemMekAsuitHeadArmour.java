@@ -89,8 +89,8 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
     public ArmorProperties getProperties(EntityLivingBase player, @NotNull ItemStack armor, DamageSource source, double damage, int slot) {
         ArmorProperties properties = new ArmorProperties(0, 0, 0);
         if (this == MekanismItems.MekAsuitHelmet) {
-            properties = new ArmorProperties(1, MekanismConfig.current().general.MekaSuitHelmetDamageRatio.val(), MekanismConfig.current().general.MekaSuitHelmetDamageMax.val());
-            properties.Toughness = 3.0F;
+            properties = new ArmorProperties(1, MekanismConfig.current().meka.MekaSuitHelmetDamageRatio.val(), MekanismConfig.current().meka.MekaSuitHelmetDamageMax.val());
+            properties.Toughness =  MekanismConfig.current().meka.mekaSuitToughness.val();
         }
         return properties;
     }
@@ -98,7 +98,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
     @Override
     public int getArmorDisplay(EntityPlayer player, @NotNull ItemStack armor, int slot) {
         if (armor.getItem() == MekanismItems.MekAsuitHelmet) {
-            return 3;
+            return MekanismConfig.current().meka.mekaSuitHelmetArmor.val();
         }
         return 0;
     }
@@ -106,7 +106,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
 
     @Override
     public int getRate(ItemStack itemstack) {
-        return 256;
+        return MekanismConfig.current().meka.mekaSuitNutritionalTransferRate.val();
     }
 
     @Override
@@ -155,19 +155,14 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
 
     @Override
     public int getMaxGas(ItemStack itemstack) {
-        return 128000;
+        return MekanismConfig.current().meka.mekaSuitNutritionalMaxStorage.val();
     }
 
     public int getStored(ItemStack itemstack) {
         return getGas(itemstack) != null ? getGas(itemstack).amount : 0;
     }
 
-    public void useGas(ItemStack itemstack) {
-        GasStack gas = getGas(itemstack);
-        if (gas != null) {
-            setGas(itemstack, new GasStack(gas.getGas(), gas.amount - 1));
-        }
-    }
+
 
     public GasStack useGas(ItemStack itemstack, int amount) {
         GasStack gas = getGas(itemstack);
@@ -187,15 +182,14 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
         if (!world.isRemote) {
             ItemStack headStack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
             ItemStack chestStack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-            PotionEffect nv = player.getActivePotionEffect(MobEffects.NIGHT_VISION);
+
             if (headStack.getItem() instanceof ItemMekAsuitHeadArmour item) {
                 if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.NutritionalInjectionUnit)) {
                     if (player.canEat(false) && item.getGas(headStack) != null) {
                         int needed = Math.min(20 - player.getFoodStats().getFoodLevel(), item.getStored(headStack) / 50);
-                        int toFeed = Math.min(20000, needed);
+                        int toFeed = Math.min((int) MekanismConfig.current().meka.mekaSuitEnergyUsageNutritionalInjection.val(), needed);
                         if (toFeed > 0 && item.getGas(headStack).amount > needed) {
                             item.setEnergy(headStack, item.getEnergy(headStack) - toFeed);
-                            item.useGas(headStack);
                             item.useGas(headStack, needed * 50);
                             player.getFoodStats().addStats(needed, 0.8F);
                         }
@@ -223,7 +217,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
                     List<PotionEffect> effects = Lists.newArrayList(player.getActivePotionEffects());
                     //if ()
                     for (PotionEffect potion : Collections2.filter(effects, potion -> potion.getPotion().isBadEffect())) {
-                        item.setEnergy(headStack, item.getEnergy(headStack) - 40000);
+                        item.setEnergy(headStack, item.getEnergy(headStack) - MekanismConfig.current().meka.mekaSuitEnergyUsagePotionTick.val());
                         player.removePotionEffect(potion.getPotion());
                     }
                 /*if ()
@@ -234,16 +228,18 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
                  */
                 }
 
+                //todo
                 if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.VisionEnhancementUnit)) {
+                    PotionEffect nv = player.getActivePotionEffect(MobEffects.NIGHT_VISION);
                     if (!player.getEntityWorld().isDaytime() && !player.getEntityWorld().provider.isNether()) {
                         if (nv == null) {
-                            player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false));
+                            player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 220, 0, false, false));
                         } else {
-                            nv.duration = Integer.MAX_VALUE;
+                            nv.duration = 220;
                         }
-                        item.setEnergy(headStack, item.getEnergy(headStack) - 200);
-                    } else if (nv != null) {
-                        nv.duration = 0;
+                        item.setEnergy(headStack, item.getEnergy(headStack) - MekanismConfig.current().meka.mekaSuitEnergyUsageVisionEnhancement.val());
+                    } else if (nv != null && nv.getDuration() <= 220) {
+                        player.removePotionEffect(MobEffects.NIGHT_VISION);
                     }
                 }
 
@@ -253,7 +249,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
                         float tempEff = 0.3f * (0.8f - b.getTemperature(player.getPosition()));
                         float humidityEff = -0.3f * (b.canRain() ? b.getRainfall() : 0.0f);
                         boolean needsRainCheck = b.canRain();
-                        double peakOutput = 500 * (1.0f + tempEff + humidityEff);
+                        double peakOutput = MekanismConfig.current().meka.mekaSuitSolarRechargingRate.val() * (1.0f + tempEff + humidityEff);
                         float brightness = player.getEntityWorld().getSunBrightnessFactor(1.0f);
                         double production = peakOutput * brightness;
                         if (needsRainCheck && (world.isRaining() || world.isThundering())) {
@@ -280,7 +276,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
         list.add(moduleUpgrade.InhalationPurificationUnit);
         list.add(moduleUpgrade.NutritionalInjectionUnit);
         list.add(moduleUpgrade.EMERGENCY_RESCUE);
-        if (UpgradeHelper.getUpgradeLevel(stack,moduleUpgrade.EMERGENCY_RESCUE) == moduleUpgrade.EMERGENCY_RESCUE.getMax() && UpgradeHelper.getUpgradeLevel(stack,moduleUpgrade.ENERGY_SHIELD_UNIT) == moduleUpgrade.ENERGY_SHIELD_UNIT.getMax()){
+        if (UpgradeHelper.getUpgradeLevel(stack, moduleUpgrade.EMERGENCY_RESCUE) == moduleUpgrade.EMERGENCY_RESCUE.getMax() && UpgradeHelper.getUpgradeLevel(stack, moduleUpgrade.ENERGY_SHIELD_UNIT) == moduleUpgrade.ENERGY_SHIELD_UNIT.getMax()) {
             list.add(moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT);
         }
         return list;

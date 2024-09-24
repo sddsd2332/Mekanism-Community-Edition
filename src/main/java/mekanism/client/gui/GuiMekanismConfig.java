@@ -32,6 +32,7 @@ public class GuiMekanismConfig extends GuiConfig {
         list.add(new DummyCategoryElement(LangUtils.localize("mekanism.configgui.ctgy.usage"), "mekanism.configgui.ctgy.usage", UsageEntry.class));
         list.add(new DummyCategoryElement(LangUtils.localize("mekanism.configgui.ctgy.storage"), "mekanism.configgui.ctgy.storage", StorageEntry.class));
         list.add(new DummyCategoryElement(LangUtils.localize("mekanism.configgui.ctgy.client"), "mekanism.configgui.ctgy.client", ClientEntry.class));
+        list.add(new DummyCategoryElement(LangUtils.localize("mekanism.configgui.ctgy.meka"),"mekanism.configgui.ctgy.meka",MekaEntry.class));
         return list;
     }
 
@@ -123,6 +124,19 @@ public class GuiMekanismConfig extends GuiConfig {
         protected GuiScreen buildChildScreen() {
             return new GuiConfig(owningScreen, new ConfigElement(Mekanism.configuration.getCategory("client")).getChildElements(), owningScreen.modID,
                     Configuration.CATEGORY_CLIENT, false, false, GuiConfig.getAbridgedConfigPath(Mekanism.configuration.toString()));
+        }
+    }
+
+    public static class MekaEntry extends CategoryEntry {
+
+        public MekaEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement prop) {
+            super(owningScreen, owningEntryList, prop);
+        }
+
+        @Override
+        protected GuiScreen buildChildScreen() {
+            return new GuiConfig(owningScreen, new ConfigElement(Mekanism.configurationMeka.getCategory("meka")).getChildElements(), owningScreen.modID,
+                    Configuration.CATEGORY_GENERAL, false, false, GuiConfig.getAbridgedConfigPath(Mekanism.configurationMeka.toString()));
         }
     }
 }

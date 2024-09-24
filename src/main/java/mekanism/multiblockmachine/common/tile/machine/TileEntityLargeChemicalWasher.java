@@ -41,9 +41,9 @@ import java.util.Map;
 public class TileEntityLargeChemicalWasher extends TileEntityMultiblockBasicMachine<GasInput, GasOutput, WasherRecipe> implements IGasHandler, IFluidHandlerWrapper, ISustainedData, Upgrade.IUpgradeInfoHandler, ITankManager, IAdvancedBoundingBlock {
 
     public static int WATER_USAGE = 5;
-    public FluidTank fluidTank = new FluidTankSync(FluidTankTier.ULTIMATE.getStorage());
-    public GasTank inputTank = new GasTank(GasTankTier.ULTIMATE.getStorage());
-    public GasTank outputTank = new GasTank(GasTankTier.ULTIMATE.getStorage());
+    public FluidTank fluidTank = new FluidTankSync(5120000);
+    public GasTank inputTank = new GasTank(8192000);
+    public GasTank outputTank = new GasTank(8192000);
     public WasherRecipe cachedRecipe;
     public double clientEnergyUsed;
     public int updateDelay;

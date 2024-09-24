@@ -461,7 +461,7 @@ public class MekanismRecipe {
         }
         inductionCell.getTagCompound().setInteger("tier", 3);
         inductionCell.getTagCompound().setTag("mekData", new NBTTagCompound());
-        ItemDataUtils.setDouble(inductionCell, "energyStored", InductionCellTier.ULTIMATE.getBaseMaxEnergy());
+        ItemDataUtils.setDouble(inductionCell, "energyStored", InductionCellTier.ULTIMATE.getMaxEnergy());
 
         ItemStack chaosCrystalStable = new ItemStack(DAFeatures.chaosCrystalStable);
         if (!chaosCrystalStable.hasTagCompound()) {

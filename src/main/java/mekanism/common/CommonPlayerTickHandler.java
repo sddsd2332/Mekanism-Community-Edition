@@ -199,10 +199,8 @@ public class CommonPlayerTickHandler {
                 isHeadItem = false;
             }
         }
-
-
         if (nv != null && isHeadItem) {
-            nv.duration = 0;
+            player.removePotionEffect(MobEffects.NIGHT_VISION);
         }
     }
 
@@ -340,7 +338,7 @@ public class CommonPlayerTickHandler {
                     return new FallEnergyInfo(feetStack, 1, 50);
                 }
             } else if (feetStack.getItem() instanceof ItemMekaSuitArmor) {
-                return new FallEnergyInfo(feetStack, 1, 50);
+                return new FallEnergyInfo(feetStack, MekanismConfig.current().meka.mekaSuitFallDamageRatio.val(), MekanismConfig.current().meka.mekaSuitEnergyUsageFall.val());
             }
         }
         return null;
@@ -379,7 +377,7 @@ public class CommonPlayerTickHandler {
             if (!feet.isEmpty() && feet.getItem() instanceof ItemMekAsuitFeetArmour feetArmor) {
                 if (UpgradeHelper.isUpgradeInstalled(feet, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
                     float boost = feetArmor.getJumpBoostMode(feet).getBoost();
-                    double usage = 1000 * (boost / 0.1F);
+                    double usage = MekanismConfig.current().meka.mekaSuitBaseJumpEnergyUsage.val() * (boost / 0.1F);
                     if (feetArmor.getEnergy(feet) > usage) {
                         ItemStack leg = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
                         if (!leg.isEmpty() && leg.getItem() instanceof ItemMekAsuitLegsArmour) {
