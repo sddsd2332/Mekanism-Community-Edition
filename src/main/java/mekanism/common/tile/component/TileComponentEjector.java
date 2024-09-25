@@ -111,6 +111,9 @@ public class TileComponentEjector implements ITileComponent {
         }
         ITankManager tankManager = (ITankManager) this.tileEntity;
         Set<EnumFacing> outputSides = getOutputSides(type, data);
+        if (outputSides.isEmpty()) {
+            return false;
+        }
         if (tankManager.getTanks() == null) {
             return false;
         }
@@ -132,6 +135,9 @@ public class TileComponentEjector implements ITileComponent {
 
         ITankManager tankManager = (ITankManager) this.tileEntity;
         Set<EnumFacing> outputSides = getOutputSides(type, data);
+        if (outputSides.isEmpty()) {
+            return false;
+        }
         if (tankManager.getTanks() == null) {
             return false;
         }
@@ -210,7 +216,11 @@ public class TileComponentEjector implements ITileComponent {
             return;
         }
         Set<EnumFacing> outputs = getOutputSides(TransmissionType.ITEM, data);
+        if (outputs.isEmpty()) {
+            return;
+        }
         TransitRequest ejectMap = null;
+        TileEntityContainerBlock self = tileEntity;
         for (EnumFacing side : outputs) {
             if (ejectMap == null) {
                 ejectMap = getEjectItemMap(data);
@@ -218,7 +228,7 @@ public class TileComponentEjector implements ITileComponent {
                     break;
                 }
             }
-            TileEntity tile = MekanismUtils.getTileEntity(tileEntity.getWorld(), tileEntity.getPos().offset(side));
+            TileEntity tile = MekanismUtils.getTileEntity(self.getWorld(), self.getPos().offset(side));
             if (tile == null) {
                 //If the spot is not loaded just skip trying to eject to it
                 continue;
@@ -228,10 +238,10 @@ public class TileComponentEjector implements ITileComponent {
             if (capability == null) {
                 response = InventoryUtils.putStackInInventory(tile, ejectMap, side, false);
             } else {
-                response = TransporterUtils.insert(tileEntity, capability, ejectMap, outputColor, true, 0);
+                response = TransporterUtils.insert(self, capability, ejectMap, outputColor, true, 0);
             }
             if (!response.isEmpty()) {
-                response.getInvStack(tileEntity, side).use();
+                response.getInvStack(self, side).use();
                 //Set map to null so next loop recalculates the eject map so that all sides get a chance to be ejected to
                 // assuming that there is still any left
                 //TODO: Eventually make some way to just directly update the TransitRequest with remaining parts
@@ -247,6 +257,7 @@ public class TileComponentEjector implements ITileComponent {
         }
         Set<EnumFacing> outputs = getOutputSides(TransmissionType.ITEM, data);
         TransitRequest ejectMap = null;
+        TileEntityContainerBlock self = tileEntity;
         for (EnumFacing side : outputs) {
             if (ejectMap == null) {
                 ejectMap = getEjectItemMap2(data);
@@ -254,7 +265,7 @@ public class TileComponentEjector implements ITileComponent {
                     break;
                 }
             }
-            TileEntity tile = MekanismUtils.getTileEntity(tileEntity.getWorld(), tileEntity.getPos().offset(side));
+            TileEntity tile = MekanismUtils.getTileEntity(self.getWorld(), self.getPos().offset(side));
             if (tile == null) {
                 //If the spot is not loaded just skip trying to eject to it
                 continue;
@@ -264,10 +275,10 @@ public class TileComponentEjector implements ITileComponent {
             if (capability == null) {
                 response = InventoryUtils.putStackInInventory(tile, ejectMap, side, false);
             } else {
-                response = TransporterUtils.insert(tileEntity, capability, ejectMap, outputColor, true, 0);
+                response = TransporterUtils.insert(self, capability, ejectMap, outputColor, true, 0);
             }
             if (!response.isEmpty()) {
-                response.getInvStack(tileEntity, side).use();
+                response.getInvStack(self, side).use();
                 //Set map to null so next loop recalculates the eject map so that all sides get a chance to be ejected to
                 // assuming that there is still any left
                 //TODO: Eventually make some way to just directly update the TransitRequest with remaining parts

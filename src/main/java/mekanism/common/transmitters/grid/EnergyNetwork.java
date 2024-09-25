@@ -128,7 +128,9 @@ public class EnergyNetwork extends DynamicNetwork<EnergyAcceptorWrapper, EnergyN
         if (!FMLCommonHandler.instance().getEffectiveSide().isServer()) {
             return;
         }
-        collectTargets();
+        if (buffer.amount > 0) {
+            collectTargets();
+        }
     }
 
     @Override

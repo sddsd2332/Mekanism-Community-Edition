@@ -21,6 +21,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
+import java.util.List;
+
 public final class CableUtils {
 
     public static boolean isCable(TileEntity tileEntity) {
@@ -62,23 +64,32 @@ public final class CableUtils {
     }
 
     public static TileEntity[] getConnectedOutputters(TileEntity source, BlockPos pos, World world) {
-        TileEntity[] outputters = new TileEntity[]{null, null, null, null, null, null};
+        TileEntity[] connected = new TileEntity[6];
         for (EnumFacing orientation : EnumFacing.VALUES) {
             final TileEntity outputter = MekanismUtils.getTileEntity(world, pos.offset(orientation));
             if (isOutputter(source, outputter, orientation)) {
-                outputters[orientation.ordinal()] = outputter;
+                connected[orientation.ordinal()] = outputter;
             }
         }
-        return outputters;
+        return connected;
     }
 
     public static TileEntity[] getConnectedTileEntities(TileEntity source, BlockPos pos, World world) {
-        TileEntity[] outputters = {null, null, null, null, null, null};
+        TileEntity[] connected = new TileEntity[6];
         for (EnumFacing orientation : EnumFacing.VALUES) {
             final TileEntity te = MekanismUtils.getTileEntity(world, pos.offset(orientation));
-            outputters[orientation.ordinal()] = te;
+            connected[orientation.ordinal()] = te;
         }
-        return outputters;
+        return connected;
+    }
+
+    public static TileEntity[] getConnectedTileEntities(List<EnumFacing> sides, BlockPos pos, World world) {
+        TileEntity[] connected = new TileEntity[6];
+        for (EnumFacing orientation : sides) {
+            final TileEntity te = MekanismUtils.getTileEntity(world, pos.offset(orientation));
+            connected[orientation.ordinal()] = te;
+        }
+        return connected;
     }
 
     public static boolean isOutputter(TileEntity source, TileEntity tileEntity, EnumFacing side) {
@@ -132,43 +143,49 @@ public final class CableUtils {
     }
     public static void emit(IEnergyWrapper emitter, int i) {
         TileEntity tileEntity = (TileEntity) emitter;
-        if (!tileEntity.getWorld().isRemote && MekanismUtils.canFunction(tileEntity)) {
-            double energyToSend = Math.min(emitter.getEnergy(), emitter.getMaxOutput());
-            if (energyToSend > 0) {
-                Coord4D coord = Coord4D.get(tileEntity);
-                //Fake that we have one target given we know that no sides will overlap
-                // This allows us to have slightly better performance
-                EnergyAcceptorTarget target = new EnergyAcceptorTarget();
-                for (EnumFacing side : EnumFacing.VALUES) {
-                    if (emitter.sideIsOutput(side)) {
-                        TileEntity tile = coord.offset(side, i).getTileEntity(tileEntity.getWorld());
-                        //If it can accept energy or it is a cable
-                        if (tile != null && (isValidAcceptorOnSide(tileEntity, tile, side) || isCable(tile))) {
-                            //Get the opposite side as the current side is relative to us
-                            EnumFacing opposite = side.getOpposite();
-                            EnergyAcceptorWrapper acceptor = EnergyAcceptorWrapper.get(tile, opposite);
-                            if (acceptor != null && acceptor.canReceiveEnergy(opposite) && acceptor.needsEnergy(opposite)) {
-                                target.addHandler(opposite, acceptor);
-                            }
-                        }
-                    }
+        if (tileEntity.getWorld().isRemote || !MekanismUtils.canFunction(tileEntity)) {
+            return;
+        }
+
+        double energyToSend = Math.min(emitter.getEnergy(), emitter.getMaxOutput());
+        if (!(energyToSend > 0)) {
+            return;
+        }
+
+        Coord4D coord = Coord4D.get(tileEntity);
+        //Fake that we have one target given we know that no sides will overlap
+        // This allows us to have slightly better performance
+        EnergyAcceptorTarget target = new EnergyAcceptorTarget();
+        for (EnumFacing side : EnumFacing.VALUES) {
+            if (!emitter.sideIsOutput(side)) {
+                continue;
+            }
+            TileEntity tile = coord.offset(side, i).getTileEntity(tileEntity.getWorld());
+            //If it can accept energy or it is a cable
+            if (tile != null && (isValidAcceptorOnSide(tileEntity, tile, side) || isCable(tile))) {
+                //Get the opposite side as the current side is relative to us
+                EnumFacing opposite = side.getOpposite();
+                EnergyAcceptorWrapper acceptor = EnergyAcceptorWrapper.get(tile, opposite);
+                if (acceptor != null && acceptor.canReceiveEnergy(opposite) && acceptor.needsEnergy(opposite)) {
+                    target.addHandler(opposite, acceptor);
                 }
-                int curHandlers = target.getHandlers().size();
-                if (curHandlers > 0) {
-                    // Firestarter start :: optimize emit
-                    /*
-                    Set<EnergyAcceptorTarget> targets = new HashSet<>();
-                    targets.add(target);
-                     */
-                    double sent = EmitUtils.sendToAcceptors(java.util.Collections.singleton(target), curHandlers, energyToSend);
-                    // Firestarter end
-                    if (emitter instanceof TileEntityInductionPort port) {
-                        //Streamline sideless removal method for induction port.
-                        port.removeEnergy(sent, false);
-                    } else {
-                        emitter.setEnergy(emitter.getEnergy() - sent);
-                    }
-                }
+            }
+        }
+
+        int curHandlers = target.getHandlers().size();
+        if (curHandlers > 0) {
+            // Firestarter start :: optimize emit
+            /*
+            Set<EnergyAcceptorTarget> targets = new HashSet<>();
+            targets.add(target);
+             */
+            double sent = EmitUtils.sendToAcceptors(java.util.Collections.singleton(target), curHandlers, energyToSend);
+            // Firestarter end
+            if (emitter instanceof TileEntityInductionPort port) {
+                //Streamline sideless removal method for induction port.
+                port.removeEnergy(sent, false);
+            } else {
+                emitter.setEnergy(emitter.getEnergy() - sent);
             }
         }
     }

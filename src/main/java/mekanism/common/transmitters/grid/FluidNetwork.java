@@ -5,7 +5,9 @@ import it.unimi.dsi.fastutil.objects.ReferenceSet;
 import mekanism.api.Coord4D;
 import mekanism.api.transmitters.DynamicNetwork;
 import mekanism.api.transmitters.IGridTransmitter;
+import mekanism.common.base.target.EnergyAcceptorTarget;
 import mekanism.common.base.target.FluidHandlerTarget;
+import mekanism.common.base.target.GasHandlerTarget;
 import mekanism.common.util.CapabilityUtils;
 import mekanism.common.util.EmitUtils;
 import mekanism.common.util.LangUtils;
@@ -39,6 +41,9 @@ public class FluidNetwork extends DynamicNetwork<IFluidHandler, FluidNetwork, Fl
     public int prevStored;
 
     public int prevTransferAmount = 0;
+
+    private final ReferenceSet<FluidHandlerTarget> targets = new ReferenceOpenHashSet<>();
+    private volatile int totalHandlers = 0;
 
     public FluidNetwork() {
     }
@@ -105,8 +110,79 @@ public class FluidNetwork extends DynamicNetwork<IFluidHandler, FluidNetwork, Fl
         return getCapacity() - (buffer != null ? buffer.amount : 0);
     }
 
-    private int tickEmit(FluidStack fluidToSend) {
-        ReferenceSet<FluidHandlerTarget> availableAcceptors = new ReferenceOpenHashSet<>();
+    public int emit(FluidStack fluidToSend, boolean doTransfer) {
+        if (fluidToSend == null || (buffer != null && buffer.getFluid() != fluidToSend.getFluid())) {
+            return 0;
+        }
+        int toUse = Math.min(getFluidNeeded(), fluidToSend.amount);
+        if (doTransfer) {
+            if (buffer == null) {
+                buffer = fluidToSend.copy();
+                buffer.amount = toUse;
+            } else {
+                buffer.amount += toUse;
+            }
+        }
+        return toUse;
+    }
+
+    @Override
+    public void preTick() {
+        super.onUpdate();
+        if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
+            prevTransferAmount = 0;
+            if (transferDelay == 0) {
+                didTransfer = false;
+            } else {
+                transferDelay--;
+            }
+            int stored = buffer != null ? buffer.amount : 0;
+            if (stored != prevStored) {
+                needsUpdate = true;
+            }
+            prevStored = stored;
+            if (didTransfer != prevTransfer || needsUpdate) {
+                MinecraftForge.EVENT_BUS.post(new FluidTransferEvent(this, buffer, didTransfer));
+                needsUpdate = false;
+            }
+            prevTransfer = didTransfer;
+        }
+    }
+
+    @Override
+    public void onParallelTick() {
+        if (!FMLCommonHandler.instance().getEffectiveSide().isServer()) {
+            return;
+        }
+        if (buffer != null) {
+            collectTargets(buffer);
+        }
+    }
+
+    @Override
+    public void onUpdate() {
+        if (!FMLCommonHandler.instance().getEffectiveSide().isServer()) {
+            return;
+        }
+        if (buffer == null) {
+            return;
+        }
+        prevTransferAmount = tickEmit(buffer);
+        if (prevTransferAmount > 0) {
+            didTransfer = true;
+            transferDelay = 2;
+        }
+        if (buffer != null) {
+            buffer.amount -= prevTransferAmount;
+            if (buffer.amount <= 0) {
+                buffer = null;
+            }
+        }
+    }
+
+    private void collectTargets(FluidStack fluidToSend) {
+        ReferenceSet<FluidHandlerTarget> targets = this.targets;
+        targets.clear();
         int totalHandlers = 0;
         for (Coord4D coord : possibleAcceptors) {
             EnumSet<EnumFacing> sides = acceptorDirections.get(coord);
@@ -128,63 +204,15 @@ public class FluidNetwork extends DynamicNetwork<IFluidHandler, FluidNetwork, Fl
             }
             int curHandlers = target.getHandlers().size();
             if (curHandlers > 0) {
-                availableAcceptors.add(target);
+                targets.add(target);
                 totalHandlers += curHandlers;
             }
         }
-        return EmitUtils.sendToAcceptors(availableAcceptors, totalHandlers, fluidToSend.amount, fluidToSend);
+        this.totalHandlers = totalHandlers;
     }
 
-    public int emit(FluidStack fluidToSend, boolean doTransfer) {
-        if (fluidToSend == null || (buffer != null && buffer.getFluid() != fluidToSend.getFluid())) {
-            return 0;
-        }
-        int toUse = Math.min(getFluidNeeded(), fluidToSend.amount);
-        if (doTransfer) {
-            if (buffer == null) {
-                buffer = fluidToSend.copy();
-                buffer.amount = toUse;
-            } else {
-                buffer.amount += toUse;
-            }
-        }
-        return toUse;
-    }
-
-    @Override
-    public void onUpdate() {
-        super.onUpdate();
-        if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
-            prevTransferAmount = 0;
-            if (transferDelay == 0) {
-                didTransfer = false;
-            } else {
-                transferDelay--;
-            }
-            int stored = buffer != null ? buffer.amount : 0;
-            if (stored != prevStored) {
-                needsUpdate = true;
-            }
-            prevStored = stored;
-            if (didTransfer != prevTransfer || needsUpdate) {
-                MinecraftForge.EVENT_BUS.post(new FluidTransferEvent(this, buffer, didTransfer));
-                needsUpdate = false;
-            }
-            prevTransfer = didTransfer;
-            if (buffer != null) {
-                prevTransferAmount = tickEmit(buffer);
-                if (prevTransferAmount > 0) {
-                    didTransfer = true;
-                    transferDelay = 2;
-                }
-                if (buffer != null) {
-                    buffer.amount -= prevTransferAmount;
-                    if (buffer.amount <= 0) {
-                        buffer = null;
-                    }
-                }
-            }
-        }
+    private int tickEmit(FluidStack fluidToSend) {
+        return EmitUtils.sendToAcceptors(targets, totalHandlers, fluidToSend.amount, fluidToSend);
     }
 
     @Override

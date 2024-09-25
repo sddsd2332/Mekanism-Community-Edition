@@ -183,16 +183,17 @@ public class GasNetwork extends DynamicNetwork<IGasHandler, GasNetwork, GasStack
         if (!FMLCommonHandler.instance().getEffectiveSide().isServer()) {
             return;
         }
-        if (buffer != null) {
-            prevTransferAmount = tickEmit(buffer);
-            if (prevTransferAmount > 0) {
-                didTransfer = true;
-                transferDelay = 2;
-            }
-            buffer.amount -= prevTransferAmount;
-            if (buffer.amount <= 0) {
-                buffer = null;
-            }
+        if (buffer == null) {
+            return;
+        }
+        prevTransferAmount = tickEmit(buffer);
+        if (prevTransferAmount > 0) {
+            didTransfer = true;
+            transferDelay = 2;
+        }
+        buffer.amount -= prevTransferAmount;
+        if (buffer.amount <= 0) {
+            buffer = null;
         }
     }
 

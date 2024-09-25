@@ -12,6 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -23,8 +24,8 @@ import java.util.function.Predicate;
  */
 public final class GasUtils {
 
-    public static IGasHandler[] getConnectedAcceptors(BlockPos pos, World world, Set<EnumFacing> sides) {
-        final IGasHandler[] acceptors = new IGasHandler[]{null, null, null, null, null, null};
+    public static IGasHandler[] getConnectedAcceptors(BlockPos pos, World world, Collection<EnumFacing> sides) {
+        final IGasHandler[] acceptors = {null, null, null, null, null, null};
         EmitUtils.forEachSide(world, pos, sides, (tile, side) ->
                 acceptors[side.ordinal()] = CapabilityUtils.getCapability(tile, Capabilities.GAS_HANDLER_CAPABILITY, side.getOpposite()));
         return acceptors;

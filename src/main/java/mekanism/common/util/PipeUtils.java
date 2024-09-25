@@ -12,6 +12,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
@@ -48,8 +49,15 @@ public final class PipeUtils {
      * @return array of IFluidHandlers
      */
     public static IFluidHandler[] getConnectedAcceptors(BlockPos pos, World world) {
-        final IFluidHandler[] acceptors = new IFluidHandler[]{null, null, null, null, null, null};
+        final IFluidHandler[] acceptors = new IFluidHandler[6];
         EmitUtils.forEachSide(world, pos, EnumSet.allOf(EnumFacing.class), (tile, side) ->
+                acceptors[side.ordinal()] = CapabilityUtils.getCapability(tile, CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite()));
+        return acceptors;
+    }
+
+    public static IFluidHandler[] getConnectedAcceptors(Collection<EnumFacing> sides, BlockPos pos, World world) {
+        final IFluidHandler[] acceptors = new IFluidHandler[6];
+        EmitUtils.forEachSide(world, pos, sides, (tile, side) ->
                 acceptors[side.ordinal()] = CapabilityUtils.getCapability(tile, CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite()));
         return acceptors;
     }
