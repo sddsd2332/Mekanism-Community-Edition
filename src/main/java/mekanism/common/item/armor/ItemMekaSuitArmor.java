@@ -362,6 +362,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
             NBTTagCompound tag = stack.getTagCompound();
             if (tag == null) {
                 tag = new NBTTagCompound();
+                stack.setTagCompound(tag);
             }
             double nc = 0;
             if (tag.hasKey("ncRadiationResistance")) {
@@ -370,8 +371,8 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
             if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.RADIATION_SHIELDING_UNIT) && nc != getShieldingByArmor()) {
                 tag.setDouble("ncRadiationResistance", getShieldingByArmor());
             }
-            if (nc == 0 && tag.isEmpty()) {
-                stack.getTagCompound().removeTag("ncRadiationResistance");
+            if (nc == 0 && !tag.isEmpty()) {
+                tag.removeTag("ncRadiationResistance");
             }
         }
     }
