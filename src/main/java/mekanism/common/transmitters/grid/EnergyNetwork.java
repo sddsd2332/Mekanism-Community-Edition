@@ -125,9 +125,6 @@ public class EnergyNetwork extends DynamicNetwork<EnergyAcceptorWrapper, EnergyN
 
     @Override
     public void onParallelTick() {
-        if (!FMLCommonHandler.instance().getEffectiveSide().isServer()) {
-            return;
-        }
         if (buffer.amount > 0) {
             collectTargets();
         }

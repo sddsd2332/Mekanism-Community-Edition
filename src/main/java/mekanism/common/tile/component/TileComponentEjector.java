@@ -1,5 +1,7 @@
 package mekanism.common.tile.component;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import io.netty.buffer.ByteBuf;
 import mekanism.api.EnumColor;
 import mekanism.api.TileNetworkList;
@@ -23,8 +25,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TileComponentEjector implements ITileComponent {
 
@@ -36,9 +40,14 @@ public class TileComponentEjector implements ITileComponent {
     private EnumColor outputColor;
     private EnumColor[] inputColors = new EnumColor[]{null, null, null, null, null, null};
     private int tickDelay = 0;
-    private int ejectTickDelay = 0;
+//    private int ejectTickDelay = 0;
     private Map<TransmissionType, SideData> sideData = new EnumMap<>(TransmissionType.class);
     private Map<TransmissionType, SideData> sideData2 = new EnumMap<>(TransmissionType.class);
+
+    private final EjectSpeedController fluidSpeedController = new EjectSpeedController();
+    private final EjectSpeedController fluid2SpeedController = new EjectSpeedController();
+    private final EjectSpeedController gasSpeedController = new EjectSpeedController();
+    private final EjectSpeedController gas2SpeedController = new EjectSpeedController();
 
     public TileComponentEjector(TileEntityContainerBlock tile) {
         tileEntity = tile;
@@ -55,13 +64,12 @@ public class TileComponentEjector implements ITileComponent {
         return this;
     }
 
-
     public void readFrom(TileComponentEjector ejector) {
         strictInput = ejector.strictInput;
         outputColor = ejector.outputColor;
         inputColors = ejector.inputColors;
         tickDelay = ejector.tickDelay;
-        ejectTickDelay = ejector.ejectTickDelay;
+//        ejectTickDelay = ejector.ejectTickDelay;
         sideData = ejector.sideData;
         sideData2 = ejector.sideData2;
     }
@@ -82,20 +90,24 @@ public class TileComponentEjector implements ITileComponent {
             tickDelay--;
         }
 
-        if (ejectTickDelay == 0) {
-            boolean success = false;
-
-            success |= eject(TransmissionType.GAS);
-            success |= eject2(TransmissionType.GAS);
-            success |= eject(TransmissionType.FLUID);
-            success |= eject2(TransmissionType.FLUID);
-
-            if (!success) {
-                ejectTickDelay = FAILURE_DELAY;
-            }
-        } else {
-            ejectTickDelay--;
-        }
+        eject(TransmissionType.GAS);
+        eject2(TransmissionType.GAS);
+        eject(TransmissionType.FLUID);
+        eject2(TransmissionType.FLUID);
+//        if (ejectTickDelay == 0) {
+////            boolean success = false;
+//
+//            success |= eject(TransmissionType.GAS);
+//            success |= eject2(TransmissionType.GAS);
+//            success |= eject(TransmissionType.FLUID);
+//            success |= eject2(TransmissionType.FLUID);
+//
+////            if (!success) {
+////                ejectTickDelay = FAILURE_DELAY;
+////            }
+//        } else {
+//            ejectTickDelay--;
+//        }
     }
 
     /**
@@ -119,9 +131,11 @@ public class TileComponentEjector implements ITileComponent {
         }
 
         if (type == TransmissionType.GAS && tankManager.getTanks()[data.availableSlots[0]] instanceof GasTank gasTank) {
-            return ejectGas(outputSides, gasTank);
+            this.gasSpeedController.ensureSize(1, () -> Collections.singletonList(new TankProvider.Gas(gasTank)));
+            return ejectGas(outputSides, gasTank, this.gasSpeedController, 0);
         } else if (type == TransmissionType.FLUID && tankManager.getTanks()[data.availableSlots[0]] instanceof FluidTank fluidTank) {
-            return ejectFluid(outputSides, fluidTank);
+            this.fluidSpeedController.ensureSize(1, () -> Collections.singletonList(new TankProvider.Fluid(fluidTank)));
+            return ejectFluid(outputSides, fluidTank, this.fluidSpeedController, 0);
         }
 
         return false;
@@ -142,14 +156,24 @@ public class TileComponentEjector implements ITileComponent {
             return false;
         }
 
-        for (int index = 0; index < data.availableSlots.length; index++) {
-            if (data.allowExtractionSlot[index]) {
-                if (type == TransmissionType.GAS && tankManager.getTanks()[data.availableSlots[index]] instanceof GasTank gasTank) {
-                    return ejectGas(outputSides, gasTank);
-                } else if (type == TransmissionType.FLUID && tankManager.getTanks()[data.availableSlots[index]] instanceof FluidTank fluidTank) {
-                    return ejectFluid(outputSides, fluidTank);
-                }
+        GasTank gasTank;
+        FluidTank fluidTank;
+        if (type == TransmissionType.GAS) {
+            gasTank = Arrays.stream(tankManager.getTanks()).filter(GasTank.class::isInstance).map(GasTank.class::cast).findFirst().orElse(null);
+            if (gasTank == null) {
+                return false;
             }
+            this.gas2SpeedController.ensureSize(1, () -> Collections.singletonList(new TankProvider.Gas(gasTank)));
+            return ejectGas(outputSides, gasTank, this.gas2SpeedController, 0);
+        }
+
+        if (type == TransmissionType.FLUID) {
+            fluidTank = Arrays.stream(tankManager.getTanks()).filter(FluidTank.class::isInstance).map(FluidTank.class::cast).findFirst().orElse(null);
+            if (fluidTank == null) {
+                return false;
+            }
+            this.fluid2SpeedController.ensureSize(1, () -> Collections.singletonList(new TankProvider.Fluid(fluidTank)));
+            return ejectFluid(outputSides, fluidTank, this.fluid2SpeedController, 0);
         }
 
         return false;
@@ -160,18 +184,25 @@ public class TileComponentEjector implements ITileComponent {
      *
      * @return return false if ejection is failed.
      */
-    private boolean ejectGas(Set<EnumFacing> outputSides, GasTank tank) {
-        if (tank.getGas() == null || tank.getStored() <= 0  || tank.getGas().getGas() == null) {
+    private boolean ejectGas(Set<EnumFacing> outputSides, GasTank tank, EjectSpeedController speedController, int tankIdx) {
+        speedController.record(tankIdx);
+
+        if (tank.getGas() == null || tank.getStored() <= 0 || tank.getGas().getGas() == null) {
+            return false;
+        }
+
+        if (!speedController.canEject(tankIdx)) {
             return false;
         }
 
         GasStack toEmit = tank.getGas().copy().withAmount(Math.min(tank.getMaxGas(), tank.getStored()));
-        int emit = GasUtils.emit(toEmit, tileEntity, outputSides);
-        if (emit <= 0) {
+        int emitted = GasUtils.emit(toEmit, tileEntity, outputSides);
+        speedController.eject(tankIdx, emitted);
+        if (emitted <= 0) {
             return false;
         }
 
-        tank.draw(emit, true);
+        tank.draw(emitted, true);
         return true;
     }
 
@@ -180,18 +211,25 @@ public class TileComponentEjector implements ITileComponent {
      *
      * @return return false if ejection is failed.
      */
-    private boolean ejectFluid(Set<EnumFacing> outputSides, FluidTank tank) {
+    private boolean ejectFluid(Set<EnumFacing> outputSides, FluidTank tank, EjectSpeedController speedController, int tankIdx) {
+        speedController.record(tankIdx);
+
         if (tank.getFluid() == null || tank.getFluidAmount() <= 0) {
             return false;
         }
 
-        FluidStack toEmit = PipeUtils.copy(tank.getFluid(), Math.min(tank.getCapacity(), tank.getFluidAmount()));
-        int emit = PipeUtils.emit(outputSides, toEmit, tileEntity);
-        if (emit <= 0) {
+        if (!speedController.canEject(tankIdx)) {
             return false;
         }
 
-        tank.drain(emit, true);
+        FluidStack toEmit = PipeUtils.copy(tank.getFluid(), Math.min(tank.getCapacity(), tank.getFluidAmount()));
+        int emitted = PipeUtils.emit(outputSides, toEmit, tileEntity);
+        speedController.eject(tankIdx, emitted);
+        if (emitted <= 0) {
+            return false;
+        }
+
+        tank.drain(emitted, true);
         return true;
     }
 
@@ -286,7 +324,6 @@ public class TileComponentEjector implements ITileComponent {
             }
         }
     }
-
 
     private TransitRequest getEjectItemMap(SideData data) {
         TransitRequest request = new TransitRequest();

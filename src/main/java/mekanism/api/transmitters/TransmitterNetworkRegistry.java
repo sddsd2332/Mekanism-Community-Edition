@@ -5,6 +5,7 @@ import mekanism.api.Coord4D;
 import mekanism.api.MekanismAPI;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
@@ -84,7 +85,10 @@ public class TransmitterNetworkRegistry {
         assignOrphans();
         commitChanges();
         networks.forEach(DynamicNetwork::preTick);
-        networks.parallelStream().forEach(DynamicNetwork::onParallelTick);
+        // ForkJoinThread cannot use getEffectiveSide().
+        if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
+            networks.parallelStream().forEach(DynamicNetwork::onParallelTick);
+        }
         networks.forEach(DynamicNetwork::tick);
     }
 

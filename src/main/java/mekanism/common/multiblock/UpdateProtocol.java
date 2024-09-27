@@ -345,7 +345,7 @@ public abstract class UpdateProtocol<T extends SynchronizedData<T>> {
             MultiblockCache<T> cache = getNewCache();
             String idToUse = null;
             if (idsFound.isEmpty()) {
-                idToUse = getManager().getUniqueInventoryID();
+                idToUse = MultiblockManager.getUniqueInventoryID();
             } else {
                 List<ItemStack> rejectedItems = new ArrayList<>();
                 for (String id : idsFound) {

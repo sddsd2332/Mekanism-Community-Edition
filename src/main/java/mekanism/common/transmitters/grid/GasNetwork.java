@@ -170,9 +170,6 @@ public class GasNetwork extends DynamicNetwork<IGasHandler, GasNetwork, GasStack
 
     @Override
     public void onParallelTick() {
-        if (!FMLCommonHandler.instance().getEffectiveSide().isServer()) {
-            return;
-        }
         if (buffer != null) {
             collectTargets(buffer);
         }

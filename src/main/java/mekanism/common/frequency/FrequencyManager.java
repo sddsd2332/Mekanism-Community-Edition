@@ -60,9 +60,7 @@ public class FrequencyManager {
         if (!loaded) {
             load(world);
         }
-        for (FrequencyManager manager : managers) {
-            manager.tickSelf(world);
-        }
+        managers.parallelStream().forEach(manager -> manager.tickSelf(world));
     }
 
     public static void reset() {
@@ -163,26 +161,31 @@ public class FrequencyManager {
     }
 
     public void tickSelf(World world) {
-        for (Frequency iterFreq : frequencies.values()) {
-            for (Iterator<Coord4D> iter = iterFreq.activeCoords.iterator(); iter.hasNext(); ) {
-                Coord4D coord = iter.next();
-                if (coord.dimensionId == world.provider.getDimension()) {
-                    if (!coord.exists(world)) {
-                        iter.remove();
-                    } else {
-                        TileEntity tile = coord.getTileEntity(world);
-                        if (!(tile instanceof IFrequencyHandler frequencyHandler)) {
-                            iter.remove();
-                        } else {
-                            Frequency freq = frequencyHandler.getFrequency(this);
-                            if (freq == null || !freq.equals(iterFreq)) {
-                                iter.remove();
-                            }
-                        }
-                    }
+        frequencies.values().parallelStream().forEach(frequency -> {
+            Iterator<Coord4D> it = frequency.activeCoords.iterator();
+            while (it.hasNext()) {
+                Coord4D coord = it.next();
+                if (coord.dimensionId != world.provider.getDimension()) {
+                    continue;
+                }
+
+                if (!coord.exists(world)) {
+                    it.remove();
+                    continue;
+                }
+
+                TileEntity tile = coord.getTileEntity(world);
+                if (!(tile instanceof IFrequencyHandler handler)) {
+                    it.remove();
+                    continue;
+                }
+
+                Frequency handlerFreq = handler.getFrequency(this);
+                if (!frequency.equals(handlerFreq)) {
+                    it.remove();
                 }
             }
-        }
+        });
     }
 
     public void writeFrequencies(TileNetworkList data) {
