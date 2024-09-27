@@ -14,8 +14,6 @@ import mekanism.common.recipe.RecipeHandler;
 import mekanism.common.recipe.inputs.CompositeInput;
 import mekanism.common.recipe.machines.DigitalAssemblyTableRecipe;
 import mekanism.common.recipe.outputs.CompositeOutput;
-import mekanism.common.tier.FluidTankTier;
-import mekanism.common.tier.GasTankTier;
 import mekanism.common.util.*;
 import mekanism.multiblockmachine.client.render.bloom.machine.BloomRenderDigitalAssemblyTable;
 import mekanism.multiblockmachine.common.MultiblockMachineItems;
@@ -48,11 +46,14 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMachine<CompositeInput, CompositeOutput, DigitalAssemblyTableRecipe>
         implements IGasHandler, IFluidHandlerWrapper, ITankManager, ISustainedData, IAdvancedBoundingBlock {
 
     private static Random Rand = new Random();
+    private final EjectSpeedController fluidSpeedController = new EjectSpeedController();
+    private final EjectSpeedController gasSpeedController = new EjectSpeedController();
     public FluidTank inputFluidTank = new FluidTankSync(5120000);
     public FluidTank outputFluidTank = new FluidTankSync(5120000);
     public GasTank inputGasTank = new GasTank(8192000);
@@ -141,7 +142,9 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
             needsPacket = false;
 
             Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
+                this.gasSpeedController.ensureSize(1, () -> Collections.singletonList(new TankProvider.Gas(outputGasTank)));
                 handleGasTank(outputGasTank, getGasTankside());
+                this.fluidSpeedController.ensureSize(1, () -> Collections.singletonList(new TankProvider.Fluid(outputFluidTank)));
                 handleFluidTank(outputFluidTank, getFluidTankside());
                 int newRedstoneLevel = getRedstoneLevel();
                 if (newRedstoneLevel != currentRedstoneLevel) {
@@ -212,17 +215,50 @@ public class TileEntityDigitalAssemblyTable extends TileEntityMultiblockBasicMac
     }
 
     private void handleGasTank(GasTank tank, TileEntity tile) {
-        if (tank.getGas() != null && tank.getGas().getGas() != null) {
-            GasStack toSend = tank.getGas().copy().withAmount(Math.min(tank.getStored(), tank.getMaxGas()));
-            tank.draw(GasUtils.emit(toSend, tile, Collections.singleton(EnumFacing.UP)), true);
+        if (tile != null) {
+            ejectGas(Collections.singleton(EnumFacing.UP), tank, this.gasSpeedController, tile);
         }
     }
 
-    private void handleFluidTank(FluidTank tank, TileEntity tile) {
-        if (tank.getFluid() != null && tile != null) {
-            FluidStack toSend = new FluidStack(tank.getFluid(), Math.min(tank.getCapacity(), tank.getFluidAmount()));
-            tank.drain(PipeUtils.emit(Collections.singleton(EnumFacing.DOWN), toSend, tile), true);
+    private void ejectGas(Set<EnumFacing> outputSides, GasTank tank, EjectSpeedController speedController, TileEntity tile) {
+        speedController.record(0);
+        if (tank.getGas() == null || tank.getStored() <= 0 || tank.getGas().getGas() == null) {
+            return;
         }
+        if (!speedController.canEject(0)) {
+            return;
+        }
+        GasStack toEmit = tank.getGas().copy().withAmount(Math.min(tank.getMaxGas(), tank.getStored()));
+        int emitted = GasUtils.emit(toEmit, tile, outputSides);
+        speedController.eject(0, emitted);
+        if (emitted <= 0) {
+            return;
+        }
+        tank.draw(emitted, true);
+    }
+
+    private void handleFluidTank(FluidTank tank, TileEntity tile) {
+        if (tile != null) {
+            ejectFluid(Collections.singleton(EnumFacing.DOWN), tank, this.fluidSpeedController, tile);
+        }
+    }
+
+    private void ejectFluid(Set<EnumFacing> outputSides, FluidTank tank, EjectSpeedController speedController, TileEntity tile) {
+        speedController.record(0);
+        if (tank.getFluid() == null || tank.getFluidAmount() <= 0) {
+            return;
+        }
+        if (!speedController.canEject(0)) {
+            return;
+        }
+        FluidStack toEmit = PipeUtils.copy(tank.getFluid(), Math.min(tank.getCapacity(), tank.getFluidAmount()));
+        int emitted = PipeUtils.emit(outputSides, toEmit, tile);
+        speedController.eject(0, emitted);
+        if (emitted <= 0) {
+            return;
+        }
+
+        tank.drain(emitted, true);
     }
 
     @Override

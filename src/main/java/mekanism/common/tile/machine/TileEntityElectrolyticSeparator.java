@@ -39,6 +39,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,6 +50,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
 
     private static final String[] methods = new String[]{"getEnergy", "getOutput", "getMaxEnergy", "getEnergyNeeded", "getWater", "getWaterNeeded", "getHydrogen",
             "getHydrogenNeeded", "getOxygen", "getOxygenNeeded"};
+    private final EjectSpeedController gasSpeedController = new EjectSpeedController();
     /**
      * This separator's water slot.
      */
@@ -79,11 +81,10 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
     public GasMode dumpRight = GasMode.IDLE;
     public SeparatorRecipe cachedRecipe;
     public double clientEnergyUsed;
-
     private int currentRedstoneLevel;
 
     public TileEntityElectrolyticSeparator() {
-        super("electrolyticseparator", MachineType.ELECTROLYTIC_SEPARATOR, 4,1);
+        super("electrolyticseparator", MachineType.ELECTROLYTIC_SEPARATOR, 4, 1);
         configComponent = new TileComponentConfig(this, TransmissionType.ITEM, TransmissionType.ENERGY, TransmissionType.GAS, TransmissionType.FLUID);
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.NONE, InventoryUtils.EMPTY));
         configComponent.addOutput(TransmissionType.ITEM, new SideData(DataType.INPUT, new int[]{0}));
@@ -149,8 +150,9 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
             prevEnergy = getEnergy();
             int dumpAmount = 8 * Math.min((int) Math.pow(2, upgradeComponent.getUpgrades(Upgrade.SPEED)), MekanismConfig.current().mekce.MAXspeedmachines.val());
             Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
-                handleTank(leftTank, dumpLeft, configComponent.getSidesForData(TransmissionType.GAS, facing, 1), dumpAmount);
-                handleTank(rightTank, dumpRight, configComponent.getSidesForData(TransmissionType.GAS, facing, 2), dumpAmount);
+                this.gasSpeedController.ensureSize(2, () -> Arrays.asList(new TankProvider.Gas(leftTank), new TankProvider.Gas(rightTank)));
+                handleTank(leftTank, dumpLeft, configComponent.getSidesForData(TransmissionType.GAS, facing, 1), dumpAmount, 0);
+                handleTank(rightTank, dumpRight, configComponent.getSidesForData(TransmissionType.GAS, facing, 2), dumpAmount, 1);
                 int newRedstoneLevel = getRedstoneLevel();
                 if (newRedstoneLevel != currentRedstoneLevel) {
                     updateComparatorOutputLevelSync();
@@ -160,14 +162,11 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
         }
     }
 
-    private void handleTank(GasTank tank, GasMode mode, Set<EnumFacing> side, int dumpAmount) {
+    private void handleTank(GasTank tank, GasMode mode, Set<EnumFacing> side, int dumpAmount, int tankidx) {
         if (tank.getGas() != null) {
             if (mode != GasMode.DUMPING) {
                 if (configComponent.isEjecting(TransmissionType.GAS)) {
-                    if (tank.getGas().getGas() != null){
-                        GasStack toSend = tank.getGas().copy().withAmount(Math.min(tank.getStored(), tank.getMaxGas()));
-                        tank.draw(GasUtils.emit(toSend, this, side), true);
-                    }
+                    ejectGas(side, tank, this.gasSpeedController, tankidx);
                 }
             } else {
                 tank.draw(dumpAmount, true);
@@ -176,6 +175,23 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
                 tank.draw(output - tank.getNeeded(), true);
             }
         }
+    }
+
+    private void ejectGas(Set<EnumFacing> outputSides, GasTank tank, EjectSpeedController speedController, int tankIdx) {
+        speedController.record(tankIdx);
+        if (tank.getGas() == null || tank.getStored() <= 0 || tank.getGas().getGas() == null) {
+            return;
+        }
+        if (!speedController.canEject(tankIdx)) {
+            return;
+        }
+        GasStack toEmit = tank.getGas().copy().withAmount(Math.min(tank.getMaxGas(), tank.getStored()));
+        int emitted = GasUtils.emit(toEmit, this, outputSides);
+        speedController.eject(tankIdx, emitted);
+        if (emitted <= 0) {
+            return;
+        }
+        tank.draw(emitted, true);
     }
 
     public int getUpgradedUsage(SeparatorRecipe recipe) {
@@ -227,7 +243,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
             return FluidUtil.getFluidContained(itemstack) == null;
         } else if (slotID == 1 || slotID == 2) {
             return itemstack.getItem() instanceof IGasItem gasItem && gasItem.getGas(itemstack) != null
-                    &&gasItem.getGas(itemstack).amount ==gasItem.getMaxGas(itemstack);
+                    && gasItem.getGas(itemstack).amount == gasItem.getMaxGas(itemstack);
         }
         return false;
     }
@@ -307,7 +323,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
     }
 
     @Override
-   public void writeCustomNBT(NBTTagCompound nbtTags) {
+    public void writeCustomNBT(NBTTagCompound nbtTags) {
         super.writeCustomNBT(nbtTags);
         if (fluidTank.getFluid() != null) {
             nbtTags.setTag("fluidTank", fluidTank.writeToNBT(new NBTTagCompound()));
@@ -395,7 +411,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
 
     @Override
     public GasStack drawGas(EnumFacing side, int amount, boolean doTransfer) {
-        if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1)){
+        if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1)) {
             return leftTank.draw(amount, doTransfer);
         } else if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(2)) {
             return rightTank.draw(amount, doTransfer);
@@ -410,9 +426,9 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
 
     @Override
     public boolean canDrawGas(EnumFacing side, Gas type) {
-        if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1)){
+        if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(1)) {
             return leftTank.getGas() != null && leftTank.getGas().getGas() == type;
-        }else if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(2)) {
+        } else if (configComponent.getOutput(TransmissionType.GAS, side, facing).hasSlot(2)) {
             return rightTank.getGas() != null && rightTank.getGas().getGas() == type;
         }
         return false;
@@ -451,7 +467,7 @@ public class TileEntityElectrolyticSeparator extends TileEntityBasicMachine<Flui
 
     @Override
     public Object[] getTanks() {
-        return new Object[]{fluidTank,leftTank, rightTank};
+        return new Object[]{fluidTank, leftTank, rightTank};
     }
 
     @Override

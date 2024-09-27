@@ -16,8 +16,6 @@ import mekanism.common.recipe.RecipeHandler;
 import mekanism.common.recipe.inputs.FluidInput;
 import mekanism.common.recipe.machines.SeparatorRecipe;
 import mekanism.common.recipe.outputs.ChemicalPairOutput;
-import mekanism.common.tier.FluidTankTier;
-import mekanism.common.tier.GasTankTier;
 import mekanism.common.tile.TileEntityGasTank.GasMode;
 import mekanism.common.util.*;
 import mekanism.multiblockmachine.client.render.bloom.machine.BloomRenderLargeElectrolyticSeparator;
@@ -41,28 +39,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBasicMachine<FluidInput, ChemicalPairOutput, SeparatorRecipe>
         implements IFluidHandlerWrapper, ISustainedData, IGasHandler, IUpgradeInfoHandler, ITankManager, IAdvancedBoundingBlock {
 
     private static final String[] methods = new String[]{"getEnergy", "getOutput", "getMaxEnergy", "getEnergyNeeded", "getWater", "getWaterNeeded", "getHydrogen",
             "getHydrogenNeeded", "getOxygen", "getOxygenNeeded"};
-
+    private final EjectSpeedController gasSpeedController = new EjectSpeedController();
     public FluidTank fluidTank = new FluidTankSync(5120000);
-
     public GasTank leftTank = new GasTank(8192000);
-
     public GasTank rightTank = new GasTank(8192000);
-
     public int output = 512;
-
     public GasMode dumpLeft = GasMode.IDLE;
-
     public GasMode dumpRight = GasMode.IDLE;
-
     public SeparatorRecipe cachedRecipe;
     public double clientEnergyUsed;
     public int updateDelay;
@@ -137,8 +127,9 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
             needsPacket = false;
             int dumpAmount = 8 * Math.min((int) Math.pow(2, upgradeComponent.getUpgrades(Upgrade.SPEED)), MekanismConfig.current().mekce.MAXspeedmachines.val());
             Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
-                handleTank(leftTank, dumpLeft, getLeftTankside(), dumpAmount);
-                handleTank(rightTank, dumpRight, getRightTankside(), dumpAmount);
+                this.gasSpeedController.ensureSize(2, () -> Arrays.asList(new TankProvider.Gas(leftTank), new TankProvider.Gas(rightTank)));
+                handleTank(leftTank, dumpLeft, getLeftTankside(), dumpAmount, 0);
+                handleTank(rightTank, dumpRight, getRightTankside(), dumpAmount, 1);
                 int newRedstoneLevel = getRedstoneLevel();
                 if (newRedstoneLevel != currentRedstoneLevel) {
                     world.updateComparatorOutputLevel(pos, getBlockType());
@@ -169,13 +160,10 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
         return null;
     }
 
-    private void handleTank(GasTank tank, GasMode mode, TileEntity tile, int dumpAmount) {
+    private void handleTank(GasTank tank, GasMode mode, TileEntity tile, int dumpAmount, int tankidx) {
         if (tank.getGas() != null) {
             if (mode != GasMode.DUMPING) {
-                if (tank.getGas().getGas() != null){
-                    GasStack toSend = tank.getGas().copy().withAmount(Math.min(tank.getStored(), tank.getMaxGas()));
-                    tank.draw(GasUtils.emit(toSend, tile, Collections.singleton(facing)), true);
-                }
+                ejectGas(Collections.singleton(facing), tank, this.gasSpeedController, tankidx, tile);
             } else {
                 tank.draw(dumpAmount, true);
             }
@@ -183,6 +171,23 @@ public class TileEntityLargeElectrolyticSeparator extends TileEntityMultiblockBa
                 tank.draw(output - tank.getNeeded(), true);
             }
         }
+    }
+
+    private void ejectGas(Set<EnumFacing> outputSides, GasTank tank, EjectSpeedController speedController, int tankIdx, TileEntity tile) {
+        speedController.record(tankIdx);
+        if (tank.getGas() == null || tank.getStored() <= 0 || tank.getGas().getGas() == null) {
+            return;
+        }
+        if (!speedController.canEject(tankIdx)) {
+            return;
+        }
+        GasStack toEmit = tank.getGas().copy().withAmount(Math.min(tank.getMaxGas(), tank.getStored()));
+        int emitted = GasUtils.emit(toEmit, tile, outputSides);
+        speedController.eject(tankIdx, emitted);
+        if (emitted <= 0) {
+            return;
+        }
+        tank.draw(emitted, true);
     }
 
     public int getUpgradedUsage(SeparatorRecipe recipe) {

@@ -15,7 +15,6 @@ import mekanism.common.recipe.RecipeHandler;
 import mekanism.common.recipe.inputs.ChemicalPairInput;
 import mekanism.common.recipe.machines.ChemicalInfuserRecipe;
 import mekanism.common.recipe.outputs.GasOutput;
-import mekanism.common.tier.GasTankTier;
 import mekanism.common.util.*;
 import mekanism.multiblockmachine.client.render.bloom.machine.BloomRenderLargeChemicalInfuser;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine;
@@ -33,9 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMachine<ChemicalPairInput, GasOutput, ChemicalInfuserRecipe>
         implements IGasHandler, ISustainedData, Upgrade.IUpgradeInfoHandler, ITankManager, IAdvancedBoundingBlock {
@@ -51,6 +48,7 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
     public double clientEnergyUsed;
     private int currentRedstoneLevel;
     private boolean rendererInitialized = false;
+    private final EjectSpeedController gasSpeedController = new EjectSpeedController();
 
     public TileEntityLargeChemicalInfuser() {
         super("cheminfuser", BlockStateMultiblockMachine.MultiblockMachineType.LARGE_CHEMICAL_INFUSER, 1, 4);
@@ -94,6 +92,7 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
             }
             needsPacket = false;
             Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
+                this.gasSpeedController.ensureSize(1, () -> Collections.singletonList(new TankProvider.Gas(centerTank)));
                 handleTank(centerTank, getLeftTankside());
                 handleTank(centerTank, getRightTankside());
                 int newRedstoneLevel = getRedstoneLevel();
@@ -127,10 +126,26 @@ public class TileEntityLargeChemicalInfuser extends TileEntityMultiblockBasicMac
     }
 
     private void handleTank(GasTank tank, TileEntity tile) {
-        if (tank.getGas() != null && tank.getGas().getGas() !=null) {
-            GasStack toSend = tank.getGas().copy().withAmount(Math.min(tank.getStored(), tank.getMaxGas()));
-            tank.draw(GasUtils.emit(toSend, tile, EnumSet.of(facing)), true);
+        if (tile != null) {
+            ejectGas(EnumSet.of(facing),tank,this.gasSpeedController, tile);
         }
+    }
+
+    private void ejectGas(Set<EnumFacing> outputSides, GasTank tank, EjectSpeedController speedController, TileEntity tile) {
+        speedController.record(0);
+        if (tank.getGas() == null || tank.getStored() <= 0 || tank.getGas().getGas() == null) {
+            return;
+        }
+        if (!speedController.canEject(0)) {
+            return;
+        }
+        GasStack toEmit = tank.getGas().copy().withAmount(Math.min(tank.getMaxGas(), tank.getStored()));
+        int emitted = GasUtils.emit(toEmit, tile, outputSides);
+        speedController.eject(0, emitted);
+        if (emitted <= 0) {
+            return;
+        }
+        tank.draw(emitted, true);
     }
 
     public int getUpgradedUsage(ChemicalInfuserRecipe recipe) {

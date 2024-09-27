@@ -37,6 +37,7 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class TileEntityLargeChemicalWasher extends TileEntityMultiblockBasicMachine<GasInput, GasOutput, WasherRecipe> implements IGasHandler, IFluidHandlerWrapper, ISustainedData, Upgrade.IUpgradeInfoHandler, ITankManager, IAdvancedBoundingBlock {
 
@@ -51,6 +52,7 @@ public class TileEntityLargeChemicalWasher extends TileEntityMultiblockBasicMach
     public int numPowering;
     private int currentRedstoneLevel;
     private boolean rendererInitialized = false;
+    private final EjectSpeedController gasSpeedController = new EjectSpeedController();
 
     public TileEntityLargeChemicalWasher() {
         super("washer", BlockStateMultiblockMachine.MultiblockMachineType.LARGE_CHEMICAL_WASHER, 1, 4);
@@ -93,6 +95,7 @@ public class TileEntityLargeChemicalWasher extends TileEntityMultiblockBasicMach
             }
             needsPacket = false;
             Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
+                this.gasSpeedController.ensureSize(1, () -> Collections.singletonList(new TankProvider.Gas(outputTank)));
                 handleTank(outputTank, getRightTankSide(), facing);
                 handleTank(outputTank, getRightTankSide(), MekanismUtils.getRight(facing));
                 int newRedstoneLevel = getRedstoneLevel();
@@ -119,10 +122,26 @@ public class TileEntityLargeChemicalWasher extends TileEntityMultiblockBasicMach
 
 
     private void handleTank(GasTank tank, TileEntity tile, EnumFacing side) {
-        if (tank.getGas() != null && tank.getGas().getGas() != null) {
-            GasStack toSend =  tank.getGas().copy().withAmount(Math.min(tank.getStored(), tank.getMaxGas()));
-            tank.draw(GasUtils.emit(toSend, tile, Collections.singleton(side)), true);
+        if (tile != null) {
+            ejectGas(Collections.singleton(side),tank,this.gasSpeedController,tile);
         }
+    }
+
+    private void ejectGas(Set<EnumFacing> outputSides, GasTank tank, EjectSpeedController speedController, TileEntity tile) {
+        speedController.record(0);
+        if (tank.getGas() == null || tank.getStored() <= 0 || tank.getGas().getGas() == null) {
+            return;
+        }
+        if (!speedController.canEject(0)) {
+            return;
+        }
+        GasStack toEmit = tank.getGas().copy().withAmount(Math.min(tank.getMaxGas(), tank.getStored()));
+        int emitted = GasUtils.emit(toEmit, tile, outputSides);
+        speedController.eject(0, emitted);
+        if (emitted <= 0) {
+            return;
+        }
+        tank.draw(emitted, true);
     }
 
     public WasherRecipe getRecipe() {
