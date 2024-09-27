@@ -151,9 +151,6 @@ public class FluidNetwork extends DynamicNetwork<IFluidHandler, FluidNetwork, Fl
 
     @Override
     public void onParallelTick() {
-        if (!FMLCommonHandler.instance().getEffectiveSide().isServer()) {
-            return;
-        }
         if (buffer != null) {
             collectTargets(buffer);
         }

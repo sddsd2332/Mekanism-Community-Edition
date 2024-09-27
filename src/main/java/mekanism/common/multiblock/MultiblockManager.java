@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 
 public class MultiblockManager<T extends SynchronizedData<T>> {
 
-    private static Set<MultiblockManager<?>> managers = new ObjectOpenHashSet<>();
+    private static final Set<MultiblockManager<?>> MANAGERS = new ObjectOpenHashSet<>();
 
     public String name;
 
@@ -23,11 +23,11 @@ public class MultiblockManager<T extends SynchronizedData<T>> {
 
     public MultiblockManager(String s) {
         name = s;
-        managers.add(this);
+        MANAGERS.add(this);
     }
 
     public static void tick(World world) {
-        for (MultiblockManager<?> manager : managers) {
+        for (MultiblockManager<?> manager : MANAGERS) {
             manager.tickSelf(world);
         }
     }
@@ -44,7 +44,7 @@ public class MultiblockManager<T extends SynchronizedData<T>> {
     }
 
     public static void reset() {
-        for (MultiblockManager<?> manager : managers) {
+        for (MultiblockManager<?> manager : MANAGERS) {
             manager.inventories.clear();
         }
     }
@@ -74,31 +74,32 @@ public class MultiblockManager<T extends SynchronizedData<T>> {
      *
      * @return unique inventory ID
      */
-    public String getUniqueInventoryID() {
+    public static String getUniqueInventoryID() {
         return UUID.randomUUID().toString();
     }
 
     public void tickSelf(World world) {
         ArrayList<String> idsToKill = new ArrayList<>();
         Map<String, Set<Coord4D>> tilesToKill = new Object2ObjectOpenHashMap<>();
-        for (Entry<String, MultiblockCache<T>> entry : inventories.entrySet()) {
+        inventories.entrySet().parallelStream().forEach(entry -> {
             String inventoryID = entry.getKey();
             for (Coord4D obj : entry.getValue().locations) {
-                if (obj.dimensionId == world.provider.getDimension() && obj.exists(world)) {
-                    TileEntity tileEntity = obj.getTileEntity(world);
-                    if (!(tileEntity instanceof TileEntityMultiblock<?> multiblock) || multiblock.getManager() != this ||
-                            (getStructureId(multiblock) != null && !Objects.equals(getStructureId(multiblock), inventoryID))) {
-                        if (!tilesToKill.containsKey(inventoryID)) {
-                            tilesToKill.put(inventoryID, new ObjectOpenHashSet<>());
-                        }
-                        tilesToKill.get(inventoryID).add(obj);
+                if (obj.dimensionId != world.provider.getDimension() || !obj.exists(world)) {
+                    continue;
+                }
+                TileEntity tileEntity = obj.getTileEntity(world);
+                if (!(tileEntity instanceof TileEntityMultiblock<?> multiblock) || multiblock.getManager() != this ||
+                    (getStructureId(multiblock) != null && !Objects.equals(getStructureId(multiblock), inventoryID))) {
+                    if (!tilesToKill.containsKey(inventoryID)) {
+                        tilesToKill.put(inventoryID, new ObjectOpenHashSet<>());
                     }
+                    tilesToKill.get(inventoryID).add(obj);
                 }
             }
             if (entry.getValue().locations.isEmpty()) {
                 idsToKill.add(inventoryID);
             }
-        }
+        });
         for (Entry<String, Set<Coord4D>> entry : tilesToKill.entrySet()) {
             for (Coord4D obj : entry.getValue()) {
                 inventories.get(entry.getKey()).locations.remove(obj);
