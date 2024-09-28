@@ -468,6 +468,9 @@ public class MekanismRecipe {
 
 
         ItemStack chaoticHelm = new ItemStack(DAFeatures.chaoticHelm);
+        if (!chaoticHelm.hasTagCompound()) {
+            chaoticHelm.setTagCompound(new NBTTagCompound());
+        }
         for (String upgrade :  DAFeatures.chaoticHelm.getValidUpgrades(chaoticHelm)) {
             UpgradeHelper.setUpgradeLevel(chaoticHelm, upgrade, DAFeatures.chaoticHelm.getMaxUpgradeLevel(chaoticHelm, upgrade));
         }
@@ -475,6 +478,9 @@ public class MekanismRecipe {
         chaoticHelm.getTagCompound().setBoolean("isStable", true);
 
         ItemStack chaoticChest = new ItemStack(DAFeatures.chaoticChest);
+        if (!chaoticChest.hasTagCompound()) {
+            chaoticChest.setTagCompound(new NBTTagCompound());
+        }
         for (String upgrade :  DAFeatures.chaoticChest.getValidUpgrades(chaoticChest)) {
             UpgradeHelper.setUpgradeLevel(chaoticChest, upgrade, DAFeatures.chaoticChest.getMaxUpgradeLevel(chaoticChest, upgrade));
         }
@@ -482,6 +488,9 @@ public class MekanismRecipe {
         chaoticChest.getTagCompound().setBoolean("isStable", true);
 
         ItemStack chaoticLegs = new ItemStack(DAFeatures.chaoticLegs);
+        if (!chaoticLegs.hasTagCompound()) {
+            chaoticLegs.setTagCompound(new NBTTagCompound());
+        }
         for (String upgrade :  DAFeatures.chaoticLegs.getValidUpgrades(chaoticLegs)) {
             UpgradeHelper.setUpgradeLevel(chaoticLegs, upgrade, DAFeatures.chaoticLegs.getMaxUpgradeLevel(chaoticLegs, upgrade));
         }
@@ -489,6 +498,9 @@ public class MekanismRecipe {
         chaoticLegs.getTagCompound().setBoolean("isStable", true);
 
         ItemStack chaoticBoots = new ItemStack(DAFeatures.chaoticBoots);
+        if (!chaoticBoots.hasTagCompound()) {
+            chaoticBoots.setTagCompound(new NBTTagCompound());
+        }
         for (String upgrade :  DAFeatures.chaoticBoots.getValidUpgrades(chaoticBoots)) {
             UpgradeHelper.setUpgradeLevel(chaoticBoots, upgrade, DAFeatures.chaoticBoots.getMaxUpgradeLevel(chaoticBoots, upgrade));
         }

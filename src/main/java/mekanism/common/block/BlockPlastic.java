@@ -1,9 +1,13 @@
 package mekanism.common.block;
 
 import mekanism.api.EnumColor;
+import mekanism.api.IMekWrench;
 import mekanism.common.Mekanism;
 import mekanism.common.block.states.BlockStatePlastic;
 import mekanism.common.block.states.BlockStatePlastic.PlasticBlockType;
+import mekanism.common.config.MekanismConfig;
+import mekanism.common.integration.wrenches.Wrenches;
+import mekanism.common.util.MekanismUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -11,10 +15,15 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -83,5 +92,27 @@ public class BlockPlastic extends Block {
             return 10;
         }
         return 0;
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (world.isRemote) {
+            return true;
+        }
+        ItemStack stack = entityplayer.getHeldItem(hand);
+        if (!stack.isEmpty() && MekanismConfig.current().mekce.PlasticWrench.val()) {
+            IMekWrench wrenchHandler = Wrenches.getHandler(stack);
+            if (wrenchHandler != null) {
+                RayTraceResult raytrace = new RayTraceResult(new Vec3d(hitX, hitY, hitZ), side, pos);
+                if (wrenchHandler.canUseWrench(entityplayer, hand, stack, raytrace)) {
+                    wrenchHandler.wrenchUsed(entityplayer, hand, stack, raytrace);
+                    if (entityplayer.isSneaking()) {
+                        MekanismUtils.dismantleBlock(this, state, world, pos);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
