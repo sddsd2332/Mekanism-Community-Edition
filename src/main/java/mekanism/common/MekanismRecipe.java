@@ -472,24 +472,28 @@ public class MekanismRecipe {
             UpgradeHelper.setUpgradeLevel(chaoticHelm, upgrade, DAFeatures.chaoticHelm.getMaxUpgradeLevel(chaoticHelm, upgrade));
         }
         DAFeatures.chaoticHelm.modifyEnergy(chaoticHelm, DAFeatures.chaoticHelm.getMaxEnergyStored(chaoticHelm));
+        chaoticHelm.getTagCompound().setBoolean("isStable", true);
 
         ItemStack chaoticChest = new ItemStack(DAFeatures.chaoticChest);
         for (String upgrade :  DAFeatures.chaoticChest.getValidUpgrades(chaoticChest)) {
             UpgradeHelper.setUpgradeLevel(chaoticChest, upgrade, DAFeatures.chaoticChest.getMaxUpgradeLevel(chaoticChest, upgrade));
         }
         DAFeatures.chaoticChest.modifyEnergy(chaoticChest, DAFeatures.chaoticChest.getMaxEnergyStored(chaoticChest));
+        chaoticChest.getTagCompound().setBoolean("isStable", true);
 
         ItemStack chaoticLegs = new ItemStack(DAFeatures.chaoticLegs);
         for (String upgrade :  DAFeatures.chaoticLegs.getValidUpgrades(chaoticLegs)) {
             UpgradeHelper.setUpgradeLevel(chaoticLegs, upgrade, DAFeatures.chaoticLegs.getMaxUpgradeLevel(chaoticLegs, upgrade));
         }
         DAFeatures.chaoticLegs.modifyEnergy(chaoticLegs, DAFeatures.chaoticLegs.getMaxEnergyStored(chaoticLegs));
+        chaoticLegs.getTagCompound().setBoolean("isStable", true);
 
         ItemStack chaoticBoots = new ItemStack(DAFeatures.chaoticBoots);
         for (String upgrade :  DAFeatures.chaoticBoots.getValidUpgrades(chaoticBoots)) {
             UpgradeHelper.setUpgradeLevel(chaoticBoots, upgrade, DAFeatures.chaoticBoots.getMaxUpgradeLevel(chaoticBoots, upgrade));
         }
         DAFeatures.chaoticBoots.modifyEnergy(chaoticBoots, DAFeatures.chaoticBoots.getMaxEnergyStored(chaoticBoots));
+        chaoticBoots.getTagCompound().setBoolean("isStable", true);
 
         addDRSimpleFusionRecipe(new ItemStack(MekanismItems.ModuleUpgrade, 1, 25), new ItemStack(MekanismItems.ModuleBase), Integer.MAX_VALUE * 53L, 3,
                 DAFeatures.chaosHeart, inductionCell, DAFeatures.chaosStabilizerCore, inductionCell, DAFeatures.chaosHeart,
