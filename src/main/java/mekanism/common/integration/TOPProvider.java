@@ -31,7 +31,7 @@ public class TOPProvider implements Function<ITheOneProbe, Void>, IProbeInfoProv
 
     @Override
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
-        if (!MekanismConfig.current().mekce.GasTOP.val()) {
+        if (!MekanismConfig.current().client.GasTOP.val()) {
             if (mode != ProbeMode.EXTENDED) {
                 return;
             }

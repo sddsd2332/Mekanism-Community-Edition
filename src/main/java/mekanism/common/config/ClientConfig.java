@@ -74,6 +74,8 @@ public class ClientConfig extends BaseConfig {
 
     public final BooleanOption largeWindGeneratorisGlobalRenderer = new BooleanOption(this,"client","largeWindGeneratorisGlobalRenderer",true);
 
+    public final BooleanOption GasTOP = new BooleanOption(this, "mekce", "GasTop", true, "If true, the shutdown requires The One Probe item to sneak up to display the amount inside the gas tank");
+
     @Override
     public void write(ByteBuf config) {
         throw new UnsupportedOperationException("Client config shouldn't be synced");

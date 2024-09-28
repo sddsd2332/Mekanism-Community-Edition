@@ -111,8 +111,8 @@ public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor implements IItemHU
     }
 
     @Override
-    double getShieldingByArmor() {
-        return 15;
+    public double getShieldingByArmor() {
+        return MekanismConfig.current().meka.mekaSuitBootsShielding.val();
     }
 
 

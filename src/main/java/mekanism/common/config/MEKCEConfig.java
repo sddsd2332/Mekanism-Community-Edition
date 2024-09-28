@@ -1,8 +1,11 @@
 package mekanism.common.config;
 
+import io.netty.buffer.ByteBuf;
 import mekanism.common.config.options.BooleanOption;
 import mekanism.common.config.options.DoubleOption;
+import mekanism.common.config.options.FloatOption;
 import mekanism.common.config.options.IntOption;
+import net.minecraftforge.common.config.Configuration;
 
 
 public class MEKCEConfig extends BaseConfig {
@@ -32,10 +35,6 @@ public class MEKCEConfig extends BaseConfig {
     public final BooleanOption EmptyToCreateGasTank = new BooleanOption(this, "mekce", "EmptyToCreateGasTank", false, "Let Configurator clear Create Gas Tank");
 
     public final BooleanOption EmptytoCreateFluidTank = new BooleanOption(this, "mekce", "EmptytoCreateFluidTank", false, "Let Configurator clear Create Fluid Tank");
-
-    public final BooleanOption GasTOP = new BooleanOption(this, "mekce", "GasTop", true, "If true, the shutdown requires The One Probe item to sneak up to display the amount inside the gas tank");
-
-    public final IntOption GasTopBarBorder = new IntOption(this, "mekce", "GasTopBarBorder", 0xfffee140, "Color for the Gas bar border");
 
     public final BooleanOption RotaryCondensentratorAuto = new BooleanOption(this, "mekce", "RotaryCondensentratorAuto", false, "Turn off automatic change gas and fluid ejection mode in Rotary Condensentrator?");
 
@@ -83,12 +82,12 @@ public class MEKCEConfig extends BaseConfig {
     public final BooleanOption EnableGlassInThermal = new BooleanOption(this, "mekce", "EnableGlassInThermal", false,
             "Enabling Structural Glass for the Thermal Evaporation Plant may contain some issues");
 
-    public final BooleanOption EnableConfiguratorWrench = new BooleanOption(this,"mekce","EnableConfiguratorWrench",true,"Enable the configurator's wrench mode");
+    public final BooleanOption EnableConfiguratorWrench = new BooleanOption(this, "mekce", "EnableConfiguratorWrench", true, "Enable the configurator's wrench mode");
 
-    public final IntOption MAXTierSize = new IntOption(this,"mekce","MAXTierSize",8,
-            "The maximum number of stacks that can be stacked in Tier Instale",1,64).setRequiresGameRestart(true);
+    public final IntOption MAXTierSize = new IntOption(this, "mekce", "MAXTierSize", 8,
+            "The maximum number of stacks that can be stacked in Tier Instale", 1, 64).setRequiresGameRestart(true);
 
-    public final BooleanOption EnableUpgradeConfigure  = new BooleanOption(this,"mekce","EnableUpgradeConfigure",false,"Enable an upgrade similar to IC2");
+    public final BooleanOption EnableUpgradeConfigure = new BooleanOption(this, "mekce", "EnableUpgradeConfigure", false, "Enable an upgrade similar to IC2");
 
 
     public final IntOption MAXThreadUpgrade = new IntOption(this, "mekce", "MAXThreadUpgrade", 8,
@@ -97,9 +96,30 @@ public class MEKCEConfig extends BaseConfig {
     public final IntOption MAXThreadUpgradeSize = new IntOption(this, "mekce", "MAXThreadUpgradeSize", 8,
             "The maximum number of stacks that can be stacked for thread upgrades", 1, 64).setRequiresGameRestart(true);
 
-    public final BooleanOption BinRecipeClosed = new BooleanOption(this,"mekce","BinRecipeClosed",false,"Turn off the BIN synthesis recipe").setRequiresGameRestart(true);
+    public final BooleanOption BinRecipeClosed = new BooleanOption(this, "mekce", "BinRecipeClosed", false, "Turn off the BIN synthesis recipe").setRequiresGameRestart(true);
 
-    public final BooleanOption BinRecipeRemovesItem = new BooleanOption(this,"mekce","BinRecipeRemovesItem",false,"Close Bin to remove items").setRequiresGameRestart(true);
-    public final BooleanOption MekAsuitOverloadProtection = new BooleanOption(this,"mekce","MekAsuitOverloadProtection",true,"Allows MekAsuit to intercept direct setHealth with Emergency Rescue installed");
+    public final BooleanOption BinRecipeRemovesItem = new BooleanOption(this, "mekce", "BinRecipeRemovesItem", false, "Close Bin to remove items").setRequiresGameRestart(true);
+    public final BooleanOption MekAsuitOverloadProtection = new BooleanOption(this, "mekce", "MekAsuitOverloadProtection", true, "Allows MekAsuit to intercept direct setHealth with Emergency Rescue installed");
 
+    public final IntOption MaximumEjectionDelay = new IntOption(this, "mekce", "MaximumEjectionDelay", 40, "Maximum ejection delay for gases and fluids");
+    public final IntOption TankChangeSpeed = new IntOption(this, "mekce", "TankChangeSpeed", 20, "Record changes in the contents of the tank,Affects the ejection speed");
+    public final FloatOption LowEjectionThreshold = new FloatOption(this, "mekce", "LowEjectionThreshold", 0.5F, "Low ejection thresholds for gases and fluids, below which the MaximumEjectionDelay is waited for to be met before output", 0, 1);
+    public final FloatOption HighEjectionThreshold = new FloatOption(this, "mekce", "HighEjectionThreshold", 0.85F, "High ejection thresholds for gases and fluids, above which they are immediately output", 0, 1);
+
+    @Override
+    public void load(Configuration config) {
+        super.load(config);
+        validate();
+    }
+
+    @Override
+    public void read(ByteBuf config) {
+        super.read(config);
+        validate();
+    }
+
+    private void validate() {
+        //ensure HighEjectionThreshold is > LowEjectionThreshold
+        HighEjectionThreshold.set(Math.max(LowEjectionThreshold.val(), HighEjectionThreshold.val()));
+    }
 }

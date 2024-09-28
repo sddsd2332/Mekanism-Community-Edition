@@ -2,6 +2,7 @@ package mekanism.common.util;
 
 import it.unimi.dsi.fastutil.ints.IntArrayFIFOQueue;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import mekanism.common.config.MekanismConfig;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.List;
@@ -44,11 +45,11 @@ public class EjectSpeedController {
 
     public static final class TankRecord {
 
-        public static final int MAX_WORK_DELAY = 40;
-        public static final int MAX_TANK_RECORDS = 20;
+        public static final int MAX_WORK_DELAY = MekanismConfig.current().mekce.MaximumEjectionDelay.val();
+        public static final int MAX_TANK_RECORDS = MekanismConfig.current().mekce.TankChangeSpeed.val();
 
-        public static final float LOW_THRESHOLD = 0.5F;
-        public static final float HIGH_THRESHOLD = 0.85F;
+        public static final float LOW_THRESHOLD = MekanismConfig.current().mekce.LowEjectionThreshold.val();
+        public static final float HIGH_THRESHOLD = MekanismConfig.current().mekce.HighEjectionThreshold.val();
 
         private final IntArrayFIFOQueue tankRecords = new IntArrayFIFOQueue();
 
