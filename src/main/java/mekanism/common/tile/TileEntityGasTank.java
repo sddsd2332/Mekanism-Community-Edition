@@ -89,17 +89,19 @@ public class TileEntityGasTank extends TileEntityContainerBlock implements IGasH
             if (TileUtils.receiveGas(inventory.get(1), gasTank) && tier == GasTankTier.CREATIVE && gasTank.getGas() != null) {
                 gasTank.getGas().amount = Integer.MAX_VALUE;
             }
-            Mekanism.EXECUTE_MANAGER.addSyncTask(this::handTank);
-            int newGasAmount = gasTank.getStored();
-            if (newGasAmount != currentGasAmount) {
-                MekanismUtils.saveChunk(this);
-            }
-            currentGasAmount = newGasAmount;
-            int newRedstoneLevel = getRedstoneLevel();
-            if (newRedstoneLevel != currentRedstoneLevel) {
-                markNoUpdateSync();
-                currentRedstoneLevel = newRedstoneLevel;
-            }
+            Mekanism.EXECUTE_MANAGER.addSyncTask(() -> {
+                handTank();
+                int newGasAmount = gasTank.getStored();
+                if (newGasAmount != currentGasAmount) {
+                    MekanismUtils.saveChunk(this);
+                }
+                currentGasAmount = newGasAmount;
+                int newRedstoneLevel = getRedstoneLevel();
+                if (newRedstoneLevel != currentRedstoneLevel) {
+                    markNoUpdateSync();
+                    currentRedstoneLevel = newRedstoneLevel;
+                }
+            });
         }
     }
 
