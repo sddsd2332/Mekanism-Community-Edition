@@ -59,6 +59,7 @@ public class EjectSpeedController {
 
         private int lastEjectAmount = 0;
         private int ejectSpeedMax = 0;
+        private int ejectFailureCount = 0;
 
         private int ejectDelay = -1;
 
@@ -79,7 +80,7 @@ public class EjectSpeedController {
             lastTankAmount = tankAmount;
             lastEjectAmount = 0;
 
-            if ((float) tank.getTankAmount() / tank.getTankCapacity() >= HIGH_THRESHOLD) {
+            if ((float) tank.getTankAmount() / tank.getTankCapacity() >= HIGH_THRESHOLD && ejectFailureCount <= 0) {
                 // faster?
                 ejectDelay = 0;
                 ejectSpeedMax = 0;
@@ -89,10 +90,15 @@ public class EjectSpeedController {
         public void eject(final int amount) {
             ejectSpeedMax = Math.max(ejectSpeedMax, amount);
             lastEjectAmount = amount;
+            if (amount <= 0) {
+                ejectFailureCount++;
+            } else {
+                ejectFailureCount = 0;
+            }
         }
 
         public int getEjectSpeed(final TankProvider tank) {
-            if (tankChangeSpeedAvg <= 0) {
+            if (tankChangeSpeedAvg <= 0 && ejectFailureCount > 0) {
                 return MAX_WORK_DELAY;
             }
             return (int) MathHelper.clamp(
