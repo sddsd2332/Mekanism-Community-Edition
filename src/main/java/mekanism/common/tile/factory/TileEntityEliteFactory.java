@@ -35,11 +35,15 @@ public class TileEntityEliteFactory extends TileEntityFactory {
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.NONE, InventoryUtils.EMPTY));
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.INPUT, new int[]{1}));
         configComponent.addOutput(TransmissionType.GAS, new SideData(DataType.OUTPUT, new int[]{2}));
+        configComponent.addOutput(TransmissionType.GAS, new SideData(new int[]{1,2},new boolean[]{false,true}));
         configComponent.setConfig(TransmissionType.GAS, new byte[]{1, 1, 1, 1, 1, 2});
 
         configComponent.setInputConfig(TransmissionType.ENERGY);
 
         ejectorComponent = new TileComponentEjector(this);
+        ejectorComponent.setOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(2));
+        ejectorComponent.setInputOutputData(TransmissionType.ITEM, configComponent.getOutputs(TransmissionType.ITEM).get(6));
         ejectorComponent.setOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(2));
+        ejectorComponent.setInputOutputData(TransmissionType.GAS, configComponent.getOutputs(TransmissionType.GAS).get(3));
     }
 }
