@@ -751,10 +751,10 @@ gui.rotaryCondensentrator.toggleOperation=切换操作
 
 gui.factory.secondaryEnergy=二次能源
 gui.factory.autoSort=自动分类
-gui.factory.autoSort.isold=正在使用旧状态自动分类
-gui.factory.autoSort.old=旧状态自动分类
-gui.factory.autoSort.old.info=如果自动分类没问题不要使用用这个
-gui.factory.autoSort.old.info2=这可能会导致原有的自动分类出现问题
+gui.factory.autoSort.isold=§e正在使用旧版自动分类。
+gui.factory.autoSort.old=使用旧版自动分类
+gui.factory.autoSort.old.info=§e警告：§r如果自动分类没有问题，请不要启用。
+gui.factory.autoSort.old.info2=启用可能会导致原自动分类§c出现问题§r。
 
 # Recipe types
 gui.factory.Smelting=熔炼
