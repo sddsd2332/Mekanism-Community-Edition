@@ -13,7 +13,7 @@ public enum moduleUpgrade {
     //head
     SolarRechargingUnit("SolarRechargingUnit", 8),
     ElectrolyticBreathingUnit("ElectrolyticBreathingUnit", 4),
-    VisionEnhancementUnit("VisionEnhancementUnit", 1),
+    VisionEnhancementUnit("VisionEnhancementUnit", 4),
     InhalationPurificationUnit("InhalationPurificationUnit", 1),
     NutritionalInjectionUnit("NutritionalInjectionUnit", 1),
     //Body

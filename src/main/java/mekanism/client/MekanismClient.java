@@ -54,6 +54,7 @@ public class MekanismClient extends Mekanism {
                 MekanismClient.voiceClient = null;
             }
         }
+        ClientTickHandler.visionEnhancement = false;
 
         ClientTickHandler.tickingSet.clear();
         ClientTickHandler.portableTeleports.clear();

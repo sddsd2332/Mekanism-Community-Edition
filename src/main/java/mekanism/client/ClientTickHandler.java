@@ -31,14 +31,17 @@ import mekanism.common.util.UpgradeHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiGameOver;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -69,6 +72,7 @@ public class ClientTickHandler {
     public static int wheelStatus = 0;
     public boolean initHoliday = false;
     public boolean shouldReset = false;
+    public static boolean visionEnhancement = false;
 
     public static void killDeadNetworks() {
         tickingSet.removeIf(iClientTicker -> !iClientTicker.needsTicks());
@@ -339,6 +343,20 @@ public class ClientTickHandler {
                     }
                 }
             }
+
+            if (isVisionEnhancementOn(mc.player)) {
+                visionEnhancement = true;
+                // adds if it doesn't exist, otherwise tops off duration to 220. equal or less than 200 will make vision flickers
+                mc.player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 220, 0, false, false));
+            } else if (visionEnhancement) {
+                visionEnhancement = false;
+                PotionEffect effect = mc.player.getActivePotionEffect(MobEffects.NIGHT_VISION);
+                if (effect != null && effect.getDuration() <= 220) {
+                    //Only remove it if it is our effect and not one that has a longer remaining duration
+                    mc.player.removePotionEffect(MobEffects.NIGHT_VISION);
+                }
+            }
+
         }
     }
 
@@ -458,6 +476,38 @@ public class ClientTickHandler {
                     event.setCanceled(true);
                 }
             }
+        }
+    }
+
+    public static boolean isVisionEnhancementOn(EntityPlayer player) {
+        ItemStack head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+        return !head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour armour&& UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.VisionEnhancementUnit) && armour.isVision;
+    }
+
+    @SubscribeEvent
+    public void onFogLighting(EntityViewRenderEvent.FogColors event) {
+        if (visionEnhancement) {
+            float oldRatio = 0.1F;
+            float newRatio = 1 - oldRatio;
+            float red = oldRatio * event.getRed();
+            float green = oldRatio * event.getGreen();
+            float blue = oldRatio * event.getBlue();
+            event.setRed(red + newRatio * 0.4F);
+            event.setGreen(green + newRatio * 0.8F);
+            event.setBlue(blue + newRatio * 0.4F);
+        }
+    }
+
+    @SubscribeEvent
+    public void onFog(EntityViewRenderEvent.RenderFogEvent event) {
+        if (visionEnhancement) {
+            float fog = 0.1F;
+            ItemStack head = mc.player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+            if (!head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour && UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.VisionEnhancementUnit)) {
+                fog -= UpgradeHelper.getUpgradeLevel(head, moduleUpgrade.VisionEnhancementUnit) * 0.022F;
+            }
+            GlStateManager.setFogDensity(fog);
+            GlStateManager.setFog(GlStateManager.FogMode.EXP2);
         }
     }
 

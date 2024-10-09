@@ -161,7 +161,6 @@ public class CommonPlayerTickHandler {
             }
         }
 
-        isMekAsuitArmorHeadEff(player);
     }
 
 
@@ -188,21 +187,6 @@ public class CommonPlayerTickHandler {
         }
     }
 
-    public void isMekAsuitArmorHeadEff(EntityPlayer player) {
-        ItemStack head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-        PotionEffect nv = player.getActivePotionEffect(MobEffects.NIGHT_VISION);
-        if (!head.isEmpty()) {
-            if (head.getItem() instanceof ItemMekAsuitHeadArmour headArmour) {
-                //if()
-                isHeadItem = true;
-            } else {
-                isHeadItem = false;
-            }
-        }
-        if (nv != null && isHeadItem) {
-            player.removePotionEffect(MobEffects.NIGHT_VISION);
-        }
-    }
 
 
     @SubscribeEvent

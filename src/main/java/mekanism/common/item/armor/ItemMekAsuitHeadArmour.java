@@ -43,6 +43,8 @@ import java.util.UUID;
 
 public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasItem, IItemHUDProvider {
 
+    public boolean isVision = false;
+
     public ItemMekAsuitHeadArmour() {
         super(EntityEquipmentSlot.HEAD);
     }
@@ -228,20 +230,13 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
                  */
                 }
 
-                //todo
-                if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.VisionEnhancementUnit)) {
-                    PotionEffect nv = player.getActivePotionEffect(MobEffects.NIGHT_VISION);
-                    if (!player.getEntityWorld().isDaytime() && !player.getEntityWorld().provider.isNether()) {
-                        if (nv == null) {
-                            player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 220, 0, false, false));
-                        } else {
-                            nv.duration = 220;
-                        }
-                        item.setEnergy(headStack, item.getEnergy(headStack) - MekanismConfig.current().meka.mekaSuitEnergyUsageVisionEnhancement.val());
-                    } else if (nv != null && nv.getDuration() <= 220) {
-                        player.removePotionEffect(MobEffects.NIGHT_VISION);
-                    }
+                if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.VisionEnhancementUnit) && !player.getEntityWorld().isDaytime() && !player.getEntityWorld().provider.isNether()) {
+                    isVision = true;
+                    item.setEnergy(headStack, item.getEnergy(headStack) - MekanismConfig.current().meka.mekaSuitEnergyUsageVisionEnhancement.val());
+                }else {
+                    isVision = false;
                 }
+
 
                 if (UpgradeHelper.isUpgradeInstalled(headStack, moduleUpgrade.SolarRechargingUnit)) {
                     if (player.getEntityWorld().isDaytime() && player.getEntityWorld().canSeeSky(player.getPosition())) {
