@@ -139,6 +139,10 @@ public class TileEntitySynchronized extends TileEntity {
     }
 
     public void markNoUpdateSync() {
+        if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
+            markNoUpdate();
+            return;
+        }
         if (inMarkTask) {
             return;
         }
@@ -178,8 +182,8 @@ public class TileEntitySynchronized extends TileEntity {
         if (inMarkTask) {
             return;
         }
-        requireUpdateComparatorOutputLevel = true;
         if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
+            requireUpdateComparatorOutputLevel = true;
             Mekanism.EXECUTE_MANAGER.addUpdateComparatorOutputLevelTask(this);
         } else {
             updateComparatorOutputLevel();

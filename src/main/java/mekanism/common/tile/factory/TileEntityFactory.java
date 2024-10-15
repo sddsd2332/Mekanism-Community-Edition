@@ -1600,7 +1600,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
                     continue;
                 }
 
-                if (internalStack.getCount() >= internalStack.getMaxStackSize() || matchStacks(internalStack, externalStack)) {
+                if (internalStack.getCount() >= internalStack.getMaxStackSize() || !matchStacks(internalStack, externalStack)) {
                     continue;
                 }
 
