@@ -377,6 +377,7 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
                     }
                     if ((progress[process] + 1) < ticksRequired) {
                         progress[process]++;
+                        gasTank.draw(secondaryEnergyThisTick, tier != FactoryTier.CREATIVE);
                         TypeUpdate(process, Exenery);
 
                     } else if ((progress[process] + 1) >= ticksRequired && ((recipeType == RecipeType.PRC || recipeType == RecipeType.NUCLEOSYNTHESIZER) ? getEnergy() >= MekanismUtils.getEnergyPerTick(this, BASE_ENERGY_PER_TICK + Exenery) : getEnergy() >= energyPerTick)) {
@@ -449,7 +450,6 @@ public class TileEntityFactory extends TileEntityMachine implements IComputerInt
     }
 
     private void TypeUpdate(int process, double Exenery) {
-        gasTank.draw(secondaryEnergyThisTick, tier != FactoryTier.CREATIVE);
         if (tier != FactoryTier.CREATIVE) {
             if (recipeType == RecipeType.PRC || recipeType == RecipeType.NUCLEOSYNTHESIZER) {
                 electricityStored.addAndGet(-MekanismUtils.getEnergyPerTick(this, BASE_ENERGY_PER_TICK + Exenery));
