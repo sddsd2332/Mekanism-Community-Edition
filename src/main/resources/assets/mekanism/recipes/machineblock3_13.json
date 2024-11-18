@@ -20,7 +20,7 @@
             },
             "C": {"item": "#CIRCUITULTIMATE"},
             "i": {
-                  "ore": "AntimatterPellet",
+                  "ore": "Antimatter",
                   "type": "forge:ore_dict"
             },
             "O": {

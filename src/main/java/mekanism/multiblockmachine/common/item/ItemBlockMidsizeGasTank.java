@@ -86,7 +86,7 @@ public class ItemBlockMidsizeGasTank extends ItemBlock implements IGasItem, ISus
     @Override
     public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, World world, @Nonnull BlockPos pos, EnumFacing side, float hitX, float hitY,
                                 float hitZ, @Nonnull IBlockState state) {
-        if (stack.getCount() >1){
+        if (stack.getCount() > 1 && MekanismConfig.current().mekce.StackingPlacementLimits.val()) {
             return false;
         }
         boolean place = true;

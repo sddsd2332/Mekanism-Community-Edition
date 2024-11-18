@@ -254,11 +254,8 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
-        if (stack.getCount() > 1) {
-            return  EnumActionResult.PASS;
-        }
         MachineType type = MachineType.get(stack);
-        if (type == MachineType.FLUID_TANK && getBucketMode(stack)) {
+        if (type == MachineType.FLUID_TANK && getBucketMode(stack) && stack.getCount() > 1) {
             return EnumActionResult.PASS;
         }
         return super.onItemUse(player, world, pos, hand, side, hitX, hitY, hitZ);
@@ -266,7 +263,7 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
 
     @Override
     public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, World world, @Nonnull BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull IBlockState state) {
-        if (stack.getCount() > 1) {
+        if (stack.getCount() > 1 && MekanismConfig.current().mekce.StackingPlacementLimits.val()) {
             return false;
         }
         boolean place = true;

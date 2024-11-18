@@ -131,7 +131,7 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
 
     @Override
     public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, World world, @Nonnull BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull IBlockState state) {
-        if (stack.getCount() >1){
+        if (stack.getCount() > 1 && MekanismConfig.current().mekce.StackingPlacementLimits.val()) {
             return false;
         }
         boolean place = true;
@@ -162,7 +162,7 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
                     }
                 }
             }
-        }else if (type == MultiblockMachineType.DIGITAL_ASSEMBLY_TABLE){
+        } else if (type == MultiblockMachineType.DIGITAL_ASSEMBLY_TABLE) {
             BlockPos.MutableBlockPos testPos = new BlockPos.MutableBlockPos();
             for (int yPos = 0; yPos <= 4; yPos++) {
                 for (int xPos = -5; xPos <= 5; xPos++) {
@@ -274,7 +274,7 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
 
     @Override
     public double getEnergy(ItemStack itemStack) {
-        if (itemStack.getCount() > 1){
+        if (itemStack.getCount() > 1) {
             return 0;
         }
         if (!MultiblockMachineType.get(itemStack).isElectric) {
@@ -291,7 +291,7 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
         if (amount == 0) {
             NBTTagCompound dataMap = ItemDataUtils.getDataMap(itemStack);
             dataMap.removeTag("energyStored");
-            if (dataMap.isEmpty() && itemStack.getTagCompound()!=null) {
+            if (dataMap.isEmpty() && itemStack.getTagCompound() != null) {
                 itemStack.getTagCompound().removeTag(ItemDataUtils.DATA_ID);
             }
         } else {
@@ -307,7 +307,7 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
 
     @Override
     public double getMaxTransfer(ItemStack itemStack) {
-        if (itemStack.getCount() > 1){
+        if (itemStack.getCount() > 1) {
             return 0;
         }
         return getMaxEnergy(itemStack) * 0.005;
@@ -326,7 +326,7 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
     @Override
     @Optional.Method(modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
     public int receiveEnergy(ItemStack theItem, int energy, boolean simulate) {
-        if (theItem.getCount() > 1){
+        if (theItem.getCount() > 1) {
             return 0;
         }
         if (canReceive(theItem)) {
@@ -343,7 +343,7 @@ public class ItemBlockMultiblockMachine extends ItemBlock implements IEnergizedI
     @Override
     @Optional.Method(modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
     public int extractEnergy(ItemStack theItem, int energy, boolean simulate) {
-        if (theItem.getCount() > 1){
+        if (theItem.getCount() > 1) {
             return 0;
         }
         if (canSend(theItem)) {

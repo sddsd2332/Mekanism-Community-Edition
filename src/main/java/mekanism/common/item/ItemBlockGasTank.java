@@ -80,7 +80,7 @@ public class ItemBlockGasTank extends ItemBlock implements IGasItem, ISustainedI
     @Override
     public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, World world, @Nonnull BlockPos pos, EnumFacing side, float hitX, float hitY,
                                 float hitZ, @Nonnull IBlockState state) {
-        if (stack.getCount() > 1) {
+        if (stack.getCount() > 1 && MekanismConfig.current().mekce.StackingPlacementLimits.val()) {
             return false;
         }
         boolean place = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, state);

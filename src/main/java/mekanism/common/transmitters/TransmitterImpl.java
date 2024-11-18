@@ -45,7 +45,7 @@ public class TransmitterImpl<ACCEPTOR, NETWORK extends DynamicNetwork<ACCEPTOR, 
             return null;
         }
         if (CapabilityUtils.hasCapability(potentialTransmitterTile, Capabilities.GRID_TRANSMITTER_CAPABILITY, side.getOpposite())) {
-            IGridTransmitter transmitter = CapabilityUtils.getCapability(potentialTransmitterTile, Capabilities.GRID_TRANSMITTER_CAPABILITY, side.getOpposite());
+            IGridTransmitter<ACCEPTOR, NETWORK, BUFFER> transmitter = CapabilityUtils.getCapability(potentialTransmitterTile, Capabilities.GRID_TRANSMITTER_CAPABILITY, side.getOpposite());
             if (TransmissionType.checkTransmissionType(transmitter, getTransmissionType()) && containingTile.isValidTransmitter(potentialTransmitterTile)) {
                 return sideCoord;
             }
@@ -73,11 +73,11 @@ public class TransmitterImpl<ACCEPTOR, NETWORK extends DynamicNetwork<ACCEPTOR, 
 
     @Override
     public boolean isValid() {
-        TileEntityTransmitter cont = getTileEntity();
-        if (cont == null) {
-            return false;
+        TileEntityTransmitter<ACCEPTOR, NETWORK, BUFFER> cont = getTileEntity();
+        if (cont != null) {
+            return !cont.isInvalid() && coord().exists(this.world()) && coord().getTileEntity(this.world()) == cont && cont.getTransmitter() == this;
         }
-        return !cont.isInvalid() && coord().exists(world()) && coord().getTileEntity(world()) == cont && cont.getTransmitter() == this;
+        return false;
     }
 
     @Override
@@ -89,9 +89,9 @@ public class TransmitterImpl<ACCEPTOR, NETWORK extends DynamicNetwork<ACCEPTOR, 
     public NETWORK getExternalNetwork(Coord4D from) {
         TileEntity tile = from.getTileEntity(world());
         if (CapabilityUtils.hasCapability(tile, Capabilities.GRID_TRANSMITTER_CAPABILITY, null)) {
-            IGridTransmitter transmitter = CapabilityUtils.getCapability(tile, Capabilities.GRID_TRANSMITTER_CAPABILITY, null);
+            IGridTransmitter<ACCEPTOR, NETWORK, BUFFER> transmitter = CapabilityUtils.getCapability(tile, Capabilities.GRID_TRANSMITTER_CAPABILITY, null);
             if (TransmissionType.checkTransmissionType(transmitter, getTransmissionType())) {
-                return ((IGridTransmitter<ACCEPTOR, NETWORK, BUFFER>) transmitter).getTransmitterNetwork();
+                return transmitter.getTransmitterNetwork();
             }
         }
         return null;

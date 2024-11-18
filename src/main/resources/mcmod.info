@@ -23,7 +23,9 @@
       "metallurgy",
       "crafttweaker",
       "cofhcore",
-      "cyclicmagic"
+      "cyclicmagic",
+      "draconicadditions@[1.12.2-1.17.0.45,)",
+      "draconicevolution@[1.12.2-2.3.28.193,)"
     ],
     "requiredMods": [
       "forge@[14.23.5.2768,)"

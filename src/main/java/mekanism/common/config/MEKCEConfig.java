@@ -106,6 +106,8 @@ public class MEKCEConfig extends BaseConfig {
     public final FloatOption LowEjectionThreshold = new FloatOption(this, "mekce", "LowEjectionThreshold", 0.5F, "Low ejection thresholds for gases and fluids, below which the MaximumEjectionDelay is waited for to be met before output", 0, 1);
     public final FloatOption HighEjectionThreshold = new FloatOption(this, "mekce", "HighEjectionThreshold", 0.85F, "High ejection thresholds for gases and fluids, above which they are immediately output", 0, 1);
     public final BooleanOption PlasticWrench = new BooleanOption(this,"mekce","PlasticWrench",false,"If true, allow the plastic to fall through the wrench");
+    public final BooleanOption StackingPlacementLimits = new BooleanOption(this,"mekce","StackingPlacementLimits",true,"If the number exceeds 1, it is forbidden to place blocks");
+
     @Override
     public void load(Configuration config) {
         super.load(config);
