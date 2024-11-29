@@ -1,7 +1,6 @@
 package mekanism.common.recipe;
 
 import com.google.common.collect.ImmutableList;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.infuse.InfuseType;
@@ -19,10 +18,7 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -712,7 +708,7 @@ public final class RecipeHandler {
             return values;
         }
 
-        private final Object2ObjectOpenHashMap<INPUT, RECIPE> recipes = new Object2ObjectOpenHashMap<>();
+        private final HashMap<INPUT, RECIPE> recipes = new HashMap<>();
         private final String recipeName;
         @Nonnull
         private final String jeiCategory;
@@ -846,7 +842,7 @@ public final class RecipeHandler {
 
         // N.B. Must return a HashMap, not Map as Unidict expects the stronger type
         @Nonnull
-        public Object2ObjectOpenHashMap<INPUT, RECIPE> get() {
+        public HashMap<INPUT, RECIPE> get() {
             return recipes;
         }
     }
