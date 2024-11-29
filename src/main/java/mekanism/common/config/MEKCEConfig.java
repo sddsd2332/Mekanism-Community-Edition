@@ -107,6 +107,8 @@ public class MEKCEConfig extends BaseConfig {
     public final FloatOption HighEjectionThreshold = new FloatOption(this, "mekce", "HighEjectionThreshold", 0.85F, "High ejection thresholds for gases and fluids, above which they are immediately output", 0, 1);
     public final BooleanOption PlasticWrench = new BooleanOption(this,"mekce","PlasticWrench",false,"If true, allow the plastic to fall through the wrench");
     public final BooleanOption StackingPlacementLimits = new BooleanOption(this,"mekce","StackingPlacementLimits",true,"If the number exceeds 1, it is forbidden to place blocks");
+    public final BooleanOption DRrecipes = new BooleanOption(this,"mekce","DRrecipes",true,"Enable the default Draconic Evolution recipe").setRequiresGameRestart(true);
+    public final BooleanOption DRAdditionsrecipes = new BooleanOption(this,"mekce","DRAdditionsrecipes",true,"Enable the default Draconic Additions recipe").setRequiresGameRestart(true);
 
     @Override
     public void load(Configuration config) {

@@ -437,9 +437,13 @@ public class MekanismRecipe {
          * ADD END
          */
         if (Mekanism.hooks.DraconicEvolution) {
-            addDRrecipes();
+            if (MekanismConfig.current().mekce.DRrecipes.val()){
+                addDRrecipes();
+            }
             if (Mekanism.hooks.DraconicAdditions) {
-                addDRAdditionsrecipes();
+                if (MekanismConfig.current().mekce.DRAdditionsrecipes.val()) {
+                    addDRAdditionsrecipes();
+                }
             }
         }
     }
