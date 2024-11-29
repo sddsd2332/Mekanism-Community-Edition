@@ -1,5 +1,8 @@
 package mekanism.common.item.armor;
 
+import com.brandon3055.draconicevolution.api.itemconfig.BooleanConfigField;
+import com.brandon3055.draconicevolution.api.itemconfig.ItemConfigFieldRegistry;
+import com.brandon3055.draconicevolution.api.itemconfig.ToolConfigHelper;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -13,6 +16,7 @@ import mekanism.common.Mekanism;
 import mekanism.common.MekanismFluids;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.integration.MekanismHooks;
 import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.moduleUpgrade;
 import mekanism.common.util.ItemDataUtils;
@@ -26,7 +30,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,6 +37,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +63,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
     public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped _default) {
         ModelMekAsuitHead armorModel = ModelMekAsuitHead.head;
         ModuleSolarHelmet Solar = ModuleSolarHelmet.solar;
-        if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.SolarRechargingUnit)) {
+        if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.SolarRechargingUnit) && getSolar(itemStack)) {
             if (armorModel.helmet_armor.childModels.contains(armorModel.hide)) {
                 armorModel.helmet_armor.childModels.remove(armorModel.hide);
             }
@@ -92,7 +96,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
         ArmorProperties properties = new ArmorProperties(0, 0, 0);
         if (this == MekanismItems.MekAsuitHelmet) {
             properties = new ArmorProperties(1, MekanismConfig.current().meka.MekaSuitHelmetDamageRatio.val(), MekanismConfig.current().meka.MekaSuitHelmetDamageMax.val());
-            properties.Toughness =  MekanismConfig.current().meka.mekaSuitToughness.val();
+            properties.Toughness = MekanismConfig.current().meka.mekaSuitToughness.val();
         }
         return properties;
     }
@@ -165,7 +169,6 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
     }
 
 
-
     public GasStack useGas(ItemStack itemstack, int amount) {
         GasStack gas = getGas(itemstack);
         if (gas == null) {
@@ -186,7 +189,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
             ItemStack chestStack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 
             if (headStack.getItem() instanceof ItemMekAsuitHeadArmour item) {
-                if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.NutritionalInjectionUnit)) {
+                if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.NutritionalInjectionUnit) && getNutritional(itemStack)) {
                     if (player.canEat(false) && item.getGas(headStack) != null) {
                         int needed = Math.min(20 - player.getFoodStats().getFoodLevel(), item.getStored(headStack) / 50);
                         int toFeed = Math.min((int) MekanismConfig.current().meka.mekaSuitEnergyUsageNutritionalInjection.val(), needed);
@@ -198,7 +201,7 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
                     }
                 }
 
-                if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.ElectrolyticBreathingUnit)) {
+                if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.ElectrolyticBreathingUnit) && getElectrolyticBreathing(itemStack)) {
                     if (player.isEntityAlive() && player.isInsideOfMaterial(Material.WATER)) {
                         if (!player.canBreatheUnderwater() && !player.capabilities.disableDamage) {
                             player.setAir(300);
@@ -217,28 +220,28 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
 
                 if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.InhalationPurificationUnit)) {
                     List<PotionEffect> effects = Lists.newArrayList(player.getActivePotionEffects());
-                    //if ()
-                    for (PotionEffect potion : Collections2.filter(effects, potion -> potion.getPotion().isBadEffect())) {
-                        item.setEnergy(headStack, item.getEnergy(headStack) - MekanismConfig.current().meka.mekaSuitEnergyUsagePotionTick.val());
-                        player.removePotionEffect(potion.getPotion());
+                    if (getInhalationBad(headStack)) {
+                        for (PotionEffect potion : Collections2.filter(effects, potion -> potion.getPotion().isBadEffect())) {
+                            item.setEnergy(headStack, item.getEnergy(headStack) - MekanismConfig.current().meka.mekaSuitEnergyUsagePotionTick.val());
+                            player.removePotionEffect(potion.getPotion());
+                        }
                     }
-                /*if ()
-                for (PotionEffect potion : Collections2.filter(effects, potion -> !potion.getPotion().isBadEffect())) {
-                    item.setEnergy(headStack, item.getEnergy(headStack) - 40000);
-                    player.removePotionEffect(potion.getPotion());
-                }
-                 */
+                    if (getInhalationGood(headStack)) {
+                        for (PotionEffect potion : Collections2.filter(effects, potion -> !potion.getPotion().isBadEffect())) {
+                            item.setEnergy(headStack, item.getEnergy(headStack) - 40000);
+                            player.removePotionEffect(potion.getPotion());
+                        }
+                    }
                 }
 
-                if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.VisionEnhancementUnit) && !player.getEntityWorld().isDaytime() && !player.getEntityWorld().provider.isNether()) {
+                if (UpgradeHelper.isUpgradeInstalled(itemStack, moduleUpgrade.VisionEnhancementUnit) && ((getVisionAuto(itemStack) && !player.getEntityWorld().isDaytime() && !player.getEntityWorld().provider.isNether()) || getVision(itemStack))) {
                     isVision = true;
                     item.setEnergy(headStack, item.getEnergy(headStack) - MekanismConfig.current().meka.mekaSuitEnergyUsageVisionEnhancement.val());
-                }else {
+                } else {
                     isVision = false;
                 }
 
-
-                if (UpgradeHelper.isUpgradeInstalled(headStack, moduleUpgrade.SolarRechargingUnit)) {
+                if (UpgradeHelper.isUpgradeInstalled(headStack, moduleUpgrade.SolarRechargingUnit) && getSolar(headStack)) {
                     if (player.getEntityWorld().isDaytime() && player.getEntityWorld().canSeeSky(player.getPosition())) {
                         Biome b = player.getEntityWorld().provider.getBiomeForCoords(player.getPosition());
                         float tempEff = 0.3f * (0.8f - b.getTemperature(player.getPosition()));
@@ -281,10 +284,10 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
         if (slotType == getEquipmentSlot()) {
-            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.NutritionalInjectionUnit)) {
+            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.NutritionalInjectionUnit) && getNutritional(stack)) {
                 list.add(LangUtils.localize("tooltip.autoeatgas.stored") + " " + EnumColor.ORANGE + (getStored(stack) > 0 ? getStored(stack) : LangUtils.localize("tooltip.noGas")));
             }
-            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.EMERGENCY_RESCUE)) {
+            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.EMERGENCY_RESCUE) && getEmergency(stack)) {
                 list.add(LangUtils.localize("tooltip.meka_head.Emergency_rescue") + " " + UpgradeHelper.getUpgradeLevel(stack, moduleUpgrade.EMERGENCY_RESCUE));
             }
             if (!Mekanism.hooks.DraconicEvolution) {
@@ -293,4 +296,155 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
 
         }
     }
+
+
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public ItemConfigFieldRegistry getFields(ItemStack stack, ItemConfigFieldRegistry registry) {
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.SolarRechargingUnit)) {
+            registry.register(stack, new BooleanConfigField("SolarRechargingUnit", true, "config.field.SolarRechargingUnit.description"));
+        }
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.ElectrolyticBreathingUnit)) {
+            registry.register(stack, new BooleanConfigField("ElectrolyticBreathingUnit", true, "config.field.ElectrolyticBreathingUnit.description"));
+        }
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.VisionEnhancementUnit)) {
+            registry.register(stack, new BooleanConfigField("VisionAuto", true, "config.field.VisionAuto.description"));
+            registry.register(stack, new BooleanConfigField("Vision", false, "config.field.Vision.description"));
+        }
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.InhalationPurificationUnit)) {
+            registry.register(stack, new BooleanConfigField("InhalationBad", true, "config.field.InhalationBad.description"));
+            registry.register(stack, new BooleanConfigField("InhalationGood", false, "config.field.InhalationGood.description"));
+        }
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.NutritionalInjectionUnit)) {
+            registry.register(stack, new BooleanConfigField("Nutritional", true, "config.field.Nutritional.description"));
+        }
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.EMERGENCY_RESCUE)) {
+            registry.register(stack, new BooleanConfigField("emergencyRescue", true, "config.field.emergencyRescue.description"));
+        }
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT)) {
+            registry.register(stack, new BooleanConfigField("Interception", true, "config.field.Interception.description"));
+        }
+        super.getFields(stack, registry);
+        return registry;
+    }
+
+
+    public boolean getSolar(ItemStack stack) {
+        if (Mekanism.hooks.DraconicEvolution) {
+            return getDESolar(stack);
+        } else {
+            return true;
+        }
+    }
+
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean getDESolar(ItemStack stack) {
+        return ToolConfigHelper.getBooleanField("SolarRechargingUnit", stack);
+    }
+
+
+    public boolean getElectrolyticBreathing(ItemStack stack) {
+        if (Mekanism.hooks.DraconicEvolution) {
+            return getDEElectrolyticBreathing(stack);
+        } else {
+            return true;
+        }
+    }
+
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean getDEElectrolyticBreathing(ItemStack stack) {
+        return ToolConfigHelper.getBooleanField("ElectrolyticBreathingUnit", stack);
+    }
+
+    public boolean getVision(ItemStack stack) {
+        if (Mekanism.hooks.DraconicEvolution) {
+            return getDEVision(stack);
+        } else {
+            return false;
+        }
+    }
+
+    public boolean getVisionAuto(ItemStack stack) {
+        if (Mekanism.hooks.DraconicEvolution) {
+            return getDEVisionAuto(stack);
+        } else {
+            return true;
+        }
+    }
+
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean getDEVision(ItemStack stack) {
+        return ToolConfigHelper.getBooleanField("Vision", stack);
+    }
+
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean getDEVisionAuto(ItemStack stack) {
+        return ToolConfigHelper.getBooleanField("VisionAuto", stack);
+    }
+
+    public boolean getInhalationBad(ItemStack stack) {
+        if (Mekanism.hooks.DraconicEvolution) {
+            return getDEInhalationBad(stack);
+        } else {
+            return true;
+        }
+    }
+
+    public boolean getInhalationGood(ItemStack stack) {
+        if (Mekanism.hooks.DraconicEvolution) {
+            return getDEInhalationGood(stack);
+        } else {
+            return false;
+        }
+    }
+
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean getDEInhalationBad(ItemStack stack) {
+        return ToolConfigHelper.getBooleanField("InhalationBad", stack);
+    }
+
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean getDEInhalationGood(ItemStack stack) {
+        return ToolConfigHelper.getBooleanField("InhalationGood", stack);
+    }
+
+    public boolean getNutritional(ItemStack stack) {
+        if (Mekanism.hooks.DraconicEvolution) {
+            return getDENutritional(stack);
+        } else {
+            return true;
+        }
+    }
+
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean getDENutritional(ItemStack stack) {
+        return ToolConfigHelper.getBooleanField("Nutritional", stack);
+    }
+
+    public boolean getEmergency(ItemStack stack) {
+        if (Mekanism.hooks.DraconicEvolution) {
+            return getDEemergency(stack);
+        } else {
+            return true;
+        }
+    }
+
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean getDEemergency(ItemStack stack) {
+        return ToolConfigHelper.getBooleanField("emergencyRescue", stack);
+    }
+
+    public boolean getInterception(ItemStack stack) {
+        if (Mekanism.hooks.DraconicEvolution) {
+            return getDEInterception(stack);
+        } else {
+            return true;
+        }
+    }
+
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean getDEInterception(ItemStack stack) {
+        return ToolConfigHelper.getBooleanField("Interception", stack);
+    }
+
 }

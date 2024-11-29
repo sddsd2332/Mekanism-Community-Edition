@@ -188,7 +188,6 @@ public class CommonPlayerTickHandler {
     }
 
 
-
     @SubscribeEvent
     public void onEntityAttacked(LivingAttackEvent event) {
         EntityLivingBase entity = event.getEntityLiving();
@@ -401,18 +400,16 @@ public class CommonPlayerTickHandler {
         event.setNewSpeed(speed);
     }
 
-    @Desugar
-    private record FallEnergyInfo(ItemStack stack, float damageRatio, float energyCost) {
-    }
-
     //When the player dies
     @SubscribeEvent
     public void onDeath(LivingDeathEvent event) {
         if (event.getEntityLiving() instanceof EntityPlayer player) {
             ItemStack head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-            if (!head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour && UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.EMERGENCY_RESCUE)) {
+            if (!head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour armour &&
+                    ((UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.EMERGENCY_RESCUE) && armour.getEmergency(head)) ||
+                            (UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT) && armour.getInterception(head)))) {
                 event.setCanceled(true);
-                if (!UpgradeHelper.isUpgradeInstalled(head,moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT)){
+                if (!UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT)) {
                     int installed = UpgradeHelper.getUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE);
                     int toAdd = Math.max(installed - 1, 0);
                     UpgradeHelper.setUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE, toAdd);
@@ -429,15 +426,16 @@ public class CommonPlayerTickHandler {
         }
     }
 
-
     @SubscribeEvent
     public void onLivingUpdate(LivingUpdateEvent event) {
         //If the player is affected by setHealth
         //What? Why do you want to go straight to setHealth?
-        if (MekanismConfig.current().mekce.MekAsuitOverloadProtection.val()){
+        if (MekanismConfig.current().mekce.MekAsuitOverloadProtection.val()) {
             if (event.getEntityLiving() instanceof EntityPlayer player) {
                 ItemStack head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-                if (!player.isEntityAlive() && !head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour && UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.EMERGENCY_RESCUE)) {
+                if (!player.isEntityAlive() && !head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour armour &&
+                        ((UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.EMERGENCY_RESCUE) && armour.getEmergency(head)) ||
+                                (UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT) && armour.getInterception(head)))) {
                     player.hurtResistantTime = 20;
                     player.deathTime = 0;
                     player.isDead = false;
@@ -448,7 +446,7 @@ public class CommonPlayerTickHandler {
                     player.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION, 100, 2));
                     player.setAir(300);
                     player.getFoodStats().addStats(20, 20);
-                    if (!UpgradeHelper.isUpgradeInstalled(head,moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT)){
+                    if (!UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT)) {
                         int installed = UpgradeHelper.getUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE);
                         int toAdd = Math.max(installed - 1, 0);
                         UpgradeHelper.setUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE, toAdd);
@@ -456,5 +454,9 @@ public class CommonPlayerTickHandler {
                 }
             }
         }
+    }
+
+    @Desugar
+    private record FallEnergyInfo(ItemStack stack, float damageRatio, float energyCost) {
     }
 }

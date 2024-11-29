@@ -1,6 +1,10 @@
 package mekanism.common.item.armor;
 
 import cofh.redstoneflux.api.IEnergyContainerItem;
+import com.brandon3055.draconicevolution.api.itemconfig.BooleanConfigField;
+import com.brandon3055.draconicevolution.api.itemconfig.IConfigurableItem;
+import com.brandon3055.draconicevolution.api.itemconfig.ItemConfigFieldRegistry;
+import com.brandon3055.draconicevolution.api.itemconfig.ToolConfigHelper;
 import com.brandon3055.draconicevolution.items.armor.ICustomArmor;
 import ic2.api.item.IElectricItemManager;
 import ic2.api.item.IHazmatLike;
@@ -17,10 +21,7 @@ import mekanism.common.integration.ic2.IC2ItemManager;
 import mekanism.common.integration.redstoneflux.RFIntegration;
 import mekanism.common.integration.tesla.TeslaItemWrapper;
 import mekanism.common.moduleUpgrade;
-import mekanism.common.util.ItemDataUtils;
-import mekanism.common.util.LangUtils;
-import mekanism.common.util.MekanismUtils;
-import mekanism.common.util.UpgradeHelper;
+import mekanism.common.util.*;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -52,10 +53,12 @@ import java.util.List;
         @Optional.Interface(iface = "ic2.api.item.ISpecialElectricItem", modid = MekanismHooks.IC2_MOD_ID),
         @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyContainerItem", modid = MekanismHooks.REDSTONEFLUX_MOD_ID),
         @Optional.Interface(iface = "ic2.api.item.IHazmatLike", modid = MekanismHooks.IC2_MOD_ID),
-        @Optional.Interface(iface = "com.brandon3055.draconicevolution.items.armor.ICustomArmor", modid = MekanismHooks.DraconicEvolution_MOD_ID)
+        @Optional.Interface(iface = "com.brandon3055.draconicevolution.items.armor.ICustomArmor", modid = MekanismHooks.DraconicEvolution_MOD_ID),
+        @Optional.Interface(iface = "com.brandon3055.draconicevolution.api.itemconfig.IConfigurableItem", modid = MekanismHooks.DraconicEvolution_MOD_ID),
+        @Optional.Interface(iface = "com.brandon3055.draconicevolution.api.itemconfig.ToolConfigHelper", modid = MekanismHooks.DraconicEvolution_MOD_ID)
 })
 public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedItem,
-        ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor, IModuleUpgrade, IHazmatLike, ICustomArmor {
+        ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor, IModuleUpgrade, IHazmatLike, ICustomArmor, IConfigurableItem {
 
     private final float absorption;
 
@@ -169,7 +172,8 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
                 source == DamageSource.GENERIC || source == DamageSource.HOT_FLOOR ||
                 source == DamageSource.IN_FIRE || source == DamageSource.IN_WALL ||
                 source == DamageSource.LAVA || source == DamageSource.LIGHTNING_BOLT ||
-                source == DamageSource.ON_FIRE || source == DamageSource.WITHER);
+                source == DamageSource.ON_FIRE || source == DamageSource.WITHER
+        );
     }
 
     private static boolean Originaltype(DamageSource source) {
@@ -369,14 +373,9 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
             if (tag.hasKey("ncRadiationResistance")) {
                 nc = tag.getDouble("ncRadiationResistance");
             }
-            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.RADIATION_SHIELDING_UNIT) && nc < getShieldingByArmor()) {
+            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.RADIATION_SHIELDING_UNIT) && getRadiation(stack) && nc < getShieldingByArmor()) {
                 tag.setDouble("ncRadiationResistance", getShieldingByArmor());
             }
-            /*
-            if (nc == 0 && !tag.isEmpty()) {
-                tag.removeTag("ncRadiationResistance");
-            }
-             */
         }
     }
 
@@ -389,14 +388,14 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     @Override
     @Optional.Method(modid = MekanismHooks.IC2_MOD_ID)
     public boolean addsProtection(EntityLivingBase entityLivingBase, EntityEquipmentSlot slotType, ItemStack stack) {
-        return UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.RADIATION_SHIELDING_UNIT);
+        return UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.RADIATION_SHIELDING_UNIT) && getRadiation(stack);
     }
 
     abstract double getShieldingByArmor();
 
     @Override
     public boolean handleUnblockableDamage(EntityLivingBase entity, @Nonnull ItemStack armor, DamageSource source, double damage, int slot) {
-        if (UpgradeHelper.isUpgradeInstalled(armor, moduleUpgrade.RADIATION_SHIELDING_UNIT)) {
+        if (UpgradeHelper.isUpgradeInstalled(armor, moduleUpgrade.RADIATION_SHIELDING_UNIT) && getRadiation(armor)) {
             return source.damageType.equals("radiation") || source.damageType.equals("sulphuric_acid") || source.damageType.equals("acid_burn") || source.damageType.equals("corium_burn") || source.damageType.equals("hot_coolant_burn");
         }
         return false;
@@ -405,7 +404,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     @Override
     public void damageArmor(EntityLivingBase entity, @Nonnull ItemStack stack, DamageSource source, int damage, int slot) {
         if (Mekanism.hooks.IC2Loaded) {
-            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.RADIATION_SHIELDING_UNIT)) {
+            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.RADIATION_SHIELDING_UNIT) && getRadiation(stack)) {
                 Potion radiation = Potion.getPotionFromResourceLocation("ic2:radiation");
                 if (radiation != null && entity.isPotionActive(radiation)) {
                     entity.removePotionEffect(radiation);
@@ -425,10 +424,14 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     public float getProtectionPoints(ItemStack stack) {
         if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.ENERGY_SHIELD_UNIT)) {
             int upgradeLevel = UpgradeHelper.getUpgradeLevel(stack, moduleUpgrade.ENERGY_SHIELD_UNIT);
-            if (MekanismConfig.current().meka.mekaSuitShield.val()) {
-                return MekanismConfig.current().meka.mekaSuitShieldCapacity.val() * getProtectionShare() * (int) Math.pow(2, upgradeLevel);
+            if (ToolConfigHelper.getBooleanField("armorEnergyShield", stack)) {
+                if (MekanismConfig.current().meka.mekaSuitShield.val()) {
+                    return MekanismConfig.current().meka.mekaSuitShieldCapacity.val() * getProtectionShare() * (int) Math.pow(2, upgradeLevel);
+                } else {
+                    return MekanismConfig.current().meka.mekaSuitShieldCapacity.val() * getProtectionShare() * upgradeLevel;
+                }
             } else {
-                return MekanismConfig.current().meka.mekaSuitShieldCapacity.val() * this.getProtectionShare() * upgradeLevel;
+                return ItemNBTHelper.getFloat(stack, "ProtectionPoints", 0);
             }
         } else {
             return 0.0F;
@@ -447,7 +450,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     @Override
     @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
     public float getRecoveryRate(ItemStack stack) {
-        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.ENERGY_SHIELD_UNIT)) {
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.ENERGY_SHIELD_UNIT) && ToolConfigHelper.getBooleanField("armorEnergyShield", stack)) {
             int upgradeLevel = UpgradeHelper.getUpgradeLevel(stack, moduleUpgrade.ENERGY_SHIELD_UNIT);
             if (MekanismConfig.current().meka.mekaSuitRecovery.val()) {
                 return MekanismConfig.current().meka.mekaSuitRecoveryRate.val() * (int) Math.pow(2, upgradeLevel);
@@ -520,6 +523,38 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
             }
             setEnergy(stack, energy);
         }
+    }
+
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public int getProfileCount(ItemStack stack) {
+        return 3;
+    }
+
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public ItemConfigFieldRegistry getFields(ItemStack stack, ItemConfigFieldRegistry registry) {
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.ENERGY_SHIELD_UNIT)) {
+            registry.register(stack, new BooleanConfigField("armorEnergyShield", true, "config.field.armorEnergyShield.description"));
+        }
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.RADIATION_SHIELDING_UNIT)) {
+            registry.register(stack, new BooleanConfigField("armorRadiationShielding", true, "config.field.armorRadiationShielding.description"));
+        }
+        return registry;
+    }
+
+
+    public boolean getRadiation(ItemStack stack) {
+        if (Mekanism.hooks.DraconicEvolution) {
+            return getDERadiation(stack);
+        } else {
+            return true;
+        }
+    }
+
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean getDERadiation(ItemStack stack) {
+        return ToolConfigHelper.getBooleanField("armorRadiationShielding", stack);
     }
 
     private static class FoundArmorDetails {

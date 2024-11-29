@@ -70,9 +70,9 @@ public class ClientTickHandler {
     public static Set<IClientTicker> tickingSet = new ReferenceOpenHashSet<>();
     public static Map<EntityPlayer, TeleportData> portableTeleports = new Object2ObjectOpenHashMap<>();
     public static int wheelStatus = 0;
+    public static boolean visionEnhancement = false;
     public boolean initHoliday = false;
     public boolean shouldReset = false;
-    public static boolean visionEnhancement = false;
 
     public static void killDeadNetworks() {
         tickingSet.removeIf(iClientTicker -> !iClientTicker.needsTicks());
@@ -166,17 +166,6 @@ public class ClientTickHandler {
         }
     }
 
-    @SubscribeEvent
-    public void renderEntityPre(RenderPlayerEvent.Pre evt) {
-        setModelVisibility(evt.getEntityPlayer(), evt.getRenderer(), false);
-    }
-
-
-    @SubscribeEvent
-    public void renderEntityPost(RenderPlayerEvent.Post evt) {
-        setModelVisibility(evt.getEntityPlayer(), evt.getRenderer(), true);
-    }
-
     private static void setModelVisibility(EntityPlayer entity, Render<?> entityModel, boolean showModel) {
         if (entityModel instanceof RenderPlayer renderPlayer) {
             if (entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() instanceof ItemMekaSuitArmor) {
@@ -204,13 +193,26 @@ public class ClientTickHandler {
         }
     }
 
+    public static boolean isVisionEnhancementOn(EntityPlayer player) {
+        ItemStack head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+        return !head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour armour && UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.VisionEnhancementUnit) && armour.isVision;
+    }
+
+    @SubscribeEvent
+    public void renderEntityPre(RenderPlayerEvent.Pre evt) {
+        setModelVisibility(evt.getEntityPlayer(), evt.getRenderer(), false);
+    }
+
+    @SubscribeEvent
+    public void renderEntityPost(RenderPlayerEvent.Post evt) {
+        setModelVisibility(evt.getEntityPlayer(), evt.getRenderer(), true);
+    }
 
     //Maybe it works
     @SubscribeEvent
     public void remove(WorldEvent.Unload event) {
         portableTeleports.remove(mc.player);
     }
-
 
     @SubscribeEvent
     public void onTick(ClientTickEvent event) {
@@ -451,19 +453,6 @@ public class ClientTickHandler {
         }
     }
 
-    private static class TeleportData {
-
-        private EnumHand hand;
-        private Frequency freq;
-        private long teleportTime;
-
-        public TeleportData(EnumHand h, Frequency f, long t) {
-            hand = h;
-            freq = f;
-            teleportTime = t;
-        }
-    }
-
     @SubscribeEvent
     public void GuiScreenEvent(GuiOpenEvent event) {
         if (event.getGui() instanceof GuiGameOver) {
@@ -472,16 +461,11 @@ public class ClientTickHandler {
             }
             if (mc.player instanceof EntityPlayerSP) {
                 ItemStack head = mc.player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-                if (!mc.player.isEntityAlive() && !head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour && UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.EMERGENCY_RESCUE)) {
+                if (!mc.player.isEntityAlive() && !head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour armour && ((UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.EMERGENCY_RESCUE) && armour.getEmergency(head)) || (UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT) && armour.getInterception(head)))) {
                     event.setCanceled(true);
                 }
             }
         }
-    }
-
-    public static boolean isVisionEnhancementOn(EntityPlayer player) {
-        ItemStack head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-        return !head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour armour&& UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.VisionEnhancementUnit) && armour.isVision;
     }
 
     @SubscribeEvent
@@ -508,6 +492,19 @@ public class ClientTickHandler {
             }
             GlStateManager.setFogDensity(fog);
             GlStateManager.setFog(GlStateManager.FogMode.EXP2);
+        }
+    }
+
+    private static class TeleportData {
+
+        private EnumHand hand;
+        private Frequency freq;
+        private long teleportTime;
+
+        public TeleportData(EnumHand h, Frequency f, long t) {
+            hand = h;
+            freq = f;
+            teleportTime = t;
         }
     }
 

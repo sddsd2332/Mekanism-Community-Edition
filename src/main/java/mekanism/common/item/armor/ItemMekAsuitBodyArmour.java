@@ -1,5 +1,6 @@
 package mekanism.common.item.armor;
 
+import com.brandon3055.draconicevolution.api.itemconfig.ItemConfigFieldRegistry;
 import com.google.common.collect.Multimap;
 import mekanism.api.EnumColor;
 import mekanism.api.gas.Gas;
@@ -253,12 +254,16 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
         if (!world.isRemote) {
             ItemStack chestStack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
             ItemStack headStack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+            boolean isHealth = false;
+            if (headStack.getItem() instanceof  ItemMekAsuitHeadArmour armour){
+                isHealth = UpgradeHelper.isUpgradeInstalled(headStack, moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT) && armour.getInterception(headStack);
+            }
             if (chestStack.getItem() instanceof ItemMekAsuitBodyArmour) {
                 if (UpgradeHelper.isUpgradeInstalled(chestStack, moduleUpgrade.CHARGE_DISTRIBUTION_UNIT)) {
                     chargeSuit(player);
                 }
                 if (UpgradeHelper.isUpgradeInstalled(chestStack, moduleUpgrade.HEALTH_REGENERATION)) {
-                    if (!UpgradeHelper.isUpgradeInstalled(headStack, moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT)) {
+                    if (isHealth) {
                         ArmourTick++;
                         if (player.getHealth() < player.getMaxHealth() && ArmourTick % 20 == 0) {
                             player.heal(UpgradeHelper.getUpgradeLevel(chestStack, moduleUpgrade.HEALTH_REGENERATION));
