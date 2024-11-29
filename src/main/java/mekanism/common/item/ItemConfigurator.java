@@ -33,11 +33,13 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
@@ -71,6 +73,25 @@ public class ItemConfigurator extends ItemEnergized implements IMekWrench, ITool
     public ItemConfigurator() {
         super(60000);
         setMaxStackSize(1);
+        this.addPropertyOverride(new ResourceLocation("mode"), new IItemPropertyGetter() {
+            @SideOnly(Side.CLIENT)
+            public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn) {
+                if (stack.getItem() instanceof ItemConfigurator) {
+                    switch (getState(stack)) {
+                        case EMPTY -> {
+                            return 1.0F;
+                        }
+                        case ROTATE -> {
+                            return 2.0F;
+                        }
+                        case WRENCH -> {
+                            return 3.0F;
+                        }
+                    }
+                }
+                return 0.0F;
+            }
+        });
     }
 
     @Override
@@ -132,7 +153,7 @@ public class ItemConfigurator extends ItemEnergized implements IMekWrench, ITool
                 if (tile instanceof TileEntityFluidTank tank) {
                     if (MekanismConfig.current().mekce.EmptytoCreateFluidTank.val()) {
                         if (SecurityUtils.canAccess(player, tile)) {
-                            if (tank.tier == FluidTankTier.CREATIVE &&tank.fluidTank.getFluid() != null && getEnergy(stack) >= ENERGY_PER_CONFIGURE) {
+                            if (tank.tier == FluidTankTier.CREATIVE && tank.fluidTank.getFluid() != null && getEnergy(stack) >= ENERGY_PER_CONFIGURE) {
                                 setEnergy(stack, getEnergy(stack) - ENERGY_PER_CONFIGURE);
                                 tank.fluidTank.setFluid(null);
                             }
@@ -316,9 +337,9 @@ public class ItemConfigurator extends ItemEnergized implements IMekWrench, ITool
         ROTATE("rotate", null, EnumColor.YELLOW, false),
         WRENCH("wrench", null, EnumColor.PINK, false);
 
-        private String name;
         @Nullable
         private final TransmissionType transmissionType;
+        private String name;
         private EnumColor color;
         private boolean configurating;
 

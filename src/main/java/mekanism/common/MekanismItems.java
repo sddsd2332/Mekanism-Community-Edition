@@ -37,7 +37,7 @@ public class MekanismItems {
     public static final Item AnchorUpgrade = new ItemUpgrade(Upgrade.ANCHOR);
     public static final Item ThreadUpgrade = new ItemUpgrade(Upgrade.THREAD);
     public static final Item TierInstaller = new ItemTierInstaller();
-    public static final ItemEnergized EnergyTablet = new ItemEnergized(1000000);
+    public static final ItemEnergized EnergyTablet = new ItemEnergized();
     public static final ItemRobit Robit = new ItemRobit();
     public static final ItemAtomicDisassembler AtomicDisassembler = new ItemAtomicDisassembler();
     public static final ItemPortableTeleporter PortableTeleporter = new ItemPortableTeleporter();

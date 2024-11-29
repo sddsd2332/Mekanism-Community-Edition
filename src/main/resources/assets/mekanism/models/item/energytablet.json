@@ -1,4 +1,26 @@
 {
-      "parent": "mekanism:item/standard_item",
-      "textures": {"layer0": "mekanism:items/EnergyTablet"}
+  "parent": "mekanism:item/standard_item",
+  "textures": {
+    "layer0": "mekanism:items/EnergyTablet_empty"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "energy": 0.3
+      },
+      "model": "mekanism:item/energytablet_30"
+    },
+    {
+      "predicate": {
+        "energy": 0.6
+      },
+      "model": "mekanism:item/energytablet_60"
+    },
+    {
+      "predicate": {
+        "energy": 1
+      },
+      "model": "mekanism:item/energytablet_100"
+    }
+  ]
 }

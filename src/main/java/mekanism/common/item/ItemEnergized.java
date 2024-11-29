@@ -16,9 +16,12 @@ import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -29,6 +32,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 @InterfaceList({
@@ -45,6 +49,25 @@ public class ItemEnergized extends ItemMekanism implements IEnergizedItem, ISpec
     public ItemEnergized(double maxElectricity) {
         super();
         MAX_ELECTRICITY = maxElectricity;
+    }
+
+    public ItemEnergized() {
+        this(1000000);
+        this.addPropertyOverride(new ResourceLocation("energy"), new IItemPropertyGetter() {
+            @SideOnly(Side.CLIENT)
+            public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn) {
+                if (stack.getItem() instanceof ItemEnergized) {
+                    if (getEnergy(stack) / getMaxEnergy(stack) > 0 && getEnergy(stack) / getMaxEnergy(stack) <= 0.3F) {
+                        return 0.3F;
+                    } else if (getEnergy(stack) / getMaxEnergy(stack) > 0.3F && getEnergy(stack) / getMaxEnergy(stack) <= 0.6F) {
+                        return 0.6F;
+                    } else if (getEnergy(stack) / getMaxEnergy(stack) > 0.6F && getEnergy(stack) / getMaxEnergy(stack) <= 1.0F) {
+                        return 1.0F;
+                    }
+                }
+                return 0.0F;
+            }
+        });
     }
 
     @Override
@@ -65,7 +88,7 @@ public class ItemEnergized extends ItemMekanism implements IEnergizedItem, ISpec
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemstack, World world, List<String> list, ITooltipFlag flag) {
-        if (itemstack.getCount() <= 1){
+        if (itemstack.getCount() <= 1) {
             list.add(EnumColor.AQUA + LangUtils.localize("tooltip.storedEnergy") + ": " + EnumColor.GREY + MekanismUtils.getEnergyDisplay(getEnergy(itemstack), getMaxEnergy(itemstack)));
         }
     }
@@ -88,7 +111,7 @@ public class ItemEnergized extends ItemMekanism implements IEnergizedItem, ISpec
 
     @Override
     public double getEnergy(ItemStack itemStack) {
-        if (itemStack.getCount() > 1){
+        if (itemStack.getCount() > 1) {
             return 0;
         }
         return ItemDataUtils.getDouble(itemStack, "energyStored");
@@ -96,8 +119,8 @@ public class ItemEnergized extends ItemMekanism implements IEnergizedItem, ISpec
 
     @Override
     public void setEnergy(ItemStack itemStack, double amount) {
-        if (itemStack.getCount() > 1){
-            return ;
+        if (itemStack.getCount() > 1) {
+            return;
         }
         if (amount == 0) {
             NBTTagCompound dataMap = ItemDataUtils.getDataMap(itemStack);
@@ -117,7 +140,7 @@ public class ItemEnergized extends ItemMekanism implements IEnergizedItem, ISpec
 
     @Override
     public double getMaxTransfer(ItemStack itemStack) {
-        if (itemStack.getCount() > 1){
+        if (itemStack.getCount() > 1) {
             return 0;
         }
         return getMaxEnergy(itemStack) * 0.005;
@@ -125,7 +148,7 @@ public class ItemEnergized extends ItemMekanism implements IEnergizedItem, ISpec
 
     @Override
     public boolean canReceive(ItemStack itemStack) {
-        if (itemStack.getCount() > 1){
+        if (itemStack.getCount() > 1) {
             return false;
         }
         return getMaxEnergy(itemStack) - getEnergy(itemStack) > 0;
@@ -133,7 +156,7 @@ public class ItemEnergized extends ItemMekanism implements IEnergizedItem, ISpec
 
     @Override
     public boolean canSend(ItemStack itemStack) {
-        if (itemStack.getCount() > 1){
+        if (itemStack.getCount() > 1) {
             return false;
         }
         return getEnergy(itemStack) > 0;
@@ -142,7 +165,7 @@ public class ItemEnergized extends ItemMekanism implements IEnergizedItem, ISpec
     @Override
     @Method(modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
     public int receiveEnergy(ItemStack theItem, int energy, boolean simulate) {
-        if (theItem.getCount() > 1){
+        if (theItem.getCount() > 1) {
             return 0;
         }
         if (canReceive(theItem)) {
@@ -159,7 +182,7 @@ public class ItemEnergized extends ItemMekanism implements IEnergizedItem, ISpec
     @Override
     @Method(modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
     public int extractEnergy(ItemStack theItem, int energy, boolean simulate) {
-        if (theItem.getCount() > 1){
+        if (theItem.getCount() > 1) {
             return 0;
         }
         if (canSend(theItem)) {

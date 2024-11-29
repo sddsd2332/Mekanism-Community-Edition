@@ -14,13 +14,16 @@ import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.SecurityUtils;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
@@ -28,6 +31,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemConfigurationCard extends ItemMekanism {
@@ -35,6 +39,12 @@ public class ItemConfigurationCard extends ItemMekanism {
     public ItemConfigurationCard() {
         super();
         setMaxStackSize(1);
+        this.addPropertyOverride(new ResourceLocation("mode"), new IItemPropertyGetter() {
+            @SideOnly(Side.CLIENT)
+            public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn) {
+                return (stack.getItem() instanceof ItemConfigurationCard && getData(stack) != null) ? 1.0F : 0.0F;
+            }
+        });
     }
 
     @Override
@@ -89,7 +99,7 @@ public class ItemConfigurationCard extends ItemMekanism {
                 } else {
                     SecurityUtils.displayNoAccess(player);
                 }
-            }else {
+            } else {
                 ItemStack stack = player.getHeldItem(hand);
                 if (player.isSneaking()) {
                     if (stack.getTagCompound() != null) {

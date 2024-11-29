@@ -1,4 +1,26 @@
 {
-      "parent": "item/handheld",
-      "textures": {"layer0": "mekanism:items/Configurator"}
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "mekanism:items/Configurator_Config"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "mode": 1
+      },
+      "model": "mekanism:item/configurator_empty"
+    },
+    {
+      "predicate": {
+        "mode": 2
+      },
+      "model": "mekanism:item/configurator_rotate"
+    },
+    {
+      "predicate": {
+        "mode": 3
+      },
+      "model": "mekanism:item/configurator_wrench"
+    }
+  ]
 }
