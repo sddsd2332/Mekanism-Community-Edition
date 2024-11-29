@@ -1,10 +1,15 @@
 package mekanism.common.item.armor;
 
+import com.brandon3055.draconicevolution.api.itemconfig.BooleanConfigField;
+import com.brandon3055.draconicevolution.api.itemconfig.IntegerConfigField;
+import com.brandon3055.draconicevolution.api.itemconfig.ItemConfigFieldRegistry;
+import com.brandon3055.draconicevolution.api.itemconfig.ToolConfigHelper;
 import com.google.common.collect.Multimap;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitBoot;
 import mekanism.common.Mekanism;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.integration.MekanismHooks;
 import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.moduleUpgrade;
 import mekanism.common.util.ItemDataUtils;
@@ -26,12 +31,15 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
+
+import static com.brandon3055.draconicevolution.api.itemconfig.IItemConfigField.EnumControlType.SLIDER;
 
 public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor implements IItemHUDProvider {
 
@@ -47,8 +55,7 @@ public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor implements IItemHU
     @Override
     @SideOnly(Side.CLIENT)
     public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped _default) {
-        ModelMekAsuitBoot armorModel = ModelMekAsuitBoot.boot;
-        return armorModel;
+        return ModelMekAsuitBoot.boot;
     }
 
     @Override
@@ -97,7 +104,7 @@ public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor implements IItemHU
             ItemStack feetStack = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
             if (feetStack.getItem() instanceof ItemMekAsuitFeetArmour armour) {
                 if (UpgradeHelper.isUpgradeInstalled(feetStack, moduleUpgrade.FROST_WALKER_UNIT)) {
-                    if (armour.getEnergy(feetStack) > 500D) {
+                    if (armour.getEnergy(feetStack) > 500D && getFrost(feetStack)) {
                         if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FROST_WALKER, feetStack) == 0) {
                             feetStack.addEnchantment(Enchantments.FROST_WALKER, UpgradeHelper.getUpgradeLevel(feetStack, moduleUpgrade.FROST_WALKER_UNIT));
                             armour.setEnergy(feetStack, armour.getEnergy(feetStack) - 500D);
@@ -156,7 +163,7 @@ public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor implements IItemHU
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
         if (slotType == getEquipmentSlot()) {
-            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
+            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT) && !Mekanism.hooks.DraconicEvolution) {
                 list.add(LangUtils.localize("tooltip.module.jump_boost.name") + " " + getJumpBoostMode(stack).getBoost());
                 list.add(LangUtils.localize("tooltip.module.step_assist.name") + " " + getStepAssistMode(stack).getHeight());
             }
@@ -221,5 +228,50 @@ public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor implements IItemHU
         }
     }
 
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public ItemConfigFieldRegistry getFields(ItemStack stack, ItemConfigFieldRegistry registry) {
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
+            int u = UpgradeHelper.getUpgradeLevel(stack,  moduleUpgrade.HYDRAULIC_PROPULSION_UNIT);
+            int i = 200 + (100 * u) + (Math.max(u - 1, 0) * 100) + (Math.max(u - 2, 0) * 100);
+            registry.register(stack, new IntegerConfigField("armorSpeedModifier", 0,  0 , i, "config.field.armorSpeedModifier.description", SLIDER).setPrefix("+").setExtension("%"));
+            registry.register(stack, new IntegerConfigField("armorJumpModifier", 0, 0, i, "config.field.armorSpeedModifier.description", SLIDER).setPrefix("+").setExtension("%"));
+            registry.register(stack, new BooleanConfigField("armorHillStep", true, "config.field.armorHillStep.description"));
+        }
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.FROST_WALKER_UNIT)) {
+            registry.register(stack, new BooleanConfigField("frost", true, "config.field.frost.description"));
+        }
+        super.getFields(stack, registry);
+        return registry;
+    }
 
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public float getSpeedModifier(ItemStack stack, EntityPlayer player) {
+        return ToolConfigHelper.getIntegerField("armorSpeedModifier", stack) / 100F;
+    }
+
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public float getJumpModifier(ItemStack stack, EntityPlayer player) {
+        return ToolConfigHelper.getIntegerField("armorJumpModifier", stack) / 100F;
+    }
+
+    @Override
+    public boolean hasHillStep(ItemStack stack, EntityPlayer player) {
+        return ToolConfigHelper.getBooleanField("armorHillStep", stack);
+    }
+
+    public boolean getFrost(ItemStack stack) {
+        if (Mekanism.hooks.DraconicEvolution) {
+            return getDEFrost(stack);
+        } else {
+            return true;
+        }
+    }
+
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean getDEFrost(ItemStack stack) {
+        return ToolConfigHelper.getBooleanField("frost", stack);
+    }
 }

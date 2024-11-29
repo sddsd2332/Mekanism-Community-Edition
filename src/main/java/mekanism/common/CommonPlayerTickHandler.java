@@ -77,7 +77,7 @@ public class CommonPlayerTickHandler {
         if (!stack.isEmpty() && stack.getItem() instanceof ItemFreeRunners freeRunners && freeRunners.getMode(stack).providesStepBoost() && !player.isSpectator()) {
             return 1.002F;
         } else if (!stack.isEmpty() && stack.getItem() instanceof ItemMekAsuitFeetArmour feetArmour && !player.isSpectator()) {
-            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
+            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT) && !Mekanism.hooks.DraconicEvolution) {
                 float height = feetArmour.getStepAssistMode(stack).getHeight();
                 if (height == 0.5F) {
                     return 1.002F;
@@ -110,7 +110,9 @@ public class CommonPlayerTickHandler {
             tickEnd(event.player);
         }
         if (event.phase == Phase.START) {
-            isMekAsuitArmorFlying(event.player);
+            if (!Mekanism.hooks.DraconicEvolution){
+                isMekAsuitArmorFlying(event.player);
+            }
         }
     }
 
@@ -358,13 +360,13 @@ public class CommonPlayerTickHandler {
         if (event.getEntity() instanceof EntityPlayer player) {
             ItemStack feet = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
             if (!feet.isEmpty() && feet.getItem() instanceof ItemMekAsuitFeetArmour feetArmor) {
-                if (UpgradeHelper.isUpgradeInstalled(feet, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
+                if (UpgradeHelper.isUpgradeInstalled(feet, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT) && !Mekanism.hooks.DraconicEvolution) {
                     float boost = feetArmor.getJumpBoostMode(feet).getBoost();
                     double usage = MekanismConfig.current().meka.mekaSuitBaseJumpEnergyUsage.val() * (boost / 0.1F);
                     if (feetArmor.getEnergy(feet) > usage) {
                         ItemStack leg = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
-                        if (!leg.isEmpty() && leg.getItem() instanceof ItemMekAsuitLegsArmour) {
-                            if (UpgradeHelper.isUpgradeInstalled(leg, moduleUpgrade.LOCOMOTIVE_BOOSTING_UNIT)) {
+                        if (!leg.isEmpty() && leg.getItem() instanceof ItemMekAsuitLegsArmour armour) {
+                            if (UpgradeHelper.isUpgradeInstalled(leg, moduleUpgrade.LOCOMOTIVE_BOOSTING_UNIT) && armour.getLocomotive(leg)) {
                                 boost = (float) Math.sqrt(boost);
                             }
                         }
@@ -380,7 +382,7 @@ public class CommonPlayerTickHandler {
     public void getBreakSpeed(PlayerEvent.BreakSpeed event) {
         EntityPlayer player = event.getEntityPlayer();
         float speed = event.getNewSpeed();
-        BlockPos position = event.getPos();
+       // BlockPos position = event.getPos();
         /*
         if (position!=null){
             BlockPos pos = position;
@@ -389,7 +391,7 @@ public class CommonPlayerTickHandler {
         }
          */
         ItemStack legs = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
-        if (!legs.isEmpty() && legs.getItem() instanceof ItemMekaSuitArmor && UpgradeHelper.isUpgradeInstalled(legs, moduleUpgrade.GYROSCOPIC_STABILIZATION_UNIT)) {
+        if (!legs.isEmpty() && legs.getItem() instanceof ItemMekAsuitLegsArmour armour && UpgradeHelper.isUpgradeInstalled(legs, moduleUpgrade.GYROSCOPIC_STABILIZATION_UNIT) && armour.getGyroscopic(legs)) {
             if (player.isInsideOfMaterial(Material.WATER) && !EnchantmentHelper.getAquaAffinityModifier(player)) {
                 speed *= 5.0F;
             }

@@ -34,7 +34,7 @@ public class PacketJumpBoostData implements IMessageHandler<PacketJumpBoostData.
                 }
             } else if (message.packetType == JumpBoostPacket.MODE) {
                 ItemStack stack = entityPlayer.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-                if (!stack.isEmpty() && stack.getItem() instanceof ItemMekAsuitFeetArmour feet && UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
+                if (!stack.isEmpty() && stack.getItem() instanceof ItemMekAsuitFeetArmour feet && UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT) && !Mekanism.hooks.DraconicEvolution) {
                     if (!message.value) {
                         feet.incrementJumpBoostMode(stack);
                     } else {

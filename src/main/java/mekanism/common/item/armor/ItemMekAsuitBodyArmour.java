@@ -1,6 +1,11 @@
 package mekanism.common.item.armor;
 
+import codechicken.lib.math.MathHelper;
+import com.brandon3055.draconicevolution.DEConfig;
+import com.brandon3055.draconicevolution.api.itemconfig.BooleanConfigField;
+import com.brandon3055.draconicevolution.api.itemconfig.IntegerConfigField;
 import com.brandon3055.draconicevolution.api.itemconfig.ItemConfigFieldRegistry;
+import com.brandon3055.draconicevolution.api.itemconfig.ToolConfigHelper;
 import com.google.common.collect.Multimap;
 import mekanism.api.EnumColor;
 import mekanism.api.gas.Gas;
@@ -13,6 +18,7 @@ import mekanism.common.Mekanism;
 import mekanism.common.MekanismFluids;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.integration.MekanismHooks;
 import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.moduleUpgrade;
@@ -31,12 +37,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
+
+import static com.brandon3055.draconicevolution.api.itemconfig.IItemConfigField.EnumControlType.SLIDER;
 
 public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasItem, IJetpackItem, IItemHUDProvider {
 
@@ -86,7 +95,7 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
         ArmorProperties properties = new ArmorProperties(0, 0, 0);
         if (this == MekanismItems.MekAsuitChestplate) {
             properties = new ArmorProperties(1, MekanismConfig.current().meka.MekaSuitBodyarmorDamageRatio.val(), MekanismConfig.current().meka.MekaSuitBodyarmorDamageMax.val());
-            properties.Toughness =  MekanismConfig.current().meka.mekaSuitToughness.val();;
+            properties.Toughness = MekanismConfig.current().meka.mekaSuitToughness.val();
         }
 
         return properties;
@@ -255,14 +264,14 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
             ItemStack chestStack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
             ItemStack headStack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
             boolean isHealth = false;
-            if (headStack.getItem() instanceof  ItemMekAsuitHeadArmour armour){
+            if (headStack.getItem() instanceof ItemMekAsuitHeadArmour armour) {
                 isHealth = UpgradeHelper.isUpgradeInstalled(headStack, moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT) && armour.getInterception(headStack);
             }
             if (chestStack.getItem() instanceof ItemMekAsuitBodyArmour) {
-                if (UpgradeHelper.isUpgradeInstalled(chestStack, moduleUpgrade.CHARGE_DISTRIBUTION_UNIT)) {
+                if (UpgradeHelper.isUpgradeInstalled(chestStack, moduleUpgrade.CHARGE_DISTRIBUTION_UNIT) && getCharge(chestStack)) {
                     chargeSuit(player);
                 }
-                if (UpgradeHelper.isUpgradeInstalled(chestStack, moduleUpgrade.HEALTH_REGENERATION)) {
+                if (UpgradeHelper.isUpgradeInstalled(chestStack, moduleUpgrade.HEALTH_REGENERATION) && gethealth(chestStack)) {
                     if (isHealth) {
                         ArmourTick++;
                         if (player.getHealth() < player.getMaxHealth() && ArmourTick % 20 == 0) {
@@ -287,7 +296,7 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
         if (slotType == getEquipmentSlot()) {
-            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.JETPACK_UNIT)) {
+            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.JETPACK_UNIT) && getJetpackMode(stack) != JetpackMode.DISABLED) {
                 list.add(LangUtils.localize("tooltip.jetpack.mode") + " " + getMode(stack).getName());
                 list.add(LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + (getStored(stack) > 0 ? getStored(stack) : LangUtils.localize("tooltip.noGas")));
             }
@@ -297,5 +306,79 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
         }
     }
 
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public ItemConfigFieldRegistry getFields(ItemStack stack, ItemConfigFieldRegistry registry) {
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.CHARGE_DISTRIBUTION_UNIT)) {
+            registry.register(stack, new BooleanConfigField("Charge", true, "config.field.Charge.description"));
+        }
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.HEALTH_REGENERATION)) {
+            registry.register(stack, new BooleanConfigField("health", true, "config.field.health.description"));
+        }
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.GRAVITATIONAL_MODULATING_UNIT)) {
+            int speedLimit = MathHelper.clip(DEConfig.flightSpeedLimit != -1 ? DEConfig.flightSpeedLimit : 600, 0, 1200);
+            registry.register(stack, new IntegerConfigField("armorFSpeedModifier", 0, 0, getJetpackMode(stack) != JetpackMode.DISABLED ? 0 : speedLimit, "config.field.armorFSpeedModifier.description", SLIDER).setPrefix("+").setExtension("%"));
+            registry.register(stack, new IntegerConfigField("armorVFSpeedModifier", 0, 0, getJetpackMode(stack) != JetpackMode.DISABLED ? 0 : speedLimit, "config.field.armorVFSpeedModifier.description", SLIDER).setPrefix("+").setExtension("%"));
+            registry.register(stack, new BooleanConfigField("armorInertiaCancel", false, "config.field.armorInertiaCancel.description"));
+            registry.register(stack, new BooleanConfigField("armorFlightLock", false, "config.field.armorFlightLock.description"));
+        }
+        super.getFields(stack, registry);
+        return registry;
+    }
+
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public float getFlightSpeedModifier(ItemStack stack, EntityPlayer player) {
+        if (getJetpackMode(stack) != JetpackMode.DISABLED) {
+            return 0;
+        }
+        int value = ToolConfigHelper.getIntegerField("armorFSpeedModifier", stack);
+        if (DEConfig.flightSpeedLimit > -1 && value > DEConfig.flightSpeedLimit) {
+            value = DEConfig.flightSpeedLimit;
+        }
+        float modifier = value / 100F;
+        return modifier;
+    }
+
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public float getFlightVModifier(ItemStack stack, EntityPlayer player) {
+        if (getJetpackMode(stack) != JetpackMode.DISABLED) {
+            return 0;
+        }
+        return ToolConfigHelper.getIntegerField("armorVFSpeedModifier", stack) / 100F;
+    }
+
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean[] hasFlight(ItemStack stack) {
+        return new boolean[]{getJetpackMode(stack) == JetpackMode.DISABLED, ToolConfigHelper.getBooleanField("armorFlightLock", stack) && getJetpackMode(stack) == JetpackMode.DISABLED, ToolConfigHelper.getBooleanField("armorInertiaCancel", stack) && getJetpackMode(stack) == JetpackMode.DISABLED};
+    }
+
+    public boolean getCharge(ItemStack stack) {
+        if (Mekanism.hooks.DraconicEvolution) {
+            return getDECharge(stack);
+        } else {
+            return true;
+        }
+    }
+
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean getDECharge(ItemStack stack) {
+        return ToolConfigHelper.getBooleanField("Charge", stack);
+    }
+
+    public boolean gethealth(ItemStack stack) {
+        if (Mekanism.hooks.DraconicEvolution) {
+            return getDEhealth(stack);
+        } else {
+            return true;
+        }
+    }
+
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean getDEhealth(ItemStack stack) {
+        return ToolConfigHelper.getBooleanField("health", stack);
+    }
 
 }

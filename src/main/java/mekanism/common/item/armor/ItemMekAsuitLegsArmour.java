@@ -1,10 +1,14 @@
 package mekanism.common.item.armor;
 
+import com.brandon3055.draconicevolution.api.itemconfig.BooleanConfigField;
+import com.brandon3055.draconicevolution.api.itemconfig.ItemConfigFieldRegistry;
+import com.brandon3055.draconicevolution.api.itemconfig.ToolConfigHelper;
 import com.google.common.collect.Multimap;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitLeg;
 import mekanism.common.Mekanism;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.integration.MekanismHooks;
 import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.moduleUpgrade;
 import mekanism.common.util.LangUtils;
@@ -26,6 +30,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
@@ -49,8 +54,7 @@ public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor implements IItemHU
     @Override
     @SideOnly(Side.CLIENT)
     public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped _default) {
-        ModelMekAsuitLeg armorModel = ModelMekAsuitLeg.leg;
-        return armorModel;
+        return ModelMekAsuitLeg.leg;
     }
 
     @Override
@@ -99,13 +103,13 @@ public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor implements IItemHU
         if (!world.isRemote) {
             ItemStack legStack = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
             if (legStack.getItem() instanceof ItemMekAsuitLegsArmour armour) {
-                if (isUpgradeInstalled(legStack, moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT)) {
+                if (isUpgradeInstalled(legStack, moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT) && getGeothermal(legStack)) {
                     if (player.isInLava() || player.isBurning()) {
                         armour.setEnergy(legStack, armour.getEnergy(legStack) + MekanismConfig.current().meka.mekaSuitGeothermalChargingRate.val() * UpgradeHelper.getUpgradeLevel(legStack, moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT) * 200);
                     }
                 }
                 if (isUpgradeInstalled(legStack, moduleUpgrade.HYDROSTATIC_REPULSOR_UNIT)) {
-                    if (player.isInsideOfMaterial(Material.WATER) && !player.canBreatheUnderwater() && armour.getEnergy(legStack) > MekanismConfig.current().meka.mekaSuitEnergyUsageHydrostaticRepulsion.val()) {
+                    if (gethydrostatic(legStack) && player.isInsideOfMaterial(Material.WATER) && !player.canBreatheUnderwater() && armour.getEnergy(legStack) > MekanismConfig.current().meka.mekaSuitEnergyUsageHydrostaticRepulsion.val()) {
                         if (EnchantmentHelper.getEnchantmentLevel(Enchantments.DEPTH_STRIDER, legStack) == 0) {
                             legStack.addEnchantment(Enchantments.DEPTH_STRIDER, UpgradeHelper.getUpgradeLevel(legStack, moduleUpgrade.HYDROSTATIC_REPULSOR_UNIT));
                         }
@@ -138,5 +142,77 @@ public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor implements IItemHU
                 list.add(LangUtils.localize("tooltip.meka_legs.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
             }
         }
+    }
+
+
+    @Override
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public ItemConfigFieldRegistry getFields(ItemStack stack, ItemConfigFieldRegistry registry) {
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.GYROSCOPIC_STABILIZATION_UNIT)) {
+            registry.register(stack, new BooleanConfigField("Gyroscopic", true, "config.field.Gyroscopic.description"));
+        }
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.GEOTHERMAL_GENERATOR_UNIT)) {
+            registry.register(stack, new BooleanConfigField("Geothermal", true, "config.field.Geothermal.description"));
+        }
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.LOCOMOTIVE_BOOSTING_UNIT)) {
+            registry.register(stack, new BooleanConfigField("Locomotive", true, "config.field.Locomotive.description"));
+        }
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.HYDROSTATIC_REPULSOR_UNIT)) {
+            registry.register(stack, new BooleanConfigField("hydrostatic", true, "config.field.hydrostatic.description"));
+        }
+        super.getFields(stack, registry);
+        return registry;
+    }
+
+    public boolean getGyroscopic(ItemStack stack) {
+        if (Mekanism.hooks.DraconicEvolution) {
+            return getDEGyroscopic(stack);
+        } else {
+            return true;
+        }
+    }
+
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean getDEGyroscopic(ItemStack stack) {
+        return ToolConfigHelper.getBooleanField("Gyroscopic", stack);
+    }
+
+    public boolean getGeothermal(ItemStack stack) {
+        if (Mekanism.hooks.DraconicEvolution) {
+            return getDEGeothermal(stack);
+        } else {
+            return true;
+        }
+    }
+
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean getDEGeothermal(ItemStack stack) {
+        return ToolConfigHelper.getBooleanField("Geothermal", stack);
+    }
+
+    public boolean getLocomotive(ItemStack stack) {
+        if (Mekanism.hooks.DraconicEvolution) {
+            return getDELocomotive(stack);
+        } else {
+            return true;
+        }
+    }
+
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean getDELocomotive(ItemStack stack) {
+        return ToolConfigHelper.getBooleanField("Locomotive", stack);
+    }
+
+    public boolean gethydrostatic(ItemStack stack) {
+        if (Mekanism.hooks.DraconicEvolution) {
+            return getDEhydrostatic(stack);
+        } else {
+            return true;
+        }
+    }
+
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean getDEhydrostatic(ItemStack stack) {
+        return ToolConfigHelper.getBooleanField("hydrostatic", stack);
     }
 }

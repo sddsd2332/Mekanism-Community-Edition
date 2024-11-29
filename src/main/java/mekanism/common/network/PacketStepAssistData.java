@@ -34,7 +34,7 @@ public class PacketStepAssistData implements IMessageHandler<PacketStepAssistDat
                 }
             } else if (message.packetType == StepAssistPacket.MODE) {
                 ItemStack stack = entityPlayer.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-                if (!stack.isEmpty() && stack.getItem() instanceof ItemMekAsuitFeetArmour feet && UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT)) {
+                if (!stack.isEmpty() && stack.getItem() instanceof ItemMekAsuitFeetArmour feet && UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT) && !Mekanism.hooks.DraconicEvolution) {
                     if (!message.value) {
                         feet.incrementStepAssistMode(stack);
                     } else {
