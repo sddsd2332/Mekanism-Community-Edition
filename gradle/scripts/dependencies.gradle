@@ -83,7 +83,7 @@ dependencies {
     implementation 'curse.maven:groovyscript-687577:5439031'
     implementation 'curse.maven:buildcraft-61811:3204475'
     implementation 'curse.maven:crafttweaker-239197:4534504'
-    implementation 'curse.maven:mixin-booter-419286:5079135'
+    //implementation 'curse.maven:mixin-booter-419286:5079135'
     implementation 'curse.maven:flux-networks-248020:3178199'
 
     runtimeOnly 'curse.maven:ftb-library-237167:2985811'
@@ -107,4 +107,7 @@ dependencies {
     implementation rfg.deobf("curse.maven:brandons-core-231382:3408276")
     implementation 'curse.maven:draconic-evolution-223565:3431261'
     implementation 'curse.maven:draconic-additions-314515:3514704'
+
+    runtimeOnly 'curse.maven:packagedauto-308380:5598426'
+    runtimeOnly 'curse.maven:packageddraconic-833931:5598456'
 }

@@ -19,6 +19,7 @@ import mekanism.common.chunkloading.ChunkManager;
 import mekanism.common.command.CommandMek;
 import mekanism.common.concurrent.TaskExecutor;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.config.MixinConfig;
 import mekanism.common.content.boiler.SynchronizedBoilerData;
 import mekanism.common.content.entangloporter.InventoryFrequency;
 import mekanism.common.content.matrix.SynchronizedMatrixData;
@@ -144,6 +145,7 @@ public class Mekanism {
     public static Configuration configurationMultiblockMachine;
     public static Configuration configurationmekaweapons;
     public static Configuration configurationMeka;
+    public static Configuration configurationMixin;
     /**
      * Mekanism version number
      */
@@ -424,8 +426,17 @@ public class Mekanism {
         configurationMultiblockMachine = new Configuration(new File("config/mekanism/MekanismMultiblockMachine.cfg"));
         configurationmekaweapons = new Configuration(new File("config/mekanism/MekanismWeapons.cfg"));
         configurationMeka = new Configuration(new File("config/mekanism/MekaSuitArmor.cfg"));
+        if (Loader.isModLoaded("mixinbooter") && Loader.isModLoaded("extrabotany")) {
+            configurationMixin = new Configuration(new File("config/mekanism/ExtraBotanyMixin.cfg"));
+        }
+
+
         //Load configuration
         proxy.loadConfiguration();
+        if (Loader.isModLoaded("mixinbooter") && Loader.isModLoaded("extrabotany")){
+            MixinConfig.initConfig(configurationMixin.getConfigFile());
+        }
+
         proxy.onConfigSync(false);
 
         MinecraftForge.EVENT_BUS.register(MekanismItems.GasMask);

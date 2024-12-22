@@ -2,6 +2,7 @@ package mekanism.weapons.common.item;
 
 import com.google.common.collect.Multimap;
 import mekanism.api.energy.IEnergizedItem;
+import mekanism.api.gear.Magnetic;
 import mekanism.common.base.IModuleUpgrade;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.moduleUpgrade;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ItemMekaTana extends ItemMekaEnergyBase implements IModuleUpgrade {
+public class ItemMekaTana extends ItemMekaEnergyBase implements IModuleUpgrade, Magnetic {
 
     public ItemMekaTana() {
         super();
@@ -57,6 +58,7 @@ public class ItemMekaTana extends ItemMekaEnergyBase implements IModuleUpgrade {
         ArrayList<moduleUpgrade> list = new ArrayList<>();
         list.add(moduleUpgrade.EnergyUnit);
         list.add(moduleUpgrade.ATTACK_AMPLIFICATION_UNIT);
+        list.add(moduleUpgrade.MAGNETIZER);
         return list;
     }
 
@@ -167,4 +169,8 @@ public class ItemMekaTana extends ItemMekaEnergyBase implements IModuleUpgrade {
     }
 
 
+    @Override
+    public boolean isMagnetic(ItemStack stack) {
+        return UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.MAGNETIZER);
+    }
 }

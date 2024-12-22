@@ -5,6 +5,7 @@ import ic2.api.item.IElectricItemManager;
 import ic2.api.item.ISpecialElectricItem;
 import mekanism.api.EnumColor;
 import mekanism.api.energy.IEnergizedItem;
+import mekanism.api.gear.Magnetic;
 import mekanism.common.base.IModuleUpgrade;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.MekanismHooks;
@@ -23,7 +24,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.IItemPropertyGetter;
@@ -51,7 +51,7 @@ import static mekanism.common.util.UpgradeHelper.isUpgradeInstalled;
         @Optional.Interface(iface = "ic2.api.item.ISpecialElectricItem", modid = MekanismHooks.IC2_MOD_ID),
         @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyContainerItem", modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
 })
-public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedItem, ISpecialElectricItem, IEnergyContainerItem {
+public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedItem, ISpecialElectricItem, IEnergyContainerItem, Magnetic {
 
     public ItemMekaBow() {
         setMaxStackSize(1);
@@ -80,7 +80,7 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
 
     @Override
     public double getMaxEnergy(ItemStack itemStack) {
-        return  MekanismUtils.getModuleMaxEnergy(itemStack, MekanismConfig.current().weapons.mekaBowBaseEnergyCapacity.val());
+        return MekanismUtils.getModuleMaxEnergy(itemStack, MekanismConfig.current().weapons.mekaBowBaseEnergyCapacity.val());
     }
 
     @Override
@@ -239,6 +239,7 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
         list.add(moduleUpgrade.AUTOFIRE_UNIT);
         list.add(moduleUpgrade.DRAWSPEED_UNIT);
         list.add(moduleUpgrade.MultipleArrowsUnit);
+        list.add(moduleUpgrade.MAGNETIZER);
         return list;
     }
 
@@ -275,7 +276,7 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
         setEnergy(fullupgrade, ((IEnergizedItem) fullupgrade.getItem()).getMaxEnergy(fullupgrade));
         list.add(fullupgrade);
 
-        ItemStack full= new ItemStack(this);
+        ItemStack full = new ItemStack(this);
         for (moduleUpgrade upgrade : getValidModule(full)) {
             UpgradeHelper.setUpgradeLevel(full, upgrade, upgrade.getMax());
         }
@@ -390,4 +391,8 @@ public class ItemMekaBow extends ItemBow implements IModuleUpgrade, IEnergizedIt
     }
 
 
+    @Override
+    public boolean isMagnetic(ItemStack stack) {
+        return UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.MAGNETIZER);
+    }
 }

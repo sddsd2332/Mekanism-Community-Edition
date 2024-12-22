@@ -11,6 +11,7 @@ import ic2.api.item.IHazmatLike;
 import ic2.api.item.ISpecialElectricItem;
 import mekanism.api.EnumColor;
 import mekanism.api.energy.IEnergizedItem;
+import mekanism.api.gear.Magnetic;
 import mekanism.common.Mekanism;
 import mekanism.common.base.IModuleUpgrade;
 import mekanism.common.capabilities.ItemCapabilityWrapper;
@@ -58,7 +59,7 @@ import java.util.List;
         @Optional.Interface(iface = "com.brandon3055.draconicevolution.api.itemconfig.ToolConfigHelper", modid = MekanismHooks.DraconicEvolution_MOD_ID)
 })
 public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedItem,
-        ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor, IModuleUpgrade, IHazmatLike, ICustomArmor, IConfigurableItem {
+        ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor, IModuleUpgrade, IHazmatLike, ICustomArmor, IConfigurableItem, Magnetic {
 
     private final float absorption;
 
@@ -348,6 +349,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
             add(moduleUpgrade.EnergyUnit);
             add(moduleUpgrade.RADIATION_SHIELDING_UNIT);
             add(moduleUpgrade.ENERGY_SHIELD_UNIT);
+            add(moduleUpgrade.MAGNETIZER);
         }};
     }
 
@@ -540,6 +542,9 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.RADIATION_SHIELDING_UNIT)) {
             registry.register(stack, new BooleanConfigField("armorRadiationShielding", true, "config.field.armorRadiationShielding.description"));
         }
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.MAGNETIZER)) {
+            registry.register(stack, new BooleanConfigField("armorMagnetic", true, "config.field.armorMagnetic.description"));
+        }
         return registry;
     }
 
@@ -581,4 +586,24 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
             this.energyAvailable = energyAvailable;
         }
     }
+
+    public boolean getMagnetic(ItemStack stack) {
+        if (Mekanism.hooks.DraconicEvolution) {
+            return getDEMagnetic(stack);
+        } else {
+            return true;
+        }
+    }
+
+    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
+    public boolean getDEMagnetic(ItemStack stack) {
+        return ToolConfigHelper.getBooleanField("armorMagnetic", stack);
+    }
+
+
+    @Override
+    public boolean isMagnetic(ItemStack stack) {
+        return UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.MAGNETIZER) && getMagnetic(stack);
+    }
+
 }

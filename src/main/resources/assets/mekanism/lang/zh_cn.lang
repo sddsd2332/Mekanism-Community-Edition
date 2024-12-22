@@ -1748,6 +1748,8 @@ module.Energy_shield_unit.desc=使用Draconic Evolution护盾来抵挡伤害
 item.module.advanced_interception_system_unit.name=先进能量护盾拦截救援系统单元
 module.Advanced_interception_system_unit.desc=不再受伤
 tooltip.install.DR2=需要安装Draconic Additions才能工作。
+item.module.magnetizer_unit.name=磁吸单元
+module.Magnetizer_unit.desc=吸附在身上
 
 config.field.armorEnergyShield.entry=能量护盾
 config.field.armorEnergyShield.description=是否允许启用能量护盾
@@ -1785,3 +1787,5 @@ config.field.hydrostatic.entry=静水推进单元
 config.field.hydrostatic.description=是否启用静水推进单元
 config.field.frost.entry=冰霜行者单元
 config.field.frost.description=是否启用冰霜行者单元
+config.field.armorMagnetic.entry=磁吸单元
+config.field.armorMagnetic.description=是否启用磁吸单元

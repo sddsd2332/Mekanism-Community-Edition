@@ -1771,6 +1771,8 @@ module.Energy_shield_unit.desc=Use Draconic Evolution's shield to block damage
 item.module.advanced_interception_system_unit.name=Advanced Energy Shield Interception and Rescue System Unit
 module.Advanced_interception_system_unit.desc=Not hurting
 tooltip.install.DR2=Draconic Additionsneeds to be installed to work.
+item.module.magnetizer_unit.name=Magnetic unit
+module.Magnetizer_unit.desc=Attaches to the body
 
 config.field.armorEnergyShield.entry=Energy Shield
 config.field.armorEnergyShield.description=Whether or not Energy Shield is enabled is allowed
@@ -1808,3 +1810,5 @@ config.field.hydrostatic.entry=Hydrostatic Repulsor Unit
 config.field.hydrostatic.description=Whether or not to enable the Hydrostatic Repulsor Unit
 config.field.frost.entry=Frost Walker Unit
 config.field.frost.description=Whether or not to enable the Frost Walker Unit
+config.field.armorMagnetic.entry=Magnetic unit
+config.field.armorMagnetic.description=Whether or not to enable the magnetic unit
