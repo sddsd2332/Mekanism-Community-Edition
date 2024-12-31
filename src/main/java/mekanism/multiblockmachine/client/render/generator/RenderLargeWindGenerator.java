@@ -22,7 +22,9 @@ public class RenderLargeWindGenerator extends RenderTileEntityTime<TileEntityLar
         bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER, "WindGenerator/LargeWindGenerator.png"));
         MekanismRenderer.rotate(tileEntity.facing, 0, 180, 90, 270);
         GlStateManager.rotate(180, 0, 0, 1);
-        model.renderBlock(getTime(), 0.0625F, angle(tileEntity,partialTick), tileEntity.getActive(), rendererDispatcher.renderEngine,true);
+        if (MekanismConfig.current().client.largeWindGeneratorRending.val()){
+            model.renderBlock(getTime(), 0.0625F, angle(tileEntity,partialTick), tileEntity.getActive(), rendererDispatcher.renderEngine,true);
+        }
         GlStateManager.popMatrix();
     }
 

@@ -86,6 +86,8 @@ public class ClientConfig extends BaseConfig {
 
     public final BooleanOption hudCompassEnabled= new BooleanOption(this,"client","mekaSuitHelmetCompass",false,"Display a fancy compass when the MekaSuit is worn.(WIP)");
 
+    public final BooleanOption largeWindGeneratorRending = new BooleanOption(this,"client","largeWindGeneratorRending",true,"Whether to render a model of a large wind turbine，If false, no rendering is done, which may optimize the fps");
+
     @Override
     public void write(ByteBuf config) {
         throw new UnsupportedOperationException("Client config shouldn't be synced");
