@@ -79,6 +79,13 @@ public class ClientConfig extends BaseConfig {
     public final BooleanOption windGeneratorItem = new BooleanOption(this, "client", "WindGenerator", true, "Wind turbine blade rotation [item]");
 
     public final BooleanOption windGeneratorRotating = new BooleanOption(this, "client", "windGeneratorRotating", true, "Wind turbine blade rotation [block]");
+
+    public final FloatOption hudJitter = new FloatOption(this,"client","hudJitter",6F,"Visual jitter of MekaSuit HUD, seen when moving the player's head. Bigger value = more jitter.",1F,100F);
+
+    public final FloatOption hudOpacity = new FloatOption(this,"client","hudOpacity",0.4F,"Opacity of HUD used by MekaSuit.",0F,1F);
+
+    public final BooleanOption hudCompassEnabled= new BooleanOption(this,"client","mekaSuitHelmetCompass",false,"Display a fancy compass when the MekaSuit is worn.(WIP)");
+
     @Override
     public void write(ByteBuf config) {
         throw new UnsupportedOperationException("Client config shouldn't be synced");

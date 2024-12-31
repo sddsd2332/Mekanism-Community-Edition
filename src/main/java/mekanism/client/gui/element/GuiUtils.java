@@ -6,6 +6,8 @@ import mekanism.api.gas.GasStack;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.common.InfuseStorage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -25,7 +27,7 @@ import static mekanism.client.gui.element.GuiElement.mc;
 @SideOnly(Side.CLIENT)
 public class GuiUtils {
 
-    public static void renderExtendedTexture(ResourceLocation resource, int sideWidth, int sideHeight, int left, int top, int width, int height) {
+    public static void  renderExtendedTexture(ResourceLocation resource, int sideWidth, int sideHeight, int left, int top, int width, int height) {
         int textureWidth = 2 * sideWidth + 1;
         int textureHeight = 2 * sideHeight + 1;
         blitNineSlicedSized(resource, left, top, width, height, sideWidth, sideHeight, textureWidth, textureHeight, 0, 0, textureWidth, textureHeight);
@@ -331,5 +333,40 @@ public class GuiUtils {
         }
     }
 
+
+    public static int drawString(FontRenderer font, String component, float x, float y, int color, boolean drawShadow) {
+        return font.drawString(component, x, y, color, drawShadow);
+    }
+
+    public static void drawBackdrop(Minecraft minecraft, int x, int y, int width, int height, int alpha) {
+        int argb = 0xFFFFFF | alpha << 24;
+        Gui.drawRect(x - 2, y - 2, x + width + 2, y + height + 2, multiply(0xFFFFFF, argb));
+    }
+
+    public static int multiply(int pPackedColourOne, int pPackedColorTwo) {
+        return color(alpha(pPackedColourOne) * alpha(pPackedColorTwo) / 255, red(pPackedColourOne) * red(pPackedColorTwo) / 255, green(pPackedColourOne) * green(pPackedColorTwo) / 255, blue(pPackedColourOne) * blue(pPackedColorTwo) / 255);
+    }
+
+
+    public static int alpha(int pPackedColor) {
+        return pPackedColor >>> 24;
+    }
+
+    public static int red(int pPackedColor) {
+        return pPackedColor >> 16 & 255;
+    }
+
+    public static int green(int pPackedColor) {
+        return pPackedColor >> 8 & 255;
+    }
+
+    public static int blue(int pPackedColor) {
+        return pPackedColor & 255;
+    }
+
+
+    public static int color(int pAlpha, int pRed, int pGreen, int pBlue) {
+        return pAlpha << 24 | pRed << 16 | pGreen << 8 | pBlue;
+    }
 
 }

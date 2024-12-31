@@ -17,7 +17,6 @@ import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.particle.Particle;
@@ -28,7 +27,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
@@ -103,39 +101,6 @@ public class RenderTickHandler {
                     ClientTickHandler.wheelStatus = 0;
                 }
 
-                if (mc.currentScreen == null && !mc.gameSettings.hideGUI && !player.isSpectator() && MekanismConfig.current().client.enableHUD.val()) {
-                    ScaledResolution scaledresolution = new ScaledResolution(mc);
-                    int count = 0;
-                    List<List<String>> renderStrings = new ArrayList<>();
-                    for (EntityEquipmentSlot slotType : EQUIPMENT_ORDER) {
-                        ItemStack stack = player.getItemStackFromSlot(slotType);
-                        if (stack.getItem() instanceof IItemHUDProvider hudProvider) {
-                            count += makeComponent(list -> hudProvider.addHUDStrings(list, player, stack, slotType), renderStrings);
-                        }
-                    }
-                    boolean reverseHud = !MekanismConfig.current().client.alignHUDLeft.val();
-                    if (count > 0) {
-                        float hudScale = MekanismConfig.current().client.hudScale.val();
-                        int xScale = (int) (scaledresolution.getScaledWidth() / hudScale);
-                        int yScale = (int) (scaledresolution.getScaledHeight() / hudScale);
-                        int start = (renderStrings.size() * 2) + (count * 9);
-                        int y = yScale - start;
-                        GlStateManager.pushMatrix();
-                        GlStateManager.scale(hudScale, hudScale, hudScale);
-                        for (List<String> group : renderStrings) {
-                            for (String text : group) {
-                                int textWidth = font.getStringWidth(text);
-                                //Align text to right if hud is reversed, otherwise align to the left
-                                //Note: that we always offset by 2 pixels from the edge of the screen regardless of how it is aligned
-                                int x = reverseHud ? xScale - textWidth - 2 : 2;
-                                font.drawStringWithShadow(text, MekanismConfig.current().client.hudX.val() + x, MekanismConfig.current().client.hudY.val() + y, 0xFFC8C8C8);
-                                y += 9;
-                            }
-                            y += 2;
-                        }
-                        GlStateManager.popMatrix();
-                    }
-                }
                 // Traverse a copy of jetpack state and do animations
                 for (UUID uuid : Mekanism.playerState.getActiveJetpacks()) {
                     EntityPlayer p = mc.world.getPlayerEntityByUUID(uuid);
@@ -259,14 +224,6 @@ public class RenderTickHandler {
         }
     }
 
-    private int makeComponent(Consumer<List<String>> adder, List<List<String>> initial) {
-        List<String> list = new ArrayList<>();
-        adder.accept(list);
-        int size = list.size();
-        if (size > 0) {
-            initial.add(list);
-        }
-        return size;
-    }
+
 
 }
