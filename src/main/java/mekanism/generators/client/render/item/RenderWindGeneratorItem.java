@@ -49,7 +49,7 @@ public class RenderWindGeneratorItem {
         //The best way to do this would be to add an event listener for dimension change.
         //The event is server side only so we would need to send a packet to clients to tell them if they are
         //in a blacklisted dimension or not.
-        if (MekanismConfig.current().generators.windGeneratorItem.val()) {
+        if (MekanismConfig.current().client.windGeneratorItem.val()) {
             if (lastTicksUpdated != Minecraft.getMinecraft().getRenderPartialTicks()) {
                 angle = (angle + 2) % 360;
                 lastTicksUpdated = Minecraft.getMinecraft().getRenderPartialTicks();
@@ -58,7 +58,7 @@ public class RenderWindGeneratorItem {
             angle = 0;
         }
 
-        windGenerator.render(0.016F, angle);
+        windGenerator.renderItem(0.016F, angle);
         GlStateManager.popMatrix();
     }
 }

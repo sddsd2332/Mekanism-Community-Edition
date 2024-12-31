@@ -78,7 +78,7 @@ public class GeneratorsConfig extends BaseConfig {
 
     public final IntOption reactorGeneratorInjectionRate = new IntOption(this, "generation",
             "reactorGeneratorInjectionRate", 100, "The maximum injection rate of the fusion reactor needs to be set to a multiple of 2",2,Integer.MAX_VALUE);
-    public final BooleanOption windGeneratorItem = new BooleanOption(this, "generation", "WindGenerator", true, "Causes the item's wind turbine to rotate the blades");
+
 
     public final IntOption ItemHohlraumMaxGas = new IntOption(this, "generation", "ItemHohlraumMaxGas", 10, "How many gases can be added to Hohlraum",1,Integer.MAX_VALUE);
 

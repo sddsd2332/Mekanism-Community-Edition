@@ -1,6 +1,7 @@
 package mekanism.multiblockmachine.client.model.generator;
 
 import mekanism.client.render.MekanismRenderer;
+import mekanism.common.config.MekanismConfig;
 import mekanism.multiblockmachine.common.util.MekanismMultiblockMachineUtils;
 import mekanism.multiblockmachine.common.util.MekanismMultiblockMachineUtils.ResourceType;
 import net.minecraft.client.model.ModelBase;
@@ -1914,11 +1915,19 @@ public class ModelLargeWindGenerator extends ModelBase {
         down.cubeList.add(new ModelBox(down, 0, 823, -48.0F, -8.0F, -48.0F, 96, 8, 96, 0.0F, false));
     }
 
-
-    public void render(double tick,float size, double angle, boolean on, TextureManager manager,boolean isEnableGlow) {
+    public void renderItem(float size, double angle) {
         GlStateManager.pushMatrix();
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        doRender(size, angle);
+        doRender(size);
+        doRenderFansItem(size,angle);
+        GlStateManager.popMatrix();
+    }
+
+    public void renderBlock(double tick,float size, double angle, boolean on, TextureManager manager,boolean isEnableGlow) {
+        GlStateManager.pushMatrix();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        doRender(size);
+        doRenderFansBlock(size, angle);
         GlStateManager.popMatrix();
         if (isEnableGlow) {
             GlStateManager.pushMatrix();
@@ -1930,7 +1939,7 @@ public class ModelLargeWindGenerator extends ModelBase {
             GlStateManager.scale(1.001F, 1.001F, 1.001F);
             GlStateManager.translate(-0.0011F, -0.0011F, -0.0011F);
             MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
-            doRender(size, angle);
+            doRenderGlow(size, angle);
             MekanismRenderer.disableGlow(glowInfo);
             GlStateManager.disableBlend();
             GlStateManager.enableAlpha();
@@ -1948,7 +1957,7 @@ public class ModelLargeWindGenerator extends ModelBase {
         GlStateManager.scale(1.0011F, 1.0011F, 1.0011F);
         GlStateManager.translate(-0.0012F, -0.0012F, -0.0012F);
         MekanismRenderer.GlowInfo glowInfo = MekanismRenderer.enableGlow();
-        doRender(size, angle);
+        doRenderGlow(size, angle);
         MekanismRenderer.disableGlow(glowInfo);
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
@@ -1971,11 +1980,29 @@ public class ModelLargeWindGenerator extends ModelBase {
         down.render(size);
     }
 
-    private void doRender(float size, double angle) {
+
+    private void doRenderFansItem(float size, double angle) {
         setRotation(fans, 0F, 0F, getRotation(getAbsoluteAngle(angle)));
         fans.render(size);
-        doRender(size);
     }
+
+    private void doRenderFansBlock(float size, double angle) {
+        if (MekanismConfig.current().client.windGeneratorRotating.val()) {
+            setRotation(fans, 0F, 0F, getRotation(getAbsoluteAngle(angle)));
+        }
+        fans.render(size);
+    }
+
+    private void doRenderGlow(float size, double angle) {
+        wind_power_middle.render(size);
+        doRenderFansBlock(size,angle);
+        south_controller.render(size);
+        west_io.render(size);
+        east_io.render(size);
+        north_io.render(size);
+    }
+
+
 
     public float getRotation(double angle) {
         return ((float) angle / (float) 180) * (float) Math.PI;

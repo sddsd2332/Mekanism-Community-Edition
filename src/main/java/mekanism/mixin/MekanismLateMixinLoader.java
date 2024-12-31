@@ -16,7 +16,8 @@ public class MekanismLateMixinLoader implements ILateMixinLoader {
     private static final Map<String, BooleanSupplier> MIXIN_CONFIGS = new LinkedHashMap<>();
 
     static {
-        addModdedMixinCFG("mixins.mekanism.json","extrabotany");
+        addModdedMixinCFG("mixins.mekanism_extrabotany.json", "extrabotany");
+        addModdedMixinCFG("mixins.mekanism_draconicevolution.json", "draconicevolution");
     }
 
     @Override
@@ -41,10 +42,6 @@ public class MekanismLateMixinLoader implements ILateMixinLoader {
 
     private static void addModdedMixinCFG(final String mixinConfig, final String modID) {
         MIXIN_CONFIGS.put(mixinConfig, () -> modLoaded(modID));
-    }
-
-    private static void addMixinCFG(final String mixinConfig) {
-        MIXIN_CONFIGS.put(mixinConfig, () -> true);
     }
 
     private static void addMixinCFG(final String mixinConfig, final BooleanSupplier conditions) {

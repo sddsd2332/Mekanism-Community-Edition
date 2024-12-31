@@ -46,7 +46,7 @@ public class RenderLargeWindGeneratorItem {
         }
         MekanismRenderer.bindTexture(MekanismMultiblockMachineUtils.getResource(MekanismMultiblockMachineUtils.ResourceType.RENDER, "WindGenerator/LargeWindGenerator.png"));
 
-        if (MekanismConfig.current().generators.windGeneratorItem.val()) {
+        if (MekanismConfig.current().client.windGeneratorItem.val()) {
             if (lastTicksUpdated != Minecraft.getMinecraft().getRenderPartialTicks()) {
                 angle = (angle + 2) % 360;
                 lastTicksUpdated = Minecraft.getMinecraft().getRenderPartialTicks();
@@ -54,7 +54,7 @@ public class RenderLargeWindGeneratorItem {
         } else {
             angle = 0;
         }
-        windGenerator.render(0,0.002F, angle,false,Minecraft.getMinecraft().renderEngine,false);
+        windGenerator.renderItem(0.002F, angle);
         GlStateManager.popMatrix();
     }
 }

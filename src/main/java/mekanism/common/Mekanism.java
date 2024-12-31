@@ -13,6 +13,7 @@ import mekanism.api.transmitters.DynamicNetwork.NetworkClientRequest;
 import mekanism.api.transmitters.DynamicNetwork.TransmittersAddedEvent;
 import mekanism.api.transmitters.TransmitterNetworkRegistry;
 import mekanism.client.ClientTickHandler;
+import mekanism.client.render.hud.MekaSuitEnergyLevel;
 import mekanism.common.base.IModule;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.chunkloading.ChunkManager;
@@ -76,6 +77,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -241,7 +243,7 @@ public class Mekanism {
 
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-        if (!MekanismConfig.current().mekce.BinRecipeClosed.val()){
+        if (!MekanismConfig.current().mekce.BinRecipeClosed.val()) {
             event.getRegistry().register(new BinRecipe());
         }
         MekanismRecipe.addRecipes();
@@ -433,7 +435,7 @@ public class Mekanism {
 
         //Load configuration
         proxy.loadConfiguration();
-        if (Loader.isModLoaded("mixinbooter") && Loader.isModLoaded("extrabotany")){
+        if (Loader.isModLoaded("mixinbooter") && Loader.isModLoaded("extrabotany")) {
             MixinConfig.initConfig(configurationMixin.getConfigFile());
         }
 
@@ -704,4 +706,10 @@ public class Mekanism {
             MekFakePlayer.releaseInstance(event.getWorld());
         }
     }
+
+    @SubscribeEvent
+    public static void onDrawScreenPre(RenderGameOverlayEvent.Pre event) {
+        MekaSuitEnergyLevel.onDrawScreenPre(event);
+    }
+
 }

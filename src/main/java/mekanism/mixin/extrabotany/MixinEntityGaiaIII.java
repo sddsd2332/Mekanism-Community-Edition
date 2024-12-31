@@ -60,7 +60,6 @@ public abstract class MixinEntityGaiaIII extends EntityLiving implements IBotani
 
     }
 
-
     @Unique
     public void BaublesDisarmInventory(EntityPlayer player) {
         IItemHandler baubles = BaublesApi.getBaublesHandler(player);

@@ -1,0 +1,15 @@
+{
+  "package": "mekanism.mixin.extrabotany",
+  "refmap": "mixins.${mod_id}.refmap.json",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinEntityGaiaIII",
+    "MixinEntitySkullLandmine",
+    "MixinEntitySkullMinion",
+    "MixinEntityVoidHerrscher"
+  ],
+  "server": [],
+  "client": []
+}

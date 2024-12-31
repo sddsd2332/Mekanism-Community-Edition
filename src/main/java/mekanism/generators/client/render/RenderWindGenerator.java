@@ -1,6 +1,7 @@
 package mekanism.generators.client.render;
 
 import mekanism.client.render.MekanismRenderer;
+import mekanism.common.config.MekanismConfig;
 import mekanism.generators.client.model.ModelWindGenerator;
 import mekanism.generators.common.tile.TileEntityWindGenerator;
 import mekanism.generators.common.util.MekanismGeneratorUtils;
@@ -26,7 +27,7 @@ public class RenderWindGenerator extends TileEntitySpecialRenderer<TileEntityWin
         if (tileEntity.getActive()) {
             angle = (tileEntity.getAngle() + ((tileEntity.getPos().getY() + 4F) / TileEntityWindGenerator.SPEED_SCALED) * partialTick) % 360;
         }
-        model.render(0.0625F, angle);
+        model.renderBlock(0.0625F, angle);
         GlStateManager.popMatrix();
     }
 }

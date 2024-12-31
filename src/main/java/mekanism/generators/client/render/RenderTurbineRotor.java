@@ -1,6 +1,7 @@
 package mekanism.generators.client.render;
 
 import mekanism.common.Mekanism;
+import mekanism.common.config.MekanismConfig;
 import mekanism.generators.client.model.ModelTurbine;
 import mekanism.generators.common.content.turbine.SynchronizedTurbineData;
 import mekanism.generators.common.tile.turbine.TileEntityTurbineRotor;
@@ -38,7 +39,7 @@ public class RenderTurbineRotor extends TileEntitySpecialRenderer<TileEntityTurb
             rotateSpeed = SynchronizedTurbineData.clientRotationMap.get(tileEntity.getMultiblock());
         }
 
-        if (!Mekanism.proxy.isPaused()) {
+        if (!Mekanism.proxy.isPaused() && MekanismConfig.current().client.windGeneratorRotating.val()) {
             tileEntity.rotationLower = (tileEntity.rotationLower + rotateSpeed * BASE_SPEED * (1F / (float) (baseIndex + 1))) % 360;
             tileEntity.rotationUpper = (tileEntity.rotationUpper + rotateSpeed * BASE_SPEED * (1F / (float) (baseIndex + 2))) % 360;
         }

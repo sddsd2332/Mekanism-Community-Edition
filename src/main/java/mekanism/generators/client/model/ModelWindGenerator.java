@@ -1,5 +1,6 @@
 package mekanism.generators.client.model;
 
+import mekanism.common.config.MekanismConfig;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraftforge.fml.relauncher.Side;
@@ -162,21 +163,31 @@ public class ModelWindGenerator extends ModelBase {
         setRotation(post1d, -0.0347321F, 0F, -0.0347321F);
     }
 
-    public void render(float size, double angle) {
-        head.render(size);
-        plateConnector2.render(size);
-        plateConnector.render(size);
-        plate.render(size);
-        baseRim.render(size);
-        base.render(size);
-        wire.render(size);
-        rearPlate1.render(size);
-        rearPlate2.render(size);
-        post1a.render(size);
-        post1b.render(size);
-        post1c.render(size);
-        post1d.render(size);
+    public void renderBlock(float size, double angle) {
+        renderModel(size);
+        if (MekanismConfig.current().client.windGeneratorRotating.val()) {
+            setRotation(blade1a, 0F, 0F, getRotation(getAbsoluteAngle(angle)));
+            setRotation(blade1b, 0F, 0F, 0.0349066F + getRotation(getAbsoluteAngle(angle)));
 
+            setRotation(blade2a, 0F, 0F, getRotation(getAbsoluteAngle(angle - 60)));
+            setRotation(blade2b, 0F, 0F, 0.0349066F + getRotation(getAbsoluteAngle(angle - 60)));
+
+            setRotation(blade3a, 0F, 0F, getRotation(getAbsoluteAngle(angle + 60)));
+            setRotation(blade3b, 0F, 0F, 0.0349066F + getRotation(getAbsoluteAngle(angle + 60)));
+
+            setRotation(bladeCap, 0F, 0F, getRotation(getAbsoluteAngle(angle)));
+            setRotation(bladeCenter, 0F, 0F, getRotation(getAbsoluteAngle(angle)));
+        }
+        blade1a.render(size);
+        blade2a.render(size);
+        blade3a.render(size);
+        blade1b.render(size);
+        blade2b.render(size);
+        blade3b.render(size);
+    }
+
+    public void renderItem(float size, double angle) {
+        renderModel(size);
         setRotation(blade1a, 0F, 0F, getRotation(getAbsoluteAngle(angle)));
         setRotation(blade1b, 0F, 0F, 0.0349066F + getRotation(getAbsoluteAngle(angle)));
 
@@ -195,6 +206,22 @@ public class ModelWindGenerator extends ModelBase {
         blade1b.render(size);
         blade2b.render(size);
         blade3b.render(size);
+    }
+
+    public void renderModel(float size) {
+        head.render(size);
+        plateConnector2.render(size);
+        plateConnector.render(size);
+        plate.render(size);
+        baseRim.render(size);
+        base.render(size);
+        wire.render(size);
+        rearPlate1.render(size);
+        rearPlate2.render(size);
+        post1a.render(size);
+        post1b.render(size);
+        post1c.render(size);
+        post1d.render(size);
 
         bladeCap.render(size);
         bladeCenter.render(size);
