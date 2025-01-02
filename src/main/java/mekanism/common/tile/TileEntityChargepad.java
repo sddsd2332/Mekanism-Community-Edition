@@ -64,6 +64,7 @@ public class TileEntityChargepad extends TileEntityEffectsBlock {
                     } else if (entity instanceof EntityPlayer player) {
                         double prevEnergy = getEnergy();
                         List<ItemStack> stacks = new ArrayList<>();
+                        stacks.addAll(player.inventory.offHandInventory);
                         stacks.addAll(player.inventory.mainInventory);
                         stacks.addAll(player.inventory.armorInventory);
                         if (Mekanism.hooks.Baubles){

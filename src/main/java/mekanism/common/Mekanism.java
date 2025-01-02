@@ -709,12 +709,9 @@ public class Mekanism {
     }
 
     @SubscribeEvent
-    public static void onDrawScreenPre(RenderGameOverlayEvent.Pre event) {
+    public  void onDrawScreenPre(RenderGameOverlayEvent.Post event) {
         MekaSuitEnergyLevel.onDrawScreenPre(event);
-    }
-
-    @SubscribeEvent
-    public static void onDrawScreenPost(RenderGameOverlayEvent.Post event) {
         MekanismHUD.onDrawScreenPre(event);
     }
+
 }

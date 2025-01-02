@@ -7,7 +7,6 @@ import mekanism.client.render.MekanismRenderer;
 import mekanism.common.InfuseStorage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -27,7 +26,7 @@ import static mekanism.client.gui.element.GuiElement.mc;
 @SideOnly(Side.CLIENT)
 public class GuiUtils {
 
-    public static void  renderExtendedTexture(ResourceLocation resource, int sideWidth, int sideHeight, int left, int top, int width, int height) {
+    public static void renderExtendedTexture(ResourceLocation resource, int sideWidth, int sideHeight, int left, int top, int width, int height) {
         int textureWidth = 2 * sideWidth + 1;
         int textureHeight = 2 * sideHeight + 1;
         blitNineSlicedSized(resource, left, top, width, height, sideWidth, sideHeight, textureWidth, textureHeight, 0, 0, textureWidth, textureHeight);
@@ -338,10 +337,6 @@ public class GuiUtils {
         return font.drawString(component, x, y, color, drawShadow);
     }
 
-    public static void drawBackdrop(Minecraft minecraft, int x, int y, int width, int height, int alpha) {
-        int argb = 0xFFFFFF | alpha << 24;
-        Gui.drawRect(x - 2, y - 2, x + width + 2, y + height + 2, multiply(0xFFFFFF, argb));
-    }
 
     public static int multiply(int pPackedColourOne, int pPackedColorTwo) {
         return color(alpha(pPackedColourOne) * alpha(pPackedColorTwo) / 255, red(pPackedColourOne) * red(pPackedColorTwo) / 255, green(pPackedColourOne) * green(pPackedColorTwo) / 255, blue(pPackedColourOne) * blue(pPackedColorTwo) / 255);
@@ -367,6 +362,29 @@ public class GuiUtils {
 
     public static int color(int pAlpha, int pRed, int pGreen, int pBlue) {
         return pAlpha << 24 | pRed << 16 | pGreen << 8 | pBlue;
+    }
+
+    public static void blit(int pX, int pY, float pUOffset, float pVOffset, int pWidth, int pHeight, int pTextureWidth, int pTextureHeight) {
+        blit(pX, pY, pWidth, pHeight, pUOffset, pVOffset, pWidth, pHeight, pTextureWidth, pTextureHeight);
+    }
+
+    public static void blit(int pX, int pY, int pWidth, int pHeight, float pUOffset, float pVOffset, int pUWidth, int pVHeight, int pTextureWidth, int pTextureHeight) {
+        blit(pX, pX + pWidth, pY, pY + pHeight, 0, pUWidth, pVHeight, pUOffset, pVOffset, pTextureWidth, pTextureHeight);
+    }
+
+
+    public static void blit(int pX1, int pX2, int pY1, int pY2, int pBlitOffset, int pUWidth, int pVHeight, float pUOffset, float pVOffset, int pTextureWidth, int pTextureHeight) {
+        innerBlit(pX1, pX2, pY1, pY2, pBlitOffset, (pUOffset + 0.0F) / (float) pTextureWidth, (pUOffset + (float) pUWidth) / (float) pTextureWidth, (pVOffset + 0.0F) / (float) pTextureHeight, (pVOffset + (float) pVHeight) / (float) pTextureHeight);
+    }
+
+    public static void innerBlit(int pX1, int pX2, int pY1, int pY2, int pBlitOffset, float pMinU, float pMaxU, float pMinV, float pMaxV) {
+        BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
+        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
+        bufferbuilder.pos((float) pX1, (float) pY1, (float) pBlitOffset).tex(pMinU, pMinV).endVertex();
+        bufferbuilder.pos((float) pX1, (float) pY2, (float) pBlitOffset).tex(pMinU, pMaxV).endVertex();
+        bufferbuilder.pos((float) pX2, (float) pY2, (float) pBlitOffset).tex(pMaxU, pMaxV).endVertex();
+        bufferbuilder.pos((float) pX2, (float) pY1, (float) pBlitOffset).tex(pMaxU, pMinV).endVertex();
+        Tessellator.getInstance().draw();
     }
 
 }

@@ -1,20 +1,23 @@
 package mekanism.client.render;
 
+import mekanism.api.energy.IEnergizedItem;
 import mekanism.client.gui.element.GuiUtils;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.item.armor.ItemMekaSuitArmor;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import static mekanism.client.render.hud.MekaSuitEnergyLevel.blit;
+import java.util.function.Predicate;
 
 public class HUDRenderer {
 
@@ -26,6 +29,7 @@ public class HUDRenderer {
             MekanismUtils.getResource(MekanismUtils.ResourceType.GUI_HUD, "hud_mekasuit_chest.png"),
             MekanismUtils.getResource(MekanismUtils.ResourceType.GUI_HUD, "hud_mekasuit_leggings.png"),
             MekanismUtils.getResource(MekanismUtils.ResourceType.GUI_HUD, "hud_mekasuit_boots.png")};
+
     private static final ResourceLocation TOOL_ICON = MekanismUtils.getResource(MekanismUtils.ResourceType.GUI_HUD, "hud_mekatool.png");
 
     private static final ResourceLocation COMPASS = MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "Compass.png");
@@ -48,9 +52,8 @@ public class HUDRenderer {
         GlStateManager.translate(yawJitter, pitchJitter, 0);
         if (MekanismConfig.current().client.hudCompassEnabled.val()) {
             renderCompass(player, font, partialTick, screenWidth, screenHeight, maxTextHeight, reverseHud, color);
-            minecraft.renderEngine.bindTexture(Gui.ICONS);
         }
-        //   renderMekaSuitEnergyIcons(player, font, color);
+        renderMekaSuitEnergyIcons(player, font, color);
         GlStateManager.popMatrix();
     }
 
@@ -74,7 +77,7 @@ public class HUDRenderer {
         return val < 0 ? -ret : ret;
     }
 
-    /*
+
     public static final EntityEquipmentSlot[] ARMOR_SLOTS = {EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET};
     public static final EntityEquipmentSlot[] HAND_SLOTS = {EntityEquipmentSlot.MAINHAND, EntityEquipmentSlot.OFFHAND};
 
@@ -85,9 +88,9 @@ public class HUDRenderer {
         int posX = 0;
         Predicate<Item> showArmorPercent = item -> item instanceof ItemMekaSuitArmor;
         for (int i = 0; i < ARMOR_SLOTS.length; i++) {
-            posX += renderEnergyIcon(player, font, posX, color, ARMOR_ICONS[i],ARMOR_SLOTS[i], showArmorPercent);
+            posX += renderEnergyIcon(player, font, posX, color, ARMOR_ICONS[i], ARMOR_SLOTS[i], showArmorPercent);
         }
-        Predicate<Item> showToolPercent = item -> item instanceof ItemMekTool;
+        Predicate<Item> showToolPercent = item -> item instanceof IEnergizedItem;
         for (EntityEquipmentSlot hand : HAND_SLOTS) {
             posX += renderEnergyIcon(player, font, posX, color, TOOL_ICON, hand, showToolPercent);
         }
@@ -95,17 +98,28 @@ public class HUDRenderer {
     }
 
 
-
     private int renderEnergyIcon(EntityPlayer player, FontRenderer font, int posX, int color, ResourceLocation icon, EntityEquipmentSlot slot,
                                  Predicate<Item> showPercent) {
         ItemStack stack = player.getItemStackFromSlot(slot);
         if (showPercent.test(stack.getItem())) {
-            renderHUDElement(font, posX, 0, IModuleHelper.INSTANCE.hudElementPercent(icon, StorageUtils.getEnergyRatio(stack)), color, false);
-            return 48;
+            if (stack.getItem() instanceof IEnergizedItem item) {
+                renderHUDElement(font, posX, 0, icon, MekanismUtils.getEnergyDisplay(item.getEnergy(stack)), color, false);
+                return 48;
+            }
         }
         return 0;
     }
-    */
+
+    private void renderHUDElement(FontRenderer font, int x, int y, ResourceLocation icon, String energy, int color, boolean iconRight) {
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        MekanismRenderer.color(color);
+        font.drawString(energy, iconRight ? x : x + 18, y + 5, color, false);
+        Minecraft.getMinecraft().renderEngine.bindTexture(icon);
+        GuiUtils.blit(iconRight ? x + font.getStringWidth(energy) + 2 : x, y, 0, 0, 16, 16, 16, 16);
+        MekanismRenderer.resetColor();
+    }
+
 
     private void renderCompass(EntityPlayer player, FontRenderer font, float partialTick, int screenWidth, int screenHeight, int maxTextHeight, boolean reverseHud,
                                int color) {
@@ -115,11 +129,14 @@ public class HUDRenderer {
         int posY = Math.min(screenHeight - 20, maxTextHeight) - 80;
         GlStateManager.pushMatrix();
         GlStateManager.translate(posX + 50, posY + 50, 0);
+        GlStateManager.pushMatrix();
 
+        GlStateManager.pushMatrix();
         GlStateManager.scale(0.7F, 0.7F, 0.7F);
         BlockPos pos = new BlockPos(player.posX, player.posY, player.posZ);
-        String coords = LangUtils.localize("x: " + pos.getX() + ",y: " + pos.getY() + ",z: " + pos.getZ());
+        String coords = LangUtils.localize(pos.getX() + " " + pos.getY() + " " + pos.getZ());
         font.drawString(coords, -font.getStringWidth(coords) / 2F, -4, color, false);
+        GlStateManager.popMatrix();
 
         float angle = 180 - getViewYRot(player, partialTick);
         GlStateManager.rotate(-60, 1, 0, 0);
@@ -127,13 +144,14 @@ public class HUDRenderer {
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         MekanismRenderer.color(color);
-        blit(COMPASS, -50, -50, 100, 100, 0, 0, 256, 256, 256, 256);
         rotateStr(font, LangUtils.localize("direction.north.short"), angle, 0, color);
         rotateStr(font, LangUtils.localize("direction.east.short"), angle, 90, color);
         rotateStr(font, LangUtils.localize("direction.south.short"), angle, 180, color);
         rotateStr(font, LangUtils.localize("direction.west.short"), angle, 270, color);
+        Minecraft.getMinecraft().renderEngine.bindTexture(COMPASS);
+        GuiUtils.blit(-50, -50, 100, 100, 0, 0, 256, 256, 256, 256);
         MekanismRenderer.resetColor();
-        ;
+        GlStateManager.popMatrix();
         GlStateManager.popMatrix();
     }
 
