@@ -84,7 +84,7 @@ public class TileEntityIsotopicCentrifuge extends TileEntityBasicMachine<GasInpu
                 }
             }
             ChargeUtils.discharge(2, this);
-            if (!inventory.get(0).isEmpty() && inventory.get(0).getItem() instanceof IGasItem  gasItem&& gasItem.getGas(inventory.get(0)) != null && RecipeHandler.Recipe.ISOTOPIC_CENTRIFUGE.containsRecipe(gasItem.getGas(inventory.get(0)).getGas())) {
+            if (!inventory.get(0).isEmpty() && inventory.get(0).getItem() instanceof IGasItem gasItem&& gasItem.getGas(inventory.get(0)) != null && RecipeHandler.Recipe.ISOTOPIC_CENTRIFUGE.containsRecipe(gasItem.getGas(inventory.get(0)).getGas())) {
                 TileUtils.receiveGasItem(inventory.get(0), inputTank);
             }
             TileUtils.drawGas(inventory.get(1), outputTank);

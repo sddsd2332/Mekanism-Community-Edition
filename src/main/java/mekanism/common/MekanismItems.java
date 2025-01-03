@@ -1,15 +1,22 @@
 package mekanism.common;
 
+import mekanism.api.annotations.NonNullSupplier;
+import mekanism.api.gear.ModuleData;
+import mekanism.api.gear.ModuleData.*;
+import mekanism.api.providers.IModuleDataProvider;
+import mekanism.common.content.gear.shared.ModuleEnergyUnit;
 import mekanism.common.item.*;
 import mekanism.common.item.armor.ItemMekAsuitBodyArmour;
 import mekanism.common.item.armor.ItemMekAsuitFeetArmour;
 import mekanism.common.item.armor.ItemMekAsuitHeadArmour;
 import mekanism.common.item.armor.ItemMekAsuitLegsArmour;
 import mekanism.common.tier.AlloyTier;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.registries.IForgeRegistry;
+import org.jetbrains.annotations.NotNull;
 
 @ObjectHolder(Mekanism.MODID)
 public class MekanismItems {
@@ -95,6 +102,15 @@ public class MekanismItems {
     public static final ItemMekAsuitFeetArmour MekAsuitBoots = new ItemMekAsuitFeetArmour();
     public static final Item ModuleBase = new ItemMekanism();
     public static final Item ModuleUpgrade = new ItemModuleUpgrade();
+    private static final IModuleDataProvider<ModuleEnergyUnit> ModuleEnergyUnit = new ModuleData<>(new ModuleDataBuilder<>(new NonNullSupplier<ModuleEnergyUnit>() {
+        @NotNull
+        @Override
+        public ModuleEnergyUnit get() {
+            return new ModuleEnergyUnit();
+        }
+    }).maxStackSize(8).rarity(EnumRarity.UNCOMMON).noDisable());
+
+    public static final Item test = new ItemModule(ModuleEnergyUnit);
     /**
      * ADD END
      */
@@ -182,8 +198,9 @@ public class MekanismItems {
         registry.register(init(MekAsuitChestplate, "MekAsuitChestplate"));
         registry.register(init(MekAsuitLeggings, "MekAsuitLeggings"));
         registry.register(init(MekAsuitBoots, "MekAsuitBoots"));
-        registry.register(init(ModuleBase,"ModuleBase"));
-        registry.register(init(ModuleUpgrade,"ModuleUpgrade"));
+        registry.register(init(ModuleBase, "ModuleBase"));
+        registry.register(init(ModuleUpgrade, "ModuleUpgrade"));
+        registry.register(init(test,"energy_unit"));
         /**
          * ADD END
          */

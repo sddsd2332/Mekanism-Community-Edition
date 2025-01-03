@@ -237,7 +237,7 @@ public class TileEntityChemicalCrystallizer extends TileEntityUpgradeableMachine
     @Override
     public boolean isItemValidForSlot(int slotID, @Nonnull ItemStack itemstack) {
         if (slotID == 0) {
-            return !itemstack.isEmpty() && itemstack.getItem() instanceof IGasItem  gasItem && gasItem.getGas(itemstack) != null &&
+            return !itemstack.isEmpty() && itemstack.getItem() instanceof IGasItem gasItem && gasItem.getGas(itemstack) != null &&
                     Recipe.CHEMICAL_CRYSTALLIZER.containsRecipe(gasItem.getGas(itemstack).getGas());
         } else if (slotID == 2) {
             return ChargeUtils.canBeDischarged(itemstack);

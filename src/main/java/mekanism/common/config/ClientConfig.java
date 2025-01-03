@@ -84,9 +84,15 @@ public class ClientConfig extends BaseConfig {
 
     public final FloatOption hudOpacity = new FloatOption(this,"client","hudOpacity",0.4F,"Opacity of HUD used by MekaSuit.",0F,1F);
 
-    public final BooleanOption hudCompassEnabled= new BooleanOption(this,"client","mekaSuitHelmetCompass",false,"Display a fancy compass when the MekaSuit is worn.(WIP)");
-
     public final BooleanOption largeWindGeneratorRending = new BooleanOption(this,"client","largeWindGeneratorRending",true,"Whether to render a model of a large wind turbine，If false, no rendering is done, which may optimize the fps");
+
+    public final BooleanOption hudCompassEnabled= new BooleanOption(this,"client","mekaSuitHelmetCompass",true,"Display a fancy compass when the MekaSuit is worn.");
+
+    public final IntOption hudColor = new IntOption(this,"client","hudColor",0x40F5F0, "Color (RGB) of HUD used by MekaSuit.",0,0xFFFFFF);
+
+    public final IntOption hudWarningColor = new IntOption(this,"client","hudWarningColor",0xFFDD4F,"Color (RGB) of warning HUD elements used by MekaSuit.",0,0xFFFFFF);
+
+    public final IntOption hudDangerColor = new IntOption(this,"client","hudDangerColor",0xFF383C,"Color (RGB) of danger HUD elements used by MekaSuit.",0,0xFFFFFF);
 
     @Override
     public void write(ByteBuf config) {

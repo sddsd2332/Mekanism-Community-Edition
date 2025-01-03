@@ -8,6 +8,7 @@ import com.brandon3055.draconicevolution.api.itemconfig.ItemConfigFieldRegistry;
 import com.brandon3055.draconicevolution.api.itemconfig.ToolConfigHelper;
 import com.google.common.collect.Multimap;
 import mekanism.api.EnumColor;
+import mekanism.api.NBTConstants;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
@@ -187,6 +188,11 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
         return false;
     }
 
+    @Override
+    public JetpackMode getJetpackMode(ItemStack stack) {
+        return JetpackMode.byIndexStatic(ItemDataUtils.getInt(stack, NBTConstants.MODE));
+    }
+
 
     @Override
     public void useJetpackFuel(ItemStack stack) {
@@ -251,7 +257,7 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
         return MekanismConfig.current().meka.mekaSuitJetpackMaxStorage.val();
     }
 
-    @Override
+
     public int getStored(ItemStack itemstack) {
         return getGas(itemstack) != null ? getGas(itemstack).amount : 0;
     }
@@ -297,11 +303,8 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
         if (slotType == getEquipmentSlot()) {
             if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.JETPACK_UNIT) && getJetpackMode(stack) != JetpackMode.DISABLED) {
-                list.add(LangUtils.localize("tooltip.jetpack.mode") + " " + getMode(stack).getName());
+                list.add(LangUtils.localize("tooltip.jetpack.mode") + " " + getJetpackMode(stack).getTextComponent());
                 list.add(LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + (getStored(stack) > 0 ? getStored(stack) : LangUtils.localize("tooltip.noGas")));
-            }
-            if (!Mekanism.hooks.DraconicEvolution) {
-                list.add(LangUtils.localize("tooltip.meka_body.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
             }
         }
     }

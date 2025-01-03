@@ -7,12 +7,13 @@ import net.minecraftforge.common.config.Property;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.function.IntSupplier;
 
 /**
  * Created by Thiakil on 15/03/2019.
  */
 @ParametersAreNonnullByDefault
-public class IntOption extends Option<IntOption> {
+public class IntOption extends Option<IntOption> implements IntSupplier {
 
     private int value;
     private final int defaultValue;
@@ -71,5 +72,10 @@ public class IntOption extends Option<IntOption> {
     @Override
     public void read(ByteBuf buf) {
         this.value = buf.readInt();
+    }
+
+    @Override
+    public int getAsInt() {
+        return value;
     }
 }

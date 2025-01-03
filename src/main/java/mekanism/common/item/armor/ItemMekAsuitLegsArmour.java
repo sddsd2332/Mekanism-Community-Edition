@@ -137,11 +137,7 @@ public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor implements IItemHU
 
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
-        if (slotType == getEquipmentSlot()) {
-            if (!Mekanism.hooks.DraconicEvolution) {
-                list.add(LangUtils.localize("tooltip.meka_legs.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
-            }
-        }
+
     }
 
 

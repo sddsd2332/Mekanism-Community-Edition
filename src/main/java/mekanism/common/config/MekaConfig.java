@@ -54,4 +54,6 @@ public class MekaConfig extends BaseConfig {
     public DoubleOption mekaSuitBodyShielding = new DoubleOption(this, "meka", "mekaSuitBodyShielding", 40);
     public DoubleOption mekaSuitPantsShielding = new DoubleOption(this, "meka", "mekaSuitPantsShielding", 20);
     public DoubleOption mekaSuitBootsShielding = new DoubleOption(this, "meka", "mekaSuitBootsShielding", 15);
+    public DoubleOption mekaToolBaseEnergyCapacity = new DoubleOption(this,"meka","mekaToolBaseEnergyCapacity",16000000,"Energy capacity (Joules) of the Meka-Tool without any installed upgrades. Quadratically scaled by upgrades.");
+    public DoubleOption mekaToolBaseChargeRate = new DoubleOption(this,"meka","mekaToolBaseChargeRate",100000,"Amount (joules) of energy the Meka-Tool can accept per tick. Quadratically scaled by upgrades.");
 }

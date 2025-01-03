@@ -290,10 +290,6 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
             if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.EMERGENCY_RESCUE) && getEmergency(stack)) {
                 list.add(LangUtils.localize("tooltip.meka_head.Emergency_rescue") + " " + UpgradeHelper.getUpgradeLevel(stack, moduleUpgrade.EMERGENCY_RESCUE));
             }
-            if (!Mekanism.hooks.DraconicEvolution) {
-                list.add(LangUtils.localize("tooltip.meka_head.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
-            }
-
         }
     }
 

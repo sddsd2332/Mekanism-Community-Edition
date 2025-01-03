@@ -1,11 +1,15 @@
 package mekanism.client.render;
 
 import mekanism.api.energy.IEnergizedItem;
+import mekanism.api.gear.IHUDElement;
 import mekanism.client.gui.element.GuiUtils;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.content.gear.HUDElement;
+import mekanism.common.item.ItemMekTool;
 import mekanism.common.item.armor.ItemMekaSuitArmor;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.text.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -45,7 +49,7 @@ public class HUDRenderer {
         if (MekanismConfig.current().client.hudOpacity.val() < 0.05F) {
             return;
         }
-        int color = 0x40F5F0;
+        int color = HUDElement.HUDColor.REGULAR.getColorARGB();
         GlStateManager.pushMatrix();
         float yawJitter = -absSqrt(player.rotationYawHead - prevRotationYaw);
         float pitchJitter = -absSqrt(player.rotationPitch - prevRotationPitch);
@@ -90,7 +94,7 @@ public class HUDRenderer {
         for (int i = 0; i < ARMOR_SLOTS.length; i++) {
             posX += renderEnergyIcon(player, font, posX, color, ARMOR_ICONS[i], ARMOR_SLOTS[i], showArmorPercent);
         }
-        Predicate<Item> showToolPercent = item -> item instanceof IEnergizedItem;
+        Predicate<Item> showToolPercent = item -> item instanceof ItemMekTool;
         for (EntityEquipmentSlot hand : HAND_SLOTS) {
             posX += renderEnergyIcon(player, font, posX, color, TOOL_ICON, hand, showToolPercent);
         }
@@ -103,20 +107,30 @@ public class HUDRenderer {
         ItemStack stack = player.getItemStackFromSlot(slot);
         if (showPercent.test(stack.getItem())) {
             if (stack.getItem() instanceof IEnergizedItem item) {
-                renderHUDElement(font, posX, 0, icon, MekanismUtils.getEnergyDisplay(item.getEnergy(stack)), color, false);
+                renderHUDElement(font, posX, 0, hudElementPercent(icon, item.getEnergyRatio(stack)), color, false);
                 return 48;
             }
         }
         return 0;
     }
 
-    private void renderHUDElement(FontRenderer font, int x, int y, ResourceLocation icon, String energy, int color, boolean iconRight) {
+    public IHUDElement hudElementPercent(ResourceLocation icon, double ratio) {
+        return hudElement(icon, TextUtils.getPercent(ratio), ratio > 0.2 ? IHUDElement.HUDColor.REGULAR : (ratio > 0.1 ? IHUDElement.HUDColor.WARNING : IHUDElement.HUDColor.DANGER));
+    }
+
+    public IHUDElement hudElement(ResourceLocation icon, String text, IHUDElement.HUDColor color) {
+        return HUDElement.of(icon, text, HUDElement.HUDColor.from(color));
+    }
+
+    private void renderHUDElement(FontRenderer font, int x, int y, IHUDElement element, int color, boolean iconRight) {
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         MekanismRenderer.color(color);
-        font.drawString(energy, iconRight ? x : x + 18, y + 5, color, false);
-        Minecraft.getMinecraft().renderEngine.bindTexture(icon);
-        GuiUtils.blit(iconRight ? x + font.getStringWidth(energy) + 2 : x, y, 0, 0, 16, 16, 16, 16);
+        font.drawString(element.getText(), iconRight ? x : x + 18, y + 5, element.getColor(), false);
+        MekanismRenderer.resetColor();
+        MekanismRenderer.color(color);
+        Minecraft.getMinecraft().renderEngine.bindTexture(element.getIcon());
+        GuiUtils.blit(iconRight ? x + font.getStringWidth(element.getText()) + 2 : x, y, 0, 0, 16, 16, 16, 16);
         MekanismRenderer.resetColor();
     }
 

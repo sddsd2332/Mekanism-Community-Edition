@@ -287,6 +287,7 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.MekAsuitBoots);
         registerItemRender(MekanismItems.ModuleBase);
         registerItemRender(MekanismItems.ModuleUpgrade);
+        registerItemRender(MekanismItems.test);
         /**
          * ADD END
          */

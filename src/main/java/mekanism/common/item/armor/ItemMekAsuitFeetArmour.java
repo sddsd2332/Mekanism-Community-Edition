@@ -167,9 +167,6 @@ public class ItemMekAsuitFeetArmour extends ItemMekaSuitArmor implements IItemHU
                 list.add(LangUtils.localize("tooltip.module.jump_boost.name") + " " + getJumpBoostMode(stack).getBoost());
                 list.add(LangUtils.localize("tooltip.module.step_assist.name") + " " + getStepAssistMode(stack).getHeight());
             }
-            if (!Mekanism.hooks.DraconicEvolution) {
-                list.add(LangUtils.localize("tooltip.meka_feet.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
-            }
         }
     }
 

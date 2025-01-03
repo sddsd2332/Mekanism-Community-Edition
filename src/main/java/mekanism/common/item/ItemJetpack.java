@@ -1,6 +1,7 @@
 package mekanism.common.item;
 
 import mekanism.api.EnumColor;
+import mekanism.api.NBTConstants;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
@@ -13,6 +14,7 @@ import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.item.interfaces.IJetpackItem;
+import mekanism.common.item.interfaces.IModeItem;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import net.minecraft.client.model.ModelBiped;
@@ -29,16 +31,18 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, IJetpackItem, IItemHUDProvider {
+public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, IJetpackItem, IItemHUDProvider, IModeItem {
 
     public int TRANSFER_RATE = 16;
 
@@ -71,14 +75,10 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack itemstack, World world, List<String> list, ITooltipFlag flag) {
-        GasStack gasStack = getGas(itemstack);
-        if (gasStack == null) {
-            list.add(LangUtils.localize("tooltip.noGas") + ".");
-        } else {
-            list.add(LangUtils.localize("tooltip.stored") + " " + gasStack.getGas().getLocalizedName() + ": " + gasStack.amount);
-        }
-        list.add(EnumColor.GREY + LangUtils.localize("tooltip.mode") + ": " + EnumColor.GREY + getMode(itemstack).getName());
+    public void addInformation(ItemStack stack, World world, List<String> list, ITooltipFlag flag) {
+        GasStack gasStack = getGas(stack);
+        list.add(gasStack == null ? LangUtils.localize("tooltip.noGas") + "." : LangUtils.localize("tooltip.stored") + " " + gasStack.getGas().getLocalizedName() + ": " + gasStack.amount);
+        list.add(EnumColor.GREY + LangUtils.localize("tooltip.mode") + ": " + EnumColor.GREY + getJetpackMode(stack).getTextComponent());
     }
 
     @Override
@@ -102,8 +102,6 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
         }
         return model;
     }
-
-
 
 
     @Override
@@ -134,7 +132,7 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
         return null;
     }
 
-    @Override
+
     public int getStored(ItemStack itemstack) {
         return getGas(itemstack) != null ? getGas(itemstack).amount : 0;
     }
@@ -153,6 +151,7 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
     public boolean canUseJetpack(ItemStack stack) {
         return getStored(stack) > 0;
     }
+
 
     @Override
     public void useJetpackFuel(ItemStack stack) {
@@ -223,14 +222,36 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
         if (slotType == getEquipmentSlot()) {
-            list.add(LangUtils.localize("tooltip.jetpack.mode") + " " + getMode(stack).getName());
-            if (getStored(stack) > 0) {
-                list.add( LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + getStored(stack));
-            }else {
-                list.add( LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + LangUtils.localize("tooltip.noGas"));
-            }
-
+            ItemJetpack jetpack = (ItemJetpack) stack.getItem();
+            list.add(EnumColor.DARK_GREY + LangUtils.localize("tooltip.jetpack.mode") + " " + jetpack.getJetpackMode(stack).getTextComponent());
+            list.add(LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + (getStored(stack) > 0 ? getStored(stack) : LangUtils.localize("tooltip.noGas")));
         }
 
     }
+
+    @Override
+    public void changeMode(@NotNull EntityPlayer player, @NotNull ItemStack stack, int shift, boolean displayChange) {
+        JetpackMode mode = getJetpackMode(stack);
+        JetpackMode newMode = mode.adjust(shift);
+        if (mode != newMode) {
+            setMode(stack, newMode);
+            if (displayChange) {
+                player.sendMessage(new TextComponentString(EnumColor.GREY + LangUtils.localize("tooltip.mode") + ": " + EnumColor.GREY + mode.getTextComponent()));
+            }
+        }
+    }
+
+    @Override
+    public JetpackMode getJetpackMode(ItemStack stack) {
+        return JetpackMode.byIndexStatic(ItemDataUtils.getInt(stack, NBTConstants.MODE));
+    }
+
+
+
+
+    @Override
+    public boolean supportsSlotType(ItemStack stack, @NotNull EntityEquipmentSlot slotType) {
+        return slotType == getEquipmentSlot();
+    }
+
 }
