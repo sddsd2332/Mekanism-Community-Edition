@@ -1,32 +1,35 @@
 package mekanism.common;
 
 import mekanism.common.util.LangUtils;
+import net.minecraft.item.EnumRarity;
 
 import java.util.Locale;
+
+import static net.minecraft.item.EnumRarity.*;
 
 public enum moduleUpgrade {
 
     //EMPTY("base",1,),
-    EnergyUnit("EnergyUnit", 8),
-    ATTACK_AMPLIFICATION_UNIT("attack_damage", 4),
-    RADIATION_SHIELDING_UNIT("radiation_shielding_unit", 1),
+    EnergyUnit("EnergyUnit", 8, UNCOMMON),
+    ATTACK_AMPLIFICATION_UNIT("attack_damage", 4, UNCOMMON),
+    RADIATION_SHIELDING_UNIT("radiation_shielding_unit", 1, UNCOMMON),
     //head
-    SolarRechargingUnit("SolarRechargingUnit", 8),
-    ElectrolyticBreathingUnit("ElectrolyticBreathingUnit", 4),
-    VisionEnhancementUnit("VisionEnhancementUnit", 4),
-    InhalationPurificationUnit("InhalationPurificationUnit", 1),
-    NutritionalInjectionUnit("NutritionalInjectionUnit", 1),
+    SolarRechargingUnit("SolarRechargingUnit", 8, RARE),
+    ElectrolyticBreathingUnit("ElectrolyticBreathingUnit", 4, UNCOMMON),
+    VisionEnhancementUnit("VisionEnhancementUnit", 4, RARE),
+    InhalationPurificationUnit("InhalationPurificationUnit", 1, RARE),
+    NutritionalInjectionUnit("NutritionalInjectionUnit", 1, RARE),
     //Body
-    JETPACK_UNIT("jetpack_unit", 1),
-    CHARGE_DISTRIBUTION_UNIT("charge_distribution_unit", 1),
+    JETPACK_UNIT("jetpack_unit", 1, RARE),
+    CHARGE_DISTRIBUTION_UNIT("charge_distribution_unit", 1, RARE),
     //legs
-    GYROSCOPIC_STABILIZATION_UNIT("gyroscopic_stabilization_unit", 1),
-    GEOTHERMAL_GENERATOR_UNIT("geothermal_generator_unit", 8),
-    HYDROSTATIC_REPULSOR_UNIT("hydrostatic_repulsor_unit", 4),
-    LOCOMOTIVE_BOOSTING_UNIT("locomotive_boosting_unit", 4),
+    GYROSCOPIC_STABILIZATION_UNIT("gyroscopic_stabilization_unit", 1, RARE),
+    GEOTHERMAL_GENERATOR_UNIT("geothermal_generator_unit", 8, RARE),
+    HYDROSTATIC_REPULSOR_UNIT("hydrostatic_repulsor_unit", 4, RARE),
+    LOCOMOTIVE_BOOSTING_UNIT("locomotive_boosting_unit", 4, RARE),
     //feet
-    HYDRAULIC_PROPULSION_UNIT("hydraulic_propulsion_unit", 4),
-    FROST_WALKER_UNIT("frost_walker_unit", 2),
+    HYDRAULIC_PROPULSION_UNIT("hydraulic_propulsion_unit", 4, RARE),
+    FROST_WALKER_UNIT("frost_walker_unit", 2, RARE),
 
     //mekaBow
     ARROWENERGY_UNIT("arrowenergy_unit", 1),
@@ -35,21 +38,29 @@ public enum moduleUpgrade {
     DRAWSPEED_UNIT("drawspeed_unit", 3),
     MultipleArrowsUnit("MultiplearrowsUnit", 4),
     //Body
-    GRAVITATIONAL_MODULATING_UNIT("gravitational_modulating_unit", 1),
-    HEALTH_REGENERATION("Health_regeneration", 10),
+    GRAVITATIONAL_MODULATING_UNIT("gravitational_modulating_unit", 1, EPIC),
+    HEALTH_REGENERATION("Health_regeneration", 10, RARE),
     //head
-    EMERGENCY_RESCUE("Emergency_rescue", 10),
+    EMERGENCY_RESCUE("Emergency_rescue", 10, EPIC),
     //ALL
-    ENERGY_SHIELD_UNIT("Energy_shield_unit", 10),
-    ADVANCED_INTERCEPTION_SYSTEM_UNIT("Advanced_interception_system_unit",1),
-    MAGNETIZER("Magnetizer_unit",1);
+    ENERGY_SHIELD_UNIT("Energy_shield_unit", 10, RARE),
+    ADVANCED_INTERCEPTION_SYSTEM_UNIT("Advanced_interception_system_unit", 1,EPIC),
+    MAGNETIZER("Magnetizer_unit", 1,UNCOMMON);
 
     private String name;
     private int maxStack;
+    private EnumRarity rarity;
 
     moduleUpgrade(String s, int max) {
         name = s;
         maxStack = max;
+        rarity = EnumRarity.COMMON;
+    }
+
+    moduleUpgrade(String s, int max, EnumRarity rarity) {
+        name = s;
+        maxStack = max;
+        this.rarity = rarity;
     }
 
 
@@ -67,6 +78,10 @@ public enum moduleUpgrade {
 
     public int getMax() {
         return maxStack;
+    }
+
+    public EnumRarity getRarity(){
+        return rarity;
     }
 
     public boolean canMultiply() {

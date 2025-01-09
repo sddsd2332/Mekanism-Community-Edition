@@ -35,6 +35,7 @@ import mekanism.common.frequency.FrequencyManager;
 import mekanism.common.integration.IMCHandler;
 import mekanism.common.integration.MekanismHooks;
 import mekanism.common.integration.multipart.MultipartMekanism;
+import mekanism.common.item.armor.ItemMekaSuitArmor;
 import mekanism.common.multiblock.MultiblockManager;
 import mekanism.common.network.PacketDataRequest.DataRequestMessage;
 import mekanism.common.network.PacketSimpleGui;
@@ -83,6 +84,7 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.world.ChunkDataEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -709,9 +711,10 @@ public class Mekanism {
     }
 
     @SubscribeEvent
-    public  void onDrawScreenPre(RenderGameOverlayEvent.Post event) {
+    public void onDrawScreenPre(RenderGameOverlayEvent.Post event) {
         MekaSuitEnergyLevel.onDrawScreenPre(event);
         MekanismHUD.onDrawScreenPre(event);
     }
+
 
 }

@@ -16,6 +16,7 @@ import mekanism.common.Mekanism;
 import mekanism.common.base.IModuleUpgrade;
 import mekanism.common.capabilities.ItemCapabilityWrapper;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.entity.EntityMekaSuitArmor;
 import mekanism.common.integration.MekanismHooks;
 import mekanism.common.integration.forgeenergy.ForgeEnergyItemWrapper;
 import mekanism.common.integration.ic2.IC2ItemManager;
@@ -28,9 +29,11 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -60,7 +63,7 @@ import java.util.List;
         @Optional.Interface(iface = "com.brandon3055.draconicevolution.api.itemconfig.ToolConfigHelper", modid = MekanismHooks.DraconicEvolution_MOD_ID)
 })
 public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedItem,
-        ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor, IModuleUpgrade, IHazmatLike, ICustomArmor, IConfigurableItem, Magnetic , IItemHUDProvider {
+        ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor, IModuleUpgrade, IHazmatLike, ICustomArmor, IConfigurableItem, Magnetic, IItemHUDProvider {
 
     private final float absorption;
 
@@ -415,12 +418,6 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         }
     }
 
-    @Nonnull
-    @Override
-    public String getItemStackDisplayName(@Nonnull ItemStack itemstack) {
-        return EnumColor.ORANGE + super.getItemStackDisplayName(itemstack);
-    }
-
     @Override
     @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
     public float getProtectionPoints(ItemStack stack) {
@@ -605,5 +602,27 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     public boolean isMagnetic(ItemStack stack) {
         return UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.MAGNETIZER) && getMagnetic(stack);
     }
+
+    @Override
+    public EnumRarity getRarity(ItemStack stack) {
+        return EnumRarity.EPIC;
+    }
+
+
+    @Override
+    public boolean hasCustomEntity(ItemStack stack) {
+        return true;
+    }
+
+    @Override
+    public Entity createEntity(World world, Entity location, ItemStack itemstack) {
+        EntityItem item = new EntityMekaSuitArmor(world, location, itemstack);
+        item.isImmuneToFire = true;
+        if (UpgradeHelper.isUpgradeInstalled(itemstack, moduleUpgrade.MAGNETIZER) && getMagnetic(itemstack)) {
+            item.setNoPickupDelay();
+        }
+        return item;
+    }
+
 
 }
