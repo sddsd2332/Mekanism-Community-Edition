@@ -7,6 +7,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import mekanism.api.EnumColor;
+import mekanism.api.energy.IEnergizedItem;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
@@ -19,12 +20,10 @@ import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.MekanismHooks;
 import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.moduleUpgrade;
-import mekanism.common.util.ItemDataUtils;
-import mekanism.common.util.LangUtils;
-import mekanism.common.util.MekanismUtils;
-import mekanism.common.util.UpgradeHelper;
+import mekanism.common.util.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -35,6 +34,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.Optional;
@@ -42,6 +42,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,6 +52,26 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
 
     public ItemMekAsuitHeadArmour() {
         super(EntityEquipmentSlot.HEAD);
+    }
+
+
+    @Override
+    public void getSubItems(@Nonnull CreativeTabs tabs, @Nonnull NonNullList<ItemStack> list) {
+        super.getSubItems(tabs,list);
+        if (!isInCreativeTab(tabs)) {
+            return;
+        }
+        ItemStack fullUpgrades = new ItemStack(this);
+        for (moduleUpgrade upgrade : getValidModule(fullUpgrades)) {
+            UpgradeHelper.setUpgradeLevel(fullUpgrades, upgrade, upgrade.getMax());
+        }
+        UpgradeHelper.setUpgradeLevel(fullUpgrades,moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT,moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT.getMax());
+        setGas(fullUpgrades,new GasStack(MekanismFluids.NutritionalPaste,((IGasItem) fullUpgrades.getItem()).getMaxGas(fullUpgrades)));
+        setEnergy(fullUpgrades, ((IEnergizedItem) fullUpgrades.getItem()).getMaxEnergy(fullUpgrades));
+        if (Mekanism.hooks.DraconicEvolution){
+            ItemNBTHelper.setFloat(fullUpgrades, "ProtectionPoints", getProtectionPoints(fullUpgrades));
+        }
+        list.add(fullUpgrades);
     }
 
     @Override
@@ -290,10 +311,6 @@ public class ItemMekAsuitHeadArmour extends ItemMekaSuitArmor implements IGasIte
             if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.EMERGENCY_RESCUE) && getEmergency(stack)) {
                 list.add(LangUtils.localize("tooltip.meka_head.Emergency_rescue") + " " + UpgradeHelper.getUpgradeLevel(stack, moduleUpgrade.EMERGENCY_RESCUE));
             }
-            if (!Mekanism.hooks.DraconicEvolution) {
-                list.add(LangUtils.localize("tooltip.meka_head.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
-            }
-
         }
     }
 

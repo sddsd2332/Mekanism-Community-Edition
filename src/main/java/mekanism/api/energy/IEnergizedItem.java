@@ -56,4 +56,8 @@ public interface IEnergizedItem {
      * @return if the item can send energy
      */
     boolean canSend(ItemStack itemStack);
+
+    default double getEnergyRatio(ItemStack stack) {
+        return getEnergy(stack) / getMaxEnergy(stack);
+    }
 }

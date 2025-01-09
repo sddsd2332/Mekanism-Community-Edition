@@ -78,7 +78,7 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
         } else {
             list.add(LangUtils.localize("tooltip.stored") + " " + gasStack.getGas().getLocalizedName() + ": " + gasStack.amount);
         }
-        list.add(EnumColor.GREY + LangUtils.localize("tooltip.mode") + ": " + EnumColor.GREY + getMode(itemstack).getName());
+        list.add(EnumColor.GREY + LangUtils.localize("tooltip.mode") + ": " + EnumColor.GREY + getJetpackMode(itemstack).getName());
     }
 
     @Override
@@ -223,7 +223,7 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
         if (slotType == getEquipmentSlot()) {
-            list.add(LangUtils.localize("tooltip.jetpack.mode") + " " + getMode(stack).getName());
+            list.add(LangUtils.localize("tooltip.jetpack.mode") + " " + getJetpackMode(stack).getName());
             if (getStored(stack) > 0) {
                 list.add( LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + getStored(stack));
             }else {

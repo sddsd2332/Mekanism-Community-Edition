@@ -6,6 +6,16 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public final class ItemNBTHelper {
 
+    // SETTERS ///////////////////////////////////////////////////////////////////
+    public static NBTTagCompound getCompound(ItemStack stack) {
+        if (stack.getTagCompound() == null) stack.setTagCompound(new NBTTagCompound());
+        return stack.getTagCompound();
+    }
+
+    public static ItemStack setFloat(ItemStack stack, String tag, float f) {
+        getCompound(stack).setFloat(tag, f);
+        return stack;
+    }
 
     // GETTERS ///////////////////////////////////////////////////////////////////
 

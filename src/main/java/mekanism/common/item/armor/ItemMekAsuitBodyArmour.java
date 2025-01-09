@@ -8,6 +8,8 @@ import com.brandon3055.draconicevolution.api.itemconfig.ItemConfigFieldRegistry;
 import com.brandon3055.draconicevolution.api.itemconfig.ToolConfigHelper;
 import com.google.common.collect.Multimap;
 import mekanism.api.EnumColor;
+import mekanism.api.NBTConstants;
+import mekanism.api.energy.IEnergizedItem;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
@@ -19,14 +21,15 @@ import mekanism.common.MekanismFluids;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.MekanismHooks;
-import mekanism.common.item.interfaces.IItemHUDProvider;
+
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.moduleUpgrade;
 import mekanism.common.util.ItemDataUtils;
+import mekanism.common.util.ItemNBTHelper;
 import mekanism.common.util.LangUtils;
-import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.UpgradeHelper;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -36,18 +39,20 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.UUID;
 
 import static com.brandon3055.draconicevolution.api.itemconfig.IItemConfigField.EnumControlType.SLIDER;
 
-public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasItem, IJetpackItem, IItemHUDProvider {
+public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasItem, IJetpackItem {
 
     public ItemMekAsuitBodyArmour() {
         super(EntityEquipmentSlot.CHEST);
@@ -58,6 +63,24 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
     @Override
     public boolean isValidArmor(ItemStack stack, EntityEquipmentSlot armorType, Entity entity) {
         return armorType == EntityEquipmentSlot.CHEST;
+    }
+
+    @Override
+    public void getSubItems(@Nonnull CreativeTabs tabs, @Nonnull NonNullList<ItemStack> list) {
+        super.getSubItems(tabs,list);
+        if (!isInCreativeTab(tabs)) {
+            return;
+        }
+        ItemStack fullUpgrades = new ItemStack(this);
+        for (moduleUpgrade upgrade : getValidModule(fullUpgrades)) {
+            UpgradeHelper.setUpgradeLevel(fullUpgrades, upgrade, upgrade.getMax());
+        }
+        setGas(fullUpgrades,new GasStack(MekanismFluids.Hydrogen,((IGasItem) fullUpgrades.getItem()).getMaxGas(fullUpgrades)));
+        setEnergy(fullUpgrades, ((IEnergizedItem) fullUpgrades.getItem()).getMaxEnergy(fullUpgrades));
+        if (Mekanism.hooks.DraconicEvolution){
+            ItemNBTHelper.setFloat(fullUpgrades, "ProtectionPoints", getProtectionPoints(fullUpgrades));
+        }
+        list.add(fullUpgrades);
     }
 
     @Override
@@ -297,11 +320,8 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
         if (slotType == getEquipmentSlot()) {
             if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.JETPACK_UNIT) && getJetpackMode(stack) != JetpackMode.DISABLED) {
-                list.add(LangUtils.localize("tooltip.jetpack.mode") + " " + getMode(stack).getName());
+                list.add(LangUtils.localize("tooltip.jetpack.mode") + " " + getJetpackMode(stack).getName());
                 list.add(LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + (getStored(stack) > 0 ? getStored(stack) : LangUtils.localize("tooltip.noGas")));
-            }
-            if (!Mekanism.hooks.DraconicEvolution) {
-                list.add(LangUtils.localize("tooltip.meka_body.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
             }
         }
     }
@@ -352,7 +372,9 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
     @Override
     @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
     public boolean[] hasFlight(ItemStack stack) {
-        return new boolean[]{getJetpackMode(stack) == JetpackMode.DISABLED, ToolConfigHelper.getBooleanField("armorFlightLock", stack) && getJetpackMode(stack) == JetpackMode.DISABLED, ToolConfigHelper.getBooleanField("armorInertiaCancel", stack) && getJetpackMode(stack) == JetpackMode.DISABLED};
+        return new boolean[]{getJetpackMode(stack) == JetpackMode.DISABLED && UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.GRAVITATIONAL_MODULATING_UNIT),
+                ToolConfigHelper.getBooleanField("armorFlightLock", stack) && getJetpackMode(stack) == JetpackMode.DISABLED && UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.GRAVITATIONAL_MODULATING_UNIT),
+                ToolConfigHelper.getBooleanField("armorInertiaCancel", stack) && getJetpackMode(stack) == JetpackMode.DISABLED && UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.GRAVITATIONAL_MODULATING_UNIT)};
     }
 
     public boolean getCharge(ItemStack stack) {
@@ -381,4 +403,13 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
         return ToolConfigHelper.getBooleanField("health", stack);
     }
 
+
+    @Override
+    public JetpackMode getJetpackMode(ItemStack stack) {
+        if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.JETPACK_UNIT)) {
+            return JetpackMode.byIndexStatic(ItemDataUtils.getInt(stack, NBTConstants.MODE));
+        } else {
+            return JetpackMode.DISABLED;
+        }
+    }
 }

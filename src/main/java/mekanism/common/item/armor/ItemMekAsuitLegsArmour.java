@@ -4,6 +4,7 @@ import com.brandon3055.draconicevolution.api.itemconfig.BooleanConfigField;
 import com.brandon3055.draconicevolution.api.itemconfig.ItemConfigFieldRegistry;
 import com.brandon3055.draconicevolution.api.itemconfig.ToolConfigHelper;
 import com.google.common.collect.Multimap;
+import mekanism.api.energy.IEnergizedItem;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitLeg;
 import mekanism.common.Mekanism;
 import mekanism.common.MekanismItems;
@@ -11,11 +12,11 @@ import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.MekanismHooks;
 import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.moduleUpgrade;
-import mekanism.common.util.LangUtils;
-import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.ItemNBTHelper;
 import mekanism.common.util.UpgradeHelper;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -29,12 +30,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.UUID;
 
@@ -137,13 +140,24 @@ public class ItemMekAsuitLegsArmour extends ItemMekaSuitArmor implements IItemHU
 
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
-        if (slotType == getEquipmentSlot()) {
-            if (!Mekanism.hooks.DraconicEvolution) {
-                list.add(LangUtils.localize("tooltip.meka_legs.storedEnergy") + " " + MekanismUtils.getEnergyDisplay(getEnergy(stack)));
-            }
-        }
     }
 
+    @Override
+    public void getSubItems(@Nonnull CreativeTabs tabs, @Nonnull NonNullList<ItemStack> list) {
+        super.getSubItems(tabs, list);
+        if (!isInCreativeTab(tabs)) {
+            return;
+        }
+        if (Mekanism.hooks.DraconicEvolution) {
+            ItemStack fullUpgrades = new ItemStack(this);
+            for (moduleUpgrade upgrade : getValidModule(fullUpgrades)) {
+                UpgradeHelper.setUpgradeLevel(fullUpgrades, upgrade, upgrade.getMax());
+            }
+            setEnergy(fullUpgrades, ((IEnergizedItem) fullUpgrades.getItem()).getMaxEnergy(fullUpgrades));
+            ItemNBTHelper.setFloat(fullUpgrades, "ProtectionPoints", getProtectionPoints(fullUpgrades));
+            list.add(fullUpgrades);
+        }
+    }
 
     @Override
     @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)

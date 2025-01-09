@@ -21,6 +21,7 @@ import mekanism.common.integration.forgeenergy.ForgeEnergyItemWrapper;
 import mekanism.common.integration.ic2.IC2ItemManager;
 import mekanism.common.integration.redstoneflux.RFIntegration;
 import mekanism.common.integration.tesla.TeslaItemWrapper;
+import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.moduleUpgrade;
 import mekanism.common.util.*;
 import net.minecraft.client.util.ITooltipFlag;
@@ -59,7 +60,7 @@ import java.util.List;
         @Optional.Interface(iface = "com.brandon3055.draconicevolution.api.itemconfig.ToolConfigHelper", modid = MekanismHooks.DraconicEvolution_MOD_ID)
 })
 public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedItem,
-        ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor, IModuleUpgrade, IHazmatLike, ICustomArmor, IConfigurableItem, Magnetic {
+        ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor, IModuleUpgrade, IHazmatLike, ICustomArmor, IConfigurableItem, Magnetic , IItemHUDProvider {
 
     private final float absorption;
 
@@ -256,7 +257,6 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         for (moduleUpgrade upgrade : getValidModule(fullUpgrade)) {
             UpgradeHelper.setUpgradeLevel(fullUpgrade, upgrade, upgrade.getMax());
         }
-
         setEnergy(fullUpgrade, ((IEnergizedItem) fullUpgrade.getItem()).getMaxEnergy(fullUpgrade));
         list.add(fullUpgrade);
 

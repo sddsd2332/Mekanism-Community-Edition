@@ -1,13 +1,18 @@
 package mekanism.common.item.interfaces;
 
 import mekanism.api.EnumColor;
+import mekanism.api.IIncrementalEnum;
+import mekanism.api.NBTConstants;
+import mekanism.api.math.MathUtils;
 import mekanism.common.CommonPlayerTickHandler;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
+import mekanism.common.util.MekanismUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;
@@ -82,36 +87,36 @@ public interface IJetpackItem {
 
 
     default JetpackMode getJetpackMode(ItemStack stack) {
-        return getMode(stack);
+        return JetpackMode.byIndexStatic(ItemDataUtils.getInt(stack, NBTConstants.MODE));
     }
 
     void useJetpackFuel(ItemStack stack);
 
-    default JetpackMode getMode(ItemStack stack) {
-        return JetpackMode.values()[ItemDataUtils.getInt(stack, "mode")];
-    }
 
     default void setMode(ItemStack stack, JetpackMode mode) {
-        ItemDataUtils.setInt(stack, "mode", mode.ordinal());
+        ItemDataUtils.setInt(stack, NBTConstants.MODE, mode.ordinal());
     }
 
     default void incrementMode(ItemStack stack) {
-        setMode(stack, getMode(stack).increment());
+        setMode(stack, getJetpackMode(stack).increment());
     }
 
     int getStored(ItemStack itemstack);
 
-    enum JetpackMode {
-        NORMAL("tooltip.jetpack.regular", EnumColor.DARK_GREEN),
-        HOVER("tooltip.jetpack.hover", EnumColor.DARK_AQUA),
-        DISABLED("tooltip.jetpack.disabled", EnumColor.DARK_RED);
+    enum JetpackMode implements IIncrementalEnum<JetpackMode> {
+        NORMAL("tooltip.jetpack.regular", EnumColor.DARK_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI_HUD, "jetpack_normal.png")),
+        HOVER("tooltip.jetpack.hover", EnumColor.DARK_AQUA, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI_HUD, "jetpack_hover.png")),
+        DISABLED("tooltip.jetpack.disabled",EnumColor.DARK_RED, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI_HUD, "jetpack_off.png"));
 
+        private static final JetpackMode[] MODES = values();
         private String unlocalized;
         private EnumColor color;
+        private final ResourceLocation hudIcon;
 
-        JetpackMode(String s, EnumColor c) {
+        JetpackMode(String s, EnumColor c,ResourceLocation hudIcon) {
             unlocalized = s;
             color = c;
+            this.hudIcon = hudIcon;
         }
 
         public JetpackMode increment() {
@@ -120,6 +125,19 @@ public interface IJetpackItem {
 
         public String getName() {
             return color + LangUtils.localize(unlocalized);
+        }
+
+        @Override
+        public JetpackMode byIndex(int index) {
+            return byIndexStatic(index);
+        }
+
+        public static JetpackMode byIndexStatic(int index) {
+            return MathUtils.getByIndexMod(MODES, index);
+        }
+
+        public ResourceLocation getHUDIcon() {
+            return hudIcon;
         }
     }
 }

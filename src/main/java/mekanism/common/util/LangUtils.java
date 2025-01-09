@@ -14,6 +14,14 @@ public final class LangUtils {
         return LangUtils.localize(transOnOffKey(b));
     }
 
+    public static String transOnOffcap(boolean b) {
+        return LangUtils.localize(transOnOffCAPSKey(b));
+    }
+
+    public static String transOnOffCAPSKey(boolean b) {
+        return "gui." + (b ? "on_caps" : "off_caps");
+    }
+
     public static String transOnOffKey(boolean b) {
         return "gui." + (b ? "on" : "off");
     }

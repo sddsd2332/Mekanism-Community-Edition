@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import mekanism.api.Coord4D;
 import mekanism.api.IClientTicker;
 import mekanism.api.Range4D;
+import mekanism.common.Mekanism;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -128,7 +129,14 @@ public abstract class DynamicNetwork<ACCEPTOR, NETWORK extends DynamicNetwork<AC
 
         //Now invalidate the transmitters
         for (IGridTransmitter<ACCEPTOR, NETWORK, BUFFER> transmitter : transmitters) {
-            invalidateTransmitter(transmitter);
+            try {
+                invalidateTransmitter(transmitter);
+            } catch (Exception e) {
+                Mekanism.logger.error("Something went wrong: {}", transmitter);
+                Mekanism.logger.error("World type : {}", world);
+                Mekanism.logger.error("Whether it works : {}", transmitter.isValid());
+            }
+
         }
 
         transmitters.clear();

@@ -20,4 +20,28 @@ public class StatUtils {
         }
         return m;
     }
+
+    public static double min(double... vals) {
+        double min = vals[0];
+        for (int i = 1; i < vals.length; i++) {
+            min = Math.min(min, vals[i]);
+        }
+        return min;
+    }
+
+    public static double max(double... vals) {
+        double max = vals[0];
+        for (int i = 1; i < vals.length; i++) {
+            max = Math.max(max, vals[i]);
+        }
+        return max;
+    }
+
+    public static float wrapDegrees(float angle) {
+        angle = angle % 360;
+        if (angle < 0) {
+            angle += 360;
+        }
+        return angle;
+    }
 }
