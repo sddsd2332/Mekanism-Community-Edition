@@ -22,6 +22,7 @@ import mekanism.common.network.PacketJetpackData.JetpackDataMessage;
 import mekanism.common.network.PacketJumpBoostData.JumpBoostDataMessage;
 import mekanism.common.network.PacketKey.KeyMessage;
 import mekanism.common.network.PacketLogisticalSorterGui.LogisticalSorterGuiMessage;
+import mekanism.common.network.PacketModeChange.ModeChangMessage;
 import mekanism.common.network.PacketNewFilter.NewFilterMessage;
 import mekanism.common.network.PacketOredictionificatorGui.OredictionificatorGuiMessage;
 import mekanism.common.network.PacketPortableTeleporter.PortableTeleporterMessage;
@@ -105,12 +106,12 @@ public class PacketHandler {
                     output.writeInt(i);
                 }
             } else if (data instanceof byte[] d) {
-                for (byte b :d) {
+                for (byte b : d) {
                     output.writeByte(b);
                 }
             } else if (data instanceof ArrayList<?> a) {
                 encode(a.toArray(), output);
-            } else if (data instanceof NonNullList<?> d ) {
+            } else if (data instanceof NonNullList<?> d) {
                 encode(d.toArray(), output);
             } else {
                 throw new RuntimeException("Un-encodable data passed to encode(): " + data + ", full data: " + Arrays.toString(dataValues));
@@ -199,10 +200,11 @@ public class PacketHandler {
         netHandler.registerMessage(PacketSecurityUpdate.class, SecurityUpdateMessage.class, 30, Side.CLIENT);
         netHandler.registerMessage(PacketFreeRunnerData.class, FreeRunnerDataMessage.class, 31, Side.CLIENT);
         netHandler.registerMessage(PacketFreeRunnerData.class, FreeRunnerDataMessage.class, 31, Side.SERVER);
-        netHandler.registerMessage(PacketJumpBoostData.class, JumpBoostDataMessage.class,32,Side.CLIENT);
-        netHandler.registerMessage(PacketJumpBoostData.class, JumpBoostDataMessage.class,32,Side.SERVER);
-        netHandler.registerMessage(PacketStepAssistData.class, StepAssistDataMessage.class,33,Side.CLIENT);
-        netHandler.registerMessage(PacketStepAssistData.class, StepAssistDataMessage.class,33,Side.SERVER);
+        netHandler.registerMessage(PacketJumpBoostData.class, JumpBoostDataMessage.class, 32, Side.CLIENT);
+        netHandler.registerMessage(PacketJumpBoostData.class, JumpBoostDataMessage.class, 32, Side.SERVER);
+        netHandler.registerMessage(PacketStepAssistData.class, StepAssistDataMessage.class, 33, Side.CLIENT);
+        netHandler.registerMessage(PacketStepAssistData.class, StepAssistDataMessage.class, 33, Side.SERVER);
+        netHandler.registerMessage(PacketModeChange.class, ModeChangMessage.class, 34, Side.SERVER);
     }
 
     /**

@@ -9,18 +9,15 @@ import mekanism.client.render.particle.EntityJetpackSmokeFX;
 import mekanism.client.render.particle.EntityScubaBubbleFX;
 import mekanism.common.ColourRGBA;
 import mekanism.common.Mekanism;
-import mekanism.common.config.MekanismConfig;
 import mekanism.common.item.ItemConfigurator;
 import mekanism.common.item.ItemConfigurator.ConfiguratorMode;
 import mekanism.common.item.ItemFlamethrower;
-import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -33,11 +30,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 @SideOnly(Side.CLIENT)
 public class RenderTickHandler {
@@ -86,7 +80,7 @@ public class RenderTickHandler {
                 if (modeSwitchTimer > 1 && mc.currentScreen == null && player.getHeldItemMainhand().getItem() instanceof ItemConfigurator) {
                     ItemStack stack = player.getHeldItemMainhand();
                     ScaledResolution scaledresolution = new ScaledResolution(mc);
-                    ConfiguratorMode mode = ((ItemConfigurator) stack.getItem()).getState(stack);
+                    ConfiguratorMode mode = ((ItemConfigurator) stack.getItem()).getMode(stack);
 
                     int x = scaledresolution.getScaledWidth();
                     int y = scaledresolution.getScaledHeight();

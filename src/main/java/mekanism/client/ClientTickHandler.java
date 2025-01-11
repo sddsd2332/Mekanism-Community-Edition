@@ -12,7 +12,6 @@ import mekanism.common.config.MekanismConfig;
 import mekanism.common.frequency.Frequency;
 import mekanism.common.item.*;
 import mekanism.common.item.ItemAtomicDisassembler.Mode;
-import mekanism.common.item.ItemConfigurator.ConfiguratorMode;
 import mekanism.common.item.ItemFlamethrower.FlamethrowerMode;
 import mekanism.common.item.ItemMekTool.MekToolMode;
 import mekanism.common.item.armor.ItemMekAsuitFeetArmour;
@@ -20,10 +19,12 @@ import mekanism.common.item.armor.ItemMekAsuitHeadArmour;
 import mekanism.common.item.armor.ItemMekaSuitArmor;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.item.interfaces.IJetpackItem.JetpackMode;
+import mekanism.common.item.interfaces.IModeItem;
 import mekanism.common.moduleUpgrade;
 import mekanism.common.network.PacketFreeRunnerData;
 import mekanism.common.network.PacketItemStack.ItemStackMessage;
 import mekanism.common.network.PacketJumpBoostData;
+import mekanism.common.network.PacketModeChange.ModeChangMessage;
 import mekanism.common.network.PacketPortableTeleporter.PortableTeleporterMessage;
 import mekanism.common.network.PacketPortableTeleporter.PortableTeleporterPacketType;
 import mekanism.common.network.PacketStepAssistData;
@@ -73,6 +74,8 @@ public class ClientTickHandler {
     public static boolean visionEnhancement = false;
     public boolean initHoliday = false;
     public boolean shouldReset = false;
+    private static long lastScrollTime = -1;
+    private static double scrollDelta;
 
     public static void killDeadNetworks() {
         tickingSet.removeIf(iClientTicker -> !iClientTicker.needsTicks());
@@ -362,29 +365,29 @@ public class ClientTickHandler {
         }
     }
 
+    private void handleModeScroll(MouseEvent event, double delta) {
+        if (delta != 0 && IModeItem.isModeItem(mc.player, EntityEquipmentSlot.MAINHAND)) {
+            wheelStatus += Mouse.getEventDWheel();
+            int shift = wheelStatus / 120;
+            wheelStatus = wheelStatus % 120;
+            int handoff = 0;
+            if (shift > 0) {
+                handoff = -1;
+            } else if (shift < 0) {
+                handoff = 1;
+            }
+            RenderTickHandler.modeSwitchTimer = 100;
+            Mekanism.packetHandler.sendToServer(new ModeChangMessage(EntityEquipmentSlot.MAINHAND, handoff));
+            event.setCanceled(true);
+        }
+    }
+
     @SubscribeEvent
     public void onMouseEvent(MouseEvent event) {
         if (mc.player != null && mc.player.isSneaking()) {
             ItemStack stack = mc.player.getHeldItemMainhand();
             int delta = Mouse.getEventDWheel();
-            if (MekanismConfig.current().client.allowConfiguratorModeScroll.val()) {
-                if (stack.getItem() instanceof ItemConfigurator configurator && delta != 0) {
-                    RenderTickHandler.modeSwitchTimer = 100;
-                    wheelStatus += Mouse.getEventDWheel();
-                    int scaledDelta = wheelStatus / 120;
-                    wheelStatus = wheelStatus % 120;
-                    int newVal = configurator.getState(stack).ordinal() + (scaledDelta % ConfiguratorMode.values().length);
-
-                    if (newVal > 0) {
-                        newVal = newVal % ConfiguratorMode.values().length;
-                    } else if (newVal < 0) {
-                        newVal = ConfiguratorMode.values().length + newVal;
-                    }
-                    configurator.setState(stack, ConfiguratorMode.values()[newVal]);
-                    Mekanism.packetHandler.sendToServer(new ItemStackMessage(EnumHand.MAIN_HAND, Collections.singletonList(newVal)));
-                    event.setCanceled(true);
-                }
-            }
+            handleModeScroll(event, delta);
             if (MekanismConfig.current().client.allowFlamethrowerModeScroll.val()) {
                 if (stack.getItem() instanceof ItemFlamethrower Flamethrower && delta != 0) {
                     RenderTickHandler.modeSwitchTimer = 100;
@@ -435,18 +438,6 @@ public class ClientTickHandler {
                     }
                     MekTool.setMode(stack, MekToolMode.values()[newVal]);
                     Mekanism.packetHandler.sendToServer(new ItemStackMessage(EnumHand.MAIN_HAND, Collections.singletonList(newVal)));
-                    event.setCanceled(true);
-                }
-            }
-            if (stack.getItem() instanceof ItemElectricBow Bow && delta != 0) {
-                RenderTickHandler.modeSwitchTimer = 100;
-                wheelStatus += Mouse.getEventDWheel();
-                int scaledDelta = wheelStatus / 120;
-                wheelStatus = wheelStatus % 120;
-                if (Math.abs(scaledDelta) % 2 == 1) {
-                    boolean newState = !Bow.getFireState(stack);
-                    Bow.setFireState(stack, newState);
-                    Mekanism.packetHandler.sendToServer(new ItemStackMessage(EnumHand.MAIN_HAND, Collections.singletonList(newState)));
                     event.setCanceled(true);
                 }
             }

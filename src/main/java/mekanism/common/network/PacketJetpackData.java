@@ -1,18 +1,22 @@
 package mekanism.common.network;
 
+import baubles.api.BaublesApi;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mekanism.common.Mekanism;
 import mekanism.common.PacketHandler;
+import mekanism.common.integration.MekanismHooks;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.item.interfaces.IJetpackItem.JetpackMode;
 import mekanism.common.network.PacketJetpackData.JetpackDataMessage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.items.IItemHandler;
 
 import java.util.Set;
 import java.util.UUID;
@@ -37,11 +41,11 @@ public class PacketJetpackData implements IMessageHandler<JetpackDataMessage, IM
                 // Use has changed the mode of their jetpack; update it
                 ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
                 if (!stack.isEmpty() && stack.getItem() instanceof IJetpackItem jetpackItem) {
-                    if (!message.value) {
-                        jetpackItem.incrementMode(stack);
-                    } else {
-                        jetpackItem.setMode(stack, JetpackMode.DISABLED);
-                    }
+                    JetpackMode mode = jetpackItem.getJetpackMode(stack);
+                    JetpackMode newMode = mode.adjust(!message.value  ? 1 : -1);
+                    jetpackItem.setMode(stack,newMode);
+                }else if (Mekanism.hooks.Baubles){
+                    getBaublesJetpackMode(message,player);
                 }
             } else if (message.packetType == JetpackPacket.FULL) {
                 // This is a full sync; merge it into our player state
@@ -49,6 +53,19 @@ public class PacketJetpackData implements IMessageHandler<JetpackDataMessage, IM
             }
         }, player);
         return null;
+    }
+
+    @Optional.Method(modid = MekanismHooks.Baubles_MOD_ID)
+    public void getBaublesJetpackMode(JetpackDataMessage message,EntityPlayer player) {
+        IItemHandler baubles = BaublesApi.getBaublesHandler(player);
+        for (int i = 0; i < baubles.getSlots(); i++) {
+            ItemStack stack = baubles.getStackInSlot(i);
+            if (stack.getItem() instanceof IJetpackItem jetpack) {
+                JetpackMode mode = jetpack.getJetpackMode(stack);
+                JetpackMode newMode = mode.adjust(!message.value  ? 1 : -1);
+                jetpack.setMode(stack,newMode);
+            }
+        }
     }
 
     public enum JetpackPacket {

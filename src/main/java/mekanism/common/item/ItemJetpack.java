@@ -1,9 +1,15 @@
 package mekanism.common.item;
 
+import baubles.api.BaubleType;
+import baubles.api.IBauble;
+import baubles.api.render.IRenderBauble;
 import mekanism.api.EnumColor;
+import mekanism.api.NBTConstants;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
+import mekanism.client.model.ModelArmoredJetpack;
+import mekanism.client.model.ModelJetpack;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.client.render.ModelCustomArmor;
 import mekanism.client.render.ModelCustomArmor.ArmorModel;
@@ -11,11 +17,14 @@ import mekanism.common.Mekanism;
 import mekanism.common.MekanismFluids;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.integration.MekanismHooks;
 import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
+import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -32,13 +41,18 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.util.EnumHelper;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, IJetpackItem, IItemHUDProvider {
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "baubles.api.IBauble", modid = MekanismHooks.Baubles_MOD_ID),
+        @Optional.Interface(iface = "baubles.api.render.IRenderBauble", modid = MekanismHooks.Baubles_MOD_ID)
+})
+public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, IJetpackItem, IItemHUDProvider, IBauble, IRenderBauble {
 
     public int TRANSFER_RATE = 16;
 
@@ -104,8 +118,6 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
     }
 
 
-
-
     @Override
     public int getMaxGas(ItemStack itemstack) {
         return MekanismConfig.current().general.maxJetpackGas.val();
@@ -152,6 +164,11 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
     @Override
     public boolean canUseJetpack(ItemStack stack) {
         return getStored(stack) > 0;
+    }
+
+    @Override
+    public JetpackMode getJetpackMode(ItemStack stack) {
+        return JetpackMode.byIndexStatic(ItemDataUtils.getInt(stack, NBTConstants.MODE));
     }
 
     @Override
@@ -225,12 +242,39 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
         if (slotType == getEquipmentSlot()) {
             list.add(LangUtils.localize("tooltip.jetpack.mode") + " " + getJetpackMode(stack).getName());
             if (getStored(stack) > 0) {
-                list.add( LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + getStored(stack));
-            }else {
-                list.add( LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + LangUtils.localize("tooltip.noGas"));
+                list.add(LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + getStored(stack));
+            } else {
+                list.add(LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + LangUtils.localize("tooltip.noGas"));
             }
 
         }
 
+    }
+
+
+    @Override
+    @Optional.Method(modid = MekanismHooks.Baubles_MOD_ID)
+    public BaubleType getBaubleType(ItemStack itemStack) {
+        return BaubleType.BODY;
+    }
+
+    private static ModelJetpack jetpack = new ModelJetpack();
+    private static ModelArmoredJetpack armoredJetpack = new ModelArmoredJetpack();
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    @Optional.Method(modid = MekanismHooks.Baubles_MOD_ID)
+    public void onPlayerBaubleRender(ItemStack itemStack, EntityPlayer entityPlayer, RenderType renderType, float v) {
+        if (renderType == RenderType.BODY) {
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(0, 0, 0.06F);
+            MekanismRenderer.bindTexture(MekanismUtils.getResource(MekanismUtils.ResourceType.RENDER, "Jetpack.png"));
+            if (this == MekanismItems.Jetpack) {
+                jetpack.render(0.0625F);
+            }else if (this == MekanismItems.ArmoredJetpack){
+                armoredJetpack.render(0.0625F);
+            }
+            GlStateManager.popMatrix();
+        }
     }
 }
