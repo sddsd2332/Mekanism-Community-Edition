@@ -3,7 +3,6 @@ package mekanism.common.item;
 import cofh.redstoneflux.api.IEnergyContainerItem;
 import ic2.api.item.IElectricItemManager;
 import ic2.api.item.ISpecialElectricItem;
-import io.netty.buffer.ByteBuf;
 import mekanism.api.Coord4D;
 import mekanism.api.EnumColor;
 import mekanism.api.energy.IEnergizedItem;
@@ -24,6 +23,7 @@ import mekanism.common.integration.forgeenergy.ForgeEnergyItemWrapper;
 import mekanism.common.integration.ic2.IC2ItemManager;
 import mekanism.common.integration.redstoneflux.RFIntegration;
 import mekanism.common.integration.tesla.TeslaItemWrapper;
+import mekanism.common.item.interfaces.IModeItem;
 import mekanism.common.security.ISecurityItem;
 import mekanism.common.security.ISecurityTile;
 import mekanism.common.security.ISecurityTile.SecurityMode;
@@ -52,6 +52,8 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -59,12 +61,12 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Optional.Interface;
 import net.minecraftforge.fml.common.Optional.InterfaceList;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -124,7 +126,7 @@ import java.util.UUID;
         @Interface(iface = "ic2.api.item.ISpecialElectricItem", modid = MekanismHooks.IC2_MOD_ID)
 })
 public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpecialElectricItem, IFactory, ISustainedInventory, ISustainedTank, IEnergyContainerItem,
-        IFluidItemWrapper, ITierItem, ISecurityItem, IItemNetwork {
+        IFluidItemWrapper, ITierItem, ISecurityItem, IModeItem {
 
     public Block metaBlock;
 
@@ -792,15 +794,6 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
         };
     }
 
-    @Override
-    public void handlePacketData(ItemStack stack, ByteBuf dataStream) {
-        if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
-            if (MachineType.get(stack) == MachineType.FLUID_TANK) {
-                boolean state = dataStream.readBoolean();
-                setBucketMode(stack, state);
-            }
-        }
-    }
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
@@ -820,4 +813,27 @@ public class ItemBlockMachine extends ItemBlock implements IEnergizedItem, ISpec
     public int getRGBDurabilityForDisplay(@Nonnull ItemStack stack) {
         return MathHelper.hsvToRGB(Math.max(0.0F, (float) (1 - getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
     }
+
+    @Override
+    public void changeMode(@NotNull EntityPlayer player, @NotNull ItemStack stack, int shift, boolean displayChangeMessage) {
+        if (MachineType.get(stack) == MachineType.FLUID_TANK) {
+            if (Math.abs(shift) % 2 == 1) {
+                boolean newState = !getBucketMode(stack);
+                setBucketMode(stack, newState);
+                if (displayChangeMessage) {
+                    player.sendMessage(new TextComponentGroup(TextFormatting.GRAY).string(Mekanism.LOG_TAG, TextFormatting.DARK_BLUE).string(" ").translation("mekanism.tooltip.portableTank.bucketMode", LangUtils.onOffColoured(newState)));
+                }
+            }
+        }
+    }
+
+    @Nonnull
+    @Override
+    public ITextComponent getScrollTextComponent(@Nonnull ItemStack stack) {
+        if (MachineType.get(stack) == MachineType.FLUID_TANK) {
+            return new TextComponentGroup(TextFormatting.GRAY).translation("mekanism.tooltip.portableTank.bucketMode", LangUtils.onOffColoured(getBucketMode(stack)));
+        }
+        return null;
+    }
+
 }

@@ -114,7 +114,6 @@ public class Mekanism {
     public static final String MOD_NAME = "Mekanism";
     public static final String LOG_TAG = '[' + MOD_NAME + ']';
     public static final PlayerState playerState = new PlayerState();
-    public static final Set<UUID> freeRunnerOn = new ObjectOpenHashSet<>();
     public static final Set<UUID> jumpBoostOn = new ObjectOpenHashSet<>();
     public static final Set<UUID> stepAssistOn = new ObjectOpenHashSet<>();
     /**
@@ -391,12 +390,11 @@ public class Mekanism {
         }
 
         //Clear all cache data
-        playerState.clear();
+        playerState.clear(false);
         activeVibrators.clear();
         worldTickHandler.resetRegenChunks();
         privateTeleporters.clear();
         privateEntangloporters.clear();
-        freeRunnerOn.clear();
         jumpBoostOn.clear();
         stepAssistOn.clear();
 

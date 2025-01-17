@@ -23,6 +23,7 @@ import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.*;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -195,5 +196,12 @@ public class ItemElectricBow extends ItemEnergized implements IModeItem, IItemHU
                 player.sendMessage(new TextComponentGroup(TextFormatting.GRAY).string(Mekanism.LOG_TAG, TextFormatting.DARK_BLUE).string(" ").translation("mekanism.tooltip.fireMode", LangUtils.onOffColoured(newState)));
             }
         }
+    }
+
+
+    @Nonnull
+    @Override
+    public ITextComponent getScrollTextComponent(@Nonnull ItemStack stack) {
+        return new TextComponentGroup(TextFormatting.GRAY).translation("mekanism.tooltip.fireMode", LangUtils.onOffColoured(getFireState(stack)));
     }
 }

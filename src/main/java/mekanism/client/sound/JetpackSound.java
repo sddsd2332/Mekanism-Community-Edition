@@ -22,7 +22,6 @@ public class JetpackSound extends PlayerSound {
 
     @Override
     public boolean shouldPlaySound(@Nonnull EntityPlayer player) {
-        ItemStack jetpack = IJetpackItem.getActiveJetpack(player);
-        return ClientTickHandler.isJetpackInUse(player,jetpack);
+        return Mekanism.playerState.isJetpackOn(player);
     }
 }

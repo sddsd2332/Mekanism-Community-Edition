@@ -4,29 +4,30 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import mekanism.api.IClientTicker;
 import mekanism.api.gas.GasStack;
+import mekanism.client.gui.GuiRadialSelector;
 import mekanism.client.render.RenderTickHandler;
 import mekanism.common.CommonPlayerTickHandler;
 import mekanism.common.KeySync;
 import mekanism.common.Mekanism;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.frequency.Frequency;
-import mekanism.common.item.*;
-import mekanism.common.item.ItemAtomicDisassembler.Mode;
-import mekanism.common.item.ItemFlamethrower.FlamethrowerMode;
-import mekanism.common.item.ItemMekTool.MekToolMode;
+import mekanism.common.item.ItemFlamethrower;
+import mekanism.common.item.ItemFreeRunners;
+import mekanism.common.item.ItemScubaTank;
 import mekanism.common.item.armor.ItemMekAsuitFeetArmour;
 import mekanism.common.item.armor.ItemMekAsuitHeadArmour;
 import mekanism.common.item.armor.ItemMekaSuitArmor;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.item.interfaces.IJetpackItem.JetpackMode;
 import mekanism.common.item.interfaces.IModeItem;
+import mekanism.common.item.interfaces.IRadialModeItem;
+import mekanism.common.item.interfaces.IRadialSelectorEnum;
 import mekanism.common.moduleUpgrade;
-import mekanism.common.network.PacketFreeRunnerData;
-import mekanism.common.network.PacketItemStack.ItemStackMessage;
 import mekanism.common.network.PacketJumpBoostData;
 import mekanism.common.network.PacketModeChange.ModeChangMessage;
 import mekanism.common.network.PacketPortableTeleporter.PortableTeleporterMessage;
 import mekanism.common.network.PacketPortableTeleporter.PortableTeleporterPacketType;
+import mekanism.common.network.PacketRadialModeChange.RadialModeChangeMessage;
 import mekanism.common.network.PacketStepAssistData;
 import mekanism.common.util.UpgradeHelper;
 import net.minecraft.client.Minecraft;
@@ -48,6 +49,7 @@ import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -82,9 +84,11 @@ public class ClientTickHandler {
     }
 
     public static boolean isJetpackInUse(EntityPlayer player, ItemStack jetpack) {
+        /*
         if (player != mc.player) {
             return Mekanism.playerState.isJetpackOn(player);
         }
+         */
         if (!player.isSpectator() && !jetpack.isEmpty()) {
             JetpackMode mode = ((IJetpackItem) jetpack.getItem()).getJetpackMode(jetpack);
             boolean guiOpen = mc.currentScreen != null;
@@ -105,23 +109,11 @@ public class ClientTickHandler {
 
     public static boolean isGasMaskOn(EntityPlayer player) {
         if (player != mc.player) {
-            return Mekanism.playerState.isGasmaskOn(player);
+            return Mekanism.playerState.isScubaMaskOn(player);
         }
         return CommonPlayerTickHandler.isScubaMaskOn(player, player.getItemStackFromSlot(EntityEquipmentSlot.CHEST));
     }
 
-    public static boolean isFreeRunnerOn(EntityPlayer player) {
-        if (player != mc.player) {
-            return Mekanism.freeRunnerOn.contains(player.getUniqueID());
-        }
-
-        ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-        if (!stack.isEmpty() && stack.getItem() instanceof ItemFreeRunners freeRunners) {
-            /*freeRunners.getEnergy(stack) > 0 && */
-            return freeRunners.getMode(stack) == ItemFreeRunners.FreeRunnerMode.NORMAL;
-        }
-        return false;
-    }
 
     public static boolean isJumpBooston(EntityPlayer player) {
         if (player != mc.player) {
@@ -154,10 +146,7 @@ public class ClientTickHandler {
 
     public static boolean hasFlamethrower(EntityPlayer player) {
         ItemStack currentItem = player.inventory.getCurrentItem();
-        if (!currentItem.isEmpty() && currentItem.getItem() instanceof ItemFlamethrower) {
-            return ((ItemFlamethrower) currentItem.getItem()).getGas(currentItem) != null;
-        }
-        return false;
+        return !currentItem.isEmpty() && currentItem.getItem() instanceof ItemFlamethrower flamethrower && flamethrower.getGas(currentItem) != null;
     }
 
     public static void portableTeleport(EntityPlayer player, EnumHand hand, Frequency freq) {
@@ -252,16 +241,11 @@ public class ClientTickHandler {
                 initHoliday = true;
             }
 
-            UUID playerUUID = mc.player.getUniqueID();
-            boolean freeRunnerOn = isFreeRunnerOn(mc.player);
-            if (Mekanism.freeRunnerOn.contains(playerUUID) != freeRunnerOn) {
-                if (freeRunnerOn && mc.currentScreen == null) {
-                    Mekanism.freeRunnerOn.add(playerUUID);
-                } else {
-                    Mekanism.freeRunnerOn.remove(playerUUID);
-                }
-                Mekanism.packetHandler.sendToServer(new PacketFreeRunnerData.FreeRunnerDataMessage(PacketFreeRunnerData.FreeRunnerPacket.UPDATE, playerUUID, freeRunnerOn));
+            if (mc.world.getWorldTime() - lastScrollTime > 20) {
+                scrollDelta = 0;
             }
+
+            UUID playerUUID = mc.player.getUniqueID();
 
             boolean jumpBoostonOn = isJumpBooston(mc.player);
             if (Mekanism.jumpBoostOn.contains(playerUUID) != jumpBoostonOn) {
@@ -289,8 +273,8 @@ public class ClientTickHandler {
             // kicks off sounds as necessary
             ItemStack jetpack = IJetpackItem.getActiveJetpack(mc.player);
             boolean jetpackInUse = isJetpackInUse(mc.player, jetpack);
-            Mekanism.playerState.setJetpackState(playerUUID, isJetpackInUse(mc.player, jetpack), true);
-            Mekanism.playerState.setGasmaskState(playerUUID, isGasMaskOn(mc.player), true);
+            Mekanism.playerState.setJetpackState(playerUUID, jetpackInUse, true);
+            Mekanism.playerState.setScubaMaskState(playerUUID, isGasMaskOn(mc.player), true);
             Mekanism.playerState.setFlamethrowerState(playerUUID, hasFlamethrower(mc.player), isFlamethrowerOn(mc.player), true);
 
             for (Iterator<Entry<EntityPlayer, TeleportData>> iter = portableTeleports.entrySet().iterator(); iter.hasNext(); ) {
@@ -324,7 +308,6 @@ public class ClientTickHandler {
                     JetpackMode primaryMode = ((IJetpackItem) primaryJetpack.getItem()).getJetpackMode(primaryJetpack);
                     JetpackMode mode = IJetpackItem.getPlayerJetpackMode(mc.player, primaryMode, () -> mc.player.movementInput.jump);
                     MekanismClient.updateKey(mc.player.movementInput.jump, KeySync.ASCEND);
-                    MekanismClient.updateKey(mc.player.movementInput.sneak, KeySync.DESCEND);
                     if (jetpackInUse && IJetpackItem.handleJetpackMotion(mc.player, mode, () -> mc.player.movementInput.jump)) {
                         mc.player.fallDistance = 0.0F;
                     }
@@ -362,10 +345,38 @@ public class ClientTickHandler {
                 }
             }
 
+            ItemStack stack = mc.player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
+            if (MekKeyHandler.getIsKeyPressed(MekanismKeyHandler.modeSwitchKey) && stack.getItem() instanceof IRadialModeItem) {
+                if (mc.currentScreen == null || mc.currentScreen instanceof GuiRadialSelector) {
+                    updateSelectorRenderer((IRadialModeItem<?>) stack.getItem());
+                }
+            } else if (mc.currentScreen instanceof GuiRadialSelector) {
+                mc.displayGuiScreen(null);
+            }
         }
     }
 
-    private void handleModeScroll(MouseEvent event, double delta) {
+    private <TYPE extends Enum<TYPE> & IRadialSelectorEnum<TYPE>> void updateSelectorRenderer(IRadialModeItem<TYPE> modeItem) {
+        Class<TYPE> modeClass = modeItem.getModeClass();
+        if (!(mc.currentScreen instanceof GuiRadialSelector) || ((GuiRadialSelector<?>) mc.currentScreen).getEnumClass() != modeClass) {
+            mc.displayGuiScreen(new GuiRadialSelector<>(modeClass, () -> {
+                if (mc.player != null) {
+                    ItemStack s = mc.player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
+                    if (s.getItem() instanceof IRadialModeItem) {
+                        return ((IRadialModeItem<TYPE>) s.getItem()).getMode(s);
+                    }
+                }
+                return modeItem.getDefaultMode();
+            }, type -> {
+                if (mc.player != null) {
+                    Mekanism.packetHandler.sendToServer(new RadialModeChangeMessage(EntityEquipmentSlot.MAINHAND, type.ordinal()));
+                }
+            }));
+        }
+    }
+
+
+    private void handleModeScroll(Event event, double delta) {
         if (delta != 0 && IModeItem.isModeItem(mc.player, EntityEquipmentSlot.MAINHAND)) {
             wheelStatus += Mouse.getEventDWheel();
             int shift = wheelStatus / 120;
@@ -385,61 +396,8 @@ public class ClientTickHandler {
     @SubscribeEvent
     public void onMouseEvent(MouseEvent event) {
         if (mc.player != null && mc.player.isSneaking()) {
-            ItemStack stack = mc.player.getHeldItemMainhand();
-            int delta = Mouse.getEventDWheel();
-            handleModeScroll(event, delta);
-            if (MekanismConfig.current().client.allowFlamethrowerModeScroll.val()) {
-                if (stack.getItem() instanceof ItemFlamethrower Flamethrower && delta != 0) {
-                    RenderTickHandler.modeSwitchTimer = 100;
-                    wheelStatus += Mouse.getEventDWheel();
-                    int scaledDelta = wheelStatus / 120;
-                    wheelStatus = wheelStatus % 120;
-                    int newVal = Flamethrower.getMode(stack).ordinal() + (scaledDelta % FlamethrowerMode.values().length);
-
-                    if (newVal > 0) {
-                        newVal = newVal % FlamethrowerMode.values().length;
-                    } else if (newVal < 0) {
-                        newVal = FlamethrowerMode.values().length + newVal;
-                    }
-                    Flamethrower.setMode(stack, FlamethrowerMode.values()[newVal]);
-                    Mekanism.packetHandler.sendToServer(new ItemStackMessage(EnumHand.MAIN_HAND, Collections.singletonList(newVal)));
-                    event.setCanceled(true);
-                }
-            }
-            if (MekanismConfig.current().client.allowAtomicDisassemblerModeScroll.val()) {
-                if (stack.getItem() instanceof ItemAtomicDisassembler AtomicDisassembler && delta != 0) {
-                    RenderTickHandler.modeSwitchTimer = 100;
-                    wheelStatus += Mouse.getEventDWheel();
-                    int scaledDelta = wheelStatus / 120;
-                    wheelStatus = wheelStatus % 120;
-                    int newVal = AtomicDisassembler.getMode(stack).ordinal() + (scaledDelta % Mode.values().length);
-
-                    if (newVal > 0) {
-                        newVal = newVal % Mode.values().length;
-                    } else if (newVal < 0) {
-                        newVal = Mode.values().length + newVal;
-                    }
-                    AtomicDisassembler.setMode(stack, Mode.values()[newVal]);
-                    Mekanism.packetHandler.sendToServer(new ItemStackMessage(EnumHand.MAIN_HAND, Collections.singletonList(newVal)));
-                    event.setCanceled(true);
-                }
-            }
-            if (MekanismConfig.current().client.allowMekToolModeScroll.val()) {
-                if (stack.getItem() instanceof ItemMekTool MekTool && delta != 0) {
-                    RenderTickHandler.modeSwitchTimer = 100;
-                    wheelStatus += Mouse.getEventDWheel();
-                    int scaledDelta = wheelStatus / 120;
-                    wheelStatus = wheelStatus % 120;
-                    int newVal = MekTool.getMode(stack).ordinal() + (scaledDelta % MekToolMode.values().length);
-                    if (newVal > 0) {
-                        newVal = newVal % MekToolMode.values().length;
-                    } else if (newVal < 0) {
-                        newVal = MekToolMode.values().length + newVal;
-                    }
-                    MekTool.setMode(stack, MekToolMode.values()[newVal]);
-                    Mekanism.packetHandler.sendToServer(new ItemStackMessage(EnumHand.MAIN_HAND, Collections.singletonList(newVal)));
-                    event.setCanceled(true);
-                }
+            if (MekanismConfig.current().client.allowModeScroll.val()) {
+                handleModeScroll(event, Mouse.getEventDWheel());
             }
         }
     }

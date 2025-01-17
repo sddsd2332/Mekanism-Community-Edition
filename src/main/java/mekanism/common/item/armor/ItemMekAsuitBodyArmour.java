@@ -274,7 +274,7 @@ public class ItemMekAsuitBodyArmour extends ItemMekaSuitArmor implements IGasIte
         return MekanismConfig.current().meka.mekaSuitJetpackMaxStorage.val();
     }
 
-    @Override
+
     public int getStored(ItemStack itemstack) {
         return getGas(itemstack) != null ? getGas(itemstack).amount : 0;
     }

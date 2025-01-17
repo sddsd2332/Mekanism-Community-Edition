@@ -20,9 +20,11 @@ import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.MekanismHooks;
 import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.item.interfaces.IJetpackItem;
+import mekanism.common.item.interfaces.IModeItem;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.TextComponentGroup;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.util.ITooltipFlag;
@@ -38,12 +40,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -52,7 +56,7 @@ import java.util.List;
         @Optional.Interface(iface = "baubles.api.IBauble", modid = MekanismHooks.Baubles_MOD_ID),
         @Optional.Interface(iface = "baubles.api.render.IRenderBauble", modid = MekanismHooks.Baubles_MOD_ID)
 })
-public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, IJetpackItem, IItemHUDProvider, IBauble, IRenderBauble {
+public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, IJetpackItem, IItemHUDProvider, IBauble, IRenderBauble, IModeItem {
 
     public int TRANSFER_RATE = 16;
 
@@ -146,7 +150,7 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
         return null;
     }
 
-    @Override
+
     public int getStored(ItemStack itemstack) {
         return getGas(itemstack) != null ? getGas(itemstack).amount : 0;
     }
@@ -163,7 +167,7 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
 
     @Override
     public boolean canUseJetpack(ItemStack stack) {
-        return getStored(stack) > 0;
+        return  getGas(stack) != null && getStored(stack) > 0 ;
     }
 
     @Override
@@ -248,9 +252,24 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
             }
 
         }
-
     }
 
+
+    public void setMode(ItemStack stack, JetpackMode mode) {
+        ItemDataUtils.setInt(stack, NBTConstants.MODE, mode.ordinal());
+    }
+
+    @Override
+    public void changeMode(@NotNull EntityPlayer player, @NotNull ItemStack stack, int shift, boolean displayChangeMessage) {
+        JetpackMode mode = getJetpackMode(stack);
+        JetpackMode newMode = mode.adjust(shift);
+        if (mode != newMode) {
+            setMode(stack, newMode);
+            if (displayChangeMessage) {
+                player.sendMessage(new TextComponentGroup(TextFormatting.GRAY).string(Mekanism.LOG_TAG, TextFormatting.DARK_BLUE).string(" ").translation("jetpack.mekanism.mode_change").string(newMode.getName()));
+            }
+        }
+    }
 
     @Override
     @Optional.Method(modid = MekanismHooks.Baubles_MOD_ID)
@@ -271,10 +290,21 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
             MekanismRenderer.bindTexture(MekanismUtils.getResource(MekanismUtils.ResourceType.RENDER, "Jetpack.png"));
             if (this == MekanismItems.Jetpack) {
                 jetpack.render(0.0625F);
-            }else if (this == MekanismItems.ArmoredJetpack){
+            } else if (this == MekanismItems.ArmoredJetpack) {
                 armoredJetpack.render(0.0625F);
             }
             GlStateManager.popMatrix();
         }
+    }
+
+
+    @Override
+    public boolean supportsSlotType(ItemStack stack, @Nonnull EntityEquipmentSlot slotType) {
+        return slotType == armorType;
+    }
+
+    @Override
+    public  boolean willAutoSync(ItemStack itemstack, EntityLivingBase player){
+        return true;
     }
 }

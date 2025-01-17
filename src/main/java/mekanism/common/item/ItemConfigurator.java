@@ -344,6 +344,12 @@ public class ItemConfigurator extends ItemEnergized implements IMekWrench, ITool
         }
     }
 
+    @Nonnull
+    @Override
+    public ITextComponent getScrollTextComponent(@Nonnull ItemStack stack) {
+        return getMode(stack).getShortText();
+    }
+
     @ParametersAreNonnullByDefault
     @MethodsReturnNonnullByDefault
     @FieldsAreNonnullByDefault
@@ -371,9 +377,9 @@ public class ItemConfigurator extends ItemEnergized implements IMekWrench, ITool
             color = c;
             configurating = b;
             if (transmissionType != null) {
-                this.icon = MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, transmissionType.getTransmission() + ".png");
+                this.icon = MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, transmissionType.getTransmission().toLowerCase(Locale.ROOT) + ".png");
             } else {
-                this.icon = icon;
+                this.icon = Objects.requireNonNull(icon, "Icon should only be null if there is a transmission type present.");
             }
         }
 
@@ -388,7 +394,7 @@ public class ItemConfigurator extends ItemEnergized implements IMekWrench, ITool
 
         @Override
         public ITextComponent getShortText() {
-            TextComponentGroup translation = new TextComponentGroup().translation("tooltip.configurator." + name);
+            TextComponentGroup translation = new TextComponentGroup(color.textFormatting).translation("tooltip.configurator." + name);
             if (this.transmissionType != null) {
                 translation.string(" (").translation(transmissionType.getTranslationKey()).string(")");
             }

@@ -3,12 +3,10 @@ package mekanism.common.item.interfaces;
 import baubles.api.BaublesApi;
 import mekanism.api.EnumColor;
 import mekanism.api.IIncrementalEnum;
-import mekanism.api.NBTConstants;
 import mekanism.api.math.MathUtils;
 import mekanism.common.CommonPlayerTickHandler;
 import mekanism.common.Mekanism;
 import mekanism.common.integration.MekanismHooks;
-import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.entity.EntityLivingBase;
@@ -16,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -48,9 +47,6 @@ public interface IJetpackItem {
             this.hudIcon = hudIcon;
         }
 
-        public JetpackMode increment() {
-            return ordinal() < values().length - 1 ? values()[ordinal() + 1] : values()[0];
-        }
 
         public String getName() {
             return color + LangUtils.localize(unlocalized);
@@ -76,12 +72,18 @@ public interface IJetpackItem {
      * If Curios is loaded, the curio slots will be checked as well.
      *
      * @param entity the entity on which to look for the jetpack
-     *
      * @return the jetpack stack if present, otherwise an empty stack
      */
     @NotNull
     static ItemStack getActiveJetpack(EntityLivingBase entity) {
-        return getJetpack(entity, stack -> stack.getItem() instanceof IJetpackItem jetpackItem && jetpackItem.canUseJetpack(stack));
+        if (entity.isRiding()) {
+            return ItemStack.EMPTY;
+        }
+        ItemStack jetpack = getJetpack(entity, stack -> stack.getItem() instanceof IJetpackItem jetpackItem && jetpackItem.canUseJetpack(stack));
+        if (entity instanceof EntityPlayer player && player.getCooldownTracker().hasCooldown(jetpack.getItem())) {
+            return ItemStack.EMPTY;
+        }
+        return jetpack;
     }
 
 
@@ -91,7 +93,6 @@ public interface IJetpackItem {
      * If Curios is loaded, the curio slots will be checked as well.
      *
      * @param entity the entity on which to look for the jetpack
-     *
      * @return the jetpack stack if present, otherwise an empty stack
      */
     @NotNull
@@ -100,23 +101,23 @@ public interface IJetpackItem {
     }
 
 
-     static ItemStack getJetpack(EntityLivingBase entity, Predicate<ItemStack> matcher) {
+    static ItemStack getJetpack(EntityLivingBase entity, Predicate<ItemStack> matcher) {
         ItemStack chest = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
         if (matcher.test(chest)) {
             return chest;
         } else if (Mekanism.hooks.Baubles) {
-            return getBaublesJetpack(entity);
+            return getBaublesJetpack(entity,matcher);
         }
         return ItemStack.EMPTY;
     }
 
     @Optional.Method(modid = MekanismHooks.Baubles_MOD_ID)
-    static ItemStack getBaublesJetpack(EntityLivingBase base) {
+    static ItemStack getBaublesJetpack(EntityLivingBase base, Predicate<ItemStack> matcher) {
         if (base instanceof EntityPlayer player) {
             IItemHandler baubles = BaublesApi.getBaublesHandler(player);
             for (int i = 0; i < baubles.getSlots(); i++) {
                 ItemStack stack = baubles.getStackInSlot(i);
-                if (stack.getItem() instanceof IJetpackItem) {
+                if (matcher.test(stack)) {
                     return stack;
                 }
             }
@@ -128,8 +129,21 @@ public interface IJetpackItem {
      * @return If fall distance should get reset or not
      */
     static boolean handleJetpackMotion(EntityPlayer player, JetpackMode mode, BooleanSupplier ascendingSupplier) {
+        Vec3d motion = new Vec3d(player.motionX, player.motionY, player.motionZ);
         if (mode == JetpackMode.NORMAL) {
-            player.motionY = Math.min(player.motionY + 0.15D, 0.5D);
+            if (player.isElytraFlying()) {
+                Vec3d lookAngle = player.getLookVec();
+                Vec3d normalizedLook = lookAngle.normalize();
+                double d1x = normalizedLook.x * 0.15;
+                double d1y = normalizedLook.y * 0.15;
+                double d1z = normalizedLook.z * 0.15;
+                player.motionX += lookAngle.x * d1x + (lookAngle.x * 1.5 - motion.x) * 0.5;
+                player.motionY += lookAngle.y * d1y + (lookAngle.y * 1.5 - motion.y) * 0.5;
+                player.motionZ += lookAngle.z * d1z + (lookAngle.z * 1.5 - motion.z) * 0.5;
+                return false;
+            } else {
+                player.motionY = Math.min(player.motionY + 0.15D, 0.5D);
+            }
         } else if (mode == JetpackMode.HOVER) {
             boolean ascending = ascendingSupplier.getAsBoolean();
             boolean descending = player.isSneaking();
@@ -166,16 +180,6 @@ public interface IJetpackItem {
         }
         return JetpackMode.DISABLED;
     }
-
-
-
-
-
-    default void setMode(ItemStack stack, JetpackMode mode) {
-        ItemDataUtils.setInt(stack, NBTConstants.MODE, mode.ordinal());
-    }
-
-    int getStored(ItemStack itemstack);
 
 
 }

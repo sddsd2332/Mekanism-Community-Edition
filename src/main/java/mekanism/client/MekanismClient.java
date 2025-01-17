@@ -65,9 +65,8 @@ public class MekanismClient extends Mekanism {
         MekanismAPI.getBoxModIgnore().clear();
         MinecraftForge.EVENT_BUS.post(new BoxBlacklistEvent());
 
-        Mekanism.playerState.clear();
+        Mekanism.playerState.clear(true);
         Mekanism.activeVibrators.clear();
-        Mekanism.freeRunnerOn.clear();
         Mekanism.jumpBoostOn.clear();
         Mekanism.stepAssistOn.clear();
 

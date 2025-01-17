@@ -1,17 +1,21 @@
 package mekanism.common.item;
 
-import io.netty.buffer.ByteBuf;
 import mekanism.api.EnumColor;
+import mekanism.api.IIncrementalEnum;
+import mekanism.api.NBTConstants;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
+import mekanism.api.math.MathUtils;
 import mekanism.client.render.MekanismRenderer;
+import mekanism.common.Mekanism;
 import mekanism.common.MekanismFluids;
-import mekanism.common.base.IItemNetwork;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.item.interfaces.IItemHUDProvider;
+import mekanism.common.item.interfaces.IModeItem;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
+import mekanism.common.util.TextComponentGroup;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,16 +24,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ItemFlamethrower extends ItemMekanism implements IGasItem, IItemNetwork, IItemHUDProvider {
+public class ItemFlamethrower extends ItemMekanism implements IGasItem, IModeItem, IItemHUDProvider {
 
     public int TRANSFER_RATE = 16;
 
@@ -156,25 +162,15 @@ public class ItemFlamethrower extends ItemMekanism implements IGasItem, IItemNet
         list.add(filled);
     }
 
-    public void incrementMode(ItemStack stack) {
-        setMode(stack, getMode(stack).increment());
-    }
 
     public FlamethrowerMode getMode(ItemStack stack) {
-        return FlamethrowerMode.values()[ItemDataUtils.getInt(stack, "mode")];
+        return FlamethrowerMode.byIndexStatic(ItemDataUtils.getInt(stack, NBTConstants.MODE));
     }
 
     public void setMode(ItemStack stack, FlamethrowerMode mode) {
-        ItemDataUtils.setInt(stack, "mode", mode.ordinal());
+        ItemDataUtils.setInt(stack, NBTConstants.MODE, mode.ordinal());
     }
 
-    @Override
-    public void handlePacketData(ItemStack stack, ByteBuf dataStream) {
-        if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
-            int state = dataStream.readInt();
-            setMode(stack, FlamethrowerMode.values()[state]);
-        }
-    }
 
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
@@ -186,11 +182,30 @@ public class ItemFlamethrower extends ItemMekanism implements IGasItem, IItemNet
         }
     }
 
-    public enum FlamethrowerMode {
+    @Override
+    public void changeMode(@NotNull EntityPlayer player, @NotNull ItemStack stack, int shift, boolean displayChangeMessage) {
+        FlamethrowerMode mode = getMode(stack);
+        FlamethrowerMode newMode = mode.adjust(shift);
+        if (mode != newMode) {
+            setMode(stack, newMode);
+            if (displayChangeMessage) {
+                player.sendMessage(new TextComponentGroup(TextFormatting.GRAY).string(Mekanism.LOG_TAG, TextFormatting.DARK_BLUE).string(" ").translation("mekanism.tooltip.flamethrower.modeBump", getMode(stack).getTextComponent()));
+            }
+        }
+    }
+
+    @Nonnull
+    @Override
+    public ITextComponent getScrollTextComponent(@Nonnull ItemStack stack) {
+        return new TextComponentGroup(TextFormatting.GRAY).translation("mekanism.tooltip.flamethrower.modeBump", getMode(stack).getTextComponent());
+    }
+
+    public enum FlamethrowerMode implements IIncrementalEnum<FlamethrowerMode> {
         COMBAT("tooltip.flamethrower.combat", EnumColor.YELLOW),
         HEAT("tooltip.flamethrower.heat", EnumColor.ORANGE),
         INFERNO("tooltip.flamethrower.inferno", EnumColor.DARK_RED);
 
+        private static final FlamethrowerMode[] MODES = values();
         private String unlocalized;
         private EnumColor color;
 
@@ -199,9 +214,6 @@ public class ItemFlamethrower extends ItemMekanism implements IGasItem, IItemNet
             color = c;
         }
 
-        public FlamethrowerMode increment() {
-            return ordinal() < values().length - 1 ? values()[ordinal() + 1] : values()[0];
-        }
 
         public String getName() {
             return color + LangUtils.localize(unlocalized);
@@ -211,6 +223,14 @@ public class ItemFlamethrower extends ItemMekanism implements IGasItem, IItemNet
             TextComponentTranslation component = new TextComponentTranslation(unlocalized);
             component.getStyle().setColor(color.textFormatting);
             return component;
+        }
+
+        @Override
+        public FlamethrowerMode byIndex(int index) {
+            return byIndexStatic(index);
+        }
+        public static FlamethrowerMode byIndexStatic(int index) {
+            return MathUtils.getByIndexMod(MODES, index);
         }
     }
 }

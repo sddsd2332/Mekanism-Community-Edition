@@ -5,7 +5,9 @@ import mekanism.api.Coord4D;
 import mekanism.api.Range4D;
 import mekanism.common.base.ITileNetwork;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.integration.MekanismHooks;
 import mekanism.common.network.*;
+import mekanism.common.network.PacketBaublesModeChange.BaublesModeChangMessage;
 import mekanism.common.network.PacketBoxBlacklist.BoxBlacklistMessage;
 import mekanism.common.network.PacketConfigSync.ConfigSyncMessage;
 import mekanism.common.network.PacketConfigurationUpdate.ConfigurationUpdateMessage;
@@ -15,28 +17,30 @@ import mekanism.common.network.PacketDigitalMinerGui.DigitalMinerGuiMessage;
 import mekanism.common.network.PacketDropperUse.DropperUseMessage;
 import mekanism.common.network.PacketEditFilter.EditFilterMessage;
 import mekanism.common.network.PacketEntityMove.EntityMoveMessage;
-import mekanism.common.network.PacketFlamethrowerData.FlamethrowerDataMessage;
-import mekanism.common.network.PacketFreeRunnerData.FreeRunnerDataMessage;
-import mekanism.common.network.PacketItemStack.ItemStackMessage;
-import mekanism.common.network.PacketJetpackData.JetpackDataMessage;
+import mekanism.common.network.PacketFlyingSync.FlyingSyncMessage;
+import mekanism.common.network.PacketGearStateUpdate.GearStateUpdateMessage;
 import mekanism.common.network.PacketJumpBoostData.JumpBoostDataMessage;
 import mekanism.common.network.PacketKey.KeyMessage;
 import mekanism.common.network.PacketLogisticalSorterGui.LogisticalSorterGuiMessage;
 import mekanism.common.network.PacketModeChange.ModeChangMessage;
 import mekanism.common.network.PacketNewFilter.NewFilterMessage;
 import mekanism.common.network.PacketOredictionificatorGui.OredictionificatorGuiMessage;
+import mekanism.common.network.PacketPlayerData.PlayerDataMessage;
 import mekanism.common.network.PacketPortableTeleporter.PortableTeleporterMessage;
 import mekanism.common.network.PacketPortalFX.PortalFXMessage;
+import mekanism.common.network.PacketRadialModeChange.RadialModeChangeMessage;
 import mekanism.common.network.PacketRedstoneControl.RedstoneControlMessage;
 import mekanism.common.network.PacketRemoveUpgrade.RemoveUpgradeMessage;
+import mekanism.common.network.PacketResetPlayerClient.ResetPlayerClientMessage;
 import mekanism.common.network.PacketRobit.RobitMessage;
-import mekanism.common.network.PacketScubaTankData.ScubaTankDataMessage;
 import mekanism.common.network.PacketSecurityMode.SecurityModeMessage;
 import mekanism.common.network.PacketSecurityUpdate.SecurityUpdateMessage;
 import mekanism.common.network.PacketSimpleGui.SimpleGuiMessage;
 import mekanism.common.network.PacketStepAssistData.StepAssistDataMessage;
+import mekanism.common.network.PacketStepHeightSync.StepHeightSyncMessage;
 import mekanism.common.network.PacketTileEntity.TileEntityMessage;
 import mekanism.common.network.PacketTransmitterUpdate.TransmitterUpdateMessage;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -49,6 +53,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
@@ -162,7 +167,7 @@ public class PacketHandler {
         netHandler.registerMessage(PacketTransmitterUpdate.class, TransmitterUpdateMessage.class, 1, Side.CLIENT);
         //FREE ID 2
         //FREE ID 3
-        netHandler.registerMessage(PacketItemStack.class, ItemStackMessage.class, 4, Side.SERVER);
+        //FREE ID 4
         netHandler.registerMessage(PacketTileEntity.class, TileEntityMessage.class, 5, Side.CLIENT);
         netHandler.registerMessage(PacketTileEntity.class, TileEntityMessage.class, 5, Side.SERVER);
         netHandler.registerMessage(PacketPortalFX.class, PortalFXMessage.class, 6, Side.CLIENT);
@@ -184,27 +189,39 @@ public class PacketHandler {
         netHandler.registerMessage(PacketSimpleGui.class, SimpleGuiMessage.class, 18, Side.SERVER);
         netHandler.registerMessage(PacketDigitalMinerGui.class, DigitalMinerGuiMessage.class, 19, Side.CLIENT);
         netHandler.registerMessage(PacketDigitalMinerGui.class, DigitalMinerGuiMessage.class, 19, Side.SERVER);
-        netHandler.registerMessage(PacketJetpackData.class, JetpackDataMessage.class, 20, Side.CLIENT);
-        netHandler.registerMessage(PacketJetpackData.class, JetpackDataMessage.class, 20, Side.SERVER);
+        //FREE ID 20
         netHandler.registerMessage(PacketKey.class, KeyMessage.class, 21, Side.SERVER);
-        netHandler.registerMessage(PacketScubaTankData.class, ScubaTankDataMessage.class, 22, Side.CLIENT);
-        netHandler.registerMessage(PacketScubaTankData.class, ScubaTankDataMessage.class, 22, Side.SERVER);
+        //FREE ID 22
         netHandler.registerMessage(PacketConfigSync.class, ConfigSyncMessage.class, 23, Side.CLIENT);
         netHandler.registerMessage(PacketBoxBlacklist.class, BoxBlacklistMessage.class, 24, Side.CLIENT);
         //FREE ID 25
         netHandler.registerMessage(PacketContainerEditMode.class, ContainerEditModeMessage.class, 26, Side.SERVER);
-        netHandler.registerMessage(PacketFlamethrowerData.class, FlamethrowerDataMessage.class, 27, Side.CLIENT);
-        netHandler.registerMessage(PacketFlamethrowerData.class, FlamethrowerDataMessage.class, 27, Side.SERVER);
+        //FREE ID 27
         netHandler.registerMessage(PacketDropperUse.class, DropperUseMessage.class, 28, Side.SERVER);
         netHandler.registerMessage(PacketEntityMove.class, EntityMoveMessage.class, 29, Side.CLIENT);
         netHandler.registerMessage(PacketSecurityUpdate.class, SecurityUpdateMessage.class, 30, Side.CLIENT);
-        netHandler.registerMessage(PacketFreeRunnerData.class, FreeRunnerDataMessage.class, 31, Side.CLIENT);
-        netHandler.registerMessage(PacketFreeRunnerData.class, FreeRunnerDataMessage.class, 31, Side.SERVER);
         netHandler.registerMessage(PacketJumpBoostData.class, JumpBoostDataMessage.class, 32, Side.CLIENT);
         netHandler.registerMessage(PacketJumpBoostData.class, JumpBoostDataMessage.class, 32, Side.SERVER);
         netHandler.registerMessage(PacketStepAssistData.class, StepAssistDataMessage.class, 33, Side.CLIENT);
         netHandler.registerMessage(PacketStepAssistData.class, StepAssistDataMessage.class, 33, Side.SERVER);
+
         netHandler.registerMessage(PacketModeChange.class, ModeChangMessage.class, 34, Side.SERVER);
+
+        netHandler.registerMessage(PacketFlyingSync.class, FlyingSyncMessage.class, 35, Side.CLIENT);
+        netHandler.registerMessage(PacketGearStateUpdate.class, GearStateUpdateMessage.class, 36, Side.SERVER);
+        netHandler.registerMessage(PacketPlayerData.class, PlayerDataMessage.class, 37, Side.CLIENT);
+        netHandler.registerMessage(PacketResetPlayerClient.class, ResetPlayerClientMessage.class, 38, Side.CLIENT);
+        netHandler.registerMessage(PacketStepHeightSync.class, StepHeightSyncMessage.class, 39, Side.CLIENT);
+        netHandler.registerMessage(PacketRadialModeChange.class, RadialModeChangeMessage.class, 40, Side.SERVER);
+        if (Mekanism.hooks.Baubles) {
+            registerBaublesMessage();
+        }
+
+    }
+
+    @Optional.Method(modid = MekanismHooks.Baubles_MOD_ID)
+    private void registerBaublesMessage() {
+        netHandler.registerMessage(PacketBaublesModeChange.class, BaublesModeChangMessage.class, 41, Side.SERVER);
     }
 
     /**
@@ -293,6 +310,10 @@ public class PacketHandler {
 
     public synchronized void sendToAllTracking(IMessage message, TargetPoint point) {
         netHandler.sendToAllTracking(message, point);
+    }
+
+    public synchronized void sendToAllTracking(IMessage message, Entity entity) {
+        netHandler.sendToAllTracking(message, entity);
     }
 
     //TODO: change Network stuff over to using this

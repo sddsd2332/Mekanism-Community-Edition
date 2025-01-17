@@ -11,6 +11,7 @@ import mekanism.common.item.ItemScubaTank;
 import mekanism.common.item.armor.*;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.item.interfaces.IJetpackItem.JetpackMode;
+import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.TextComponentGroup;
 import mekanism.common.util.UpgradeHelper;
 import net.minecraft.block.material.Material;
@@ -109,11 +110,14 @@ public class CommonPlayerTickHandler {
         if (event.phase == Phase.END && event.side == Side.SERVER) {
             tickEnd(event.player);
         }
+        /*
         if (event.phase == Phase.START) {
             if (!Mekanism.hooks.DraconicEvolution){
                 isMekAsuitArmorFlying(event.player);
             }
         }
+
+         */
     }
 
     public void tickEnd(EntityPlayer player) {
@@ -162,10 +166,11 @@ public class CommonPlayerTickHandler {
                 }
             }
         }
-
+        Mekanism.playerState.updateFlightInfo(player);
     }
 
 
+    /*
     public void isMekAsuitArmorFlying(EntityPlayer player) {
         ItemStack chest = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
         PlayerCapabilities capabilities = player.capabilities;
@@ -188,6 +193,8 @@ public class CommonPlayerTickHandler {
             }
         }
     }
+
+     */
 
 
     @SubscribeEvent
@@ -460,5 +467,13 @@ public class CommonPlayerTickHandler {
 
     @Desugar
     private record FallEnergyInfo(ItemStack stack, float damageRatio, float energyCost) {
+    }
+
+    public static boolean isGravitationalModulationReady(EntityPlayer player) {
+        ItemStack chest = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+        if (!chest.isEmpty() && chest.getItem() instanceof ItemMekAsuitBodyArmour armour && UpgradeHelper.isUpgradeInstalled(chest, moduleUpgrade.GRAVITATIONAL_MODULATING_UNIT) && armour.getJetpackMode(chest) == JetpackMode.DISABLED) {
+            return MekanismUtils.isPlayingMode(player);
+        }
+        return false;
     }
 }

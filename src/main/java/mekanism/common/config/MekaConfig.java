@@ -47,7 +47,7 @@ public class MekaConfig extends BaseConfig {
     public IntOption mekaSuitShieldRestoresEnergy = new IntOption(this, "meka", "mekaSuitShieldRestoresEnergy", 500, "The amount of energy required whenever the shield recovers a little", 0, Integer.MAX_VALUE);
     //public DoubleOption mekaSuitElytraEnergyUsage = new DoubleOption(this,"meka","elytraEnergyUsage",32000,"Energy usage (Joules) per second of the MekaSuit when flying with the Elytra Unit.");
     //public DoubleOption mekaSuitEnergyUsageSprintBoost = new DoubleOption(this,"meka","energyUsageSprintBoost",100,"Energy usage (Joules) of MekaSuit when adding 0.1 to sprint motion.");
-    //public DoubleOption mekaSuitEnergyUsageGravitationalModulation = new DoubleOption(this,"meka","energyUsageGravitationalModulation",1000,"Energy usage (Joules) of MekaSuit per tick when flying via Gravitational Modulation.");
+    public DoubleOption mekaSuitEnergyUsageGravitationalModulation = new DoubleOption(this,"meka","energyUsageGravitationalModulation",1000,"Energy usage (Joules) of MekaSuit per tick when flying via Gravitational Modulation.");
     //public DoubleOption mekaSuitInventoryChargeRate = new DoubleOption(this,"meka","inventoryChargeRate",1000,"Charge rate of inventory items (Joules) per tick.");
     //  public DoubleOption mekaSuitEnergyUsageItemAttraction = new DoubleOption(this,"meka","energyUsageItemAttraction",250,"Energy usage (Joules) of MekaSuit per tick of attracting a single item.");
     public DoubleOption mekaSuitHelmetShielding = new DoubleOption(this, "meka", "mekaSuitHelmetShielding", 25);

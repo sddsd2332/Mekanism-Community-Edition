@@ -1,19 +1,24 @@
 package mekanism.common.item;
 
 import com.google.common.collect.Multimap;
-import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mekanism.api.Coord4D;
 import mekanism.api.EnumColor;
+import mekanism.api.IDisableableEnum;
+import mekanism.api.NBTConstants;
+import mekanism.api.math.MathUtils;
 import mekanism.common.Mekanism;
 import mekanism.common.OreDictCache;
-import mekanism.common.base.IItemNetwork;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.item.ItemMekTool.MekToolMode;
 import mekanism.common.item.interfaces.IItemHUDProvider;
+import mekanism.common.item.interfaces.IRadialModeItem;
+import mekanism.common.item.interfaces.IRadialSelectorEnum;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.TextComponentGroup;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.BlockDirt.DirtType;
@@ -31,21 +36,22 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.WorldEvents;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.*;
-import java.util.function.Supplier;
+import java.util.function.BooleanSupplier;
 
-public class ItemMekTool extends ItemEnergized implements IItemNetwork, IItemHUDProvider {
-    private  Random rand = new Random();
+public class ItemMekTool extends ItemEnergized implements IItemHUDProvider, IRadialModeItem<MekToolMode> {
+    private Random rand = new Random();
 
     public ItemMekTool() {
         super(MekanismConfig.current().general.toolBatteryCapacity.val());
@@ -66,15 +72,14 @@ public class ItemMekTool extends ItemEnergized implements IItemNetwork, IItemHUD
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemstack, World world, List<String> list, ITooltipFlag flag) {
-        super.addInformation(itemstack, world, list, flag);
-        MekToolMode mode = getMode(itemstack);
-        list.add(LangUtils.localize("tooltip.mode") + ": " + EnumColor.INDIGO + mode.getModeName());
-        list.add(LangUtils.localize("tooltip.efficiency") + ": " + EnumColor.INDIGO + mode.getEfficiency());
-        list.addAll(MekanismUtils.splitTooltip(LangUtils.localize("tooltip.MekTool1"), itemstack));
-        list.addAll(MekanismUtils.splitTooltip(LangUtils.localize("tooltip.MekTool2"), itemstack));
-        list.addAll(MekanismUtils.splitTooltip(LangUtils.localize("tooltip.MekTool3"), itemstack));
-        list.addAll(MekanismUtils.splitTooltip(EnumColor.RED + LangUtils.localize("tooltip.MekTool4"), itemstack));
+    public void addInformation(ItemStack stack, World world, List<String> list, ITooltipFlag flag) {
+        super.addInformation(stack, world, list, flag);
+        list.add(LangUtils.localize("tooltip.mode") + ": " + EnumColor.INDIGO + getMode(stack).getModeName());
+        list.add(LangUtils.localize("tooltip.efficiency") + ": " + EnumColor.INDIGO + getMode(stack).getEfficiency());
+        list.addAll(MekanismUtils.splitTooltip(LangUtils.localize("tooltip.MekTool1"), stack));
+        list.addAll(MekanismUtils.splitTooltip(LangUtils.localize("tooltip.MekTool2"), stack));
+        list.addAll(MekanismUtils.splitTooltip(LangUtils.localize("tooltip.MekTool3"), stack));
+        list.addAll(MekanismUtils.splitTooltip(EnumColor.RED + LangUtils.localize("tooltip.MekTool4"), stack));
     }
 
     @Override
@@ -92,10 +97,10 @@ public class ItemMekTool extends ItemEnergized implements IItemNetwork, IItemHUD
         if (attacker instanceof EntityPlayer player) {
             if (energy > getMaxEnergy(itemstack) * 0.9) {
                 if (target.getHealth() / target.getMaxHealth() > 0.1) {
-                    if (rand.nextDouble() <= 0.1D){
+                    if (rand.nextDouble() <= 0.1D) {
                         target.setHealth(0.0F);
                         target.getDataManager().set(EntityLivingBase.HEALTH, 0.0F);
-                    }else {
+                    } else {
                         target.setHealth(0.1F);
                         target.getDataManager().set(EntityLivingBase.HEALTH, 0.1F);
                     }
@@ -200,21 +205,6 @@ public class ItemMekTool extends ItemEnergized implements IItemNetwork, IItemHUD
         return true;
     }
 
-    @Nonnull
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer entityplayer, @Nonnull EnumHand hand) {
-        ItemStack itemstack = entityplayer.getHeldItem(hand);
-        if (entityplayer.isSneaking()) {
-            if (!world.isRemote) {
-                toggleMode(itemstack);
-                MekToolMode mode = getMode(itemstack);
-                entityplayer.sendMessage(new TextComponentString(EnumColor.DARK_BLUE + Mekanism.LOG_TAG + " " + EnumColor.GREY + LangUtils.localize("tooltip.modeToggle")
-                        + " " + EnumColor.INDIGO + mode.getModeName() + EnumColor.AQUA + " (" + mode.getEfficiency() + ")"));
-            }
-            return new ActionResult<>(EnumActionResult.SUCCESS, itemstack);
-        }
-        return new ActionResult<>(EnumActionResult.PASS, itemstack);
-    }
 
     @Nonnull
     @Override
@@ -314,17 +304,26 @@ public class ItemMekTool extends ItemEnergized implements IItemNetwork, IItemHUD
         return hardness == 0 ? destroyEnergy / 2 : destroyEnergy;
     }
 
-    public MekToolMode getMode(ItemStack itemStack) {
-        return MekToolMode.getFromInt(ItemDataUtils.getInt(itemStack, "mode"));
+    @Override
+    public Class<MekToolMode> getModeClass() {
+        return MekToolMode.class;
     }
 
-    public void toggleMode(ItemStack itemStack) {
-        ItemDataUtils.setInt(itemStack, "mode", MekToolMode.getNextEnabledAsInt(getMode(itemStack)));
+    @Override
+    public MekToolMode getModeByIndex(int ordinal) {
+        return MekToolMode.byIndexStatic(ordinal);
     }
 
-    public void setMode(ItemStack itemStack, MekToolMode mode) {
-        ItemDataUtils.setInt(itemStack, "mode", mode.ordinal());
+    @Override
+    public MekToolMode getMode(ItemStack stack) {
+        return MekToolMode.byIndexStatic(ItemDataUtils.getInt(stack, NBTConstants.MODE));
     }
+
+    @Override
+    public void setMode(ItemStack stack, EntityPlayer player, MekToolMode mode) {
+        ItemDataUtils.setInt(stack, NBTConstants.MODE, mode.ordinal());
+    }
+
 
     @Override
     public boolean canSend(ItemStack itemStack) {
@@ -342,13 +341,6 @@ public class ItemMekTool extends ItemEnergized implements IItemNetwork, IItemHUD
         return multiMap;
     }
 
-    @Override
-    public void handlePacketData(ItemStack stack, ByteBuf dataStream) {
-        if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
-            int state = dataStream.readInt();
-            setMode(stack, MekToolMode.values()[state]);
-        }
-    }
 
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
@@ -356,56 +348,65 @@ public class ItemMekTool extends ItemEnergized implements IItemNetwork, IItemHUD
         list.add(LangUtils.localize("tooltip.efficiency") + ": " + EnumColor.INDIGO + getMode(stack).getEfficiency());
     }
 
-    public enum MekToolMode {
-        NORMAL("normal", 20, 3, () -> true),
-        SLOW("slow", 8, 1, () -> MekanismConfig.current().general.disassemblerSlowMode.val()),
-        FAST("fast", 128, 5, () -> MekanismConfig.current().general.disassemblerFastMode.val()),
-        VERY_FAST("very_fast", 256, 5, () -> MekanismConfig.current().general.toolVeryFastMode.val()),
-        VEIN("vein", 20, 3, () -> MekanismConfig.current().general.disassemblerVeinMining.val()),
-        EXTENDED_VEIN("extended_vein", 20, 3, () -> MekanismConfig.current().general.disassemblerExtendedMining.val()),
-        OFF("off", 0, 0, () -> true);
+    @Override
+    public void changeMode(@NotNull EntityPlayer player, @NotNull ItemStack stack, int shift, boolean displayChangeMessage) {
+        MekToolMode mode = getMode(stack);
+        MekToolMode newMode = mode.adjust(shift);
+        if (mode != newMode) {
+            setMode(stack, player, newMode);
+            if (displayChangeMessage) {
+                player.sendMessage(new TextComponentString(EnumColor.DARK_BLUE + Mekanism.LOG_TAG + " " + EnumColor.GREY + LangUtils.localize("tooltip.modeToggle") + " " + EnumColor.INDIGO + newMode.getModeName() + EnumColor.AQUA + " (" + newMode.getEfficiency() + ")"));
+            }
+        }
+    }
 
-        private final Supplier<Boolean> checkEnabled;
+    @Nonnull
+    @Override
+    public ITextComponent getScrollTextComponent(@Nonnull ItemStack stack) {
+        return getMode(stack).getShortText();
+    }
+
+    public enum MekToolMode implements IDisableableEnum<MekToolMode>, IRadialSelectorEnum<MekToolMode> {
+        NORMAL("normal", 20, 3, () -> true, EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_normal.png")),
+        SLOW("slow", 8, 1, () -> MekanismConfig.current().general.disassemblerSlowMode.val(), EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_slow.png")),
+        FAST("fast", 128, 5, () -> MekanismConfig.current().general.disassemblerFastMode.val(), EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_fast.png")),
+        VEIN("vein", 20, 3, () -> MekanismConfig.current().general.disassemblerVeinMining.val(), EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_vein.png")),
+        EXTENDED_VEIN("extended_vein", 20, 3, () -> MekanismConfig.current().general.disassemblerExtendedMining.val(), EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_vein.png")),
+        OFF("off", 0, 0, () -> true, EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "void.png"));
+
+
+        private static final MekToolMode[] MODES = values();
+        private final BooleanSupplier checkEnabled;
         private final String mode;
         private final int efficiency;
         //Must be odd, or zero
         private final int diameter;
+        private final ResourceLocation icon;
+        private final EnumColor color;
 
-        MekToolMode(String mode, int efficiency, int diameter, Supplier<Boolean> checkEnabled) {
+        MekToolMode(String mode, int efficiency, int diameter, BooleanSupplier checkEnabled, EnumColor color, ResourceLocation icon) {
             this.mode = mode;
             this.efficiency = efficiency;
             this.diameter = diameter;
             this.checkEnabled = checkEnabled;
+            this.color = color;
+            this.icon = icon;
         }
 
         /**
          * Gets a Mode from its ordinal. NOTE: if this mode is not enabled then it will reset to NORMAL
          */
-        public static MekToolMode getFromInt(int ordinal) {
-            MekToolMode[] values = values();
-            //If it is out of bounds just shift it as if it had gone around that many times
-            MekToolMode mode = values[ordinal % values.length];
+        public static MekToolMode byIndexStatic(int index) {
+            MekToolMode mode = MathUtils.getByIndexMod(MODES, index);
             return mode.isEnabled() ? mode : NORMAL;
         }
 
-        public static int getNextEnabledAsInt(MekToolMode mode) {
-            //Get the next mode
-            MekToolMode next = mode.getNext();
-            //keep going until we find one that is enabled (we know at the very least NORMAL and OFF are enabled
-            while (!next.isEnabled()) {
-                next = next.getNext();
-            }
-            return next.ordinal();
+
+        @Override
+        public MekToolMode byIndex(int index) {
+            return MathUtils.getByIndexMod(MODES, index);
         }
 
-        private MekToolMode getNext() {
-            MekToolMode[] values = values();
-            return values[(ordinal() + 1) % values.length];
-        }
-
-        public String getModeName() {
-            return LangUtils.localize("mekanism.tooltip.mektool." + mode);
-        }
 
         public int getEfficiency() {
             return efficiency;
@@ -416,7 +417,26 @@ public class ItemMekTool extends ItemEnergized implements IItemNetwork, IItemHUD
         }
 
         public boolean isEnabled() {
-            return checkEnabled.get();
+            return checkEnabled.getAsBoolean();
+        }
+
+        public String getModeName() {
+            return LangUtils.localize("mekanism.tooltip.disassembler." + mode);
+        }
+
+        @Override
+        public ITextComponent getShortText() {
+            return new TextComponentGroup(color.textFormatting).translation("mekanism.tooltip.mektool." + mode);
+        }
+
+        @Override
+        public EnumColor getColor() {
+            return color;
+        }
+
+        @Override
+        public ResourceLocation getIcon() {
+            return icon;
         }
     }
 
