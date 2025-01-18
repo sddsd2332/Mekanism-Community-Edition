@@ -36,6 +36,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -76,6 +77,7 @@ public class ItemConfigurator extends ItemEnergized implements IMekWrench, ITool
 
     public ItemConfigurator() {
         super(60000);
+        setRarity(EnumRarity.UNCOMMON);
         setMaxStackSize(1);
         this.addPropertyOverride(new ResourceLocation("mode"), new IItemPropertyGetter() {
             @SideOnly(Side.CLIENT)
@@ -180,7 +182,7 @@ public class ItemConfigurator extends ItemEnergized implements IMekWrench, ITool
                             return EnumActionResult.FAIL;
                         }
                     }
-                } else if (tile instanceof TileEntityContainerBlock b) {
+                } else if (tile instanceof TileEntityContainerBlock) {
                     if (SecurityUtils.canAccess(player, tile)) {
                         //TODO: Switch this to items being handled by TECB, energy handled here (via lambdas?)
                         IInventory inv = (IInventory) tile;
@@ -349,6 +351,14 @@ public class ItemConfigurator extends ItemEnergized implements IMekWrench, ITool
     public ITextComponent getScrollTextComponent(@Nonnull ItemStack stack) {
         return getMode(stack).getShortText();
     }
+
+    /*
+    @Override
+    public String getItemStackDisplayName(@Nonnull ItemStack itemstack) {
+        return super.getItemStackDisplayName(itemstack) + " " + LangUtils.localize("tooltip.mode") + ": " + getColor(getMode(itemstack)) + getStateDisplay(getMode(itemstack));
+    }
+
+     */
 
     @ParametersAreNonnullByDefault
     @MethodsReturnNonnullByDefault

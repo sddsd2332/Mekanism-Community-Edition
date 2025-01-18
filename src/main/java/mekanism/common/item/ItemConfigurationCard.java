@@ -16,6 +16,7 @@ import mekanism.common.util.SecurityUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,6 +40,7 @@ public class ItemConfigurationCard extends ItemMekanism {
     public ItemConfigurationCard() {
         super();
         setMaxStackSize(1);
+        setRarity(EnumRarity.UNCOMMON);
         this.addPropertyOverride(new ResourceLocation("mode"), new IItemPropertyGetter() {
             @SideOnly(Side.CLIENT)
             public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn) {

@@ -1,12 +1,11 @@
 {
-  "package": "mekanism.mixin.draconicevolution",
+  "package": "mekanism.mixin.jei",
   "refmap": "mixins.${mod_id}.refmap.json",
   "target": "@env(DEFAULT)",
   "minVersion": "0.8",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinChaosWorldGenHandler",
-    "MixinTileChaosCrystal"
+    "MixinItemStackFastRenderer"
   ],
   "server": [],
   "client": []

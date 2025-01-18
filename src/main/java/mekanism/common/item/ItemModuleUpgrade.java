@@ -30,6 +30,7 @@ public class ItemModuleUpgrade extends ItemMekanism implements IMetaItem, IModul
     public ItemModuleUpgrade() {
         super();
         setHasSubtypes(true);
+
     }
 
 

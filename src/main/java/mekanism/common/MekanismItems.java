@@ -1,11 +1,13 @@
 package mekanism.common;
 
+import mekanism.api.EnumColor;
 import mekanism.common.item.*;
 import mekanism.common.item.armor.ItemMekAsuitBodyArmour;
 import mekanism.common.item.armor.ItemMekAsuitFeetArmour;
 import mekanism.common.item.armor.ItemMekAsuitHeadArmour;
 import mekanism.common.item.armor.ItemMekAsuitLegsArmour;
 import mekanism.common.tier.AlloyTier;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
@@ -14,11 +16,11 @@ import net.minecraftforge.registries.IForgeRegistry;
 @ObjectHolder(Mekanism.MODID)
 public class MekanismItems {
 
-    public static final Item EnrichedAlloy = new ItemAlloy(AlloyTier.INFUSED);
-    public static final Item ReinforcedAlloy = new ItemAlloy(AlloyTier.REINFORCED);
-    public static final Item AtomicAlloy = new ItemAlloy(AlloyTier.ATOMIC);
-    public static final Item TeleportationCore = new ItemMekanism();
-    public static final Item ElectrolyticCore = new ItemMekanism();
+    public static final Item EnrichedAlloy = new ItemAlloy(AlloyTier.INFUSED).setRarity(EnumRarity.UNCOMMON);
+    public static final Item ReinforcedAlloy = new ItemAlloy(AlloyTier.REINFORCED).setRarity(EnumRarity.RARE);
+    public static final Item AtomicAlloy = new ItemAlloy(AlloyTier.ATOMIC).setRarity(EnumRarity.EPIC);
+    public static final Item TeleportationCore = new ItemMekanism().setRarity(EnumRarity.RARE);
+    public static final Item ElectrolyticCore = new ItemMekanism().setRarity(EnumRarity.UNCOMMON);
     public static final Item Substrate = new ItemMekanism();
     public static final Item Polyethene = new ItemHDPE();
     public static final Item BioFuel = new ItemMekanism();
@@ -78,11 +80,11 @@ public class MekanismItems {
     public static final ItemMekTool MekTool = new ItemMekTool();
     public static final ItemCanteen Canteen = new ItemCanteen();
     public static final Item CosmicAlloy = new ItemMekanism();
-    public static final Item PlutoniumPellet = new ItemMekanism();
-    public static final Item AntimatterPellet = new ItemMekanism();
-    public static final Item ReprocessedFissileFragment = new ItemMekanism();
-    public static final Item YellowCakeUranium = new ItemMekanism();
-    public static final Item PoloniumPellet = new ItemMekanism();
+    public static final Item PlutoniumPellet = new ItemMekanism().setNameColor(EnumColor.GREY);
+    public static final Item AntimatterPellet = new ItemMekanism().setNameColor(EnumColor.PURPLE);
+    public static final Item ReprocessedFissileFragment = new ItemMekanism().setRarity(EnumRarity.RARE);
+    public static final Item YellowCakeUranium = new ItemMekanism().setRarity(EnumRarity.UNCOMMON);
+    public static final Item PoloniumPellet = new ItemMekanism().setNameColor(EnumColor.INDIGO);
     public static final Item CosmicMatter = new ItemMekanism();
     public static final Item Scrap = new ItemMekanism();
     public static final Item ScrapBox = new ItemMekanism();
@@ -182,8 +184,9 @@ public class MekanismItems {
         registry.register(init(MekAsuitChestplate, "MekAsuitChestplate"));
         registry.register(init(MekAsuitLeggings, "MekAsuitLeggings"));
         registry.register(init(MekAsuitBoots, "MekAsuitBoots"));
-        registry.register(init(ModuleBase,"ModuleBase"));
-        registry.register(init(ModuleUpgrade,"ModuleUpgrade"));
+        registry.register(init(ModuleBase, "ModuleBase"));
+        registry.register(init(ModuleUpgrade, "ModuleUpgrade"));
+
         /**
          * ADD END
          */

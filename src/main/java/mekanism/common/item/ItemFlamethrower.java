@@ -20,6 +20,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
@@ -42,6 +43,7 @@ public class ItemFlamethrower extends ItemMekanism implements IGasItem, IModeIte
     public ItemFlamethrower() {
         super();
         setMaxStackSize(1);
+        setRarity(EnumRarity.RARE);
     }
 
     @Override

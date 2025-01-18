@@ -10,6 +10,7 @@ import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -27,6 +28,7 @@ public class ItemSeismicReader extends ItemEnergized {
     public ItemSeismicReader() {
         super(12000);
         setMaxStackSize(1);
+        setRarity(EnumRarity.UNCOMMON);
     }
 
     @Override

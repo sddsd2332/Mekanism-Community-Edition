@@ -8,6 +8,7 @@ import mekanism.common.util.MekanismUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -25,6 +26,7 @@ public class ItemDictionary extends ItemMekanism {
     public ItemDictionary() {
         super();
         setMaxStackSize(1);
+        setRarity(EnumRarity.UNCOMMON);
     }
 
     @Nonnull

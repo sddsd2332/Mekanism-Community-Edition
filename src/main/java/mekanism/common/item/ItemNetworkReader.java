@@ -12,6 +12,7 @@ import mekanism.common.Mekanism;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.util.CapabilityUtils;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
@@ -30,6 +31,7 @@ public class ItemNetworkReader extends ItemEnergized {
 
     public ItemNetworkReader() {
         super(60000);
+        setRarity(EnumRarity.UNCOMMON);
         setMaxStackSize(1);
     }
 

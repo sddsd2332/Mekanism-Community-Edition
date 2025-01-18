@@ -1,13 +1,22 @@
 package mekanism.coremod;
 
+import mekanism.common.integration.MekanismHooks;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
+import zone.rong.mixinbooter.IEarlyMixinLoader;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 @SortingIndex(9999)//must be > 1000 so we're after the srg transformer
-public class MekanismCoremod implements IFMLLoadingPlugin {
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "zone.rong.mixinbooter.IEarlyMixinLoader", modid = "mixinbooter")
+})
+public class MekanismCoremod implements IFMLLoadingPlugin, IEarlyMixinLoader {
 
     private static final String[] transformers = {
             "mekanism.coremod.KeybindingMigrationHelper"
@@ -23,7 +32,8 @@ public class MekanismCoremod implements IFMLLoadingPlugin {
         return null;
     }
 
-    @Nullable @Override
+    @Nullable
+    @Override
     public String getSetupClass() {
         return null;
     }
@@ -35,5 +45,12 @@ public class MekanismCoremod implements IFMLLoadingPlugin {
     @Override
     public String getAccessTransformerClass() {
         return null;
+    }
+
+    @Override
+    public List<String> getMixinConfigs() {
+        return Arrays.asList(
+                "mixins.mekanism.json"
+        );
     }
 }

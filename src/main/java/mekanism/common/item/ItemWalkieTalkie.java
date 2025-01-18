@@ -9,7 +9,6 @@ import mekanism.common.config.MekanismConfig;
 import mekanism.common.item.interfaces.IModeItem;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
-import mekanism.common.util.TextComponentGroup;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,7 +19,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -111,6 +109,6 @@ public class ItemWalkieTalkie extends ItemMekanismAddition implements IModeItem 
     @Nonnull
     @Override
     public ITextComponent getScrollTextComponent(@Nonnull ItemStack stack) {
-        return new TextComponentGroup(TextFormatting.GRAY).translation("tooltip.channel", getChannel(stack));
+        return new TextComponentString(LangUtils.localize("tooltip.channel") + ": " + EnumColor.GREY + getChannel(stack));
     }
 }

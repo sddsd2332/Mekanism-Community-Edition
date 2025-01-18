@@ -17,6 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -35,6 +36,7 @@ public class ItemPortableTeleporter extends ItemEnergized implements IOwnerItem 
     public ItemPortableTeleporter() {
         super(1000000);
         setMaxStackSize(1);
+        setRarity(EnumRarity.RARE);
     }
 
     public static double calculateEnergyCost(Entity entity, Coord4D coords) {

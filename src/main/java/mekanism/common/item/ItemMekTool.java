@@ -31,6 +31,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -56,6 +57,7 @@ public class ItemMekTool extends ItemEnergized implements IItemHUDProvider, IRad
     public ItemMekTool() {
         super(MekanismConfig.current().general.toolBatteryCapacity.val());
         setMaxStackSize(1);
+        setRarity(EnumRarity.EPIC);
     }
 
 
@@ -64,11 +66,6 @@ public class ItemMekTool extends ItemEnergized implements IItemHUDProvider, IRad
         return state.getBlock() != Blocks.BEDROCK;
     }
 
-    @Nonnull
-    @Override
-    public String getItemStackDisplayName(@Nonnull ItemStack itemstack) {
-        return EnumColor.PURPLE + super.getItemStackDisplayName(itemstack);
-    }
 
     @SideOnly(Side.CLIENT)
     @Override

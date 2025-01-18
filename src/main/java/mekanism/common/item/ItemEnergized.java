@@ -17,6 +17,7 @@ import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -53,6 +54,7 @@ public class ItemEnergized extends ItemMekanism implements IEnergizedItem, ISpec
 
     public ItemEnergized() {
         this(1000000);
+        setRarity(EnumRarity.UNCOMMON);
         this.addPropertyOverride(new ResourceLocation("energy"), new IItemPropertyGetter() {
             @SideOnly(Side.CLIENT)
             public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn) {
@@ -216,4 +218,5 @@ public class ItemEnergized extends ItemMekanism implements IEnergizedItem, ISpec
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
         return new ItemCapabilityWrapper(stack, new TeslaItemWrapper(), new ForgeEnergyItemWrapper());
     }
+
 }

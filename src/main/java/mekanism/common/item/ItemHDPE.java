@@ -3,6 +3,7 @@ package mekanism.common.item;
 import mekanism.common.Mekanism;
 import mekanism.common.base.IMetaItem;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
@@ -14,6 +15,7 @@ public class ItemHDPE extends ItemMekanism implements IMetaItem {
         super();
         setHasSubtypes(true);
         setCreativeTab(Mekanism.tabMekanism);
+        setRarity(EnumRarity.UNCOMMON);
     }
 
     @Override
@@ -40,6 +42,7 @@ public class ItemHDPE extends ItemMekanism implements IMetaItem {
     public String getTranslationKey(ItemStack item) {
         return "item." + PlasticItem.values()[item.getItemDamage()].getName();
     }
+
 
     public enum PlasticItem {
         PELLET("HDPEPellet"),

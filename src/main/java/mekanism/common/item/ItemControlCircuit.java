@@ -44,7 +44,6 @@ public class ItemControlCircuit extends ItemMekanism implements IMetaItem {
     @Nonnull
     @Override
     public String getItemStackDisplayName(@Nonnull ItemStack itemstack) {
-        BaseTier tier = BaseTier.values()[itemstack.getItemDamage()];
-        return tier.getColor() + LangUtils.localize("item." + tier.getSimpleName() + "ControlCircuit.name");
+        return BaseTier.values()[itemstack.getItemDamage()].getColor() + super.getItemStackDisplayName(itemstack);
     }
 }

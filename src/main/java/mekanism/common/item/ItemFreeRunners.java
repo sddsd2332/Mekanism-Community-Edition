@@ -5,6 +5,7 @@ import ic2.api.item.IElectricItemManager;
 import ic2.api.item.ISpecialElectricItem;
 import mekanism.api.EnumColor;
 import mekanism.api.IIncrementalEnum;
+import mekanism.api.NBTConstants;
 import mekanism.api.energy.IEnergizedItem;
 import mekanism.api.math.MathUtils;
 import mekanism.client.render.ModelCustomArmor;
@@ -23,7 +24,6 @@ import mekanism.common.item.interfaces.IModeItem;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
-import mekanism.common.util.TextComponentGroup;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -32,6 +32,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,7 +40,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -246,15 +246,11 @@ public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpeci
     }
 
     public FreeRunnerMode getMode(ItemStack itemStack) {
-        return FreeRunnerMode.values()[ItemDataUtils.getInt(itemStack, "mode")];
+        return FreeRunnerMode.byIndexStatic(ItemDataUtils.getInt(itemStack, NBTConstants.MODE));
     }
 
     public void setMode(ItemStack itemStack, FreeRunnerMode mode) {
-        ItemDataUtils.setInt(itemStack, "mode", mode.ordinal());
-    }
-
-    public void incrementMode(ItemStack itemStack) {
-        setMode(itemStack, getMode(itemStack).increment());
+        ItemDataUtils.setInt(itemStack, NBTConstants.MODE, mode.ordinal());
     }
 
     @Override
@@ -271,7 +267,7 @@ public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpeci
         FreeRunnerMode newMode = mode.adjust(shift);
         if (mode != newMode) {
             setMode(stack, newMode);
-            if (displayChangeMessage){
+            if (displayChangeMessage) {
                 player.sendMessage(new TextComponentString(EnumColor.DARK_BLUE + Mekanism.LOG_TAG + " " + EnumColor.GREY + LangUtils.localize("tooltip.free_runners.mode") + " " + EnumColor.INDIGO + newMode.getName()));
             }
         }
@@ -296,9 +292,6 @@ public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpeci
             this.color = color;
         }
 
-        public FreeRunnerMode increment() {
-            return ordinal() < values().length - 1 ? values()[ordinal() + 1] : values()[0];
-        }
 
         public boolean preventsFallDamage() {
             return preventsFallDamage;
@@ -320,5 +313,10 @@ public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpeci
         public static FreeRunnerMode byIndexStatic(int index) {
             return MathUtils.getByIndexMod(MODES, index);
         }
+    }
+
+    @Override
+    public EnumRarity getRarity(ItemStack stack) {
+        return EnumRarity.RARE;
     }
 }

@@ -17,10 +17,7 @@ import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.EnumAction;
-import net.minecraft.item.IItemPropertyGetter;
-import net.minecraft.item.ItemArrow;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.*;
 import net.minecraft.util.text.ITextComponent;
@@ -40,6 +37,7 @@ public class ItemElectricBow extends ItemEnergized implements IModeItem, IItemHU
     public ItemElectricBow() {
         super(120000);
         setMaxStackSize(1);
+        setRarity(EnumRarity.RARE);
         setFull3D();
         this.addPropertyOverride(new ResourceLocation("pull"), new IItemPropertyGetter() {
             @SideOnly(Side.CLIENT)
