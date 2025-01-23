@@ -8,8 +8,8 @@ import mekanism.client.model.mekasuitarmour.ModelMekAsuitHead;
 import mekanism.client.model.mekasuitarmour.ModuleSolarHelmet;
 import mekanism.common.MekanismFluids;
 import mekanism.common.MekanismItems;
+import mekanism.common.MekanismModules;
 import mekanism.common.config.MekanismConfig;
-import mekanism.common.content.gear.Modules;
 import mekanism.common.util.ItemDataUtils;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.EntityLivingBase;
@@ -66,7 +66,8 @@ public class ItemMekaSuitHelmet extends ItemMekaSuitArmor implements IGasItem {
         ModelMekAsuitHead armorModel = ModelMekAsuitHead.head;
         ModuleSolarHelmet Solar = ModuleSolarHelmet.solar;
 
-        if (isModuleEnabled(itemStack, Modules.SOLAR_RECHARGING_UNIT)) {
+        /*
+        if (isModuleEnabled(itemStack, MekanismModules.SOLAR_RECHARGING_UNIT)) {
             armorModel.helmet_armor.childModels.remove(armorModel.hide);
             if (!armorModel.bipedHead.childModels.contains(Solar.solar_helmet)) {
                 armorModel.bipedHead.addChild(Solar.solar_helmet);
@@ -77,6 +78,8 @@ public class ItemMekaSuitHelmet extends ItemMekaSuitArmor implements IGasItem {
                 armorModel.helmet_armor.childModels.add(armorModel.hide);
             }
         }
+
+         */
         return armorModel;
     }
 
@@ -87,7 +90,7 @@ public class ItemMekaSuitHelmet extends ItemMekaSuitArmor implements IGasItem {
 
     @Override
     public int addGas(ItemStack itemstack, GasStack stack) {
-        if (!hasModule(itemstack, Modules.NUTRITIONAL_INJECTION_UNIT)) {
+        if (!hasModule(itemstack, MekanismModules.NUTRITIONAL_INJECTION_UNIT)) {
             return 0;
         }
         if (getGas(itemstack) != null && getGas(itemstack).getGas() != stack.getGas()) {

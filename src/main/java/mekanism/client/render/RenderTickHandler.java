@@ -26,6 +26,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -40,8 +41,6 @@ import java.util.UUID;
 @SideOnly(Side.CLIENT)
 public class RenderTickHandler {
 
-    private static final EntityEquipmentSlot[] EQUIPMENT_ORDER = {EntityEquipmentSlot.OFFHAND, EntityEquipmentSlot.MAINHAND, EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS,
-            EntityEquipmentSlot.FEET};
     public static int modeSwitchTimer = 0;
     public Random rand = new Random();
     public Minecraft mc = Minecraft.getMinecraft();
@@ -89,23 +88,6 @@ public class RenderTickHandler {
                         font.drawStringWithShadow("Side: " + pos.sideHit, 1, 37, 0x404040);
                     }
                 }
-
-                /*
-                //todo use vanilla status bar text?
-                if (modeSwitchTimer > 1 && mc.currentScreen == null && player.getHeldItemMainhand().getItem() instanceof ItemConfigurator) {
-                    ItemStack stack = player.getHeldItemMainhand();
-                    ScaledResolution scaledresolution = new ScaledResolution(mc);
-                    ConfiguratorMode mode = ((ItemConfigurator) stack.getItem()).getMode(stack);
-
-                    int x = scaledresolution.getScaledWidth();
-                    int y = scaledresolution.getScaledHeight();
-                    int stringWidth = font.getStringWidth(mode.getName());
-                    int color = new ColourRGBA(1, 1, 1, (float) modeSwitchTimer / 100F).argb();
-                    font.drawString(mode.getColor() + mode.getName(), x / 2 - stringWidth / 2, y - 60, color);
-                }
-                modeSwitchTimer = Math.max(modeSwitchTimer - 1, 0);
-                 */
-
                 if (modeSwitchTimer == 0) {
                     ClientTickHandler.wheelStatus = 0;
                 }
@@ -259,17 +241,6 @@ public class RenderTickHandler {
             fx = new EntityScubaBubbleFX(world, x, y, z, velX, velY, velZ);
         }
         mc.effectRenderer.addEffect(fx);
-    }
-
-    private void drawString(ScaledResolution res, String s, boolean leftSide, int y, int color) {
-        FontRenderer font = mc.fontRenderer;
-        // Note that we always offset by 2 pixels when left or right aligned
-        if (leftSide) {
-            font.drawStringWithShadow(s, 2, y, color);
-        } else {
-            int width = font.getStringWidth(s) + 2;
-            font.drawStringWithShadow(s, res.getScaledWidth() - width, y, color);
-        }
     }
 
 

@@ -24,7 +24,7 @@ import mekanism.common.config.MekanismConfig;
 import mekanism.common.config.MixinConfig;
 import mekanism.common.content.boiler.SynchronizedBoilerData;
 import mekanism.common.content.entangloporter.InventoryFrequency;
-import mekanism.common.content.gear.Modules;
+import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.content.matrix.SynchronizedMatrixData;
 import mekanism.common.content.tank.SynchronizedTankData;
 import mekanism.common.content.transporter.PathfinderCache;
@@ -380,7 +380,7 @@ public class Mekanism {
             voiceManager.start();
         }
         CommandMek.register(event);
-        Modules.processSupportedContainers();
+        ModuleHelper.get().processSupportedContainers();
     }
 
     @EventHandler
@@ -402,7 +402,7 @@ public class Mekanism {
         TransporterManager.reset();
         PathfinderCache.reset();
         TransmitterNetworkRegistry.reset();
-        Modules.resetSupportedContainers();
+        ModuleHelper.get().resetSupportedContainers();
     }
 
     @EventHandler
@@ -487,7 +487,6 @@ public class Mekanism {
         MinecraftForge.EVENT_BUS.register(new CommonPlayerTickHandler());
 
 
-
         //Initialization notification
         logger.info("Version " + versionNumber + " initializing...");
 
@@ -548,19 +547,25 @@ public class Mekanism {
     }
 
     private void imcQueue() {
-        Item[] allItem = {MekanismItems.MEKASUIT_HELMET, MekanismItems.MEKASUIT_BODYARMOR, MekanismItems.MEKASUIT_PANTS, MekanismItems.MEKASUIT_BOOTS, MekanismItems.MekTool};
-        for (Item stack : allItem) {
-            Modules.setSupported(stack, Modules.ENERGY_UNIT);
+        Item[] addModulesToAll = {MekanismItems.MEKASUIT_HELMET, MekanismItems.MEKASUIT_BODYARMOR, MekanismItems.MEKASUIT_PANTS, MekanismItems.MEKASUIT_BOOTS/*, MekanismItems.MekTool*/};
+        Item[] addMekaSuitModules = {MekanismItems.MEKASUIT_HELMET, MekanismItems.MEKASUIT_BODYARMOR, MekanismItems.MEKASUIT_PANTS, MekanismItems.MEKASUIT_BOOTS};
+
+        for (Item stack : addModulesToAll) {
+            ModuleHelper.get().setSupported(stack, MekanismModules.ENERGY_UNIT);
         }
-        Item[] MekaSuitModules = {MekanismItems.MEKASUIT_HELMET, MekanismItems.MEKASUIT_BODYARMOR, MekanismItems.MEKASUIT_PANTS, MekanismItems.MEKASUIT_BOOTS};
-        for (Item stack : MekaSuitModules) {
-            Modules.setSupported(stack, Modules.RADIATION_SHIELDING_UNIT);
+
+        for (Item stack : addMekaSuitModules) {
+            ModuleHelper.get().setSupported(stack, MekanismModules.COLOR_MODULATION_UNIT, MekanismModules.LASER_DISSIPATION_UNIT, MekanismModules.RADIATION_SHIELDING_UNIT);
         }
-        Modules.setSupported(MekanismItems.MekTool, Modules.ATTACK_AMPLIFICATION_UNIT, Modules.SILK_TOUCH_UNIT/*, MekanismModules.VEIN_MINING_UNIT, MekanismModules.FARMING_UNIT, MekanismModules.SHEARING_UNIT */, Modules.TELEPORTATION_UNIT, Modules.EXCAVATION_ESCALATION_UNIT);
-        Modules.setSupported(MekanismItems.MEKASUIT_HELMET, Modules.ELECTROLYTIC_BREATHING_UNIT, Modules.INHALATION_PURIFICATION_UNIT, Modules.VISION_ENHANCEMENT_UNIT, Modules.SOLAR_RECHARGING_UNIT, Modules.NUTRITIONAL_INJECTION_UNIT);
-        Modules.setSupported(MekanismItems.MEKASUIT_BODYARMOR, Modules.JETPACK_UNIT, Modules.GRAVITATIONAL_MODULATING_UNIT, Modules.CHARGE_DISTRIBUTION_UNIT/*, MekanismModules.DOSIMETER_UNIT, MekanismModules.GEIGER_UNIT, Modules.ELYTRA_UNIT*/);
-        Modules.setSupported(MekanismItems.MEKASUIT_PANTS, Modules.LOCOMOTIVE_BOOSTING_UNIT);
-        Modules.setSupported(MekanismItems.MEKASUIT_BOOTS, Modules.HYDRAULIC_PROPULSION_UNIT, Modules.MAGNETIC_ATTRACTION_UNIT/*, Modules.FROST_WALKER_UNIT*/);
+        // ModuleHelper.get().setSupported(MekanismItems.MekTool, MekanismModules.ATTACK_AMPLIFICATION_UNIT, MekanismModules.SILK_TOUCH_UNIT, MekanismModules.FORTUNE_UNIT, MekanismModules.BLASTING_UNIT, MekanismModules.VEIN_MINING_UNIT, MekanismModules.FARMING_UNIT, MekanismModules.SHEARING_UNIT, MekanismModules.TELEPORTATION_UNIT, MekanismModules.EXCAVATION_ESCALATION_UNIT);
+
+        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_HELMET, MekanismModules.ELECTROLYTIC_BREATHING_UNIT, MekanismModules.INHALATION_PURIFICATION_UNIT, MekanismModules.VISION_ENHANCEMENT_UNIT, MekanismModules.NUTRITIONAL_INJECTION_UNIT);
+
+        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_BODYARMOR, MekanismModules.JETPACK_UNIT, MekanismModules.GRAVITATIONAL_MODULATING_UNIT, MekanismModules.CHARGE_DISTRIBUTION_UNIT, /*MekanismModules.DOSIMETER_UNIT, MekanismModules.GEIGER_UNIT,*/ MekanismModules.ELYTRA_UNIT);
+
+        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_PANTS, MekanismModules.LOCOMOTIVE_BOOSTING_UNIT, MekanismModules.GYROSCOPIC_STABILIZATION_UNIT, MekanismModules.HYDROSTATIC_REPULSOR_UNIT/*, MekanismModules.MOTORIZED_SERVO_UNIT*/);
+
+        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_BOOTS, MekanismModules.HYDRAULIC_PROPULSION_UNIT, /*MekanismModules.MAGNETIC_ATTRACTION_UNIT,*/ MekanismModules.FROST_WALKER_UNIT);
     }
 
 

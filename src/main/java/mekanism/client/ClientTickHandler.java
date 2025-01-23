@@ -3,13 +3,15 @@ package mekanism.client;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import mekanism.api.IClientTicker;
+import mekanism.api.gear.IModule;
 import mekanism.client.gui.GuiRadialSelector;
 import mekanism.client.render.RenderTickHandler;
 import mekanism.common.CommonPlayerTickHandler;
 import mekanism.common.KeySync;
 import mekanism.common.Mekanism;
+import mekanism.common.MekanismModules;
 import mekanism.common.config.MekanismConfig;
-import mekanism.common.content.gear.Modules;
+import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.content.gear.mekasuit.ModuleVisionEnhancementUnit;
 import mekanism.common.frequency.Frequency;
 import mekanism.common.item.ItemFlamethrower;
@@ -107,7 +109,7 @@ public class ClientTickHandler {
     }
 
     public static boolean isVisionEnhancementOn(EntityPlayer player) {
-        ModuleVisionEnhancementUnit module = Modules.load(player.getItemStackFromSlot(EntityEquipmentSlot.HEAD), Modules.VISION_ENHANCEMENT_UNIT);
+        IModule<ModuleVisionEnhancementUnit> module = ModuleHelper.get().load(player.getItemStackFromSlot(EntityEquipmentSlot.HEAD), MekanismModules.VISION_ENHANCEMENT_UNIT);
         return module != null && module.isEnabled() && module.getContainerEnergy() > MekanismConfig.current().meka.mekaSuitEnergyUsageVisionEnhancement.val();
     }
 
@@ -238,7 +240,7 @@ public class ClientTickHandler {
             }
 
             ItemStack stack = minecraft.player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
-            if (MekKeyHandler.getIsKeyPressed(MekanismKeyHandler.modeSwitchKey) && stack.getItem() instanceof IRadialModeItem) {
+            if (MekKeyHandler.getIsKeyPressed(MekanismKeyHandler.handModeSwitchKey) && stack.getItem() instanceof IRadialModeItem) {
                 if (minecraft.currentScreen == null || minecraft.currentScreen instanceof GuiRadialSelector) {
                     updateSelectorRenderer((IRadialModeItem<?>) stack.getItem());
                 }
@@ -312,7 +314,7 @@ public class ClientTickHandler {
     public void onFog(EntityViewRenderEvent.RenderFogEvent event) {
         if (visionEnhancement) {
             float fog = 0.1F;
-            ModuleVisionEnhancementUnit module = Modules.load(minecraft.player.getItemStackFromSlot(EntityEquipmentSlot.HEAD), Modules.VISION_ENHANCEMENT_UNIT);
+            IModule<ModuleVisionEnhancementUnit> module = ModuleHelper.get().load(minecraft.player.getItemStackFromSlot(EntityEquipmentSlot.HEAD), MekanismModules.VISION_ENHANCEMENT_UNIT);
             if (module != null) {
                 fog -= module.getInstalledCount() * 0.022F;
             }

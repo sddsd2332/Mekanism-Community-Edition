@@ -3,8 +3,9 @@ package mekanism.common;
 import mekanism.api.energy.IEnergizedItem;
 import mekanism.api.functions.FloatSupplier;
 import mekanism.api.gas.GasStack;
+import mekanism.api.gear.IModule;
 import mekanism.common.config.MekanismConfig;
-import mekanism.common.content.gear.Modules;
+import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.content.gear.mekasuit.ModuleGravitationalModulatingUnit;
 import mekanism.common.content.gear.mekasuit.ModuleHydraulicPropulsionUnit;
 import mekanism.common.content.gear.mekasuit.ModuleLocomotiveBoostingUnit;
@@ -66,9 +67,9 @@ public class CommonPlayerTickHandler {
                     return 0.5F;
                 }
             }
-            ModuleHydraulicPropulsionUnit module = Modules.load(stack, Modules.HYDRAULIC_PROPULSION_UNIT);
+            IModule<ModuleHydraulicPropulsionUnit>  module = ModuleHelper.get().load(stack, MekanismModules.HYDRAULIC_PROPULSION_UNIT);
             if (module != null && module.isEnabled()) {
-                return module.getStepHeight();
+                return module.getCustomInstance().getStepHeight();
             }
         }
         return 0;
@@ -133,7 +134,7 @@ public class CommonPlayerTickHandler {
 
     public static boolean isGravitationalModulationReady(EntityPlayer player) {
         if (MekanismUtils.isPlayingMode(player)) {
-            ModuleGravitationalModulatingUnit module = Modules.load(player.getItemStackFromSlot(EntityEquipmentSlot.CHEST), Modules.GRAVITATIONAL_MODULATING_UNIT);
+            IModule<ModuleGravitationalModulatingUnit> module =  ModuleHelper.get().load(player.getItemStackFromSlot(EntityEquipmentSlot.CHEST), MekanismModules.GRAVITATIONAL_MODULATING_UNIT);
             double usage = MekanismConfig.current().meka.mekaSuitEnergyUsageGravitationalModulation.val();
             return module != null && module.isEnabled() && module.getContainerEnergy() - (usage) >= 0;
         }
@@ -271,15 +272,15 @@ public class CommonPlayerTickHandler {
     @SubscribeEvent
     public void onLivingJump(LivingJumpEvent event) {
         if (event.getEntity() instanceof EntityPlayer player) {
-            ModuleHydraulicPropulsionUnit module = Modules.load(player.getItemStackFromSlot(EntityEquipmentSlot.FEET), Modules.HYDRAULIC_PROPULSION_UNIT);
+            IModule<ModuleHydraulicPropulsionUnit> module =  ModuleHelper.get().load(player.getItemStackFromSlot(EntityEquipmentSlot.FEET), MekanismModules.HYDRAULIC_PROPULSION_UNIT);
             if (module != null && module.isEnabled() && Mekanism.keyMap.has(player, KeySync.DESCEND)) {
-                float boost = module.getBoost();
+                float boost = module.getCustomInstance().getBoost();
                 double usage = MekanismConfig.current().meka.mekaSuitBaseJumpEnergyUsage.val() * (boost / 0.1F);
                 IEnergizedItem energyContainer = module.getEnergyContainer();
                 if (module.canUseEnergy(player, energyContainer, usage, false)) {
                     // if we're sprinting with the boost module, limit the height
-                    ModuleLocomotiveBoostingUnit boostModule =Modules.load(player.getItemStackFromSlot(EntityEquipmentSlot.LEGS), Modules.LOCOMOTIVE_BOOSTING_UNIT);
-                    if (boostModule != null && boostModule.isEnabled() && boostModule.canFunction(player)) {
+                    IModule<ModuleLocomotiveBoostingUnit> boostModule = ModuleHelper.get().load(player.getItemStackFromSlot(EntityEquipmentSlot.LEGS), MekanismModules.LOCOMOTIVE_BOOSTING_UNIT);
+                    if (boostModule != null && boostModule.isEnabled() && boostModule.getCustomInstance().canFunction(boostModule,player)) {
                         boost = (float) Math.sqrt(boost);
                     }
                     player.motionY += boost;
@@ -322,7 +323,7 @@ public class CommonPlayerTickHandler {
         float speed = event.getNewSpeed();
         //Gyroscopic stabilization check
         ItemStack legs = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
-        if (!legs.isEmpty() && Modules.isEnabled(legs, Modules.GYROSCOPIC_STABILIZATION_UNIT)) {
+        if (!legs.isEmpty() && ModuleHelper.get().isEnabled(legs, MekanismModules.GYROSCOPIC_STABILIZATION_UNIT)) {
             if (player.isInsideOfMaterial(Material.WATER) && !EnchantmentHelper.getAquaAffinityModifier(player)) {
                 speed *= 5.0F;
             }

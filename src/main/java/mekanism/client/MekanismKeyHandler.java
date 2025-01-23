@@ -4,6 +4,7 @@ import baubles.api.BaublesApi;
 import mekanism.api.gas.IGasItem;
 import mekanism.client.sound.SoundHandler;
 import mekanism.common.Mekanism;
+import mekanism.common.MekanismLang;
 import mekanism.common.MekanismSounds;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.MekanismHooks;
@@ -30,35 +31,55 @@ import org.lwjgl.input.Keyboard;
 public class MekanismKeyHandler extends MekKeyHandler {
 
     public static final String keybindCategory = Mekanism.MOD_NAME;
-    public static KeyBinding modeSwitchKey = new KeyBinding("mekanism.key.mode", Keyboard.KEY_M, keybindCategory);
-    public static KeyBinding armorModeSwitchKey = new KeyBinding("mekanism.key.armorMode", Keyboard.KEY_G, keybindCategory);
-    public static KeyBinding freeRunnerModeSwitchKey = new KeyBinding("mekanism.key.feetMode", Keyboard.KEY_B, keybindCategory);
-    public static KeyBinding MekAsuitFeetModeSwitchKey = new KeyBinding("mekanism.key.MekAsuitFeetMode", Keyboard.KEY_N, keybindCategory);
+    public static KeyBinding handModeSwitchKey = new KeyBinding(MekanismLang.KEY_HAND_MODE.getTranslationKey(), Keyboard.KEY_M, keybindCategory);
+    public static KeyBinding headModeSwitchKey = new KeyBinding(MekanismLang.KEY_HEAD_MODE.getTranslationKey(), Keyboard.KEY_V, keybindCategory);
+    public static KeyBinding chestModeSwitchKey = new KeyBinding(MekanismLang.KEY_CHEST_MODE.getTranslationKey(), Keyboard.KEY_G, keybindCategory);
+    public static KeyBinding legsModeSwitchKey = new KeyBinding(MekanismLang.KEY_LEGS_MODE.getTranslationKey(), Keyboard.KEY_J, keybindCategory);
+    public static KeyBinding feetModeSwitchKey = new KeyBinding(MekanismLang.KEY_FEET_MODE.getTranslationKey(), Keyboard.KEY_B, keybindCategory);
+
     public static KeyBinding voiceKey = new KeyBinding("mekanism.key.voice", Keyboard.KEY_U, keybindCategory);
 
-    public static KeyBinding enableHUDkEY = new KeyBinding("mekanism.key.enableHUD", Keyboard.KEY_H, keybindCategory);
-
+    /**
+     * 替换 为 detailsKey ？
+     */
     public static KeyBinding sneakKey = Minecraft.getMinecraft().gameSettings.keyBindSneak;
     public static KeyBinding jumpKey = Minecraft.getMinecraft().gameSettings.keyBindJump;
 
+    public static KeyBinding hudKey = new KeyBinding("mekanism.key.enableHUD", Keyboard.KEY_H, keybindCategory);
+
+    public static KeyBinding boostKey = new KeyBinding(MekanismLang.KEY_BOOST.getTranslationKey(), Keyboard.KEY_N, keybindCategory);
+    public static KeyBinding moduleTweakerKey = new KeyBinding(MekanismLang.KEY_MODULE_TWEAKER.getTranslationKey(), Keyboard.KEY_BACKSLASH, keybindCategory);
+    public static KeyBinding ModuleRadiationShielding = new KeyBinding("ModuleRadiationShielding", Keyboard.KEY_0, keybindCategory);
+
     private static Builder BINDINGS = new Builder()
-            .addBinding(modeSwitchKey, false)
-            .addBinding(armorModeSwitchKey, false)
-            .addBinding(freeRunnerModeSwitchKey, false)
-            .addBinding(MekAsuitFeetModeSwitchKey, false)
+            .addBinding(handModeSwitchKey, false)
+            .addBinding(headModeSwitchKey, false)
+            .addBinding(chestModeSwitchKey, false)
+            .addBinding(legsModeSwitchKey, false)
+            .addBinding(feetModeSwitchKey, false)
             .addBinding(voiceKey, true)
-            .addBinding(enableHUDkEY, false);
+            .addBinding(hudKey, false)
+            .addBinding(boostKey, false)
+            .addBinding(moduleTweakerKey, false)
+            .addBinding(ModuleRadiationShielding, false);
 
     public MekanismKeyHandler() {
         super(BINDINGS);
-
-        ClientRegistry.registerKeyBinding(modeSwitchKey);
-        ClientRegistry.registerKeyBinding(armorModeSwitchKey);
-        ClientRegistry.registerKeyBinding(freeRunnerModeSwitchKey);
-        ClientRegistry.registerKeyBinding(MekAsuitFeetModeSwitchKey);
+        /*
+        for (KeyBinding bindings : BINDINGS.getBindings()){
+            ClientRegistry.registerKeyBinding(bindings);
+        }
+         */
+        ClientRegistry.registerKeyBinding(handModeSwitchKey);
+        ClientRegistry.registerKeyBinding(headModeSwitchKey);
+        ClientRegistry.registerKeyBinding(chestModeSwitchKey);
+        ClientRegistry.registerKeyBinding(legsModeSwitchKey);
+        ClientRegistry.registerKeyBinding(feetModeSwitchKey);
         ClientRegistry.registerKeyBinding(voiceKey);
-        ClientRegistry.registerKeyBinding(enableHUDkEY);
-
+        ClientRegistry.registerKeyBinding(hudKey);
+        ClientRegistry.registerKeyBinding(boostKey);
+        ClientRegistry.registerKeyBinding(moduleTweakerKey);
+        ClientRegistry.registerKeyBinding(ModuleRadiationShielding);
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -70,21 +91,27 @@ public class MekanismKeyHandler extends MekKeyHandler {
     @Override
     public void keyDown(KeyBinding kb, boolean isRepeat) {
         EntityPlayer player = FMLClientHandler.instance().getClient().player;
-        if (kb == modeSwitchKey) {
-            if (IModeItem.isModeItem(player, EntityEquipmentSlot.MAINHAND, false)) {
-                Mekanism.packetHandler.sendToServer(new ModeChangMessage(EntityEquipmentSlot.MAINHAND, player.isSneaking()));
-            } else if (!IModeItem.isModeItem(player, EntityEquipmentSlot.MAINHAND) && IModeItem.isModeItem(player, EntityEquipmentSlot.OFFHAND)) {
-                Mekanism.packetHandler.sendToServer(new ModeChangMessage(EntityEquipmentSlot.OFFHAND, player.isSneaking()));
+        if (kb == handModeSwitchKey) {
+            if (player != null) {
+                if (IModeItem.isModeItem(player, EntityEquipmentSlot.MAINHAND, false)) {
+                    Mekanism.packetHandler.sendToServer(new ModeChangMessage(EntityEquipmentSlot.MAINHAND, player.isSneaking()));
+                } else if (!IModeItem.isModeItem(player, EntityEquipmentSlot.MAINHAND) && IModeItem.isModeItem(player, EntityEquipmentSlot.OFFHAND)) {
+                    Mekanism.packetHandler.sendToServer(new ModeChangMessage(EntityEquipmentSlot.OFFHAND, player.isSneaking()));
+                }
             }
-        } else if (kb == armorModeSwitchKey) {
+        } else if (kb == headModeSwitchKey) {
+            handlePotentialModeItem(EntityEquipmentSlot.HEAD);
+        } else if (kb == chestModeSwitchKey) {
             handlePotentialModeItem(EntityEquipmentSlot.CHEST);
-        } else if (kb == freeRunnerModeSwitchKey) {
+        } else if (kb == legsModeSwitchKey) {
+            handlePotentialModeItem(EntityEquipmentSlot.LEGS);
+        } else if (kb == feetModeSwitchKey) {
             handlePotentialModeItem(EntityEquipmentSlot.FEET);
-        } else if (kb == MekAsuitFeetModeSwitchKey) {
-        } else if (kb == enableHUDkEY) {
+        } else if (kb == hudKey) {
             MekanismConfig.current().client.enableHUD.set(!MekanismConfig.current().client.enableHUD.val());
         }
     }
+
 
     private static void handlePotentialModeItem(EntityEquipmentSlot slot) {
         EntityPlayer player = Minecraft.getMinecraft().player;

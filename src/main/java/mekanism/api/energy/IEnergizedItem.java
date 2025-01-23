@@ -84,14 +84,14 @@ public interface IEnergizedItem {
         return amount - toAdd;
     }
 
-    default double extract (ItemStack stack, double amount, boolean action){
-        if (getEnergy(stack) ==0 || amount ==0){
+    default double extract(ItemStack stack, double amount, boolean action) {
+        if (getEnergy(stack) == 0 || amount == 0) {
             return 0;
         }
-        double ret = Math.min(getEnergy(stack),amount);
+        double ret = Math.min(getEnergy(stack), amount);
         if (ret != 0 && action) {
             // Note: this also will mark that the contents changed
-            setEnergy(stack,getEnergy(stack) - (ret));
+            setEnergy(stack, getEnergy(stack) - (ret));
         }
         return ret;
     }

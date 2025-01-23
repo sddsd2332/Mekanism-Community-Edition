@@ -1,3 +1,4 @@
+/*
 package mekanism.client.gui.element;
 
 import mekanism.api.text.IHasTextComponent;
@@ -7,8 +8,6 @@ import mekanism.client.render.MekanismRenderer;
 import mekanism.client.sound.SoundHandler;
 import mekanism.common.MekanismLang;
 import mekanism.common.MekanismSounds;
-import mekanism.common.content.gear.Module;
-import mekanism.common.content.gear.ModuleConfigItem;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
@@ -32,7 +31,7 @@ public class GuiModuleScreen extends GuiElement {
     protected int relativeX;
     protected int relativeY;
 
-    private Module currentModule;
+    private oldModule currentOldModule;
     private List<MiniElement> miniElements = new ArrayList<>();
 
     public GuiModuleScreen(IGuiWrapper gui, ResourceLocation def, int x, int y, Consumer<ItemStack> callback) {
@@ -44,38 +43,59 @@ public class GuiModuleScreen extends GuiElement {
     }
 
     @SuppressWarnings("unchecked")
-    public void setModule(Module module) {
+    public void setModule(oldModule oldModule) {
         List<MiniElement> newElements = new ArrayList<>();
 
-        if (module != null) {
+        if (oldModule != null) {
             int startY = 3;
-            if (module.getData().isExclusive(module.getData().getExclusiveFlags())) {
+            if (oldModule.getData().isExclusive(oldModule.getData().getExclusiveFlags())) {
                 startY += 13;
             }
-            if (module.getData().getMaxStackSize() > 1) {
+            if (oldModule.getData().getMaxStackSize() > 1) {
                 startY += 13;
             }
-            for (int i = 0; i < module.getConfigItems().size(); i++) {
-                ModuleConfigItem<?> configItem = module.getConfigItems().get(i);
+            for (int i = 0; i < oldModule.getConfigItems().size(); i++) {
+                oldModuleConfigItem<?> configItem = oldModule.getConfigItems().get(i);
                 // Don't show the enabled option if this is enabled by default
-                if (configItem.getData() instanceof ModuleConfigItem.BooleanData && (!configItem.getName().equals(Module.ENABLED_KEY) || !module.getData().isNoDisable())) {
-                    newElements.add(new BooleanToggle((ModuleConfigItem<Boolean>) configItem, 2, startY));
+                if (configItem.getData() instanceof oldModuleConfigItem.BooleanData && (!configItem.getName().equals(oldModule.ENABLED_KEY) || !oldModule.getData().isNoDisable())) {
+                    newElements.add(new BooleanToggle((oldModuleConfigItem<Boolean>) configItem, 2, startY));
                     startY += 24;
-                } else if (configItem.getData() instanceof ModuleConfigItem.EnumData) {
-                    EnumToggle toggle = new EnumToggle((ModuleConfigItem<Enum<? extends IHasTextComponent>>) configItem, 2, startY);
+                } else if (configItem.getData() instanceof oldModuleConfigItem.EnumData) {
+                    EnumToggle toggle = new EnumToggle((oldModuleConfigItem<Enum<? extends IHasTextComponent>>) configItem, 2, startY);
                     newElements.add(toggle);
                     startY += 34;
                     // allow the dragger to continue sliding, even when we reset the config element
-                    if (currentModule != null && currentModule.getData() == module.getData() && miniElements.get(i) instanceof EnumToggle) {
+                    if (currentOldModule != null && currentOldModule.getData() == oldModule.getData() && miniElements.get(i) instanceof EnumToggle) {
                         toggle.dragging = ((EnumToggle) miniElements.get(i)).dragging;
                     }
                 }
             }
         }
 
-        currentModule = module;
+        currentOldModule = oldModule;
         miniElements = newElements;
     }
+    @Override
+    public void renderBackground(int xAxis, int yAxis,int guiWidth, int guiHeight) {
+        for (MiniElement element : miniElements) {
+            element.renderBackground(xAxis, yAxis);
+        }
+    }
+
+    @Override
+    public void mouseClicked(int xAxis, int yAxis, int button) {
+        for (MiniElement element : miniElements) {
+            element.click(xAxis, yAxis);
+        }
+    }
+
+    @Override
+    public void preMouseClicked(int xAxis, int yAxis, int button) {
+        for (MiniElement element : miniElements) {
+            element.release(xAxis, yAxis);
+        }
+    }
+
 
     public int getRelativeX() {
         return relativeX;
@@ -91,24 +111,11 @@ public class GuiModuleScreen extends GuiElement {
     }
 
     @Override
-    public void renderBackground(int xAxis, int yAxis, int guiWidth, int guiHeight) {
-
-    }
-
-    @Override
     public void renderForeground(int xAxis, int yAxis) {
 
     }
 
-    @Override
-    public void preMouseClicked(int xAxis, int yAxis, int button) {
 
-    }
-
-    @Override
-    public void mouseClicked(int xAxis, int yAxis, int button) {
-
-    }
 
     abstract class MiniElement {
 
@@ -158,9 +165,9 @@ public class GuiModuleScreen extends GuiElement {
 
     class BooleanToggle extends MiniElement {
 
-        final ModuleConfigItem<Boolean> data;
+        final oldModuleConfigItem<Boolean> data;
 
-        BooleanToggle(ModuleConfigItem<Boolean> data, int xPos, int yPos) {
+        BooleanToggle(oldModuleConfigItem<Boolean> data, int xPos, int yPos) {
             super(xPos, yPos);
             this.data = data;
         }
@@ -209,10 +216,10 @@ public class GuiModuleScreen extends GuiElement {
         final int BAR_LENGTH = 134 - 24;
         final int BAR_START = 10;
         final float TEXT_SCALE = 0.7F;
-        final ModuleConfigItem<Enum<? extends IHasTextComponent>> data;
+        final oldModuleConfigItem<Enum<? extends IHasTextComponent>> data;
         boolean dragging = false;
 
-        EnumToggle(ModuleConfigItem<Enum<? extends IHasTextComponent>> data, int xPos, int yPos) {
+        EnumToggle(oldModuleConfigItem<Enum<? extends IHasTextComponent>> data, int xPos, int yPos) {
             super(xPos, yPos);
             this.data = data;
         }
@@ -220,7 +227,7 @@ public class GuiModuleScreen extends GuiElement {
         @Override
         public void renderBackground(int mouseX, int mouseY) {
             mc.getRenderManager().renderEngine.bindTexture(SLIDER);
-            int count = ((ModuleConfigItem.EnumData<?>) data.getData()).getSelectableCount();
+            int count = ((oldModuleConfigItem.EnumData<?>) data.getData()).getSelectableCount();
             int center = (BAR_LENGTH / (count - 1)) * data.get().ordinal();
             GuiUtils.blit( getX() + BAR_START + center - 2, getY() + 11, 0, 0, 5, 6, 8, 8);
             GuiUtils.blit( getX() + BAR_START, getY() + 17, 0, 6, BAR_LENGTH, 2, 8, 8);
@@ -228,7 +235,7 @@ public class GuiModuleScreen extends GuiElement {
 
         @Override
         public void renderForeground(int mouseX, int mouseY) {
-            ModuleConfigItem.EnumData<?> enumData = (ModuleConfigItem.EnumData<?>) data.getData();
+            oldModuleConfigItem.EnumData<?> enumData = (oldModuleConfigItem.EnumData<?>) data.getData();
             renderText(data.getDescription().getTranslationKey(), getRelativeX() + 3, getRelativeY(), TEXT_COLOR, 0.8F);
             Enum<? extends IHasTextComponent>[] arr = enumData.getEnums();
             int count = enumData.getSelectableCount();
@@ -250,7 +257,7 @@ public class GuiModuleScreen extends GuiElement {
 
         @Override
         public void click(double mouseX, double mouseY) {
-            int count = ((ModuleConfigItem.EnumData<?>) data.getData()).getSelectableCount();
+            int count = ((oldModuleConfigItem.EnumData<?>) data.getData()).getSelectableCount();
             if (!dragging) {
                 int center = (BAR_LENGTH / (count - 1)) * data.get().ordinal();
                 if (mouseX >= getX() + BAR_START + center - 2 && mouseX < getX() + BAR_START + center + 3 && mouseY >= getY() + 11 && mouseY < getY() + 17) {
@@ -258,7 +265,7 @@ public class GuiModuleScreen extends GuiElement {
                 }
             }
             if (!dragging) {
-                Enum<? extends IHasTextComponent>[] arr = ((ModuleConfigItem.EnumData<?>) data.getData()).getEnums();
+                Enum<? extends IHasTextComponent>[] arr = ((oldModuleConfigItem.EnumData<?>) data.getData()).getEnums();
                 if (mouseX >= getX() + BAR_START && mouseX < getX() + BAR_START + BAR_LENGTH && mouseY >= getY() + 10 && mouseY < getY() + 22) {
                     int cur = (int) Math.round(((mouseX - getX() - BAR_START) / BAR_LENGTH) * (count - 1));
                     cur = Math.min(count - 1, Math.max(0, cur));
@@ -281,3 +288,5 @@ public class GuiModuleScreen extends GuiElement {
          renderText(text.getFormattedText(), (int) centerX, (int) y, color, scale);
     }
 }
+
+ */

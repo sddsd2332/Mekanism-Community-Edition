@@ -1,7 +1,6 @@
 package mekanism.common;
 
 import mekanism.api.EnumColor;
-import mekanism.common.content.gear.Modules;
 import mekanism.common.item.*;
 import mekanism.common.item.armor.ItemMekaSuitBodyArmor;
 import mekanism.common.item.armor.ItemMekaSuitBoots;
@@ -13,9 +12,6 @@ import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.registries.IForgeRegistry;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 @ObjectHolder(Mekanism.MODID)
 public class MekanismItems {
@@ -107,28 +103,41 @@ public class MekanismItems {
     public static final Item MEKASUIT_PANTS = new ItemMekaSuitPants();
     public static final Item MEKASUIT_BOOTS = new ItemMekaSuitBoots();
 
-    public static final ItemModule MODULE_ENERGY = new ItemModule(Modules.ENERGY_UNIT);
-    // public static final Item MODULE_LASER_DISSIPATION = new ItemModule(MekanismModules.LASER_DISSIPATION_UNIT);
-    public static final ItemModule MODULE_RADIATION_SHIELDING = new ItemModule(Modules.RADIATION_SHIELDING_UNIT);
-    public static final ItemModule MODULE_EXCAVATION_ESCALATION = new ItemModule(Modules.EXCAVATION_ESCALATION_UNIT);
-    public static final ItemModule MODULE_ATTACK_AMPLIFICATION = new ItemModule(Modules.ATTACK_AMPLIFICATION_UNIT);
-    public static final ItemModule MODULE_SILK_TOUCH = new ItemModule(Modules.SILK_TOUCH_UNIT);
-    public static final ItemModule MODULE_TELEPORTATION = new ItemModule(Modules.TELEPORTATION_UNIT);
-    public static final ItemModule MODULE_ELECTROLYTIC_BREATHING = new ItemModule(Modules.ELECTROLYTIC_BREATHING_UNIT);
-    public static final ItemModule MODULE_INHALATION_PURIFICATION = new ItemModule(Modules.INHALATION_PURIFICATION_UNIT);
-    public static final ItemModule MODULE_VISION_ENHANCEMENT = new ItemModule(Modules.VISION_ENHANCEMENT_UNIT);
-    public static final ItemModule MODULE_SOLAR_RECHARGING = new ItemModule(Modules.SOLAR_RECHARGING_UNIT);
-    public static final ItemModule MODULE_NUTRITIONAL_INJECTION = new ItemModule(Modules.NUTRITIONAL_INJECTION_UNIT);
+    public static final ItemModule MODULE_ENERGY = new ItemModule(MekanismModules.ENERGY_UNIT);
+    public static final ItemModule MODULE_COLOR_MODULATION = new ItemModule(MekanismModules.COLOR_MODULATION_UNIT);
+    public static final ItemModule MODULE_LASER_DISSIPATION = new ItemModule(MekanismModules.LASER_DISSIPATION_UNIT);
+    public static final ItemModule MODULE_RADIATION_SHIELDING = new ItemModule(MekanismModules.RADIATION_SHIELDING_UNIT);
+    /*
+    public static final ItemModule MODULE_EXCAVATION_ESCALATION = new ItemModule(MekanismModules.EXCAVATION_ESCALATION_UNIT);
+    public static final ItemModule MODULE_ATTACK_AMPLIFICATION = new ItemModule(MekanismModules.ATTACK_AMPLIFICATION_UNIT);
+    public static final ItemModule MODULE_FARMING = new ItemModule(MekanismModules.FARMING_UNIT);
+    public static final ItemModule MODULE_SHEARING = new ItemModule(MekanismModules.SHEARING_UNIT);
+    public static final ItemModule MODULE_SILK_TOUCH = new ItemModule(MekanismModules.SILK_TOUCH_UNIT);
+    public static final ItemModule MODULE_FORTUNE = new ItemModule(MekanismModules.FORTUNE_UNIT);
+    public static final ItemModule MODULE_BLASTING = new ItemModule(MekanismModules.BLASTING_UNIT);
+    public static final ItemModule MODULE_VEIN_MINING = new ItemModule(MekanismModules.VEIN_MINING_UNIT);
+    public static final ItemModule MODULE_TELEPORTATION = new ItemModule(MekanismModules.TELEPORTATION_UNIT);
+    */
+    public static final ItemModule MODULE_ELECTROLYTIC_BREATHING = new ItemModule(MekanismModules.ELECTROLYTIC_BREATHING_UNIT);
+    public static final ItemModule MODULE_INHALATION_PURIFICATION = new ItemModule(MekanismModules.INHALATION_PURIFICATION_UNIT);
+    public static final ItemModule MODULE_VISION_ENHANCEMENT = new ItemModule(MekanismModules.VISION_ENHANCEMENT_UNIT);
+    public static final ItemModule MODULE_NUTRITIONAL_INJECTION = new ItemModule(MekanismModules.NUTRITIONAL_INJECTION_UNIT);
+    /*
+    public static final ItemModule MODULE_DOSIMETER = new ItemModule(MekanismModules.DOSIMETER_UNIT);
+    public static final ItemModule MODULE_GEIGER = new ItemModule(MekanismModules.GEIGER_UNIT);
+     */
+    public static final ItemModule MODULE_JETPACK = new ItemModule(MekanismModules.JETPACK_UNIT);
+    public static final ItemModule MODULE_CHARGE_DISTRIBUTION = new ItemModule(MekanismModules.CHARGE_DISTRIBUTION_UNIT);
+    public static final ItemModule MODULE_ELYTRA = new ItemModule(MekanismModules.ELYTRA_UNIT);
+    public static final ItemModule MODULE_GYROSCOPIC_STABILIZATION = new ItemModule(MekanismModules.GYROSCOPIC_STABILIZATION_UNIT);
+    public static final ItemModule MODULE_HYDROSTATIC_REPULSOR = new ItemModule(MekanismModules.HYDROSTATIC_REPULSOR_UNIT);
+    public static final ItemModule MODULE_LOCOMOTIVE_BOOSTING = new ItemModule(MekanismModules.LOCOMOTIVE_BOOSTING_UNIT);
+  //  public static final ItemModule MODULE_MOTORIZED_SERVO = new ItemModule(MekanismModules.MOTORIZED_SERVO_UNIT);
+    public static final ItemModule MODULE_HYDRAULIC_PROPULSION = new ItemModule(MekanismModules.HYDRAULIC_PROPULSION_UNIT);
+  //  public static final ItemModule MODULE_MAGNETIC_ATTRACTION = new ItemModule(MekanismModules.MAGNETIC_ATTRACTION_UNIT);
+    public static final ItemModule MODULE_FROST_WALKER = new ItemModule(MekanismModules.FROST_WALKER_UNIT);
 
-    public static final ItemModule MODULE_JETPACK = new ItemModule(Modules.JETPACK_UNIT);
-    public static final ItemModule MODULE_CHARGE_DISTRIBUTION = new ItemModule(Modules.CHARGE_DISTRIBUTION_UNIT);
-    public static final ItemModule MODULE_GRAVITATIONAL_MODULATING = new ItemModule(Modules.GRAVITATIONAL_MODULATING_UNIT);
-  //  public static final ItemModule MODULE_ELYTRA = new ItemModule(Modules.ELYTRA_UNIT);
-    public static final ItemModule MODULE_LOCOMOTIVE_BOOSTING = new ItemModule(Modules.LOCOMOTIVE_BOOSTING_UNIT);
-    public static final ItemModule MODULE_GYROSCOPIC_STABILIZATION = new ItemModule(Modules.GYROSCOPIC_STABILIZATION_UNIT);
-    public static final ItemModule MODULE_HYDRAULIC_PROPULSION = new ItemModule(Modules.HYDRAULIC_PROPULSION_UNIT);
-    public static final ItemModule MODULE_MAGNETIC_ATTRACTION = new ItemModule(Modules.MAGNETIC_ATTRACTION_UNIT);
-  //  public static final ItemModule MODULE_FROST_WALKER = new ItemModule(Modules.FROST_WALKER_UNIT);
+
     /**
      * ADD END
      */
@@ -223,26 +232,41 @@ public class MekanismItems {
         registry.register(init(MEKASUIT_BODYARMOR, "mekasuit_bodyarmor"));
         registry.register(init(MEKASUIT_PANTS, "mekasuit_pants"));
         registry.register(init(MEKASUIT_BOOTS, "mekasuit_boots"));
+
         registry.register(initModule(MODULE_ENERGY));
+        registry.register(initModule(MODULE_COLOR_MODULATION));
+        registry.register(initModule(MODULE_LASER_DISSIPATION));
         registry.register(initModule(MODULE_RADIATION_SHIELDING));
+        /*
         registry.register(initModule(MODULE_EXCAVATION_ESCALATION));
         registry.register(initModule(MODULE_ATTACK_AMPLIFICATION));
+        registry.register(initModule(MODULE_FARMING));
+        registry.register(initModule(MODULE_SHEARING));
         registry.register(initModule(MODULE_SILK_TOUCH));
+        registry.register(initModule(MODULE_SOLAR_RECHARGING));
+        registry.register(initModule(MODULE_FORTUNE));
+        registry.register(initModule(MODULE_BLASTING));
+        registry.register(initModule(MODULE_VEIN_MINING));
         registry.register(initModule(MODULE_TELEPORTATION));
+         */
         registry.register(initModule(MODULE_ELECTROLYTIC_BREATHING));
         registry.register(initModule(MODULE_INHALATION_PURIFICATION));
         registry.register(initModule(MODULE_VISION_ENHANCEMENT));
-        registry.register(initModule(MODULE_SOLAR_RECHARGING));
         registry.register(initModule(MODULE_NUTRITIONAL_INJECTION));
+      //  registry.register(initModule(MODULE_DOSIMETER));
+      //  registry.register(initModule(MODULE_GEIGER));
         registry.register(initModule(MODULE_JETPACK));
         registry.register(initModule(MODULE_CHARGE_DISTRIBUTION));
-        registry.register(initModule(MODULE_GRAVITATIONAL_MODULATING));
-     //   registry.register(initModule(MODULE_ELYTRA));
-        registry.register(initModule(MODULE_LOCOMOTIVE_BOOSTING));
+      //  registry.register(initModule(MODULE_GRAVITATIONAL_MODULATING));
+        registry.register(initModule(MODULE_ELYTRA));
         registry.register(initModule(MODULE_GYROSCOPIC_STABILIZATION));
+        registry.register(initModule(MODULE_HYDROSTATIC_REPULSOR));
+        registry.register(initModule(MODULE_LOCOMOTIVE_BOOSTING));
+      //  registry.register(initModule(MODULE_MOTORIZED_SERVO));
         registry.register(initModule(MODULE_HYDRAULIC_PROPULSION));
-        registry.register(initModule(MODULE_MAGNETIC_ATTRACTION));
-    //    registry.register(initModule(MODULE_FROST_WALKER));
+       // registry.register(initModule(MODULE_MAGNETIC_ATTRACTION));
+        registry.register(initModule(MODULE_FROST_WALKER));
+
         /**
          * ADD END
          */

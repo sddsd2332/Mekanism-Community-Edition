@@ -2,12 +2,12 @@ package mekanism.common.item;
 
 
 import mekanism.api.EnumColor;
+import mekanism.api.gear.ModuleData;
 import mekanism.client.MekKeyHandler;
 import mekanism.client.MekanismKeyHandler;
 import mekanism.common.MekanismLang;
 import mekanism.common.content.gear.IModuleItem;
-import mekanism.common.content.gear.Modules;
-import mekanism.common.content.gear.Modules.ModuleData;
+import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.util.LangUtils;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.util.ITooltipFlag;
@@ -28,7 +28,6 @@ public class ItemModule extends ItemMekanism implements IModuleItem {
 
     public ItemModule(ModuleData<?> moduleData) {
         super();
-        moduleData.setStack(this);
         this.moduleData = moduleData;
     }
 
@@ -53,10 +52,10 @@ public class ItemModule extends ItemMekanism implements IModuleItem {
     public void addInformation(@Nonnull ItemStack stack, World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
         if (MekKeyHandler.getIsKeyPressed(MekanismKeyHandler.sneakKey)) {
             tooltip.add(MekanismLang.MODULE_SUPPORTED.translateColored(EnumColor.BRIGHT_GREEN).getFormattedText());
-            for (Item item : Modules.getSupported(getModuleData())) {
+            for (Item item : ModuleHelper.get().getSupported(getModuleData())) {
                 tooltip.add(item.getItemStackDisplayName(new ItemStack(item)));
             }
-            Set<ModuleData<?>> conflicting = Modules.getConflicting(getModuleData());
+            Set<ModuleData<?>> conflicting = ModuleHelper.get().getConflicting(getModuleData());
             if (!conflicting.isEmpty()) {
                 tooltip.add(MekanismLang.MODULE_CONFLICTING.translateColored(EnumColor.RED).getFormattedText());
                 for (ModuleData<?> module : conflicting) {
@@ -65,8 +64,8 @@ public class ItemModule extends ItemMekanism implements IModuleItem {
             }
         } else {
             ModuleData<?> moduleData = getModuleData();
-            tooltip.add(moduleData.getDescription().getFormattedText());
-            tooltip.add(MekanismLang.MODULE_STACKABLE.translateColored(EnumColor.GREY).getFormattedText() + EnumColor.AQUA +  moduleData.getMaxStackSize());
+            tooltip.add(LangUtils.localize(moduleData.getDescriptionTranslationKey()));
+            tooltip.add(MekanismLang.MODULE_STACKABLE.translateColored(EnumColor.GREY).getFormattedText() + EnumColor.AQUA + moduleData.getMaxStackSize());
             tooltip.add(LangUtils.localize("tooltip.hold") + " " + EnumColor.INDIGO + GameSettings.getKeyDisplayString(MekanismKeyHandler.sneakKey.getKeyCode()) + EnumColor.GREY + " " + LangUtils.localize("tooltip.forDetails") + ".");
         }
     }

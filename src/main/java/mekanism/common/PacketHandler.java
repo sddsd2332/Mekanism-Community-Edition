@@ -38,6 +38,7 @@ import mekanism.common.network.PacketSimpleGui.SimpleGuiMessage;
 import mekanism.common.network.PacketStepHeightSync.StepHeightSyncMessage;
 import mekanism.common.network.PacketTileEntity.TileEntityMessage;
 import mekanism.common.network.PacketTransmitterUpdate.TransmitterUpdateMessage;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -212,7 +213,6 @@ public class PacketHandler {
         if (Mekanism.hooks.Baubles) {
             registerBaublesMessage();
         }
-
     }
 
     @Optional.Method(modid = MekanismHooks.Baubles_MOD_ID)
@@ -329,6 +329,7 @@ public class PacketHandler {
     public static UUID readUUID(ByteBuf dataStream) {
         return new UUID(dataStream.readLong(), dataStream.readLong());
     }
+
 
     public static void writeUUID(ByteBuf dataStream, UUID uuid) {
         dataStream.writeLong(uuid.getMostSignificantBits());

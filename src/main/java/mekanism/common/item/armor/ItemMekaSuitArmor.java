@@ -7,15 +7,19 @@ import ic2.api.item.ISpecialElectricItem;
 import mekanism.api.EnumColor;
 import mekanism.api.energy.IEnergizedItem;
 import mekanism.api.functions.FloatSupplier;
+import mekanism.api.gear.ICustomModule;
+import mekanism.api.gear.ICustomModule.ModuleDamageAbsorbInfo;
+import mekanism.api.gear.IModule;
+import mekanism.api.gear.ModuleData;
 import mekanism.client.MekKeyHandler;
 import mekanism.client.MekanismKeyHandler;
 import mekanism.common.Mekanism;
-import mekanism.common.MekanismLang;
+import mekanism.common.MekanismModules;
 import mekanism.common.capabilities.ItemCapabilityWrapper;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.content.gear.IModuleContainerItem;
 import mekanism.common.content.gear.Module;
-import mekanism.common.content.gear.Modules;
+import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.content.gear.shared.ModuleEnergyUnit;
 import mekanism.common.entity.EntityMekaSuitArmor;
 import mekanism.common.integration.MekanismHooks;
@@ -44,7 +48,6 @@ import net.minecraft.potion.Potion;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -111,7 +114,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     @Override
     public void damageArmor(EntityLivingBase entity, @Nonnull ItemStack stack, DamageSource source, int damage, int slot) {
         if (Mekanism.hooks.IC2Loaded) {
-            if (Modules.isEnabled(stack, Modules.RADIATION_SHIELDING_UNIT)) {
+            if (isModuleEnabled(stack, MekanismModules.RADIATION_SHIELDING_UNIT)) {
                 Potion radiation = Potion.getPotionFromResourceLocation("ic2:radiation");
                 if (radiation != null && entity.isPotionActive(radiation)) {
                     entity.removePotionEffect(radiation);
@@ -124,13 +127,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
         if (MekKeyHandler.getIsKeyPressed(MekanismKeyHandler.sneakKey)) {
-            for (Module module : Modules.loadAll(stack)) {
-                ITextComponent component = module.getData().getLangEntry().translateColored(EnumColor.GREY);
-                if (module.getInstalledCount() > 1) {
-                    component.appendSibling(MekanismLang.GENERIC_FRACTION.translateColored(EnumColor.GREY).appendText(EnumColor.GREY + "(" + module.getInstalledCount() + "/" + module.getData().getMaxStackSize() + ")"));
-                }
-                tooltip.add(component.getFormattedText());
-            }
+            addModuleDetails(stack, tooltip);
         } else {
             tooltip.add(EnumColor.AQUA + LangUtils.localize("tooltip.storedEnergy") + ": " + EnumColor.GREY + MekanismUtils.getEnergyDisplay(getEnergy(stack), getMaxEnergy(stack)));
             addInformation(stack, world, tooltip);
@@ -179,8 +176,8 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         items.add(stack);
 
         ItemStack FullStack = new ItemStack(this);
-        for (Modules.ModuleData<?> module : Modules.getAll()) {
-            if (Modules.getSupported(FullStack).contains(module)) {
+        for (ModuleData<?> module : ModuleHelper.get().getAll()) {
+            if (ModuleHelper.get().getSupported(FullStack).contains(module)) {
                 setModule(FullStack, module);
             }
         }
@@ -191,14 +188,14 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     @Override
     public void onArmorTick(World world, EntityPlayer player, ItemStack stack) {
         super.onArmorTick(world, player, stack);
-        for (Module module : Modules.loadAll(stack)) {
+        for (Module<?> module : getModules(stack)) {
             module.tick(player);
         }
     }
 
     @Override
     public void changeMode(@NotNull EntityPlayer player, @NotNull ItemStack stack, int shift, boolean displayChangeMessage) {
-        for (Module module : Modules.loadAll(stack)) {
+        for (Module<?> module : getModules(stack)) {
             if (module.handlesModeChange()) {
                 module.changeMode(player, stack, shift, displayChangeMessage);
                 return;
@@ -209,7 +206,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
 
     @Override
     public boolean supportsSlotType(ItemStack stack, @Nonnull EntityEquipmentSlot slotType) {
-        return slotType == armorType && Modules.loadAll(stack).stream().anyMatch(Module::handlesModeChange);
+        return slotType == armorType && getModules(stack).stream().anyMatch(Module::handlesModeChange);
     }
 
     @Override
@@ -219,14 +216,14 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
 
     @Override
     public double getMaxEnergy(ItemStack stack) {
-        ModuleEnergyUnit module = Modules.load(stack, Modules.ENERGY_UNIT);
-        return module == null ? MekanismConfig.current().meka.mekaSuitBaseEnergyCapacity.val() : module.getEnergyCapacity();
+        IModule<ModuleEnergyUnit> module = getModule(stack, MekanismModules.ENERGY_UNIT);
+        return module == null ? MekanismConfig.current().meka.mekaSuitBaseEnergyCapacity.val() : module.getCustomInstance().getEnergyCapacity(module);
     }
 
     @Override
     public double getMaxTransfer(ItemStack stack) {
-        ModuleEnergyUnit module = Modules.load(stack, Modules.ENERGY_UNIT);
-        return module == null ? MekanismConfig.current().meka.mekaSuitBaseChargeRate.val() : module.getChargeRate();
+        IModule<ModuleEnergyUnit> module = getModule(stack, MekanismModules.ENERGY_UNIT);
+        return module == null ? MekanismConfig.current().meka.mekaSuitBaseChargeRate.val() : module.getCustomInstance().getChargeRate(module);
     }
 
 
@@ -260,9 +257,9 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
                 if (energyContainer != null) {
                     FoundArmorDetails details = new FoundArmorDetails(energyContainer, (ItemMekaSuitArmor) stack.getItem());
                     armorDetails.add(details);
-                    for (Module module : details.armor.getModules(stack)) {
+                    for (Module<?> module : details.armor.getModules(stack)) {
                         if (module.isEnabled()) {
-                            Module.ModuleDamageAbsorbInfo damageAbsorbInfo = getModuleDamageAbsorbInfo(module, source);
+                            ModuleDamageAbsorbInfo damageAbsorbInfo = getModuleDamageAbsorbInfo(module, source);
                             if (damageAbsorbInfo != null) {
                                 float absorption = damageAbsorbInfo.getAbsorptionRatio().getAsFloat();
                                 ratioAbsorbed += absorbDamage(details.usageInfo, amount, absorption, ratioAbsorbed, damageAbsorbInfo.getEnergyCost());
@@ -320,8 +317,8 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     }
 
     @Nullable
-    private static Module.ModuleDamageAbsorbInfo getModuleDamageAbsorbInfo(Module module, DamageSource damageSource) {
-        return module.getDamageAbsorbInfo(damageSource);
+    private static <MODULE extends ICustomModule<MODULE>> ModuleDamageAbsorbInfo getModuleDamageAbsorbInfo(IModule<MODULE> module, DamageSource damageSource) {
+        return module.getCustomInstance().getDamageAbsorbInfo(module, damageSource);
     }
 
     private static float absorbDamage(EnergyUsageInfo usageInfo, float amount, float absorption, float currentAbsorbed, double energyCost) {
@@ -401,7 +398,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     @Override
     @Optional.Method(modid = MekanismHooks.IC2_MOD_ID)
     public boolean addsProtection(EntityLivingBase entity, EntityEquipmentSlot slotType, ItemStack stack) {
-        return isModuleEnabled(stack, Modules.RADIATION_SHIELDING_UNIT);
+        return isModuleEnabled(stack, MekanismModules.RADIATION_SHIELDING_UNIT);
     }
 
 

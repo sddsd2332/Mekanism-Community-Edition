@@ -1,13 +1,12 @@
 package mekanism.client.render;
 
-import mekanism.api.MekanismAPI;
 import mekanism.api.energy.IEnergizedItem;
 import mekanism.api.gear.IHUDElement;
 import mekanism.client.gui.element.GuiUtils;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.content.gear.HUDElement;
 import mekanism.common.content.gear.IModuleContainerItem;
-import mekanism.common.content.gear.Modules;
+import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.item.ItemMekTool;
 import mekanism.common.item.armor.ItemMekaSuitArmor;
 import mekanism.common.util.LangUtils;
@@ -111,7 +110,7 @@ public class HUDRenderer {
         ItemStack stack = player.getItemStackFromSlot(slot);
         if (showPercent.test(stack.getItem())) {
             if (stack.getItem() instanceof IEnergizedItem item) {
-                renderHUDElement(font, posX, 0,  Modules.hudElementPercent(icon, item.getEnergyRatio(stack)), color, false);
+                renderHUDElement(font, posX, 0,  ModuleHelper.get().hudElementPercent(icon, item.getEnergyRatio(stack)), color, false);
                 return 48;
             }
         }

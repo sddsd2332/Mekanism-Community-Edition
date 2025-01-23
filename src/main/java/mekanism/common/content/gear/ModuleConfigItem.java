@@ -1,57 +1,60 @@
 package mekanism.common.content.gear;
 
-import java.util.function.Consumer;
-import mekanism.api.text.IHasTextComponent;
+import java.util.Objects;
+import java.util.function.BooleanSupplier;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import mekanism.api.gear.config.IModuleConfigItem;
+import mekanism.api.gear.config.ModuleBooleanData;
+import mekanism.api.gear.config.ModuleConfigData;
 import mekanism.api.text.ILangEntry;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.text.ITextComponent;
+import org.jetbrains.annotations.NotNull;
 
-public class ModuleConfigItem<TYPE> {
+public class ModuleConfigItem<TYPE> implements IModuleConfigItem<TYPE> {
 
-    private final Module module;
+    private final Module<?> module;
     private final String name;
     private final ILangEntry description;
-    private final ConfigData<TYPE> data;
+    private final ModuleConfigData<TYPE> data;
 
-    public ModuleConfigItem(Module module, String name, ILangEntry description, ConfigData<TYPE> data, TYPE def) {
+    public ModuleConfigItem(Module<?> module, String name, ILangEntry description, ModuleConfigData<TYPE> data) {
         this.module = module;
         this.name = name;
         this.description = description;
         this.data = data;
-        data.set(def);
     }
 
-    public ILangEntry getDescription() {
-        return description;
+    public ITextComponent getDescription() {
+        return description.translate();
     }
 
-    public ConfigData<TYPE> getData() {
+    public ModuleConfigData<TYPE> getData() {
         return data;
     }
 
+    @Nonnull
+    @Override
     public TYPE get() {
         return data.get();
     }
 
-    public void set(TYPE type, Consumer<ItemStack> callback) {
-        data.set(type);
-        // validity checks
-        for (Module m : Modules.loadAll(module.getContainer())) {
-            // disable other exclusive modules
-            if (name.equals(Module.ENABLED_KEY) && type == Boolean.TRUE && module.getData().isExclusive(m.getData().getExclusiveFlags())) {
-                if (m.getData().isExclusive(module.getData().getExclusiveFlags()) && m.getData() != module.getData()) {
-                    m.setDisabledForce();
-                }
-            }
-            // turn off mode change handling for other modules
-            if (name.equals(Module.HANDLE_MODE_CHANGE_KEY) && type == Boolean.TRUE && module.handlesModeChange()) {
-                if (m.handlesModeChange() && m.getData() != module.getData()) {
-                    m.setModeHandlingDisabledForce();
-                }
-            }
-        }
+    @Override
+    public void set(@Nonnull TYPE val) {
+        set(val, null);
+    }
+
+    public void set(@Nonnull TYPE val, @Nullable Runnable callback) {
+        Objects.requireNonNull(val, "Value cannot be null.");
+        data.set(val);
+        // perform any validity checks such as disabling conflicting modules
+        checkValidity(val, callback);
         // finally, save this specific module with the callback (to send a packet)
         module.save(callback);
+    }
+
+    protected void checkValidity(@NotNull TYPE val, @org.jetbrains.annotations.Nullable Runnable callback) {
     }
 
     public void read(NBTTagCompound tag) {
@@ -64,96 +67,29 @@ public class ModuleConfigItem<TYPE> {
         data.write(name, tag);
     }
 
+    @Nonnull
+    @Override
     public String getName() {
         return name;
     }
 
-    public interface ConfigData<TYPE> {
+    public static class DisableableModuleConfigItem extends ModuleConfigItem<Boolean> {
 
-        TYPE get();
+        private final BooleanSupplier isConfigEnabled;
 
-        void set(TYPE val);
-
-        void read(String name, NBTTagCompound tag);
-
-        void write(String name, NBTTagCompound tag);
-    }
-
-    public static class BooleanData implements ConfigData<Boolean> {
-
-        private boolean value;
-
-        public BooleanData() {
-            this(true);
+        public DisableableModuleConfigItem(Module<?> module, String name, ILangEntry description, boolean def, BooleanSupplier isConfigEnabled) {
+            super(module, name, description, new ModuleBooleanData(def));
+            this.isConfigEnabled = isConfigEnabled;
         }
 
-        public BooleanData(boolean def) {
-            value = def;
-        }
-
+        @Nonnull
         @Override
         public Boolean get() {
-            return value;
+            return isConfigEnabled() && super.get();
         }
 
-        @Override
-        public void set(Boolean val) {
-            value = val;
-        }
-
-        @Override
-        public void read(String name, NBTTagCompound tag) {
-            value = tag.getBoolean(name);
-        }
-
-        @Override
-        public void write(String name, NBTTagCompound tag) {
-            tag.setBoolean(name, value);
-        }
-    }
-
-    public static class EnumData<TYPE extends Enum<TYPE> & IHasTextComponent> implements ConfigData<TYPE> {
-
-        private final Class<TYPE> enumClass;
-        private TYPE value;
-        private final int selectableCount;
-
-        public EnumData(Class<TYPE> enumClass) {
-            this(enumClass, enumClass.getEnumConstants().length);
-        }
-
-        public EnumData(Class<TYPE> enumClass, int selectableCount) {
-            this.enumClass = enumClass;
-            this.selectableCount = selectableCount;
-        }
-
-        @Override
-        public TYPE get() {
-            return value;
-        }
-
-        @Override
-        public void set(TYPE val) {
-            value = val;
-        }
-
-        @Override
-        public void read(String name, NBTTagCompound tag) {
-            int index = Math.min(tag.getInteger(name), selectableCount - 1);
-            value = enumClass.getEnumConstants()[index];
-        }
-
-        @Override
-        public void write(String name, NBTTagCompound tag) {
-            tag.setInteger(name, value.ordinal());
-        }
-
-        public TYPE[] getEnums() {
-            return enumClass.getEnumConstants();
-        }
-
-        public int getSelectableCount() {
-            return selectableCount;
+        public boolean isConfigEnabled() {
+            return isConfigEnabled.getAsBoolean();
         }
     }
 }

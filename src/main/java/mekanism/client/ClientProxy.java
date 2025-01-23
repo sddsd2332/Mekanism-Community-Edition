@@ -293,26 +293,40 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.MEKASUIT_PANTS);
         registerItemRender(MekanismItems.MEKASUIT_BOOTS);
 
+
         registerItemRender(MekanismItems.MODULE_ENERGY);
+        registerItemRender(MekanismItems.MODULE_COLOR_MODULATION);
+        registerItemRender(MekanismItems.MODULE_LASER_DISSIPATION);
         registerItemRender(MekanismItems.MODULE_RADIATION_SHIELDING);
+        /*
         registerItemRender(MekanismItems.MODULE_EXCAVATION_ESCALATION);
         registerItemRender(MekanismItems.MODULE_ATTACK_AMPLIFICATION);
+        registerItemRender(MekanismItems.MODULE_FARMING);
+        registerItemRender(MekanismItems.MODULE_SHEARING);
         registerItemRender(MekanismItems.MODULE_SILK_TOUCH);
+        registerItemRender(MekanismItems.MODULE_SOLAR_RECHARGING);
+        registerItemRender(MekanismItems.MODULE_FORTUNE);
+        registerItemRender(MekanismItems.MODULE_BLASTING);
+        registerItemRender(MekanismItems.MODULE_VEIN_MINING);
         registerItemRender(MekanismItems.MODULE_TELEPORTATION);
+        */
         registerItemRender(MekanismItems.MODULE_ELECTROLYTIC_BREATHING);
         registerItemRender(MekanismItems.MODULE_INHALATION_PURIFICATION);
         registerItemRender(MekanismItems.MODULE_VISION_ENHANCEMENT);
-        registerItemRender(MekanismItems.MODULE_SOLAR_RECHARGING);
         registerItemRender(MekanismItems.MODULE_NUTRITIONAL_INJECTION);
+        //registerItemRender(MekanismItems.MODULE_DOSIMETER);
+        //registerItemRender(MekanismItems.MODULE_GEIGER);
         registerItemRender(MekanismItems.MODULE_JETPACK);
         registerItemRender(MekanismItems.MODULE_CHARGE_DISTRIBUTION);
-        registerItemRender(MekanismItems.MODULE_GRAVITATIONAL_MODULATING);
-       // registerItemRender(MekanismItems.MODULE_ELYTRA);
-        registerItemRender(MekanismItems.MODULE_LOCOMOTIVE_BOOSTING);
+        //registerItemRender(MekanismItems.MODULE_GRAVITATIONAL_MODULATING);
+        registerItemRender(MekanismItems.MODULE_ELYTRA);
         registerItemRender(MekanismItems.MODULE_GYROSCOPIC_STABILIZATION);
+        registerItemRender(MekanismItems.MODULE_HYDROSTATIC_REPULSOR);
+        registerItemRender(MekanismItems.MODULE_LOCOMOTIVE_BOOSTING);
+        //registerItemRender(MekanismItems.MODULE_MOTORIZED_SERVO);
         registerItemRender(MekanismItems.MODULE_HYDRAULIC_PROPULSION);
-        registerItemRender(MekanismItems.MODULE_MAGNETIC_ATTRACTION);
-    //    registerItemRender(MekanismItems.MODULE_FROST_WALKER);
+        //registerItemRender(MekanismItems.MODULE_MAGNETIC_ATTRACTION);
+        registerItemRender(MekanismItems.MODULE_FROST_WALKER);
 
         /**
          * ADD END

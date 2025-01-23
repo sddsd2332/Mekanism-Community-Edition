@@ -1,12 +1,15 @@
 package mekanism.common.tile;
 
 import mekanism.api.Coord4D;
+import mekanism.api.gear.IModule;
+import mekanism.api.gear.ModuleData;
 import mekanism.common.Upgrade;
 import mekanism.common.base.IBoundingBlock;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.content.gear.IModuleContainerItem;
 import mekanism.common.content.gear.IModuleItem;
-import mekanism.common.content.gear.Modules;
+import mekanism.common.content.gear.ModuleHelper;
+import mekanism.common.item.ItemModule;
 import mekanism.common.tile.prefab.TileEntityOperationalMachine;
 import mekanism.common.util.ChargeUtils;
 import mekanism.common.util.MekanismUtils;
@@ -38,18 +41,18 @@ public class TileEntityModificationStation extends TileEntityOperationalMachine 
             if (MekanismUtils.canFunction(this)) {
                 boolean operated = false;
                 if (getEnergy() >= energyPerTick && !moduleSlot.isEmpty() && !containerSlot.isEmpty()) {
-                    Modules.ModuleData<?> data = ((IModuleItem) moduleSlot.getItem()).getModuleData();
-                    IModuleContainerItem item = (IModuleContainerItem) containerSlot.getItem();
+                    ModuleData<?> data = ((IModuleItem) moduleSlot.getItem()).getModuleData();
                     // make sure the container supports this module
-                    if (Modules.getSupported(containerSlot).contains(data)) {
+                    if (ModuleHelper.get().getSupported(containerSlot).contains(data)) {
                         // make sure we can still install more of this module
-                        if (!item.hasModule(containerSlot, data) || item.getModule(containerSlot, data).getInstalledCount() < data.getMaxStackSize()) {
+                        IModule<?> module = ModuleHelper.get().load(containerSlot, data);
+                        if (module == null || module.getInstalledCount() < data.getMaxStackSize()) {
                             operated = true;
                             operatingTicks++;
                             electricityStored.addAndGet(-energyPerTick);
                             if (operatingTicks == ticksRequired) {
                                 operatingTicks = 0;
-                                item.addModule(containerSlot, data);
+                                ((IModuleContainerItem) containerSlot.getItem()).addModule(containerSlot, data);
                                 moduleSlot.shrink(1);
                             }
                         }
@@ -64,11 +67,11 @@ public class TileEntityModificationStation extends TileEntityOperationalMachine 
         }
     }
 
-    public void removeModule(EntityPlayer player, Modules.ModuleData<?> type) {
+    public void removeModule(EntityPlayer player, ModuleData<?> type) {
         ItemStack stack = inventory.get(3);
         if (!stack.isEmpty()) {
             IModuleContainerItem container = (IModuleContainerItem) stack.getItem();
-            if (container.hasModule(stack, type) && player.inventory.addItemStackToInventory(type.getStack().copy())) {
+            if (container.hasModule(stack, type) && player.inventory.add(1,new ItemStack(new ItemModule(type)))) {
                 container.removeModule(stack, type);
             }
         }

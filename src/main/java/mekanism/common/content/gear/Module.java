@@ -1,40 +1,50 @@
 package mekanism.common.content.gear;
 
+import mcp.MethodsReturnNonnullByDefault;
 import mekanism.api.EnumColor;
 import mekanism.api.NBTConstants;
 import mekanism.api.energy.IEnergizedItem;
-import mekanism.api.functions.FloatSupplier;
+import mekanism.api.gear.ICustomModule;
 import mekanism.api.gear.IHUDElement;
+import mekanism.api.gear.IModule;
+import mekanism.api.gear.ModuleData;
+import mekanism.api.gear.config.IModuleConfigItem;
+import mekanism.api.gear.config.ModuleBooleanData;
+import mekanism.api.gear.config.ModuleConfigData;
+import mekanism.api.gear.config.ModuleConfigItemCreator;
 import mekanism.api.text.IHasTextComponent;
 import mekanism.api.text.ILangEntry;
 import mekanism.common.MekanismLang;
-import mekanism.common.content.gear.ModuleConfigItem.BooleanData;
-import mekanism.common.content.gear.Modules.ModuleData;
+import mekanism.common.content.gear.ModuleConfigItem.DisableableModuleConfigItem;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.common.util.Constants.NBT;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-public abstract class Module {
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+public final class Module<MODULE extends ICustomModule<MODULE>> implements IModule<MODULE> {
 
     public static final String ENABLED_KEY = "enabled";
-    public static final String HANDLE_MODE_CHANGE_KEY = "handleModeChange";
 
-    protected final List<ModuleConfigItem<?>> configItems = new ArrayList<>();
+    private final List<ModuleConfigItem<?>> configItems = new ArrayList<>();
 
-    private ModuleData<?> data;
-    private ItemStack container;
+    private final ModuleData<MODULE> data;
+    private final ItemStack container;
+    private final MODULE customModule;
 
     private ModuleConfigItem<Boolean> enabled;
     private ModuleConfigItem<Boolean> handleModeChange;
@@ -42,38 +52,102 @@ public abstract class Module {
 
     private int installed = 1;
 
-    public void init(ModuleData<?> data, ItemStack container) {
+    public Module(ModuleData<MODULE> data, ItemStack container) {
         this.data = data;
         this.container = container;
+        this.customModule = data.get();
+    }
+
+    @Override
+    public MODULE getCustomInstance() {
+        return customModule;
     }
 
     public void init() {
-        enabled = addConfigItem(new ModuleConfigItem<>(this, ENABLED_KEY, MekanismLang.MODULE_ENABLED, new BooleanData(), !data.isDisabledByDefault()));
+        enabled = addConfigItem(new ModuleConfigItem<>(this, ENABLED_KEY, MekanismLang.MODULE_ENABLED, new ModuleBooleanData(!data.isDisabledByDefault())) {
+            @Override
+            public void set(@Nonnull Boolean val, @Nullable Runnable callback) {
+                //Custom override of set to see if it changed and if so notify the custom module of that fact
+                boolean wasEnabled = get();
+                super.set(val, callback);
+                //Note: This isn't the best but given we only call set for enabled from within Mekanism, we can use the
+                // implementation detail that if the callback is null we are on the client side so if it isn't null then
+                // we can assume it is server side
+                if (callback == null && wasEnabled != get()) {
+                    customModule.onEnabledStateChange(Module.this);
+                }
+            }
+
+            @Override
+            protected void checkValidity(@NotNull Boolean value, @org.jetbrains.annotations.Nullable Runnable callback) {
+                //If enabled state of the module changes, recheck about mode changes and exclusivity flags
+                // but only if this module can handle mode changes or has any exclusive flags set
+                if (value && (handlesModeChange() || data.getExclusiveFlags() != 0)) {
+                    for (Module<?> m : ModuleHelper.get().loadAll(getContainer())) {
+                        if (data != m.getData()) {
+                            // disable other exclusive modules
+                            if (m.getData().isExclusive(data.getExclusiveFlags())) {
+                                m.setDisabledForce(callback != null);
+                            }
+                            // turn off mode change handling for other modules
+                            if (handlesModeChange() && m.handlesModeChange()) {
+                                m.setModeHandlingDisabledForce();
+                            }
+                        }
+                    }
+                }
+            }
+        });
         if (data.handlesModeChange()) {
-            handleModeChange = addConfigItem(new ModuleConfigItem<>(this, HANDLE_MODE_CHANGE_KEY, MekanismLang.MODULE_HANDLE_MODE_CHANGE, new BooleanData(), true));
+            handleModeChange = addConfigItem(new ModuleConfigItem<>(this, "handleModeChange", MekanismLang.MODULE_HANDLE_MODE_CHANGE,
+                    new ModuleBooleanData(!data.isModeChangeDisabledByDefault())) {
+                @Override
+                protected void checkValidity(@NotNull Boolean value, @org.jetbrains.annotations.Nullable Runnable callback) {
+                    //If the mode change is being enabled, and we handle mode changes
+                    if (value && handlesModeChange()) {
+                        for (Module<?> m : ModuleHelper.get().loadAll(getContainer())) {
+                            // turn off mode change handling for other modules
+                            if (data != m.getData() && m.handlesModeChange()) {
+                                m.setModeHandlingDisabledForce();
+                            }
+                        }
+                    }
+                }
+            });
         }
         if (data.rendersHUD()) {
-            renderHUD = addConfigItem(new ModuleConfigItem<>(this, "renderHUD", MekanismLang.MODULE_RENDER_HUD, new BooleanData(), true));
+            renderHUD = addConfigItem(new ModuleConfigItem<>(this, "renderHUD", MekanismLang.MODULE_RENDER_HUD, new ModuleBooleanData()));
         }
+        customModule.init(this, new ModuleConfigItemCreator() {
+            @Override
+            public <TYPE> IModuleConfigItem<TYPE> createConfigItem(String name, ILangEntry description, ModuleConfigData<TYPE> data) {
+                return addConfigItem(new ModuleConfigItem<>(Module.this, name, description, data));
+            }
+
+            @Override
+            public IModuleConfigItem<Boolean> createDisableableConfigItem(String name, ILangEntry description, boolean def, BooleanSupplier isConfigEnabled) {
+                return addConfigItem(new DisableableModuleConfigItem(Module.this, name, description, def, isConfigEnabled));
+            }
+        });
     }
 
-    protected <T> ModuleConfigItem<T> addConfigItem(ModuleConfigItem<T> item) {
+    private <T> ModuleConfigItem<T> addConfigItem(ModuleConfigItem<T> item) {
         configItems.add(item);
         return item;
     }
 
     public void tick(EntityPlayer player) {
-        if (!player.world.isRemote) {
-            if (isEnabled()) {
-                tickServer(player);
-            }
-        } else {
-            if (isEnabled()) {
-                tickClient(player);
+        if (isEnabled()) {
+            if (player.world.isRemote) {
+                customModule.tickClient(this, player);
+            } else {
+                customModule.tickServer(this, player);
             }
         }
     }
 
+    @Nullable
+    @Override
     public IEnergizedItem getEnergyContainer() {
         if (getContainer().getItem() instanceof IEnergizedItem item) {
             return item;
@@ -81,21 +155,30 @@ public abstract class Module {
         return null;
     }
 
-
+    @Override
     public double getContainerEnergy() {
         IEnergizedItem energyContainer = getEnergyContainer();
         return energyContainer == null ? 0 : energyContainer.getEnergy(getContainer());
     }
 
+
+    @Override
+    public boolean hasEnoughEnergy(double cost) {
+        return cost == 0 || getContainerEnergy() >= (cost);
+    }
+
+    @Override
     public boolean canUseEnergy(EntityLivingBase wearer, double energy) {
         //Note: This is subtly different than how useEnergy does it so that we can get to useEnergy when in creative
         return canUseEnergy(wearer, energy, false);
     }
 
+    @Override
     public boolean canUseEnergy(EntityLivingBase wearer, double energy, boolean ignoreCreative) {
         return canUseEnergy(wearer, getEnergyContainer(), energy, ignoreCreative);
     }
 
+    @Override
     public boolean canUseEnergy(EntityLivingBase wearer, @Nullable IEnergizedItem energyContainer, double energy, boolean ignoreCreative) {
         if (energyContainer != null && wearer instanceof EntityPlayer player && !player.isSpectator()) {
             //Don't check spectators in general
@@ -106,14 +189,17 @@ public abstract class Module {
         return false;
     }
 
+    @Override
     public double useEnergy(EntityLivingBase wearer, double energy) {
         return useEnergy(wearer, energy, true);
     }
 
+    @Override
     public double useEnergy(EntityLivingBase wearer, double energy, boolean freeCreative) {
         return useEnergy(wearer, getEnergyContainer(), energy, freeCreative);
     }
 
+    @Override
     public double useEnergy(EntityLivingBase wearer, @Nullable IEnergizedItem energyContainer, double energy, boolean freeCreative) {
         if (energyContainer != null) {
             //Use from spectators if this is called due to the various edge cases that exist for when things are calculated manually
@@ -124,14 +210,8 @@ public abstract class Module {
         return 0;
     }
 
-    protected void tickServer(EntityPlayer player) {
-    }
-
-    protected void tickClient(EntityPlayer player) {
-    }
-
-    public final void read(NBTTagCompound nbt) {
-        if (nbt.hasKey(NBTConstants.AMOUNT)) {
+    public void read(NBTTagCompound nbt) {
+        if (nbt.hasKey(NBTConstants.AMOUNT, NBT.TAG_INT)) {
             installed = nbt.getInteger(NBTConstants.AMOUNT);
         }
         init();
@@ -145,31 +225,26 @@ public abstract class Module {
      *
      * @param callback - will run after the NBT data is saved
      */
-    public final void save(Consumer<ItemStack> callback) {
-        NBTTagCompound modulesTag = ItemDataUtils.getCompound(container, NBTConstants.MODULES);
-        NBTTagCompound nbt = modulesTag.getCompoundTag(data.getName());
-
+    public void save(@Nullable Runnable callback) {
+        NBTTagCompound modulesTag = ItemDataUtils.getOrAddCompound(container, NBTConstants.MODULES);
+        String registryName = data.getName().toString();
+        NBTTagCompound nbt = modulesTag.getCompoundTag(registryName);
         nbt.setInteger(NBTConstants.AMOUNT, installed);
         for (ModuleConfigItem<?> item : configItems) {
             item.write(nbt);
         }
-
-        modulesTag.setTag(data.getName(), nbt);
-        ItemDataUtils.setCompound(container, NBTConstants.MODULES, modulesTag);
-
+        modulesTag.setTag(registryName, nbt);
         if (callback != null) {
-            callback.accept(container);
+            callback.run();
         }
     }
 
-    public String getName() {
-        return data.getName();
-    }
-
-    public ModuleData<?> getData() {
+    @Override
+    public ModuleData<MODULE> getData() {
         return data;
     }
 
+    @Override
     public int getInstalledCount() {
         return installed;
     }
@@ -178,20 +253,26 @@ public abstract class Module {
         this.installed = installed;
     }
 
+    @Override
     public boolean isEnabled() {
-        if (enabled != null) {
-            return enabled.get();
-        } else {
-            return false;
+        return enabled.get();
+    }
+
+    public void setDisabledForce(boolean hasCallback) {
+        if (isEnabled()) {
+            enabled.getData().set(false);
+            save(null);
+            //Manually call state changed as we bypassed the check we injected into set if we are on the server
+            // we use the implementation detail about whether there was a callback to determine if it was on the
+            // server or not
+            if (!hasCallback) {
+                customModule.onEnabledStateChange(this);
+            }
         }
     }
 
-    public void setDisabledForce() {
-        enabled.getData().set(false);
-        save(null);
-    }
-
-    protected ItemStack getContainer() {
+    @Override
+    public ItemStack getContainer() {
         return container;
     }
 
@@ -200,22 +281,57 @@ public abstract class Module {
     }
 
     public void addHUDStrings(EntityPlayer player, List<String> list) {
+        customModule.addHUDStrings(this, player, list::add);
     }
 
     public void addHUDElements(EntityPlayer player, List<IHUDElement> list) {
-
+        customModule.addHUDElements(this, player, list::add);
     }
+
+    /*
+    public void addRadialModes(@NotNull ItemStack stack, Consumer<NestedRadialMode> adder) {
+        customModule.addRadialModes(this, stack, adder);
+    }
+
+    @Nullable
+    public <M extends IRadialMode> M getMode(@NotNull ItemStack stack, RadialData<M> radialData) {
+        return customModule.getMode(this, stack, radialData);
+    }
+
+    public <M extends IRadialMode> boolean setMode(@NotNull EntityPlayer player, @NotNull ItemStack stack, RadialData<M> radialData, M mode) {
+        return customModule.setMode(this, player, stack, radialData, mode);
+    }
+
+
+
+    @Nullable
+    public ITextComponent getModeScrollComponent(ItemStack stack) {
+        return customModule.getModeScrollComponent(this, stack);
+    }
+     */
 
     public void changeMode(@Nonnull EntityPlayer player, @Nonnull ItemStack stack, int shift, boolean displayChangeMessage) {
+        customModule.changeMode(this, player, stack, shift, displayChangeMessage);
     }
 
-    public boolean canChangeModeWhenDisabled() {
+    @Override
+    public boolean handlesModeChange() {
+        return data.handlesModeChange() && handleModeChange.get() && (isEnabled() || customModule.canChangeModeWhenDisabled(this));
+    }
+
+    /*
+    @Override
+    public boolean handlesRadialModeChange() {
+        return data.handlesModeChange() && (isEnabled() || customModule.canChangeRadialModeWhenDisabled(this));
+    }
+
+    public boolean handlesAnyModeChange() {
+        if (data.handlesModeChange()) {
+            return isEnabled() || handleModeChange.get() && customModule.canChangeModeWhenDisabled(this) || customModule.canChangeRadialModeWhenDisabled(this);
+        }
         return false;
     }
-
-    public boolean handlesModeChange() {
-        return data.handlesModeChange() && handleModeChange.get() && (isEnabled() || canChangeModeWhenDisabled());
-    }
+     */
 
     public void setModeHandlingDisabledForce() {
         if (data.handlesModeChange()) {
@@ -224,74 +340,44 @@ public abstract class Module {
         }
     }
 
+    @Override
     public boolean renderHUD() {
         return data.rendersHUD() && renderHUD.get();
     }
 
     public void onAdded(boolean first) {
-        for (Module module : Modules.loadAll(getContainer())) {
+        for (Module<?> module : ModuleHelper.get().loadAll(getContainer())) {
             if (module.getData() != getData()) {
                 // disable other exclusive modules if this is an exclusive module, as this one will now be active
                 if (getData().isExclusive(module.getData().getExclusiveFlags())) {
-                    module.setDisabledForce();
+                    module.setDisabledForce(false);
                 }
                 if (handlesModeChange() && module.handlesModeChange()) {
                     module.setModeHandlingDisabledForce();
                 }
             }
         }
-        onAddedModule(first);
-    }
-
-    public void onAddedModule(boolean first) {
-
+        customModule.onAdded(this, first);
     }
 
     public void onRemoved(boolean last) {
+        customModule.onRemoved(this, last);
     }
 
-    protected void displayModeChange(EntityPlayer player, ITextComponent modeName, IHasTextComponent mode) {
-        player.sendMessage(MekanismLang.LOG_FORMAT.translateColored(EnumColor.DARK_BLUE, MekanismLang.MEKANISM,
-                MekanismLang.MODULE_MODE_CHANGE.translateColored(EnumColor.GREY, modeName, EnumColor.INDIGO, mode.getTextComponent())));
+    @Override
+    public void displayModeChange(EntityPlayer player, ITextComponent modeName, IHasTextComponent mode) {
+        player.sendMessage(MekanismUtils.logFormat(MekanismLang.MODULE_MODE_CHANGE.translate(modeName, EnumColor.INDIGO, mode)));
     }
 
-    protected void toggleEnabled(EntityPlayer player, ITextComponent modeName) {
-        enabled.set(!isEnabled(), null);
-        ILangEntry lang = isEnabled() ? MekanismLang.MODULE_ENABLED_LOWER : MekanismLang.MODULE_DISABLED_LOWER;
-        player.sendMessage(MekanismLang.LOG_FORMAT.translateColored(EnumColor.DARK_BLUE, MekanismLang.MEKANISM,
-                MekanismLang.GENERIC_STORED.translateColored(EnumColor.GREY, EnumColor.GREY, modeName, isEnabled() ? EnumColor.BRIGHT_GREEN : EnumColor.DARK_RED, lang.translate())));
-    }
-
-    public ModuleDamageAbsorbInfo getDamageAbsorbInfo(DamageSource damageSource) {
-        return null;
-    }
-
-    public static class ModuleDamageAbsorbInfo {
-
-        private final FloatSupplier absorptionRatio;
-        private final double energyCost;
-
-        /**
-         * @param absorptionRatio Ratio of damage this module can absorb up to, returns a value between zero and one.
-         * @param energyCost      Energy cost per point of damage reduced.
-         */
-        public ModuleDamageAbsorbInfo(FloatSupplier absorptionRatio, double energyCost) {
-            this.absorptionRatio = Objects.requireNonNull(absorptionRatio, "Absorption ratio supplier cannot be null");
-            this.energyCost = Objects.requireNonNull(energyCost, "Energy cost supplier cannot be null");
+    @Override
+    public void toggleEnabled(EntityPlayer player, ITextComponent modeName) {
+        enabled.set(!isEnabled());
+        ITextComponent message;
+        if (isEnabled()) {
+            message = MekanismLang.GENERIC_STORED.translate(modeName, EnumColor.BRIGHT_GREEN, MekanismLang.MODULE_ENABLED_LOWER);
+        } else {
+            message = MekanismLang.GENERIC_STORED.translate(modeName, EnumColor.DARK_RED, MekanismLang.MODULE_DISABLED_LOWER);
         }
-
-        /**
-         * Gets the ratio of damage this module can absorb up to, returns a value between zero and one.
-         */
-        public FloatSupplier getAbsorptionRatio() {
-            return absorptionRatio;
-        }
-
-        /**
-         * Gets the energy cost per point of damage reduced.
-         */
-        public double getEnergyCost() {
-            return energyCost;
-        }
+        player.sendMessage(MekanismUtils.logFormat(message));
     }
 }

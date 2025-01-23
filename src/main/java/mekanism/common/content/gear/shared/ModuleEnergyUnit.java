@@ -1,32 +1,32 @@
 package mekanism.common.content.gear.shared;
 
+import mekanism.api.annotations.ParametersAreNotNullByDefault;
 import mekanism.api.energy.IEnergizedItem;
+import mekanism.api.gear.ICustomModule;
+import mekanism.api.gear.IModule;
 import mekanism.common.config.MekanismConfig;
-import mekanism.common.content.gear.Module;
 import mekanism.common.item.armor.ItemMekaSuitArmor;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+@ParametersAreNotNullByDefault
+public class ModuleEnergyUnit implements ICustomModule<ModuleEnergyUnit> {
 
-@ParametersAreNonnullByDefault
-public class ModuleEnergyUnit extends Module {
-
-    public double getEnergyCapacity() {
-        double base = getContainer().getItem() instanceof ItemMekaSuitArmor ? MekanismConfig.current().meka.mekaSuitBaseEnergyCapacity.val()
+    public double getEnergyCapacity(IModule<ModuleEnergyUnit> module) {
+        double base = module.getContainer().getItem() instanceof ItemMekaSuitArmor ? MekanismConfig.current().meka.mekaSuitBaseEnergyCapacity.val()
                 : MekanismConfig.current().meka.mekaToolBaseEnergyCapacity.val();
-        return base * (Math.pow(2, getInstalledCount()));
+        return base * (Math.pow(2, module.getInstalledCount()));
     }
 
-    public double getChargeRate() {
-        double base = getContainer().getItem() instanceof ItemMekaSuitArmor ? MekanismConfig.current().meka.mekaSuitBaseChargeRate.val()
+    public double getChargeRate(IModule<ModuleEnergyUnit> module) {
+        double base = module.getContainer().getItem() instanceof ItemMekaSuitArmor ? MekanismConfig.current().meka.mekaSuitBaseChargeRate.val()
                 : MekanismConfig.current().meka.mekaToolBaseChargeRate.val();
-        return base * (Math.pow(2, getInstalledCount()));
+        return base * (Math.pow(2, module.getInstalledCount()));
     }
 
     @Override
-    public void onRemoved(boolean last) {
-        IEnergizedItem energyContainer = getEnergyContainer();
+    public void onRemoved(IModule<ModuleEnergyUnit> module, boolean last) {
+        IEnergizedItem energyContainer = module.getEnergyContainer();
         if (energyContainer != null) {
-            energyContainer.setEnergy(getContainer(), Math.min(energyContainer.getEnergy(getContainer()), energyContainer.getMaxEnergy(getContainer())));
+            energyContainer.setEnergy(module.getContainer(), Math.min(energyContainer.getEnergy(module.getContainer()), energyContainer.getMaxEnergy(module.getContainer())));
         }
     }
 }

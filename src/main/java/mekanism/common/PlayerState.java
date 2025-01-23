@@ -4,10 +4,11 @@ import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import mekanism.api.gear.IModule;
 import mekanism.client.sound.PlayerSound.SoundType;
 import mekanism.client.sound.SoundHandler;
 import mekanism.common.config.MekanismConfig;
-import mekanism.common.content.gear.Modules;
+import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.content.gear.mekasuit.ModuleGravitationalModulatingUnit;
 import mekanism.common.network.PacketFlyingSync.FlyingSyncMessage;
 import mekanism.common.network.PacketGearStateUpdate.GearStateUpdateMessage;
@@ -264,13 +265,13 @@ public class PlayerState {
 
             if (player.capabilities.isFlying && hasGravitationalModulator) {
                 //If the player is actively flying (not just allowed to), and has the gravitational modulator ready then apply movement boost if active, and use energy
-                ModuleGravitationalModulatingUnit module = Modules.load(player.getItemStackFromSlot(EntityEquipmentSlot.CHEST), Modules.GRAVITATIONAL_MODULATING_UNIT);
+                IModule<ModuleGravitationalModulatingUnit> module = ModuleHelper.get().load(player.getItemStackFromSlot(EntityEquipmentSlot.CHEST), MekanismModules.GRAVITATIONAL_MODULATING_UNIT);
                 if (module != null) {//Should not be null but double check
                     double usage = MekanismConfig.current().meka.mekaSuitEnergyUsageGravitationalModulation.val();
                     if (Mekanism.keyMap.has(player, KeySync.DESCEND)) {
                         double boostUsage = usage * 4;
                         if (module.canUseEnergy(player, boostUsage, false)) {
-                            float boost = module.getBoost();
+                            float boost = module.getCustomInstance().getBoost();
                             if (boost > 0) {
                                 player.moveRelative(boost, 0, 0, 1);
                             }

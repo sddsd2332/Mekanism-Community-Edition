@@ -4,13 +4,15 @@ import com.google.common.collect.Multimap;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
+import mekanism.api.gear.IModule;
+import mekanism.api.gear.ModuleData;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitBody;
 import mekanism.client.model.mekasuitarmour.ModuleGravitational;
 import mekanism.client.model.mekasuitarmour.ModuleJetpack;
 import mekanism.common.MekanismFluids;
 import mekanism.common.MekanismItems;
+import mekanism.common.MekanismModules;
 import mekanism.common.config.MekanismConfig;
-import mekanism.common.content.gear.Modules;
 import mekanism.common.content.gear.mekasuit.ModuleJetpackUnit;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.util.ItemDataUtils;
@@ -71,14 +73,14 @@ public class ItemMekaSuitBodyArmor extends ItemMekaSuitArmor implements IGasItem
         ModuleJetpack jetpack = ModuleJetpack.jetpacks;
         ModuleGravitational gravitational = ModuleGravitational.gravitational;
 
-        if (isModuleEnabled(itemStack, Modules.JETPACK_UNIT)) {
+        if (isModuleEnabled(itemStack, MekanismModules.JETPACK_UNIT)) {
             if (!armorModel.bipedBody.childModels.contains(jetpack.jetpack)) {
                 armorModel.bipedBody.addChild(jetpack.jetpack);
             }
         } else {
             armorModel.bipedBody.childModels.remove(jetpack.jetpack);
         }
-        if (isModuleEnabled(itemStack, Modules.GRAVITATIONAL_MODULATING_UNIT)) {
+        if (isModuleEnabled(itemStack, MekanismModules.GRAVITATIONAL_MODULATING_UNIT)) {
             if (!armorModel.bipedBody.childModels.contains(gravitational.gravitational_modulator)) {
                 armorModel.bipedBody.addChild(gravitational.gravitational_modulator);
             }
@@ -97,7 +99,7 @@ public class ItemMekaSuitBodyArmor extends ItemMekaSuitArmor implements IGasItem
 
     @Override
     public int addGas(ItemStack itemstack, GasStack stack) {
-        if (!hasModule(itemstack, Modules.JETPACK_UNIT)) {
+        if (!hasModule(itemstack, MekanismModules.JETPACK_UNIT)) {
             return 0;
         }
         if (getGas(itemstack) != null && getGas(itemstack).getGas() != stack.getGas()) {
@@ -154,14 +156,14 @@ public class ItemMekaSuitBodyArmor extends ItemMekaSuitArmor implements IGasItem
 
     @Override
     public boolean canUseJetpack(ItemStack stack) {
-        return armorType == EntityEquipmentSlot.CHEST && isModuleEnabled(stack,Modules.JETPACK_UNIT) ? getStored(stack) > 0 :getModules(stack).stream().allMatch(module -> module.isEnabled() && module.getData().isExclusive(Modules.ExclusiveFlag.OVERRIDE_JUMP.getMask()));
+        return armorType == EntityEquipmentSlot.CHEST && isModuleEnabled(stack, MekanismModules.JETPACK_UNIT) ? getStored(stack) > 0 :getModules(stack).stream().allMatch(module -> module.isEnabled() && module.getData().isExclusive(ModuleData.ExclusiveFlag.OVERRIDE_JUMP.getMask()));
     }
 
     @Override
     public JetpackMode getJetpackMode(ItemStack stack) {
-        ModuleJetpackUnit module = getModule(stack, Modules.JETPACK_UNIT);
+        IModule<ModuleJetpackUnit> module = getModule(stack, MekanismModules.JETPACK_UNIT);
         if (module != null && module.isEnabled()) {
-            return module.getMode();
+            return module.getCustomInstance().getMode();
         }
         return JetpackMode.DISABLED;
     }

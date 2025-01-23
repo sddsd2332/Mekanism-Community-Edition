@@ -1,25 +1,29 @@
 package mekanism.common.content.gear.mekasuit;
 
+import mekanism.api.annotations.NothingNullByDefault;
+import mekanism.api.annotations.ParametersAreNotNullByDefault;
+import mekanism.api.gear.ICustomModule;
+import mekanism.api.gear.IModule;
+import mekanism.api.gear.config.IModuleConfigItem;
+import mekanism.api.gear.config.ModuleConfigItemCreator;
+import mekanism.api.gear.config.ModuleEnumData;
 import mekanism.api.text.IHasTextComponent;
 import mekanism.api.text.TextComponentGroup;
 import mekanism.common.MekanismLang;
-import mekanism.common.content.gear.Module;
-import mekanism.common.content.gear.ModuleConfigItem;
-import mekanism.common.content.gear.ModuleConfigItem.EnumData;
 import net.minecraft.util.text.ITextComponent;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+@ParametersAreNotNullByDefault
+public class ModuleHydraulicPropulsionUnit implements ICustomModule<ModuleHydraulicPropulsionUnit> {
 
-@ParametersAreNonnullByDefault
-public class ModuleHydraulicPropulsionUnit extends Module {
-
-    private ModuleConfigItem<JumpBoost> jumpBoost;
-    private ModuleConfigItem<StepAssist> stepAssist;
+    private IModuleConfigItem<JumpBoost> jumpBoost;
+    private IModuleConfigItem<StepAssist> stepAssist;
 
     @Override
-    public void init() {
-        jumpBoost = addConfigItem(new ModuleConfigItem<>(this, "jump_boost", MekanismLang.MODULE_JUMP_BOOST, new EnumData<>(JumpBoost.class, getInstalledCount() + 1), JumpBoost.LOW));
-        stepAssist = addConfigItem(new ModuleConfigItem<>(this, "step_assist", MekanismLang.MODULE_STEP_ASSIST, new EnumData<>(StepAssist.class, getInstalledCount() + 1), StepAssist.LOW));
+    public void init(IModule<ModuleHydraulicPropulsionUnit> module, ModuleConfigItemCreator configItemCreator) {
+        jumpBoost = configItemCreator.createConfigItem("jump_boost", MekanismLang.MODULE_JUMP_BOOST,
+                new ModuleEnumData<>(JumpBoost.LOW, module.getInstalledCount() + 1));
+        stepAssist = configItemCreator.createConfigItem("step_assist", MekanismLang.MODULE_STEP_ASSIST,
+                new ModuleEnumData<>(StepAssist.LOW, module.getInstalledCount() + 1));
     }
 
     public float getBoost() {
@@ -30,6 +34,7 @@ public class ModuleHydraulicPropulsionUnit extends Module {
         return stepAssist.get().getHeight();
     }
 
+    @NothingNullByDefault
     public enum JumpBoost implements IHasTextComponent {
         OFF(0),
         LOW(0.5F),
@@ -55,6 +60,7 @@ public class ModuleHydraulicPropulsionUnit extends Module {
         }
     }
 
+    @NothingNullByDefault
     public enum StepAssist implements IHasTextComponent {
         OFF(0),
         LOW(0.5F),
