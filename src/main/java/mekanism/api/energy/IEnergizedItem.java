@@ -60,4 +60,40 @@ public interface IEnergizedItem {
     default double getEnergyRatio(ItemStack stack) {
         return getEnergy(stack) / getMaxEnergy(stack);
     }
+
+    default double getNeeded(ItemStack stack) {
+        return getMaxEnergy(stack) - getEnergy(stack);
+    }
+
+    default double insert(ItemStack stack, double amount, boolean action) {
+        if (amount == 0) {
+            //"Fail quick" if the given amount is empty
+            return amount;
+        }
+        double needed = getNeeded(stack);
+        if (needed == 0) {
+            //Fail if we are a full container
+            return amount;
+        }
+        double toAdd = Math.min(amount, needed);
+        if (toAdd != 0 && action) {
+            //If we want to actually insert the energy, then update the current energy
+            // Note: this also will mark that the contents changed
+            setEnergy(stack, getEnergy(stack) + (toAdd));
+        }
+        return amount - toAdd;
+    }
+
+    default double extract (ItemStack stack, double amount, boolean action){
+        if (getEnergy(stack) ==0 || amount ==0){
+            return 0;
+        }
+        double ret = Math.min(getEnergy(stack),amount);
+        if (ret != 0 && action) {
+            // Note: this also will mark that the contents changed
+            setEnergy(stack,getEnergy(stack) - (ret));
+        }
+        return ret;
+    }
+
 }

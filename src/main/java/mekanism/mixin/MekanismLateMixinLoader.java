@@ -17,7 +17,7 @@ public class MekanismLateMixinLoader implements ILateMixinLoader {
 
     static {
         addModdedMixinCFG("mixins.mekanism_extrabotany.json", "extrabotany");
-        addModdedMixinCFG("mixins.mekanism_draconicevolution.json", "draconicevolution");
+        addModdedMixinCFG("mixins.mekanism_jei.json","jei");
     }
 
     @Override

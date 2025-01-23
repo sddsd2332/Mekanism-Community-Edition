@@ -9,6 +9,7 @@ import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
@@ -31,6 +32,7 @@ public class ItemUpgrade extends ItemMekanism implements IUpgradeItem {
         super();
         upgrade = type;
         setMaxStackSize(type.getItemMax());
+        setRarity(EnumRarity.UNCOMMON);
     }
 
     @Override

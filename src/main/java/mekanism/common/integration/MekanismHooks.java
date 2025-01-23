@@ -71,6 +71,7 @@ public final class MekanismHooks {
     public static final String Baubles_MOD_ID = "baubles";
     public static final String DraconicEvolution_MOD_ID = "draconicevolution";
     public static final String DraconicAdditions_MOD_ID = "draconicadditions";
+    public static final String MIXINBOOTER_MOD_ID = "mixinbooter";
     public boolean AE2Loaded = false;
     public boolean BuildCraftLoaded = false;
     public boolean CCLoaded = false;
@@ -92,6 +93,7 @@ public final class MekanismHooks {
     public boolean Baubles = false;
     public boolean DraconicEvolution= false;
     public boolean DraconicAdditions= false;
+    public boolean MixinBooter =false;
     public void hookPreInit() {
         AE2Loaded = Loader.isModLoaded(APPLIED_ENERGISTICS_2_MOD_ID);
         BuildCraftLoaded = Loader.isModLoaded(BUILDCRAFT_MOD_ID);
@@ -118,6 +120,7 @@ public final class MekanismHooks {
         }
         DraconicEvolution = Loader.isModLoaded(DraconicEvolution_MOD_ID);
         DraconicAdditions = Loader.isModLoaded(DraconicAdditions_MOD_ID);
+        MixinBooter = Loader.isModLoaded(MIXINBOOTER_MOD_ID);
     }
 
     public enum Mods {

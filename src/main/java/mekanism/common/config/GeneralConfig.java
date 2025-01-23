@@ -1,10 +1,7 @@
 package mekanism.common.config;
 
 import mekanism.common.block.states.BlockStateMachine.MachineType;
-import mekanism.common.config.options.BooleanOption;
-import mekanism.common.config.options.DoubleOption;
-import mekanism.common.config.options.EnumOption;
-import mekanism.common.config.options.IntOption;
+import mekanism.common.config.options.*;
 import mekanism.common.tier.BaseTier;
 import mekanism.common.tier.FluidTankTier;
 import mekanism.common.tier.GasTankTier;
@@ -304,6 +301,8 @@ public class GeneralConfig extends BaseConfig {
     public final BooleanOption blacklistFlux = new BooleanOption(this, "general", "BlacklistFluxPower", false,
             "Disables Flux Networks power integration. Requires world restart (server-side option in SMP).");
 
+    public final IntOption nutritionalPasteMBPerFood = new IntOption(this,"general","mbPerFood",50,"How much mB of Nutritional Paste equates to one 'half-food.'");
+    public final FloatOption nutritionalPasteSaturation = new FloatOption(this,"general","saturation",0.8F,"Saturation level of Nutritional Paste when eaten.");
 
     public final TypeConfigManager<MachineType> machinesManager = new TypeConfigManager<>(this, "machines", MachineType.class, MachineType::getValidMachines, MachineType::getBlockName);
     public final EnumMap<BaseTier, TierConfig> tiers = TierConfig.create(this);

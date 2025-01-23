@@ -11,6 +11,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
@@ -38,7 +39,7 @@ public class ItemGaugeDropper extends ItemMekanism implements IGasItem {
     public ItemGaugeDropper() {
         super();
         setMaxStackSize(1);
-        setCreativeTab(Mekanism.tabMekanism);
+        setRarity(EnumRarity.UNCOMMON);
     }
 
     public ItemStack getEmptyItem() {

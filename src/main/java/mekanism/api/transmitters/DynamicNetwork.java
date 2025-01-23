@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import mekanism.api.Coord4D;
 import mekanism.api.IClientTicker;
 import mekanism.api.Range4D;
+import mekanism.common.Mekanism;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -106,13 +107,19 @@ public abstract class DynamicNetwork<ACCEPTOR, NETWORK extends DynamicNetwork<AC
         }
     }
 
-    @Nullable public BUFFER getBuffer() {
+    @Nullable
+    public BUFFER getBuffer() {
         return null;
     }
 
     public abstract void absorbBuffer(IGridTransmitter<ACCEPTOR, NETWORK, BUFFER> transmitter);
 
     public abstract void clampBuffer();
+
+
+    public boolean isRemote() {
+        return world == null ? FMLCommonHandler.instance().getEffectiveSide().isClient() : world.isRemote;
+    }
 
     public void invalidate() {
         //Remove invalid transmitters first for share calculations
@@ -126,22 +133,20 @@ public abstract class DynamicNetwork<ACCEPTOR, NETWORK extends DynamicNetwork<AC
             transmitter.updateShare();
         }
 
-        //Now invalidate the transmitters
-        for (IGridTransmitter<ACCEPTOR, NETWORK, BUFFER> transmitter : transmitters) {
-            invalidateTransmitter(transmitter);
+        //Now invalidate the transmitter
+        if (!isRemote()) {
+            for (IGridTransmitter<ACCEPTOR, NETWORK, BUFFER> transmitter : transmitters) {
+                if (transmitter.isValid()) {
+                    transmitter.takeShare();
+                    transmitter.setTransmitterNetwork(null);
+                    TransmitterNetworkRegistry.registerOrphanTransmitter(transmitter);
+                }
+            }
         }
-
-        transmitters.clear();
         deregister();
     }
 
-    public void invalidateTransmitter(IGridTransmitter<ACCEPTOR, NETWORK, BUFFER> transmitter) {
-        if (!world.isRemote && transmitter.isValid()) {
-            transmitter.takeShare();
-            transmitter.setTransmitterNetwork(null);
-            TransmitterNetworkRegistry.registerOrphanTransmitter(transmitter);
-        }
-    }
+
 
     public void acceptorChanged(IGridTransmitter<ACCEPTOR, NETWORK, BUFFER> transmitter, EnumFacing side) {
         EnumSet<EnumFacing> directions = changedAcceptors.get(transmitter);
@@ -226,7 +231,6 @@ public abstract class DynamicNetwork<ACCEPTOR, NETWORK extends DynamicNetwork<AC
         transmitters.clear();
         transmittersToAdd.clear();
         transmittersAdded.clear();
-
         if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
             TransmitterNetworkRegistry.getInstance().removeNetwork(this);
         } else {

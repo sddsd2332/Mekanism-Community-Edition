@@ -1,12 +1,9 @@
 package mekanism.common.config.options;
 
 import io.netty.buffer.ByteBuf;
-import mekanism.api.math.FloatingLong;
-import mekanism.api.math.FloatingLongSupplier;
 import mekanism.common.config.BaseConfig;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -15,7 +12,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Created by Thiakil on 15/03/2019.
  */
 @ParametersAreNonnullByDefault
-public class DoubleOption extends Option<DoubleOption> implements FloatingLongSupplier {
+public class DoubleOption extends Option<DoubleOption> {
 
     private double value;
     private final double defaultValue;
@@ -75,10 +72,5 @@ public class DoubleOption extends Option<DoubleOption> implements FloatingLongSu
     @Override
     public void read(ByteBuf buf) {
         this.value = buf.readDouble();
-    }
-
-    @Override
-    public @NotNull FloatingLong get() {
-        return  FloatingLong.create(value);
     }
 }

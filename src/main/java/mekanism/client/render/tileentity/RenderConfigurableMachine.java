@@ -47,11 +47,11 @@ public class RenderConfigurableMachine<S extends TileEntity & ISideConfiguration
     public void render(S configurable, double x, double y, double z, float partialTick, int destroyStage, float alpha) {
         ItemStack itemStack = mc.player.inventory.getCurrentItem();
         Item item = itemStack.getItem();
-        if (!itemStack.isEmpty() && item instanceof ItemConfigurator && ((ItemConfigurator) item).getState(itemStack).isConfigurating()) {
+        if (!itemStack.isEmpty() && item instanceof ItemConfigurator && ((ItemConfigurator) item).getMode(itemStack).isConfigurating()) {
             RayTraceResult pos = mc.player.rayTrace(8.0D, 1.0F);
             if (pos != null) {
                 BlockPos bp = pos.getBlockPos();
-                TransmissionType type = Objects.requireNonNull(((ItemConfigurator) item).getState(itemStack).getTransmission(), "Configurating state requires transmission type");
+                TransmissionType type = Objects.requireNonNull(((ItemConfigurator) item).getMode(itemStack).getTransmission(), "Configurating state requires transmission type");
                 if (configurable.getConfig().supports(type)) {
                     if (bp.equals(configurable.getPos())) {
                         SideData data = configurable.getConfig().getOutput(type, pos.sideHit, configurable.getOrientation());

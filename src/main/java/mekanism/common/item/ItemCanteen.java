@@ -16,6 +16,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumAction;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
@@ -36,14 +37,12 @@ public class ItemCanteen extends ItemMekanism implements IGasItem {
     public static final int ItemStack = 50;
 
     public ItemCanteen() {
+        super();
         setMaxStackSize(1);
         setNoRepair();
+        setRarity(EnumRarity.UNCOMMON);
     }
 
-    @Override
-    public String getItemStackDisplayName(@Nonnull ItemStack itemstack) {
-        return EnumColor.YELLOW + super.getItemStackDisplayName(itemstack);
-    }
 
     @Override
     @SideOnly(Side.CLIENT)

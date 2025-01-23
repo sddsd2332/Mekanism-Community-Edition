@@ -3,21 +3,18 @@ package mekanism.common.tile;
 import mekanism.api.Coord4D;
 import mekanism.common.Upgrade;
 import mekanism.common.base.IBoundingBlock;
-import mekanism.common.base.IModuleUpgrade;
-import mekanism.common.base.IModuleUpgradeItem;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
-import mekanism.common.moduleUpgrade;
+import mekanism.common.content.gear.IModuleContainerItem;
+import mekanism.common.content.gear.IModuleItem;
+import mekanism.common.content.gear.Modules;
 import mekanism.common.tile.prefab.TileEntityOperationalMachine;
 import mekanism.common.util.ChargeUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.NonNullListSynchronized;
-import mekanism.common.util.UpgradeHelper;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import org.jetbrains.annotations.NotNull;
-
-import static mekanism.common.util.ItemDataUtils.DATA_ID;
 
 public class TileEntityModificationStation extends TileEntityOperationalMachine implements IBoundingBlock {
 
@@ -38,36 +35,43 @@ public class TileEntityModificationStation extends TileEntityOperationalMachine 
             ChargeUtils.discharge(1, this);
             ItemStack moduleSlot = inventory.get(2);
             ItemStack containerSlot = inventory.get(3);
-            if (canOperate() && MekanismUtils.canFunction(this) && getEnergy() >= energyPerTick && !moduleSlot.isEmpty() && !containerSlot.isEmpty() && moduleSlot.getItem() instanceof IModuleUpgradeItem module && containerSlot.getItem() instanceof IModuleUpgrade item) {
-                if (UpgradeHelper.getUpgradeLevel(containerSlot, module.getmoduleUpgrade(moduleSlot)) >= module.getmoduleUpgrade(moduleSlot).getMax()) {
-                    return;
+            if (MekanismUtils.canFunction(this)) {
+                boolean operated = false;
+                if (getEnergy() >= energyPerTick && !moduleSlot.isEmpty() && !containerSlot.isEmpty()) {
+                    Modules.ModuleData<?> data = ((IModuleItem) moduleSlot.getItem()).getModuleData();
+                    IModuleContainerItem item = (IModuleContainerItem) containerSlot.getItem();
+                    // make sure the container supports this module
+                    if (Modules.getSupported(containerSlot).contains(data)) {
+                        // make sure we can still install more of this module
+                        if (!item.hasModule(containerSlot, data) || item.getModule(containerSlot, data).getInstalledCount() < data.getMaxStackSize()) {
+                            operated = true;
+                            operatingTicks++;
+                            electricityStored.addAndGet(-energyPerTick);
+                            if (operatingTicks == ticksRequired) {
+                                operatingTicks = 0;
+                                item.addModule(containerSlot, data);
+                                moduleSlot.shrink(1);
+                            }
+                        }
+                    }
+
                 }
-                setActive(true);
-                electricityStored.addAndGet(-energyPerTick);
-                if ((operatingTicks + 1) < ticksRequired) {
-                    operatingTicks++;
-                } else if ((operatingTicks + 1) >= ticksRequired) {
+                if (!operated) {
                     operatingTicks = 0;
-                    addUpgrades(module.getmoduleUpgrade(moduleSlot), moduleSlot.getCount());
                 }
-            } else if (prevEnergy >= getEnergy()) {
-                setActive(false);
-            }
-            if (!getActive()) {
-                operatingTicks = 0;
             }
             prevEnergy = getEnergy();
         }
     }
 
-
-    public boolean canOperate() {
-        ItemStack moduleSlot = inventory.get(2);
-        ItemStack containerSlot = inventory.get(3);
-        if (!moduleSlot.isEmpty() && !containerSlot.isEmpty() && moduleSlot.getItem() instanceof IModuleUpgradeItem item && containerSlot.getItem() instanceof IModuleUpgrade upgrade) {
-            return upgrade.getValidModule(containerSlot).contains(item.getmoduleUpgrade(moduleSlot));
+    public void removeModule(EntityPlayer player, Modules.ModuleData<?> type) {
+        ItemStack stack = inventory.get(3);
+        if (!stack.isEmpty()) {
+            IModuleContainerItem container = (IModuleContainerItem) stack.getItem();
+            if (container.hasModule(stack, type) && player.inventory.addItemStackToInventory(type.getStack().copy())) {
+                container.removeModule(stack, type);
+            }
         }
-        return false;
     }
 
     @Override
@@ -107,35 +111,6 @@ public class TileEntityModificationStation extends TileEntityOperationalMachine 
         world.setBlockToAir(getPos().offset(right));
         world.setBlockToAir(getPos().up());
         world.setBlockToAir(getPos());
-    }
-
-    public void addUpgrades(moduleUpgrade upgrade, int maxAvailable) {
-        ItemStack containerSlot = inventory.get(3);
-        if (!containerSlot.isEmpty()) {
-            int installed = UpgradeHelper.getUpgradeLevel(containerSlot, upgrade);
-            if (installed < upgrade.getMax()) {
-                int toAdd = Math.min(upgrade.getMax() - installed, maxAvailable);
-                if (toAdd > 0) {
-                    UpgradeHelper.setUpgradeLevel(containerSlot, upgrade, installed + toAdd);
-                    inventory.get(2).shrink(toAdd);
-                }
-            }
-        }
-    }
-
-    public void removeUpgrade(moduleUpgrade upgrade, boolean removeAll) {
-        ItemStack containerSlot = inventory.get(3);
-        if (!containerSlot.isEmpty() && containerSlot.getTagCompound() != null) {
-            int installed = UpgradeHelper.getUpgradeLevel(containerSlot, upgrade);
-            if (installed > 0) {
-                int toRemove = removeAll ? installed : 1;
-                UpgradeHelper.setUpgradeLevel(containerSlot, upgrade, installed - toRemove);
-            }
-            if (UpgradeHelper.getUpgradeLevel(containerSlot, upgrade) == 0) {
-                NBTTagCompound upgradeTag = containerSlot.getOrCreateSubCompound(DATA_ID);
-                upgradeTag.removeTag(upgrade.getName());
-            }
-        }
     }
 
     @Override

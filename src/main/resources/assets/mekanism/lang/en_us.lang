@@ -1821,3 +1821,7 @@ direction.south.short=S
 direction.west.short=W
 direction.east.short=E
 generic.mekanism.percent=%
+gui.on_caps=ON
+gui.off_caps=OFF
+generic.mekanism.list= -
+jetpack.mekanism.mode_change=Jetpack mode changed to:

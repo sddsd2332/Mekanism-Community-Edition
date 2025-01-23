@@ -35,8 +35,8 @@ public class ClientConfig extends BaseConfig {
     public final BooleanOption opaqueTransmitters = new BooleanOption(this, "client", "OpaqueTransmitterRender", false,
             "If true, don't render Cables/Pipes/Tubes as transparent and don't render their contents.");
 
-    public final BooleanOption allowConfiguratorModeScroll = new BooleanOption(this, "client", "ConfiguratorModeScroll", true,
-            "Allow sneak+scroll to change Configurator modes.");
+    public final BooleanOption allowModeScroll = new BooleanOption(this, "client", "allowModeScroll", true,
+            "Allow sneak + scroll to change item modes.");
 
     public final BooleanOption enableMultiblockFormationParticles = new BooleanOption(this, "client", "MultiblockFormParticles", true,
             "Set to false to prevent particle spam when loading multiblocks (notification message will display instead).");
@@ -46,15 +46,6 @@ public class ClientConfig extends BaseConfig {
 
     public final BooleanOption enableHUD = new BooleanOption(this, "client", "enableHUD", true,
             "Enable item information HUD during gameplay");
-
-    public final BooleanOption allowFlamethrowerModeScroll = new BooleanOption(this, "client", "FlamethrowerModeScroll", true,
-            "Allow sneak+scroll to change Flamethrower modes.");
-
-    public final BooleanOption allowAtomicDisassemblerModeScroll = new BooleanOption(this, "client", "AtomicDisassemblerModeScroll", true,
-            "Allow sneak+scroll to change Atomic Disassembler modes.");
-
-    public final BooleanOption allowMekToolModeScroll = new BooleanOption(this, "client", "allowMekToolModeScroll", true,
-            "Allow sneak+scroll to change MekTool modes.");
 
     public final IntOption AllMekGuiBg = new IntOption(this,"client","AllMekGuiBg",0xFFFFFFFF,
             "All mekanism GUI background colors");

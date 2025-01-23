@@ -2,9 +2,12 @@ package mekanism.common.util;
 
 import com.mojang.authlib.GameProfile;
 import ic2.api.energy.EnergyNet;
+import it.unimi.dsi.fastutil.longs.Long2DoubleArrayMap;
+import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import mekanism.api.Chunk3D;
 import mekanism.api.Coord4D;
+import mekanism.api.EnumColor;
 import mekanism.api.IMekWrench;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
@@ -30,18 +33,24 @@ import mekanism.common.tile.base.TileEntitySynchronized;
 import mekanism.common.tile.component.SideConfig;
 import mekanism.common.util.UnitDisplayUtils.ElectricUnit;
 import mekanism.common.util.UnitDisplayUtils.TemperatureUnit;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.SPacketEntityEffect;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
@@ -52,6 +61,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
@@ -76,7 +86,7 @@ import java.util.function.BiConsumer;
 public final class MekanismUtils {
 
     public static final EnumFacing[] SIDE_DIRS = new EnumFacing[]{EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST};
-
+    private static final ItemStack MILK = new ItemStack(Items.MILK_BUCKET);
     public static final Map<String, Class<?>> classesFound = new Object2ObjectOpenHashMap<>();
     public static final ThreadLocal<Boolean> isInjecting = ThreadLocal.withInitial(() -> false);
     public static final BiConsumer<Integer, Runnable> inject = (reqTime, process) -> {
@@ -929,6 +939,7 @@ public final class MekanismUtils {
         return !player.isCreative() && !player.isSpectator();
     }
 
+
     /**
      * Whether or not a given EntityPlayer is considered an Op.
      *
@@ -1129,6 +1140,8 @@ public final class MekanismUtils {
 
     public enum ResourceType {
         GUI("gui"),
+        GUI_BUTTON("gui/button"),
+        GUI_ICONS("gui/icons"),
         GUI_BAR("gui/bar"),
         GUI_ELEMENT("gui/elements"),
         BUTTON("gui/button"),
@@ -1154,6 +1167,43 @@ public final class MekanismUtils {
 
         public String getPrefix() {
             return prefix + "/";
+        }
+    }
+
+    public static ITextComponent logFormat(Object message) {
+        return logFormat(EnumColor.GREY, message);
+    }
+
+    public static ITextComponent logFormat(EnumColor messageColor, Object message) {
+        return MekanismLang.LOG_FORMAT.translateColored(EnumColor.DARK_BLUE, MekanismLang.MEKANISM, messageColor, message);
+    }
+
+
+    public static void speedUpEffectSafely(EntityLivingBase entity, PotionEffect effectInstance) {
+        if (effectInstance.getDuration() > 0) {
+            int remainingDuration = effectInstance.deincrementDuration();
+            if (remainingDuration == 0) {
+                onChangedPotionEffect(entity, effectInstance, true);
+            }
+        }
+    }
+
+    public static boolean shouldSpeedUpEffect(PotionEffect effectInstance) {
+        return effectInstance.isCurativeItem(MILK);
+    }
+    /**
+     * Copy of LivingEntity#onChangedPotionEffect(EffectInstance, boolean) due to not being able to AT the method as it is protected.
+     */
+    private static void onChangedPotionEffect(EntityLivingBase entity, PotionEffect effectInstance, boolean reapply) {
+        entity.potionsNeedUpdate = true;
+        if (reapply && !entity.world.isRemote) {
+            Potion effect = effectInstance.getPotion();
+            effect.removeAttributesModifiersFromEntity(entity, entity.getAttributeMap(), effectInstance.getAmplifier());
+            effect.applyAttributesModifiersToEntity(entity, entity.getAttributeMap(), effectInstance.getAmplifier());
+        }
+        if (entity instanceof EntityPlayerMP playerMP) {
+            playerMP.connection.sendPacket(new SPacketEntityEffect(entity.getEntityId(), effectInstance));
+            CriteriaTriggers.EFFECTS_CHANGED.trigger(playerMP);
         }
     }
 }

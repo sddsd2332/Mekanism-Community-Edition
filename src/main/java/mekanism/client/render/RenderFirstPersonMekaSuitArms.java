@@ -6,7 +6,8 @@ package mekanism.client.render;
 
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitBodyArm;
 import mekanism.common.config.MekanismConfig;
-import mekanism.common.item.armor.ItemMekAsuitBodyArmour;
+
+import mekanism.common.item.armor.ItemMekaSuitBodyArmor;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -34,7 +35,7 @@ public class RenderFirstPersonMekaSuitArms {
         AbstractClientPlayer player = Minecraft.getMinecraft().player;
         if (player != null && !player.isInvisible() && !player.isSpectator()) {
             ItemStack chestStack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-            if (chestStack.getItem() instanceof ItemMekAsuitBodyArmour) {
+            if (chestStack.getItem() instanceof ItemMekaSuitBodyArmor) {
                 ItemStack stack = event.getItemStack();
                 EnumHand hand = event.getHand();
                 if (stack.isEmpty()) {

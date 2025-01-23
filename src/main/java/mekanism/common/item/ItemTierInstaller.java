@@ -72,7 +72,13 @@ public class ItemTierInstaller extends ItemMekanism implements IMetaItem {
 
     @Nonnull
     @Override
-    public String getTranslationKey(ItemStack item) {
-        return "item." + BaseTier.values()[item.getItemDamage()].getSimpleName().toLowerCase(Locale.ROOT) + "TierInstaller";
+    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+        return BaseTier.values()[stack.getItemDamage()].getColor() + super.getItemStackDisplayName(stack);
+    }
+
+    @Nonnull
+    @Override
+    public String getTranslationKey(ItemStack stack) {
+        return "item." + BaseTier.values()[stack.getItemDamage()].getSimpleName().toLowerCase(Locale.ROOT) + "TierInstaller";
     }
 }

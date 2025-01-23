@@ -4,8 +4,15 @@ import mekanism.common.config.options.BooleanOption;
 import mekanism.common.config.options.DoubleOption;
 import mekanism.common.config.options.FloatOption;
 import mekanism.common.config.options.IntOption;
+import mekanism.common.item.armor.ItemMekaSuitArmor;
+import net.minecraft.util.DamageSource;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class MekaConfig extends BaseConfig {
+
+    public final Map<DamageSource, FloatOption> mekaSuitDamageRatios = create();
 
     public final DoubleOption MekaSuitHelmetDamageRatio = new DoubleOption(this, "general", "MekaSuitHelmetDamageRatio", 0.15F, "Damage absorb ratio of the MekaSuit Helmet.");
     public final IntOption MekaSuitHelmetDamageMax = new IntOption(this, "general", "MekaSuitHelmetDamageMax", 115, "Max damage the MekaSuit Helmet can absorb.");
@@ -46,14 +53,22 @@ public class MekaConfig extends BaseConfig {
     public FloatOption mekaSuitRecoveryRate = new FloatOption(this, "meka", "mekaSuitRecoveryRate", 10, "The recovery rate of the full set of base shields after the default installation", 0.1F, Float.MAX_VALUE);
     public IntOption mekaSuitShieldRestoresEnergy = new IntOption(this, "meka", "mekaSuitShieldRestoresEnergy", 500, "The amount of energy required whenever the shield recovers a little", 0, Integer.MAX_VALUE);
     //public DoubleOption mekaSuitElytraEnergyUsage = new DoubleOption(this,"meka","elytraEnergyUsage",32000,"Energy usage (Joules) per second of the MekaSuit when flying with the Elytra Unit.");
-    //public DoubleOption mekaSuitEnergyUsageSprintBoost = new DoubleOption(this,"meka","energyUsageSprintBoost",100,"Energy usage (Joules) of MekaSuit when adding 0.1 to sprint motion.");
-    //public DoubleOption mekaSuitEnergyUsageGravitationalModulation = new DoubleOption(this,"meka","energyUsageGravitationalModulation",1000,"Energy usage (Joules) of MekaSuit per tick when flying via Gravitational Modulation.");
-    //public DoubleOption mekaSuitInventoryChargeRate = new DoubleOption(this,"meka","inventoryChargeRate",1000,"Charge rate of inventory items (Joules) per tick.");
-    //  public DoubleOption mekaSuitEnergyUsageItemAttraction = new DoubleOption(this,"meka","energyUsageItemAttraction",250,"Energy usage (Joules) of MekaSuit per tick of attracting a single item.");
+    public DoubleOption mekaSuitEnergyUsageSprintBoost = new DoubleOption(this, "meka", "energyUsageSprintBoost", 100, "Energy usage (Joules) of MekaSuit when adding 0.1 to sprint motion.");
+    public DoubleOption mekaSuitEnergyUsageGravitationalModulation = new DoubleOption(this, "meka", "energyUsageGravitationalModulation", 1000, "Energy usage (Joules) of MekaSuit per tick when flying via Gravitational Modulation.");
+    public DoubleOption mekaSuitInventoryChargeRate = new DoubleOption(this, "meka", "inventoryChargeRate", 1000, "Charge rate of inventory items (Joules) per tick.");
+    public DoubleOption mekaSuitEnergyUsageItemAttraction = new DoubleOption(this, "meka", "energyUsageItemAttraction", 250, "Energy usage (Joules) of MekaSuit per tick of attracting a single item.");
     public DoubleOption mekaSuitHelmetShielding = new DoubleOption(this, "meka", "mekaSuitHelmetShielding", 25);
     public DoubleOption mekaSuitBodyShielding = new DoubleOption(this, "meka", "mekaSuitBodyShielding", 40);
     public DoubleOption mekaSuitPantsShielding = new DoubleOption(this, "meka", "mekaSuitPantsShielding", 20);
     public DoubleOption mekaSuitBootsShielding = new DoubleOption(this, "meka", "mekaSuitBootsShielding", 15);
-    public DoubleOption mekaToolBaseEnergyCapacity = new DoubleOption(this,"meka","mekaToolBaseEnergyCapacity",16000000,"Energy capacity (Joules) of the Meka-Tool without any installed upgrades. Quadratically scaled by upgrades.");
+    public DoubleOption mekaToolBaseEnergyCapacity = new DoubleOption(this,"meka","mekaToolbaseEnergyCapacity",16000000,"Energy capacity (Joules) of the Meka-Tool without any installed upgrades. Quadratically scaled by upgrades.");
     public DoubleOption mekaToolBaseChargeRate = new DoubleOption(this,"meka","mekaToolBaseChargeRate",100000,"Amount (joules) of energy the Meka-Tool can accept per tick. Quadratically scaled by upgrades.");
+
+    public final Map<DamageSource, FloatOption> create() {
+        Map<DamageSource, FloatOption> map = new LinkedHashMap<>();
+        for (DamageSource type : ItemMekaSuitArmor.getSupportedSources()) {
+            map.put(type,new FloatOption(this,"meka",type.getDamageType() + "DamageReductionRatio",1F,"Percent of damage taken from " + type.getDamageType() + " that can be absorbed by the MekaSuit when there is enough power and a full suit is equipped.",0,1));
+        }
+        return map;
+    }
 }

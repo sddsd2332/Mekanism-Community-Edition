@@ -11,8 +11,10 @@ import mekanism.common.Mekanism;
 import mekanism.common.MekanismFluids;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.item.interfaces.IItemHUDProvider;
+import mekanism.common.item.interfaces.IModeItem;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
+import mekanism.common.util.TextComponentGroup;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -21,20 +23,23 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ItemScubaTank extends ItemArmor implements IGasItem, IItemHUDProvider {
+public class ItemScubaTank extends ItemArmor implements IGasItem, IItemHUDProvider, IModeItem {
 
     public int TRANSFER_RATE = 16;
 
@@ -211,4 +216,22 @@ public class ItemScubaTank extends ItemArmor implements IGasItem, IItemHUDProvid
         }
 
     }
+
+    @Override
+    public void changeMode(@NotNull EntityPlayer player, @NotNull ItemStack stack, int shift, boolean displayChangeMessage) {
+        if (Math.abs(shift) % 2 == 1) {
+            //We are changing by an odd amount, so toggle the mode
+            boolean newState = !getFlowing(stack);
+            setFlowing(stack, newState);
+            if (displayChangeMessage) {
+                player.sendMessage(new TextComponentGroup(TextFormatting.GRAY).string(Mekanism.LOG_TAG, TextFormatting.DARK_BLUE).string(" ").translation("tooltip.flowing", LangUtils.onOffColoured(newState)));
+            }
+        }
+    }
+
+    @Override
+    public EnumRarity getRarity(ItemStack stack) {
+        return EnumRarity.RARE;
+    }
+
 }

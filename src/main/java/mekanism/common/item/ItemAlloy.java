@@ -6,6 +6,7 @@ import mekanism.common.config.MekanismConfig;
 import mekanism.common.tier.AlloyTier;
 import mekanism.common.util.CapabilityUtils;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
@@ -33,20 +34,14 @@ public class ItemAlloy extends ItemMekanism {
         if (MekanismConfig.current().general.allowTransmitterAlloyUpgrade.val() && CapabilityUtils.hasCapability(tile, Capabilities.ALLOY_INTERACTION_CAPABILITY, side)) {
             if (!world.isRemote) {
                 IAlloyInteraction interaction = CapabilityUtils.getCapability(tile, Capabilities.ALLOY_INTERACTION_CAPABILITY, side);
-                    interaction.onAlloyInteraction(player, stack, tier);
+                interaction.onAlloyInteraction(player, stack, tier);
             }
             return EnumActionResult.SUCCESS;
         }
         return EnumActionResult.PASS;
     }
 
-    @Override
-    public String getItemStackDisplayName(@Nonnull ItemStack itemstack) {
-        if (itemstack.getItem() == this) {
-            return tier.getColor() + super.getItemStackDisplayName(itemstack);
-        }
-        return super.getItemStackDisplayName(itemstack);
-    }
+
 
     public AlloyTier getTier() {
         return tier;

@@ -1,15 +1,17 @@
 package mekanism.client.render;
 
+import mekanism.api.MekanismAPI;
 import mekanism.api.energy.IEnergizedItem;
 import mekanism.api.gear.IHUDElement;
 import mekanism.client.gui.element.GuiUtils;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.content.gear.HUDElement;
+import mekanism.common.content.gear.IModuleContainerItem;
+import mekanism.common.content.gear.Modules;
 import mekanism.common.item.ItemMekTool;
 import mekanism.common.item.armor.ItemMekaSuitArmor;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
-import mekanism.common.util.text.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -58,6 +60,8 @@ public class HUDRenderer {
             renderCompass(player, font, partialTick, screenWidth, screenHeight, maxTextHeight, reverseHud, color);
         }
         renderMekaSuitEnergyIcons(player, font, color);
+        renderMekaSuitModuleIcons(player, font, screenWidth, screenHeight, reverseHud, color);
+
         GlStateManager.popMatrix();
     }
 
@@ -107,20 +111,36 @@ public class HUDRenderer {
         ItemStack stack = player.getItemStackFromSlot(slot);
         if (showPercent.test(stack.getItem())) {
             if (stack.getItem() instanceof IEnergizedItem item) {
-                renderHUDElement(font, posX, 0, hudElementPercent(icon, item.getEnergyRatio(stack)), color, false);
+                renderHUDElement(font, posX, 0,  Modules.hudElementPercent(icon, item.getEnergyRatio(stack)), color, false);
                 return 48;
             }
         }
         return 0;
     }
 
-    public IHUDElement hudElementPercent(ResourceLocation icon, double ratio) {
-        return hudElement(icon, TextUtils.getPercent(ratio), ratio > 0.2 ? IHUDElement.HUDColor.REGULAR : (ratio > 0.1 ? IHUDElement.HUDColor.WARNING : IHUDElement.HUDColor.DANGER));
+
+    private void renderMekaSuitModuleIcons(EntityPlayer player, FontRenderer font, int screenWidth, int screenHeight, boolean reverseHud, int color) {
+        int startX = screenWidth - 10;
+        int curY = screenHeight - 10;
+        GlStateManager.pushMatrix();
+        for (EntityEquipmentSlot type : EQUIPMENT_ORDER){
+            ItemStack stack = player.getItemStackFromSlot(type);
+            if (stack.getItem() instanceof IModuleContainerItem item) {
+                for (IHUDElement element : item.getHUDElements(player, stack)) {
+                    curY -= 18;
+                    if (reverseHud) {
+                        //Align the mekasuit module icons to the left of the screen
+                        renderHUDElement(font, 10, curY, element, color, false);
+                    } else {
+                        int elementWidth = 24 + font.getStringWidth(element.getText());
+                        renderHUDElement(font, startX - elementWidth, curY, element, color, true);
+                    }
+                }
+            }
+        }
+        GlStateManager.popMatrix();
     }
 
-    public IHUDElement hudElement(ResourceLocation icon, String text, IHUDElement.HUDColor color) {
-        return HUDElement.of(icon, text, HUDElement.HUDColor.from(color));
-    }
 
     private void renderHUDElement(FontRenderer font, int x, int y, IHUDElement element, int color, boolean iconRight) {
         GlStateManager.enableBlend();

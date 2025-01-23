@@ -1,42 +1,38 @@
 package mekanism.common;
 
-import com.github.bsideup.jabel.Desugar;
+import mekanism.api.energy.IEnergizedItem;
+import mekanism.api.functions.FloatSupplier;
 import mekanism.api.gas.GasStack;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.content.gear.Modules;
+import mekanism.common.content.gear.mekasuit.ModuleGravitationalModulatingUnit;
+import mekanism.common.content.gear.mekasuit.ModuleHydraulicPropulsionUnit;
+import mekanism.common.content.gear.mekasuit.ModuleLocomotiveBoostingUnit;
 import mekanism.common.entity.EntityFlame;
 import mekanism.common.item.ItemFlamethrower;
 import mekanism.common.item.ItemFreeRunners;
 import mekanism.common.item.ItemGasMask;
 import mekanism.common.item.ItemScubaTank;
-import mekanism.common.item.armor.*;
+import mekanism.common.item.armor.ItemMekaSuitArmor;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.item.interfaces.IJetpackItem.JetpackMode;
-import mekanism.common.util.TextComponentGroup;
-import mekanism.common.util.UpgradeHelper;
+import mekanism.common.util.MekanismUtils;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.PlayerCapabilities;
-import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
-import net.minecraftforge.fml.relauncher.Side;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -46,20 +42,10 @@ import java.util.UUID;
 public class CommonPlayerTickHandler {
 
     public static final List<UUID> FLYING_PLAYERS = new ArrayList<>();
-    boolean isHeadItem = false;
+
 
     public static boolean isOnGroundOrSleeping(EntityPlayer player) {
         return player.onGround || player.isSneaking();
-        /*
-        int x = MathHelper.floor(player.posX);
-        int y = MathHelper.floor(player.posY - 0.01);
-        int z = MathHelper.floor(player.posZ);
-        BlockPos pos = new BlockPos(x, y, z);
-        IBlockState s = player.world.getBlockState(pos);
-        AxisAlignedBB box = s.getBoundingBox(player.world, pos).offset(pos);
-        AxisAlignedBB playerBox = player.getEntityBoundingBox();
-        return !s.getBlock().isAir(s, player.world, pos) && playerBox.offset(0, -0.01, 0).intersects(box);
-         */
     }
 
     public static boolean isScubaMaskOn(EntityPlayer player, ItemStack tank) {
@@ -74,50 +60,29 @@ public class CommonPlayerTickHandler {
 
     public static float getStepBoost(EntityPlayer player) {
         ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-        if (!stack.isEmpty() && stack.getItem() instanceof ItemFreeRunners freeRunners && freeRunners.getMode(stack).providesStepBoost() && !player.isSpectator()) {
-            return 1.002F;
-        } else if (!stack.isEmpty() && stack.getItem() instanceof ItemMekAsuitFeetArmour feetArmour && !player.isSpectator()) {
-            if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT) && !Mekanism.hooks.DraconicEvolution) {
-                float height = feetArmour.getStepAssistMode(stack).getHeight();
-                if (height == 0.5F) {
-                    return 1.002F;
-                } else if (height == 1) {
-                    return 1.6F;
-                } else if (height == 1.5F) {
-                    return 2.002F;
-                } else if (height == 2) {
-                    return 2.6F;
+        if (!stack.isEmpty() && !player.isSneaking()) {
+            if (stack.getItem() instanceof ItemFreeRunners freeRunners) {
+                if (freeRunners.getMode(stack) == ItemFreeRunners.FreeRunnerMode.NORMAL) {
+                    return 0.5F;
                 }
             }
-        } else if (player.stepHeight >= 1F) {
-            return 0.6F;
+            ModuleHydraulicPropulsionUnit module = Modules.load(stack, Modules.HYDRAULIC_PROPULSION_UNIT);
+            if (module != null && module.isEnabled()) {
+                return module.getStepHeight();
+            }
         }
-        return 0.6F;
-    }
-
-    @SubscribeEvent
-    public static void playerLoggedOut(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent event) {
-        removeFlyingPlayer(event.player.getUniqueID());
-    }
-
-    private static void removeFlyingPlayer(UUID playerUUID) {
-        FLYING_PLAYERS.removeIf(uuid -> uuid.equals(playerUUID));
+        return 0;
     }
 
     @SubscribeEvent
     public void onTick(PlayerTickEvent event) {
-        if (event.phase == Phase.END && event.side == Side.SERVER) {
+        if (event.phase == Phase.END && event.side.isServer()) {
             tickEnd(event.player);
-        }
-        if (event.phase == Phase.START) {
-            if (!Mekanism.hooks.DraconicEvolution){
-                isMekAsuitArmorFlying(event.player);
-            }
         }
     }
 
     public void tickEnd(EntityPlayer player) {
-        player.stepHeight = getStepBoost(player);
+        Mekanism.playerState.updateStepAssist(player);
 
         ItemStack currentItem = player.inventory.getCurrentItem();
         if (isFlamethrowerOn(player, currentItem)) {
@@ -157,36 +122,26 @@ public class CommonPlayerTickHandler {
             if (player.getAir() == max) {
                 for (PotionEffect effect : player.getActivePotionEffects()) {
                     for (int i = 0; i < 9; i++) {
-                        effect.onUpdate(player);
+                        MekanismUtils.speedUpEffectSafely(player, effect);
                     }
                 }
             }
         }
-
+        Mekanism.playerState.updateFlightInfo(player);
     }
 
 
-    public void isMekAsuitArmorFlying(EntityPlayer player) {
-        ItemStack chest = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-        PlayerCapabilities capabilities = player.capabilities;
-        UUID playerUUID = player.getUniqueID();
-        if (!chest.isEmpty() && chest.getItem() instanceof ItemMekAsuitBodyArmour && UpgradeHelper.isUpgradeInstalled(chest, moduleUpgrade.GRAVITATIONAL_MODULATING_UNIT)) {
-            if (!capabilities.allowFlying) {
-                capabilities.allowFlying = true;
-                player.sendPlayerAbilities();
-                if (!FLYING_PLAYERS.contains(playerUUID))
-                    FLYING_PLAYERS.add(playerUUID);
-            }
-        } else {
-            if (FLYING_PLAYERS.contains(playerUUID)) {
-                if (capabilities.allowFlying && !player.isSpectator() && !player.isCreative()) {
-                    capabilities.allowFlying = false;
-                    capabilities.isFlying = false;
-                    player.sendPlayerAbilities();
-                }
-                removeFlyingPlayer(playerUUID);
-            }
+    public static boolean isGravitationalModulationReady(EntityPlayer player) {
+        if (MekanismUtils.isPlayingMode(player)) {
+            ModuleGravitationalModulatingUnit module = Modules.load(player.getItemStackFromSlot(EntityEquipmentSlot.CHEST), Modules.GRAVITATIONAL_MODULATING_UNIT);
+            double usage = MekanismConfig.current().meka.mekaSuitEnergyUsageGravitationalModulation.val();
+            return module != null && module.isEnabled() && module.getContainerEnergy() - (usage) >= 0;
         }
+        return false;
+    }
+
+    public static boolean isGravitationalModulationOn(EntityPlayer player) {
+        return isGravitationalModulationReady(player) && player.capabilities.isFlying;
     }
 
 
@@ -219,7 +174,7 @@ public class CommonPlayerTickHandler {
         if (event.getSource() == DamageSource.FALL) {
             //Free runner checks
             FallEnergyInfo info = getFallAbsorptionEnergyInfo(entity);
-            if (info != null && tryAbsorbAll(event, entity.getItemStackFromSlot(EntityEquipmentSlot.FEET), info.damageRatio, info.energyCost)) {
+            if (info != null && tryAbsorbAll(event, entity, info.container, info.damageRatio, info.energyCost)) {
                 return;
             }
         }
@@ -247,7 +202,7 @@ public class CommonPlayerTickHandler {
         }
         if (event.getSource() == DamageSource.FALL) {
             FallEnergyInfo info = getFallAbsorptionEnergyInfo(entity);
-            if (info != null && handleDamage(event, entity.getItemStackFromSlot(EntityEquipmentSlot.FEET), info.damageRatio, info.energyCost)) {
+            if (info != null && handleDamage(event, entity, info.container, info.damageRatio, info.energyCost)) {
                 return;
             }
         }
@@ -265,92 +220,50 @@ public class CommonPlayerTickHandler {
         }
     }
 
-    @SubscribeEvent
-    public void onLivingDamage(LivingDamageEvent event) {
-        EntityLivingBase entity = event.getEntityLiving();
-        if (event.getAmount() <= 0 || !entity.isEntityAlive()) {
-            return;
-        }
-        if (entity instanceof EntityPlayer player) {
-            float ratioAbsorbed = ItemMekaSuitArmor.getDamageAbsorbed(player, event.getSource(), event.getAmount());
-            if (ratioAbsorbed > 0) {
-                float damageRemaining = event.getAmount() * Math.max(0, 1 - ratioAbsorbed);
-                if (damageRemaining <= 0) {
-                    event.setCanceled(true);
-                } else {
-                    event.setAmount(damageRemaining);
-                }
-            }
-        }
-    }
 
-    private boolean handleDamage(LivingHurtEvent event, ItemStack energyContainer, float absorptionRatio, float energyCost) {
-        if (!energyContainer.isEmpty()) {
-            float absorption = absorptionRatio;
-            float amount = event.getAmount() * absorption;
-            float energyRequirement = energyCost * amount;
-            float ratioAbsorbed = 0;
-            if (energyRequirement == 0) {
-                ratioAbsorbed = absorption;
-            } else {
-                if (energyContainer.getItem() instanceof ItemFreeRunners boots) {
-                    ratioAbsorbed = (float) (absorption * ((boots.getEnergy(energyContainer) - energyRequirement) / amount));
-                    boots.setEnergy(energyContainer, boots.getEnergy(energyContainer) - ((boots.getEnergy(energyContainer) - energyRequirement) / amount));
-                } else if (energyContainer.getItem() instanceof ItemMekaSuitArmor armor) {
-                    ratioAbsorbed = (float) (absorption * ((armor.getEnergy(energyContainer) - energyRequirement) / amount));
-                    armor.setEnergy(energyContainer, armor.getEnergy(energyContainer) - ((armor.getEnergy(energyContainer) - energyRequirement) / amount));
-                }
-            }
-            if (ratioAbsorbed > 0) {
-                float damageRemaining = event.getAmount() * Math.max(0, 1 - ratioAbsorbed);
-                if (damageRemaining <= 0) {
-                    event.setCanceled(true);
-                    return true;
-                } else {
-                    event.setAmount(damageRemaining);
-                }
-            }
-        }
-        return false;
-    }
-
-    @Nullable
-    private FallEnergyInfo getFallAbsorptionEnergyInfo(EntityLivingBase base) {
-        ItemStack feetStack = base.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-        if (!feetStack.isEmpty()) {
-            if (feetStack.getItem() instanceof ItemFreeRunners boots) {
-                if (boots.getMode(feetStack).preventsFallDamage()) {
-                    return new FallEnergyInfo(feetStack, 1, 50);
-                }
-            } else if (feetStack.getItem() instanceof ItemMekaSuitArmor) {
-                return new FallEnergyInfo(feetStack, MekanismConfig.current().meka.mekaSuitFallDamageRatio.val(), MekanismConfig.current().meka.mekaSuitEnergyUsageFall.val());
-            }
-        }
-        return null;
-    }
-
-    private boolean tryAbsorbAll(LivingAttackEvent event, ItemStack stack, float absorptionRatio, float energyCost) {
-        if (!stack.isEmpty() && absorptionRatio == 1) {
+    private boolean tryAbsorbAll(LivingAttackEvent event, EntityLivingBase entityLivingBase, IEnergizedItem energyContainer, FloatSupplier absorptionRatio, double energyCost) {
+        if (energyContainer != null && absorptionRatio.getAsFloat() == 1) {
             double energyRequirement = energyCost * event.getAmount();
             if (energyRequirement == 0) {
                 event.setCanceled(true);
                 return true;
             }
-            if (stack.getItem() instanceof ItemFreeRunners boot) {
-                if (boot.getEnergy(stack) > energyRequirement) {
-                    boot.setEnergy(stack, boot.getEnergy(stack) - energyRequirement);
-                    event.setCanceled(true);
-                    return true;
-                }
-            } else if (stack.getItem() instanceof ItemMekaSuitArmor meka) {
-                if (meka.getEnergy(stack) > energyRequirement) {
-                    meka.setEnergy(stack, meka.getEnergy(stack) - energyRequirement);
-                    event.setCanceled(true);
-                    return true;
-                }
+            ItemStack stack = entityLivingBase.getItemStackFromSlot(EntityEquipmentSlot.FEET);
+            double simulatedExtract = energyContainer.extract(stack, energyRequirement, false);
+            if (simulatedExtract == energyRequirement) {
+                //If we could fully negate the damage cancel the event and extract it
+                energyContainer.extract(stack, energyRequirement, true);
+                event.setCanceled(true);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean handleDamage(LivingHurtEvent event, EntityLivingBase base, IEnergizedItem energyContainer, FloatSupplier absorptionRatio, double energyCost) {
+        if (energyContainer != null) {
+            ItemStack feetStack = base.getItemStackFromSlot(EntityEquipmentSlot.FEET);
+            float absorption = absorptionRatio.getAsFloat();
+            float amount = event.getAmount() * absorption;
+            double energyRequirement = energyCost * amount;
+            float ratioAbsorbed;
+            if (energyRequirement == 0) {
+                //No energy is actually needed to absorb the damage, either because of the config
+                // or how small the amount to absorb is
+                ratioAbsorbed = absorption;
+            } else {
+                ratioAbsorbed = (float) (absorption * energyContainer.extract(feetStack, energyRequirement, true) / (amount));
             }
 
-
+            if (ratioAbsorbed > 0) {
+                float damageRemaining = event.getAmount() * Math.max(0, 1 - ratioAbsorbed);
+                if (damageRemaining <= 0) {
+                    event.setCanceled(true);
+                    return true;
+                } else {
+                    event.setAmount(damageRemaining);
+                }
+            }
         }
         return false;
     }
@@ -358,40 +271,58 @@ public class CommonPlayerTickHandler {
     @SubscribeEvent
     public void onLivingJump(LivingJumpEvent event) {
         if (event.getEntity() instanceof EntityPlayer player) {
-            ItemStack feet = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-            if (!feet.isEmpty() && feet.getItem() instanceof ItemMekAsuitFeetArmour feetArmor) {
-                if (UpgradeHelper.isUpgradeInstalled(feet, moduleUpgrade.HYDRAULIC_PROPULSION_UNIT) && !Mekanism.hooks.DraconicEvolution) {
-                    float boost = feetArmor.getJumpBoostMode(feet).getBoost();
-                    double usage = MekanismConfig.current().meka.mekaSuitBaseJumpEnergyUsage.val() * (boost / 0.1F);
-                    if (feetArmor.getEnergy(feet) > usage) {
-                        ItemStack leg = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
-                        if (!leg.isEmpty() && leg.getItem() instanceof ItemMekAsuitLegsArmour armour) {
-                            if (UpgradeHelper.isUpgradeInstalled(leg, moduleUpgrade.LOCOMOTIVE_BOOSTING_UNIT) && armour.getLocomotive(leg)) {
-                                boost = (float) Math.sqrt(boost);
-                            }
-                        }
-                        player.motionY += boost;
-                        feetArmor.setEnergy(feet, feetArmor.getEnergy(feet) - usage);
+            ModuleHydraulicPropulsionUnit module = Modules.load(player.getItemStackFromSlot(EntityEquipmentSlot.FEET), Modules.HYDRAULIC_PROPULSION_UNIT);
+            if (module != null && module.isEnabled() && Mekanism.keyMap.has(player, KeySync.DESCEND)) {
+                float boost = module.getBoost();
+                double usage = MekanismConfig.current().meka.mekaSuitBaseJumpEnergyUsage.val() * (boost / 0.1F);
+                IEnergizedItem energyContainer = module.getEnergyContainer();
+                if (module.canUseEnergy(player, energyContainer, usage, false)) {
+                    // if we're sprinting with the boost module, limit the height
+                    ModuleLocomotiveBoostingUnit boostModule =Modules.load(player.getItemStackFromSlot(EntityEquipmentSlot.LEGS), Modules.LOCOMOTIVE_BOOSTING_UNIT);
+                    if (boostModule != null && boostModule.isEnabled() && boostModule.canFunction(player)) {
+                        boost = (float) Math.sqrt(boost);
                     }
+                    player.motionY += boost;
+                    module.useEnergy(player, energyContainer, usage, true);
                 }
             }
         }
     }
 
+
+    @Nullable
+    private FallEnergyInfo getFallAbsorptionEnergyInfo(EntityLivingBase base) {
+        ItemStack feetStack = base.getItemStackFromSlot(EntityEquipmentSlot.FEET);
+        if (!feetStack.isEmpty()) {
+            if (feetStack.getItem() instanceof ItemFreeRunners boots) {
+                if (boots.getMode(feetStack).preventsFallDamage()) {
+                    return new FallEnergyInfo(boots, MekanismConfig.current().mekce.freeRunnerFallDamageRatio, MekanismConfig.current().mekce.freeRunnerFallEnergyCost.val());
+                }
+            } else if (feetStack.getItem() instanceof ItemMekaSuitArmor armor) {
+                return new FallEnergyInfo(armor, MekanismConfig.current().meka.mekaSuitFallDamageRatio, MekanismConfig.current().meka.mekaSuitEnergyUsageFall.val());
+            }
+        }
+        return null;
+    }
+
+
+    @SubscribeEvent
+    public static void playerLoggedOut(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent event) {
+        removeFlyingPlayer(event.player.getUniqueID());
+    }
+
+    private static void removeFlyingPlayer(UUID playerUUID) {
+        FLYING_PLAYERS.removeIf(uuid -> uuid.equals(playerUUID));
+    }
+
+
     @SubscribeEvent
     public void getBreakSpeed(PlayerEvent.BreakSpeed event) {
         EntityPlayer player = event.getEntityPlayer();
         float speed = event.getNewSpeed();
-       // BlockPos position = event.getPos();
-        /*
-        if (position!=null){
-            BlockPos pos = position;
-            ItemStack mainHand = player.getHeldItemMainhand();
-
-        }
-         */
+        //Gyroscopic stabilization check
         ItemStack legs = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
-        if (!legs.isEmpty() && legs.getItem() instanceof ItemMekAsuitLegsArmour armour && UpgradeHelper.isUpgradeInstalled(legs, moduleUpgrade.GYROSCOPIC_STABILIZATION_UNIT) && armour.getGyroscopic(legs)) {
+        if (!legs.isEmpty() && Modules.isEnabled(legs, Modules.GYROSCOPIC_STABILIZATION_UNIT)) {
             if (player.isInsideOfMaterial(Material.WATER) && !EnchantmentHelper.getAquaAffinityModifier(player)) {
                 speed *= 5.0F;
             }
@@ -402,12 +333,29 @@ public class CommonPlayerTickHandler {
         event.setNewSpeed(speed);
     }
 
+
+    private static class FallEnergyInfo {
+
+        @Nullable
+        private final IEnergizedItem container;
+        private final FloatSupplier damageRatio;
+        private final double energyCost;
+
+        public FallEnergyInfo(@Nullable IEnergizedItem container, FloatSupplier damageRatio, float energyCost) {
+            this.container = container;
+            this.damageRatio = damageRatio;
+            this.energyCost = energyCost;
+        }
+
+    }
+
+    /*
     //When the player dies
     @SubscribeEvent
     public void onDeath(LivingDeathEvent event) {
         if (event.getEntityLiving() instanceof EntityPlayer player) {
             ItemStack head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-            if (!head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour armour &&
+            if (!head.isEmpty() && head.getItem() instanceof ItemOldMekAsuitHeadArmour armour &&
                     ((UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.EMERGENCY_RESCUE) && armour.getEmergency(head)) ||
                             (UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT) && armour.getInterception(head)))) {
                 event.setCanceled(true);
@@ -435,7 +383,7 @@ public class CommonPlayerTickHandler {
         if (MekanismConfig.current().mekce.MekAsuitOverloadProtection.val()) {
             if (event.getEntityLiving() instanceof EntityPlayer player) {
                 ItemStack head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-                if (!player.isEntityAlive() && !head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour armour &&
+                if (!player.isEntityAlive() && !head.isEmpty() && head.getItem() instanceof ItemOldMekAsuitHeadArmour armour &&
                         ((UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.EMERGENCY_RESCUE) && armour.getEmergency(head)) ||
                                 (UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT) && armour.getInterception(head)))) {
                     player.hurtResistantTime = 20;
@@ -458,7 +406,7 @@ public class CommonPlayerTickHandler {
         }
     }
 
-    @Desugar
-    private record FallEnergyInfo(ItemStack stack, float damageRatio, float energyCost) {
-    }
+
+ */
+
 }

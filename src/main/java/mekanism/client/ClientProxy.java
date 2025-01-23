@@ -281,13 +281,39 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.FluoriteClump);
         registerItemRender(MekanismItems.ArmoredFreeRunners);
         registerItemRender(MekanismItems.MekTool);
-        registerItemRender(MekanismItems.MekAsuitHelmet);
-        registerItemRender(MekanismItems.MekAsuitChestplate);
-        registerItemRender(MekanismItems.MekAsuitLeggings);
-        registerItemRender(MekanismItems.MekAsuitBoots);
+   //     registerItemRender(MekanismItems.MekAsuitHelmet);
+    //    registerItemRender(MekanismItems.MekAsuitChestplate);
+   //     registerItemRender(MekanismItems.MekAsuitLeggings);
+  //      registerItemRender(MekanismItems.MekAsuitBoots);
         registerItemRender(MekanismItems.ModuleBase);
         registerItemRender(MekanismItems.ModuleUpgrade);
-        registerItemRender(MekanismItems.test);
+
+        registerItemRender(MekanismItems.MEKASUIT_HELMET);
+        registerItemRender(MekanismItems.MEKASUIT_BODYARMOR);
+        registerItemRender(MekanismItems.MEKASUIT_PANTS);
+        registerItemRender(MekanismItems.MEKASUIT_BOOTS);
+
+        registerItemRender(MekanismItems.MODULE_ENERGY);
+        registerItemRender(MekanismItems.MODULE_RADIATION_SHIELDING);
+        registerItemRender(MekanismItems.MODULE_EXCAVATION_ESCALATION);
+        registerItemRender(MekanismItems.MODULE_ATTACK_AMPLIFICATION);
+        registerItemRender(MekanismItems.MODULE_SILK_TOUCH);
+        registerItemRender(MekanismItems.MODULE_TELEPORTATION);
+        registerItemRender(MekanismItems.MODULE_ELECTROLYTIC_BREATHING);
+        registerItemRender(MekanismItems.MODULE_INHALATION_PURIFICATION);
+        registerItemRender(MekanismItems.MODULE_VISION_ENHANCEMENT);
+        registerItemRender(MekanismItems.MODULE_SOLAR_RECHARGING);
+        registerItemRender(MekanismItems.MODULE_NUTRITIONAL_INJECTION);
+        registerItemRender(MekanismItems.MODULE_JETPACK);
+        registerItemRender(MekanismItems.MODULE_CHARGE_DISTRIBUTION);
+        registerItemRender(MekanismItems.MODULE_GRAVITATIONAL_MODULATING);
+       // registerItemRender(MekanismItems.MODULE_ELYTRA);
+        registerItemRender(MekanismItems.MODULE_LOCOMOTIVE_BOOSTING);
+        registerItemRender(MekanismItems.MODULE_GYROSCOPIC_STABILIZATION);
+        registerItemRender(MekanismItems.MODULE_HYDRAULIC_PROPULSION);
+        registerItemRender(MekanismItems.MODULE_MAGNETIC_ATTRACTION);
+    //    registerItemRender(MekanismItems.MODULE_FROST_WALKER);
+
         /**
          * ADD END
          */
@@ -850,7 +876,7 @@ public class ClientProxy extends CommonProxy {
         }, MekanismItems.Balloon);
 
         MinecraftForge.EVENT_BUS.register(new ClientConnectionHandler());
-        MinecraftForge.EVENT_BUS.register(new ClientPlayerTracker());
+      //  MinecraftForge.EVENT_BUS.register(new ClientPlayerTracker());
         MinecraftForge.EVENT_BUS.register(new ClientTickHandler());
         MinecraftForge.EVENT_BUS.register(new RenderFirstPersonMekaSuitArms());
         MinecraftForge.EVENT_BUS.register(new RenderTickHandler());

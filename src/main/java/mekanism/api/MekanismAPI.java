@@ -1,17 +1,12 @@
 package mekanism.api;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import mekanism.api.gear.IModuleHelper;
-import mekanism.api.gear.ModuleData;
 import mekanism.api.util.BlockInfo;
 import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
-import net.minecraftforge.registries.RegistryManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,7 +32,6 @@ public class MekanismAPI {
     //Ignore all mod blocks
     private static Set<String> cardboardBoxModIgnore = new ObjectOpenHashSet<>();
     private static MekanismRecipeHelper helper = null;
-    private static IForgeRegistry<ModuleData<?>> MODULE_REGISTRY;
 
     public static boolean isBlockCompatible(@Nonnull Block block, int meta) {
         if (cardboardBoxModIgnore.contains(Objects.requireNonNull(block.getRegistryName()).getNamespace())) {
@@ -125,21 +119,6 @@ public class MekanismAPI {
             removeBoxBlacklistMod(modid);
         }
     }
-    private static IModuleHelper MODULE_HELPER;
 
-    /**
-     * Gets Mekanism's {@link IModuleHelper} that provides various utility methods for implementing custom modules.
-     */
-    public static IModuleHelper getModuleHelper() {
-        // Harmless race
-        if (MODULE_HELPER == null) {
-            try {
-                Class<?> clazz = Class.forName("mekanism.common.content.gear.ModuleHelper");
-                MODULE_HELPER = (IModuleHelper) clazz.getField("INSTANCE").get(null);
-            } catch (ReflectiveOperationException ex) {
-                logger.fatal("Error retrieving RadiationManager, Mekanism may be absent, damaged, or outdated.");
-            }
-        }
-        return MODULE_HELPER;
-    }
+
 }

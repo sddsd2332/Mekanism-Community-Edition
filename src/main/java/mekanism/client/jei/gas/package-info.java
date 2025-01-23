@@ -4,6 +4,6 @@
 package mekanism.client.jei.gas;
 
 import mcp.MethodsReturnNonnullByDefault;
-import mekanism.common.util.FieldsAreNonnullByDefault;
+import mekanism.api.annotations.FieldsAreNonnullByDefault;
 
 import javax.annotation.ParametersAreNonnullByDefault;

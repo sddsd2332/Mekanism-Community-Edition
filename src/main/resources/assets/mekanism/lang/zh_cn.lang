@@ -1798,3 +1798,7 @@ direction.south.short=S
 direction.west.short=W
 direction.east.short=E
 generic.mekanism.percent=%
+gui.on_caps=开启
+gui.off_caps=关闭
+generic.mekanism.list= -
+jetpack.mekanism.mode_change=喷气背包模式更改为：

@@ -1,12 +1,12 @@
 package mekanism.common.item;
 
-import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import mekanism.api.EnumColor;
+import mekanism.api.NBTConstants;
 import mekanism.common.Mekanism;
-import mekanism.common.base.IItemNetwork;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.item.interfaces.IModeItem;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -17,15 +17,17 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ItemWalkieTalkie extends ItemMekanismAddition implements IItemNetwork {
+public class ItemWalkieTalkie extends ItemMekanismAddition implements IModeItem {
 
     public static ModelResourceLocation OFF_MODEL = new ModelResourceLocation(new ResourceLocation(Mekanism.MODID, "WalkieTalkie"), "inventory");
 
@@ -69,19 +71,19 @@ public class ItemWalkieTalkie extends ItemMekanismAddition implements IItemNetwo
     }
 
     public void setOn(ItemStack itemStack, boolean on) {
-        ItemDataUtils.setBoolean(itemStack, "on", on);
+        ItemDataUtils.setBoolean(itemStack, NBTConstants.RUNNING, on);
     }
 
     public boolean getOn(ItemStack itemStack) {
-        return ItemDataUtils.getBoolean(itemStack, "on");
+        return ItemDataUtils.getBoolean(itemStack, NBTConstants.RUNNING);
     }
 
     public void setChannel(ItemStack itemStack, int channel) {
-        ItemDataUtils.setInt(itemStack, "channel", channel);
+        ItemDataUtils.setInt(itemStack, NBTConstants.CHANNEL, channel);
     }
 
     public int getChannel(ItemStack itemStack) {
-        int channel = ItemDataUtils.getInt(itemStack, "channel");
+        int channel = ItemDataUtils.getInt(itemStack, NBTConstants.CHANNEL);
         if (channel == 0) {
             setChannel(itemStack, 1);
             channel = 1;
@@ -89,11 +91,24 @@ public class ItemWalkieTalkie extends ItemMekanismAddition implements IItemNetwo
         return channel;
     }
 
+
     @Override
-    public void handlePacketData(ItemStack stack, ByteBuf dataStream) {
-        if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
-            int channel = dataStream.readInt();
-            setChannel(stack, channel);
+    public void changeMode(@NotNull EntityPlayer player, @NotNull ItemStack stack, int shift, boolean displayChangeMessage) {
+        if (getOn(stack)) {
+            int channel = getChannel(stack);
+            int newChannel = Math.floorMod(channel + shift - 1, 8) + 1;
+            if (channel != newChannel) {
+                setChannel(stack, newChannel);
+                if (displayChangeMessage) {
+                    player.sendMessage(new TextComponentString(EnumColor.DARK_BLUE + Mekanism.LOG_TAG + " " + EnumColor.GREY + LangUtils.localize("tooltip.channel") + ": " + EnumColor.GREY + getChannel(stack)));
+                }
+            }
         }
+    }
+
+    @Nonnull
+    @Override
+    public ITextComponent getScrollTextComponent(@Nonnull ItemStack stack) {
+        return new TextComponentString(LangUtils.localize("tooltip.channel") + ": " + EnumColor.GREY + getChannel(stack));
     }
 }

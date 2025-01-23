@@ -2,12 +2,11 @@ package mekanism.client.render.obj;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import mekanism.api.transmitters.TransmissionType;
 import mekanism.common.Mekanism;
 import mekanism.common.block.property.PropertyColor;
 import mekanism.common.block.property.PropertyConnection;
+import mekanism.common.block.states.BlockStateTransmitter;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.tile.transmitter.TileEntitySidedPipe;
 import mekanism.common.tile.transmitter.TileEntitySidedPipe.ConnectionType;
@@ -246,9 +245,21 @@ public class TransmitterModel extends OBJBakedModelBase {
         public IBakedModel handleItemState(@Nonnull IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
             if (itemCache == null) {
                 List<String> visible = new ArrayList<>();
-
-                for (EnumFacing side : EnumFacing.VALUES) {
-                    visible.add(side.getName() + (side.getAxis() == Axis.Y ? "NORMAL" : "NONE"));
+                if (Mekanism.hooks.MixinBooter) {
+                    TransmissionType transmission = BlockStateTransmitter.TransmitterType.values()[stack.getItemDamage()].getTransmission();
+                    if (transmission == TransmissionType.ITEM || transmission == TransmissionType.FLUID) {
+                        for (EnumFacing side : EnumFacing.VALUES) {
+                            visible.add(side.getName() + (side.getAxis() == Axis.Y ? "NORMAL" : "NONE"));
+                        }
+                    } else {
+                        for (EnumFacing side : EnumFacing.VALUES) {
+                            visible.add(side.getName() + "NONE");
+                        }
+                    }
+                } else {
+                    for (EnumFacing side : EnumFacing.VALUES) {
+                        visible.add(side.getName() + (side.getAxis() == Axis.Y ? "NORMAL" : "NONE"));
+                    }
                 }
 
                 itemCache = new TransmitterModel(baseModel, getModel(), new OBJState(visible, true), vertexFormat, textureMap, transformationMap);

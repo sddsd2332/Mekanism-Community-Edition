@@ -16,6 +16,12 @@ public class SlotArmor extends Slot {
 
     private final EntityEquipmentSlot armorType;
 
+    public SlotArmor(InventoryPlayer inventory, int index, int x, int y, EntityEquipmentSlot armorType) {
+        super(inventory,index,x,y);
+        this.armorType = armorType;
+    }
+
+
     public SlotArmor(InventoryPlayer inventory, EntityEquipmentSlot armorType, int x, int y) {
         super(inventory, 35 + armorType.getSlotIndex(), x, y);
         this.armorType = armorType;

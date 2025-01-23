@@ -13,6 +13,8 @@ import mekanism.common.recipe.RecipeHandler;
 import mekanism.common.recipe.inputs.GasInput;
 import mekanism.common.recipe.machines.WasherRecipe;
 import mekanism.common.recipe.outputs.GasOutput;
+import mekanism.common.tier.FluidTankTier;
+import mekanism.common.tier.GasTankTier;
 import mekanism.common.util.*;
 import mekanism.multiblockmachine.client.render.bloom.machine.BloomRenderLargeChemicalWasher;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine;

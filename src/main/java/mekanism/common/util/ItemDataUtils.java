@@ -35,6 +35,10 @@ public class ItemDataUtils {
         return getDataMap(stack).hasKey(key);
     }
 
+    public static boolean hasData(ItemStack stack, String key, int type) {
+        return hasDataTag(stack) && getDataMap(stack).hasKey(key, type);
+    }
+
     public static void removeData(ItemStack stack, String key) {
         if (!hasDataTag(stack)) {
             return;
@@ -75,6 +79,16 @@ public class ItemDataUtils {
             return new NBTTagCompound();
         }
         return getDataMap(stack).getCompoundTag(key);
+    }
+
+    public static NBTTagCompound getOrAddCompound(ItemStack stack, String key) {
+        NBTTagCompound dataMap = getDataMap(stack);
+        if (dataMap.hasKey(key, 10)) {
+            return dataMap.getCompoundTag(key);
+        }
+        NBTTagCompound compound = new NBTTagCompound();
+        dataMap.setTag(key, compound);
+        return compound;
     }
 
     public static NBTTagList getList(ItemStack stack, String key) {

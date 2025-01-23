@@ -53,6 +53,7 @@ public class SoundHandler {
     private static Set<UUID> jetpackSounds = new ObjectOpenHashSet<>();
     private static Set<UUID> gasmaskSounds = new ObjectOpenHashSet<>();
     private static Set<UUID> flamethrowerSounds = new ObjectOpenHashSet<>();
+    private static Set<UUID> gravitationalModulationSounds = new ObjectOpenHashSet<>();
 
     private static Long2ObjectMap<ISound> soundMap = new Long2ObjectOpenHashMap<>();
     private static boolean IN_MUFFLED_CHECK = false;
@@ -61,12 +62,14 @@ public class SoundHandler {
         jetpackSounds.clear();
         gasmaskSounds.clear();
         flamethrowerSounds.clear();
+        gravitationalModulationSounds.clear();
     }
 
     public static void clearPlayerSounds(UUID uuid) {
         jetpackSounds.remove(uuid);
         gasmaskSounds.remove(uuid);
         flamethrowerSounds.remove(uuid);
+        gravitationalModulationSounds.remove(uuid);
     }
 
     public static void startSound(@Nonnull World world, @Nonnull UUID uuid, @Nonnull SoundType soundType) {
@@ -98,6 +101,15 @@ public class SoundHandler {
                         // Currently it requests both play, except only one can ever play at once due to the shouldPlaySound method
                         playSound(new FlamethrowerSound.Active(player));
                         playSound(new FlamethrowerSound.Idle(player));
+                    }
+                }
+            }
+            case GRAVITATIONAL_MODULATOR -> {
+                if (!gravitationalModulationSounds.contains(uuid)){
+                    EntityPlayer player = world.getPlayerEntityByUUID(uuid);
+                    if (player != null) {
+                        gravitationalModulationSounds.add(uuid);
+                        playSound(new GravitationalModulationSound(player));
                     }
                 }
             }

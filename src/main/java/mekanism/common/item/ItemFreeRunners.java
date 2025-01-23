@@ -4,7 +4,10 @@ import cofh.redstoneflux.api.IEnergyContainerItem;
 import ic2.api.item.IElectricItemManager;
 import ic2.api.item.ISpecialElectricItem;
 import mekanism.api.EnumColor;
+import mekanism.api.IIncrementalEnum;
+import mekanism.api.NBTConstants;
 import mekanism.api.energy.IEnergizedItem;
+import mekanism.api.math.MathUtils;
 import mekanism.client.render.ModelCustomArmor;
 import mekanism.client.render.ModelCustomArmor.ArmorModel;
 import mekanism.common.Mekanism;
@@ -17,6 +20,7 @@ import mekanism.common.integration.ic2.IC2ItemManager;
 import mekanism.common.integration.redstoneflux.RFIntegration;
 import mekanism.common.integration.tesla.TeslaItemWrapper;
 import mekanism.common.item.interfaces.IItemHUDProvider;
+import mekanism.common.item.interfaces.IModeItem;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
@@ -28,12 +32,14 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -43,6 +49,7 @@ import net.minecraftforge.fml.common.Optional.InterfaceList;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -51,7 +58,7 @@ import java.util.List;
         @Interface(iface = "ic2.api.item.ISpecialElectricItem", modid = MekanismHooks.IC2_MOD_ID),
         @Interface(iface = "cofh.redstoneflux.api.IEnergyContainerItem", modid = MekanismHooks.REDSTONEFLUX_MOD_ID)
 })
-public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor, IItemHUDProvider {
+public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpecialElectricItem, IEnergyContainerItem, ISpecialArmor, IItemHUDProvider, IModeItem {
 
     /**
      * The maximum amount of energy this item can hold.
@@ -239,15 +246,11 @@ public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpeci
     }
 
     public FreeRunnerMode getMode(ItemStack itemStack) {
-        return FreeRunnerMode.values()[ItemDataUtils.getInt(itemStack, "mode")];
+        return FreeRunnerMode.byIndexStatic(ItemDataUtils.getInt(itemStack, NBTConstants.MODE));
     }
 
     public void setMode(ItemStack itemStack, FreeRunnerMode mode) {
-        ItemDataUtils.setInt(itemStack, "mode", mode.ordinal());
-    }
-
-    public void incrementMode(ItemStack itemStack) {
-        setMode(itemStack, getMode(itemStack).increment());
+        ItemDataUtils.setInt(itemStack, NBTConstants.MODE, mode.ordinal());
     }
 
     @Override
@@ -258,15 +261,29 @@ public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpeci
         }
     }
 
-    public enum FreeRunnerMode {
+    @Override
+    public void changeMode(@NotNull EntityPlayer player, @NotNull ItemStack stack, int shift, boolean displayChangeMessage) {
+        FreeRunnerMode mode = getMode(stack);
+        FreeRunnerMode newMode = mode.adjust(shift);
+        if (mode != newMode) {
+            setMode(stack, newMode);
+            if (displayChangeMessage) {
+                player.sendMessage(new TextComponentString(EnumColor.DARK_BLUE + Mekanism.LOG_TAG + " " + EnumColor.GREY + LangUtils.localize("tooltip.free_runners.mode") + " " + EnumColor.INDIGO + newMode.getName()));
+            }
+        }
+    }
+
+    public enum FreeRunnerMode implements IIncrementalEnum<FreeRunnerMode> {
         NORMAL("tooltip.freerunner.regular", EnumColor.DARK_GREEN, true, true),
         SAFETY("tooltip.freerunner.safety", EnumColor.ORANGE, true, false),
         DISABLED("tooltip.freerunner.disabled", EnumColor.DARK_RED, false, false);
 
+        private static final FreeRunnerMode[] MODES = values();
+
         private final boolean preventsFallDamage;
         private final boolean providesStepBoost;
-        private String unlocalized;
-        private EnumColor color;
+        private final String unlocalized;
+        private final EnumColor color;
 
         FreeRunnerMode(String unlocalized, EnumColor color, boolean preventsFallDamage, boolean providesStepBoost) {
             this.preventsFallDamage = preventsFallDamage;
@@ -275,9 +292,6 @@ public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpeci
             this.color = color;
         }
 
-        public FreeRunnerMode increment() {
-            return ordinal() < values().length - 1 ? values()[ordinal() + 1] : values()[0];
-        }
 
         public boolean preventsFallDamage() {
             return preventsFallDamage;
@@ -290,5 +304,19 @@ public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpeci
         public String getName() {
             return color + LangUtils.localize(unlocalized);
         }
+
+        @Override
+        public FreeRunnerMode byIndex(int index) {
+            return byIndexStatic(index);
+        }
+
+        public static FreeRunnerMode byIndexStatic(int index) {
+            return MathUtils.getByIndexMod(MODES, index);
+        }
+    }
+
+    @Override
+    public EnumRarity getRarity(ItemStack stack) {
+        return EnumRarity.RARE;
     }
 }

@@ -1,10 +1,15 @@
 package mekanism.common.item;
 
+import baubles.api.BaubleType;
+import baubles.api.IBauble;
+import baubles.api.render.IRenderBauble;
 import mekanism.api.EnumColor;
 import mekanism.api.NBTConstants;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
+import mekanism.client.model.ModelArmoredJetpack;
+import mekanism.client.model.ModelJetpack;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.client.render.ModelCustomArmor;
 import mekanism.client.render.ModelCustomArmor.ArmorModel;
@@ -12,12 +17,16 @@ import mekanism.common.Mekanism;
 import mekanism.common.MekanismFluids;
 import mekanism.common.MekanismItems;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.integration.MekanismHooks;
 import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.item.interfaces.IModeItem;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
+import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.TextComponentGroup;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -31,10 +40,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.util.EnumHelper;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +52,11 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, IJetpackItem, IItemHUDProvider, IModeItem {
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "baubles.api.IBauble", modid = MekanismHooks.Baubles_MOD_ID),
+        @Optional.Interface(iface = "baubles.api.render.IRenderBauble", modid = MekanismHooks.Baubles_MOD_ID)
+})
+public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, IJetpackItem, IItemHUDProvider, IBauble, IRenderBauble, IModeItem {
 
     public int TRANSFER_RATE = 16;
 
@@ -75,10 +89,14 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, World world, List<String> list, ITooltipFlag flag) {
-        GasStack gasStack = getGas(stack);
-        list.add(gasStack == null ? LangUtils.localize("tooltip.noGas") + "." : LangUtils.localize("tooltip.stored") + " " + gasStack.getGas().getLocalizedName() + ": " + gasStack.amount);
-        list.add(EnumColor.GREY + LangUtils.localize("tooltip.mode") + ": " + EnumColor.GREY + getJetpackMode(stack).getTextComponent());
+    public void addInformation(ItemStack itemstack, World world, List<String> list, ITooltipFlag flag) {
+        GasStack gasStack = getGas(itemstack);
+        if (gasStack == null) {
+            list.add(LangUtils.localize("tooltip.noGas") + ".");
+        } else {
+            list.add(LangUtils.localize("tooltip.stored") + " " + gasStack.getGas().getLocalizedName() + ": " + gasStack.amount);
+        }
+        list.add(EnumColor.GREY + LangUtils.localize("tooltip.mode") + ": " + EnumColor.GREY + getJetpackMode(itemstack).getName());
     }
 
     @Override
@@ -149,9 +167,13 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
 
     @Override
     public boolean canUseJetpack(ItemStack stack) {
-        return getStored(stack) > 0;
+        return  getGas(stack) != null && getStored(stack) > 0 ;
     }
 
+    @Override
+    public JetpackMode getJetpackMode(ItemStack stack) {
+        return JetpackMode.byIndexStatic(ItemDataUtils.getInt(stack, NBTConstants.MODE));
+    }
 
     @Override
     public void useJetpackFuel(ItemStack stack) {
@@ -222,36 +244,67 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
         if (slotType == getEquipmentSlot()) {
-            ItemJetpack jetpack = (ItemJetpack) stack.getItem();
-            list.add(EnumColor.DARK_GREY + LangUtils.localize("tooltip.jetpack.mode") + " " + jetpack.getJetpackMode(stack).getTextComponent());
-            list.add(LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + (getStored(stack) > 0 ? getStored(stack) : LangUtils.localize("tooltip.noGas")));
-        }
+            list.add(LangUtils.localize("tooltip.jetpack.mode") + " " + getJetpackMode(stack).getName());
+            if (getStored(stack) > 0) {
+                list.add(LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + getStored(stack));
+            } else {
+                list.add(LangUtils.localize("tooltip.jetpack.stored") + " " + EnumColor.ORANGE + LangUtils.localize("tooltip.noGas"));
+            }
 
+        }
+    }
+
+
+    public void setMode(ItemStack stack, JetpackMode mode) {
+        ItemDataUtils.setInt(stack, NBTConstants.MODE, mode.ordinal());
     }
 
     @Override
-    public void changeMode(@NotNull EntityPlayer player, @NotNull ItemStack stack, int shift, boolean displayChange) {
+    public void changeMode(@NotNull EntityPlayer player, @NotNull ItemStack stack, int shift, boolean displayChangeMessage) {
         JetpackMode mode = getJetpackMode(stack);
         JetpackMode newMode = mode.adjust(shift);
         if (mode != newMode) {
             setMode(stack, newMode);
-            if (displayChange) {
-                player.sendMessage(new TextComponentString(EnumColor.GREY + LangUtils.localize("tooltip.mode") + ": " + EnumColor.GREY + mode.getTextComponent()));
+            if (displayChangeMessage) {
+                player.sendMessage(new TextComponentGroup(TextFormatting.GRAY).string(Mekanism.LOG_TAG, TextFormatting.DARK_BLUE).string(" ").translation("jetpack.mekanism.mode_change").string(newMode.getName()));
             }
         }
     }
 
     @Override
-    public JetpackMode getJetpackMode(ItemStack stack) {
-        return JetpackMode.byIndexStatic(ItemDataUtils.getInt(stack, NBTConstants.MODE));
+    @Optional.Method(modid = MekanismHooks.Baubles_MOD_ID)
+    public BaubleType getBaubleType(ItemStack itemStack) {
+        return BaubleType.BODY;
     }
 
 
+    @SideOnly(Side.CLIENT)
+    @Override
+    @Optional.Method(modid = MekanismHooks.Baubles_MOD_ID)
+    public void onPlayerBaubleRender(ItemStack itemStack, EntityPlayer entityPlayer, RenderType renderType, float v) {
+        ModelJetpack jetpack = new ModelJetpack();
+        ModelArmoredJetpack armoredJetpack = new ModelArmoredJetpack();
+        if (renderType == RenderType.BODY) {
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(0, 0, 0.06F);
+            MekanismRenderer.bindTexture(MekanismUtils.getResource(MekanismUtils.ResourceType.RENDER, "Jetpack.png"));
+            if (this == MekanismItems.Jetpack) {
+                jetpack.render(0.0625F);
+            } else if (this == MekanismItems.ArmoredJetpack) {
+                armoredJetpack.render(0.0625F);
+            }
+            GlStateManager.popMatrix();
+        }
+    }
 
 
     @Override
-    public boolean supportsSlotType(ItemStack stack, @NotNull EntityEquipmentSlot slotType) {
-        return slotType == getEquipmentSlot();
+    public boolean supportsSlotType(ItemStack stack, @Nonnull EntityEquipmentSlot slotType) {
+        return slotType == armorType;
     }
 
+    @Override
+    public  boolean willAutoSync(ItemStack itemstack, EntityLivingBase player){
+        return true;
+    }
 }

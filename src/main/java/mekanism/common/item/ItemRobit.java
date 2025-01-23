@@ -9,6 +9,7 @@ import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -28,6 +29,7 @@ public class ItemRobit extends ItemEnergized implements ISustainedInventory {
     public ItemRobit() {
         super(100000);
         setMaxStackSize(1);
+        setRarity(EnumRarity.RARE);
     }
 
     @Override
@@ -89,4 +91,5 @@ public class ItemRobit extends ItemEnergized implements ISustainedInventory {
         }
         return null;
     }
+
 }

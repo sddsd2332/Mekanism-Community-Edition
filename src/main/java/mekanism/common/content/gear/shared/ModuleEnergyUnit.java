@@ -1,36 +1,32 @@
 package mekanism.common.content.gear.shared;
 
-import mekanism.api.annotations.ParametersAreNotNullByDefault;
-import mekanism.api.energy.IEnergyContainer;
-import mekanism.api.gear.ICustomModule;
-import mekanism.api.gear.IModule;
-import mekanism.api.math.FloatingLong;
+import mekanism.api.energy.IEnergizedItem;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.content.gear.Module;
 import mekanism.common.item.armor.ItemMekaSuitArmor;
 
-@ParametersAreNotNullByDefault
-public class ModuleEnergyUnit implements ICustomModule<ModuleEnergyUnit> {
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
+public class ModuleEnergyUnit extends Module {
 
-    public FloatingLong getEnergyCapacity(IModule<ModuleEnergyUnit> module) {
-        FloatingLong base = module.getContainer().getItem() instanceof ItemMekaSuitArmor ? MekanismConfig.current().meka.mekaSuitBaseEnergyCapacity.get()
-                : MekanismConfig.current().meka.mekaToolBaseEnergyCapacity.get();
-        return base.multiply(Math.pow(2, module.getInstalledCount()));
+    public double getEnergyCapacity() {
+        double base = getContainer().getItem() instanceof ItemMekaSuitArmor ? MekanismConfig.current().meka.mekaSuitBaseEnergyCapacity.val()
+                : MekanismConfig.current().meka.mekaToolBaseEnergyCapacity.val();
+        return base * (Math.pow(2, getInstalledCount()));
     }
 
-    public FloatingLong getChargeRate(IModule<ModuleEnergyUnit> module) {
-        FloatingLong base = module.getContainer().getItem() instanceof ItemMekaSuitArmor ? MekanismConfig.current().meka.mekaSuitBaseChargeRate.get()
-                : MekanismConfig.current().meka.mekaToolBaseChargeRate.get();
-        return base.multiply(Math.pow(2, module.getInstalledCount()));
+    public double getChargeRate() {
+        double base = getContainer().getItem() instanceof ItemMekaSuitArmor ? MekanismConfig.current().meka.mekaSuitBaseChargeRate.val()
+                : MekanismConfig.current().meka.mekaToolBaseChargeRate.val();
+        return base * (Math.pow(2, getInstalledCount()));
     }
 
     @Override
-    public void onRemoved(IModule<ModuleEnergyUnit> module, boolean last) {
-        IEnergyContainer energyContainer = module.getEnergyContainer();
+    public void onRemoved(boolean last) {
+        IEnergizedItem energyContainer = getEnergyContainer();
         if (energyContainer != null) {
-            energyContainer.setEnergy(energyContainer.getEnergy().min(energyContainer.getMaxEnergy()));
+            energyContainer.setEnergy(getContainer(), Math.min(energyContainer.getEnergy(getContainer()), energyContainer.getMaxEnergy(getContainer())));
         }
     }
-
-
 }

@@ -1,11 +1,13 @@
 package mekanism.common.item;
 
-import io.netty.buffer.ByteBuf;
 import mekanism.api.EnumColor;
-import mekanism.common.base.IItemNetwork;
+import mekanism.api.NBTConstants;
+import mekanism.common.Mekanism;
 import mekanism.common.item.interfaces.IItemHUDProvider;
+import mekanism.common.item.interfaces.IModeItem;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
+import mekanism.common.util.TextComponentGroup;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -15,27 +17,27 @@ import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.EnumAction;
-import net.minecraft.item.IItemPropertyGetter;
-import net.minecraft.item.ItemArrow;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemElectricBow extends ItemEnergized implements IItemNetwork, IItemHUDProvider {
+public class ItemElectricBow extends ItemEnergized implements IModeItem, IItemHUDProvider {
 
     public ItemElectricBow() {
         super(120000);
         setMaxStackSize(1);
+        setRarity(EnumRarity.RARE);
         setFull3D();
         this.addPropertyOverride(new ResourceLocation("pull"), new IItemPropertyGetter() {
             @SideOnly(Side.CLIENT)
@@ -164,12 +166,12 @@ public class ItemElectricBow extends ItemEnergized implements IItemNetwork, IIte
         return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
     }
 
-    public void setFireState(ItemStack itemstack, boolean state) {
-        ItemDataUtils.setBoolean(itemstack, "fireState", state);
+    public void setFireState(ItemStack stack, boolean state) {
+        ItemDataUtils.setBoolean(stack, NBTConstants.MODE, state);
     }
 
-    public boolean getFireState(ItemStack itemstack) {
-        return ItemDataUtils.getBoolean(itemstack, "fireState");
+    public boolean getFireState(ItemStack stack) {
+        return ItemDataUtils.getBoolean(stack, NBTConstants.MODE);
     }
 
     @Override
@@ -177,16 +179,27 @@ public class ItemElectricBow extends ItemEnergized implements IItemNetwork, IIte
         return false;
     }
 
-    @Override
-    public void handlePacketData(ItemStack stack, ByteBuf dataStream) {
-        if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
-            boolean state = dataStream.readBoolean();
-            setFireState(stack, state);
-        }
-    }
 
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
         list.add(EnumColor.PINK + LangUtils.localizeWithFormat("mekanism.tooltip.fireMode", LangUtils.transOnOff(getFireState(stack))));
+    }
+
+    @Override
+    public void changeMode(@NotNull EntityPlayer player, @NotNull ItemStack stack, int shift, boolean displayChangeMessage) {
+        if (Math.abs(shift) % 2 == 1) {
+            boolean newState = !getFireState(stack);
+            setFireState(stack, newState);
+            if (displayChangeMessage) {
+                player.sendMessage(new TextComponentGroup(TextFormatting.GRAY).string(Mekanism.LOG_TAG, TextFormatting.DARK_BLUE).string(" ").translation("mekanism.tooltip.fireMode", LangUtils.onOffColoured(newState)));
+            }
+        }
+    }
+
+
+    @Nonnull
+    @Override
+    public ITextComponent getScrollTextComponent(@Nonnull ItemStack stack) {
+        return new TextComponentGroup(TextFormatting.GRAY).translation("mekanism.tooltip.fireMode", LangUtils.onOffColoured(getFireState(stack)));
     }
 }

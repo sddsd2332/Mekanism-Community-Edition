@@ -1,7 +1,7 @@
 package mekanism.common.inventory.container;
 
-import mekanism.common.base.IModuleUpgrade;
-import mekanism.common.base.IModuleUpgradeItem;
+import mekanism.common.content.gear.IModuleContainerItem;
+import mekanism.common.content.gear.IModuleItem;
 import mekanism.common.inventory.slot.SlotEnergy;
 import mekanism.common.tile.TileEntityModificationStation;
 import mekanism.common.util.ChargeUtils;
@@ -55,13 +55,13 @@ public class ContainerModificationStation extends ContainerMekanism<TileEntityMo
         addSlotToContainer(new Slot(tileEntity, 2, 26, 34) {
             @Override
             public boolean isItemValid(ItemStack itemstack) {
-                return itemstack.getItem() instanceof IModuleUpgradeItem;
+                return itemstack.getItem() instanceof IModuleItem;
             }
         });
         addSlotToContainer(new Slot(tileEntity, 3, 116, 34) {
             @Override
             public boolean isItemValid(ItemStack itemstack) {
-                return itemstack.getItem() instanceof IModuleUpgrade;
+                return itemstack.getItem() instanceof IModuleContainerItem;
             }
         });
     }

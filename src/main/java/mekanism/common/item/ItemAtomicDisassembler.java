@@ -1,18 +1,24 @@
 package mekanism.common.item;
 
 import com.google.common.collect.Multimap;
-import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mekanism.api.Coord4D;
 import mekanism.api.EnumColor;
+import mekanism.api.IDisableableEnum;
+import mekanism.api.NBTConstants;
+import mekanism.api.math.MathUtils;
 import mekanism.common.Mekanism;
 import mekanism.common.OreDictCache;
-import mekanism.common.base.IItemNetwork;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.item.ItemAtomicDisassembler.DisassemblerMode;
 import mekanism.common.item.interfaces.IItemHUDProvider;
+import mekanism.common.item.interfaces.IRadialModeItem;
+import mekanism.common.item.interfaces.IRadialSelectorEnum;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.LangUtils;
+import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.TextComponentGroup;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.BlockDirt.DirtType;
@@ -25,32 +31,35 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.WorldEvents;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
+import java.util.function.BooleanSupplier;
 
-public class ItemAtomicDisassembler extends ItemEnergized implements IItemNetwork, IItemHUDProvider {
+public class ItemAtomicDisassembler extends ItemEnergized implements IItemHUDProvider, IRadialModeItem<DisassemblerMode> {
 
     public ItemAtomicDisassembler() {
         super(MekanismConfig.current().general.disassemblerBatteryCapacity.val());
         setMaxStackSize(1);
+        setRarity(EnumRarity.RARE);
     }
 
     @Override
@@ -62,7 +71,7 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemNetwor
     @Override
     public void addInformation(ItemStack itemstack, World world, List<String> list, ITooltipFlag flag) {
         super.addInformation(itemstack, world, list, flag);
-        Mode mode = getMode(itemstack);
+        DisassemblerMode mode = getMode(itemstack);
         list.add(LangUtils.localize("tooltip.mode") + ": " + EnumColor.INDIGO + mode.getModeName());
         list.add(LangUtils.localize("tooltip.efficiency") + ": " + EnumColor.INDIGO + mode.getEfficiency());
     }
@@ -115,9 +124,9 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemNetwor
     public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, EntityPlayer player) {
         super.onBlockStartBreak(itemstack, pos, player);
         if (!player.world.isRemote && !player.capabilities.isCreativeMode) {
-            Mode mode = getMode(itemstack);
-            boolean extended = mode == Mode.EXTENDED_VEIN;
-            if (extended || mode == Mode.VEIN) {
+            DisassemblerMode mode = getMode(itemstack);
+            boolean extended = mode == DisassemblerMode.EXTENDED_VEIN;
+            if (extended || mode == DisassemblerMode.VEIN) {
                 IBlockState state = player.world.getBlockState(pos);
                 Block block = state.getBlock();
                 if (block == Blocks.LIT_REDSTONE_ORE) {
@@ -161,22 +170,6 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemNetwor
     @Override
     public boolean isFull3D() {
         return true;
-    }
-
-    @Nonnull
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer entityplayer, @Nonnull EnumHand hand) {
-        ItemStack itemstack = entityplayer.getHeldItem(hand);
-        if (entityplayer.isSneaking()) {
-            if (!world.isRemote) {
-                toggleMode(itemstack);
-                Mode mode = getMode(itemstack);
-                entityplayer.sendMessage(new TextComponentString(EnumColor.DARK_BLUE + Mekanism.LOG_TAG + " " + EnumColor.GREY + LangUtils.localize("tooltip.modeToggle")
-                        + " " + EnumColor.INDIGO + mode.getModeName() + EnumColor.AQUA + " (" + mode.getEfficiency() + ")"));
-            }
-            return new ActionResult<>(EnumActionResult.SUCCESS, itemstack);
-        }
-        return new ActionResult<>(EnumActionResult.PASS, itemstack);
     }
 
     @Nonnull
@@ -277,16 +270,25 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemNetwor
         return hardness == 0 ? destroyEnergy / 2 : destroyEnergy;
     }
 
-    public Mode getMode(ItemStack itemStack) {
-        return Mode.getFromInt(ItemDataUtils.getInt(itemStack, "mode"));
+    @Override
+    public Class<DisassemblerMode> getModeClass() {
+        return DisassemblerMode.class;
     }
 
-    public void toggleMode(ItemStack itemStack) {
-        ItemDataUtils.setInt(itemStack, "mode", Mode.getNextEnabledAsInt(getMode(itemStack)));
+    @Override
+    public DisassemblerMode getModeByIndex(int ordinal) {
+        return DisassemblerMode.byIndexStatic(ordinal);
     }
 
-    public void setMode(ItemStack itemStack, Mode mode) {
-        ItemDataUtils.setInt(itemStack, "mode", mode.ordinal());
+    @Override
+    public DisassemblerMode getMode(ItemStack stack) {
+        return DisassemblerMode.byIndexStatic(ItemDataUtils.getInt(stack, NBTConstants.MODE));
+    }
+
+
+    @Override
+    public void setMode(ItemStack stack, EntityPlayer player, DisassemblerMode mode) {
+        ItemDataUtils.setInt(stack, NBTConstants.MODE, mode.ordinal());
     }
 
 
@@ -306,13 +308,6 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemNetwor
         return multiMap;
     }
 
-    @Override
-    public void handlePacketData(ItemStack stack, ByteBuf dataStream) {
-        if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
-            int state = dataStream.readInt();
-            setMode(stack, Mode.values()[state]);
-        }
-    }
 
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
@@ -320,50 +315,65 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemNetwor
         list.add(LangUtils.localize("tooltip.efficiency") + ": " + EnumColor.INDIGO + getMode(stack).getEfficiency());
     }
 
-    public enum Mode {
-        NORMAL("normal", 20, 3, () -> true),
-        SLOW("slow", 8, 1, () -> MekanismConfig.current().general.disassemblerSlowMode.val()),
-        FAST("fast", 128, 5, () -> MekanismConfig.current().general.disassemblerFastMode.val()),
-        VEIN("vein", 20, 3, () -> MekanismConfig.current().general.disassemblerVeinMining.val()),
-        EXTENDED_VEIN("extended_vein", 20, 3, () -> MekanismConfig.current().general.disassemblerExtendedMining.val()),
-        OFF("off", 0, 0, () -> true);
+    @Override
+    public void changeMode(@NotNull EntityPlayer player, @NotNull ItemStack stack, int shift, boolean displayChangeMessage) {
+        DisassemblerMode mode = getMode(stack);
+        DisassemblerMode newMode = mode.adjust(shift);
+        if (mode != newMode) {
+            setMode(stack, player, newMode);
+            if (displayChangeMessage) {
+                player.sendMessage(new TextComponentString(EnumColor.DARK_BLUE + Mekanism.LOG_TAG + " " + EnumColor.GREY + LangUtils.localize("tooltip.modeToggle") + " " + EnumColor.INDIGO + newMode.getModeName() + EnumColor.AQUA + " (" + newMode.getEfficiency() + ")"));
+            }
+        }
+    }
 
-        private final Supplier<Boolean> checkEnabled;
+
+    @Nonnull
+    @Override
+    public ITextComponent getScrollTextComponent(@Nonnull ItemStack stack) {
+        return getMode(stack).getShortText();
+    }
+
+
+    public enum DisassemblerMode implements IDisableableEnum<DisassemblerMode>, IRadialSelectorEnum<DisassemblerMode> {
+        NORMAL("normal", 20, 3, () -> true, EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_normal.png")),
+        SLOW("slow", 8, 1, () -> MekanismConfig.current().general.disassemblerSlowMode.val(), EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_slow.png")),
+        FAST("fast", 128, 5, () -> MekanismConfig.current().general.disassemblerFastMode.val(), EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_fast.png")),
+        VEIN("vein", 20, 3, () -> MekanismConfig.current().general.disassemblerVeinMining.val(), EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_vein.png")),
+        EXTENDED_VEIN("extended_vein", 20, 3, () -> MekanismConfig.current().general.disassemblerExtendedMining.val(), EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_vein.png")),
+        OFF("off", 0, 0, () -> true, EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "void.png"));
+
+        private static final DisassemblerMode[] MODES = values();
+        private final BooleanSupplier checkEnabled;
         private final String mode;
         private final int efficiency;
         //Must be odd, or zero
         private final int diameter;
+        private final ResourceLocation icon;
+        private final EnumColor color;
 
-        Mode(String mode, int efficiency, int diameter, Supplier<Boolean> checkEnabled) {
+        DisassemblerMode(String mode, int efficiency, int diameter, BooleanSupplier checkEnabled, EnumColor color, ResourceLocation icon) {
             this.mode = mode;
             this.efficiency = efficiency;
             this.diameter = diameter;
             this.checkEnabled = checkEnabled;
+            this.color = color;
+            this.icon = icon;
         }
 
         /**
          * Gets a Mode from its ordinal. NOTE: if this mode is not enabled then it will reset to NORMAL
          */
-        public static Mode getFromInt(int ordinal) {
-            Mode[] values = values();
-            //If it is out of bounds just shift it as if it had gone around that many times
-            Mode mode = values[ordinal % values.length];
+        public static DisassemblerMode byIndexStatic(int index) {
+            DisassemblerMode mode = MathUtils.getByIndexMod(MODES, index);
             return mode.isEnabled() ? mode : NORMAL;
         }
 
-        public static int getNextEnabledAsInt(Mode mode) {
-            //Get the next mode
-            Mode next = mode.getNext();
-            //keep going until we find one that is enabled (we know at the very least NORMAL and OFF are enabled
-            while (!next.isEnabled()) {
-                next = next.getNext();
-            }
-            return next.ordinal();
-        }
-
-        private Mode getNext() {
-            Mode[] values = values();
-            return values[(ordinal() + 1) % values.length];
+        @Nonnull
+        @Override
+        public DisassemblerMode byIndex(int index) {
+            //Note: We can't just use byIndexStatic, as we want to be able to return disabled modes
+            return MathUtils.getByIndexMod(MODES, index);
         }
 
         public String getModeName() {
@@ -378,8 +388,24 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemNetwor
             return diameter;
         }
 
+        @Override
         public boolean isEnabled() {
-            return checkEnabled.get();
+            return checkEnabled.getAsBoolean();
+        }
+
+        @Override
+        public ITextComponent getShortText() {
+            return new TextComponentGroup(color.textFormatting).translation("mekanism.tooltip.disassembler." + mode);
+        }
+
+        @Override
+        public EnumColor getColor() {
+            return color;
+        }
+
+        @Override
+        public ResourceLocation getIcon() {
+            return icon;
         }
     }
 
@@ -451,7 +477,6 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemNetwor
 
     @FunctionalInterface
     interface ItemUseConsumer {
-
         //Used to reference useHoe and useShovel via lambda references
         EnumActionResult use(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing facing);
     }
