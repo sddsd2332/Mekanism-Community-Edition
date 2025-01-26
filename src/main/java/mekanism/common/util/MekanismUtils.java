@@ -35,7 +35,9 @@ import mekanism.common.util.UnitDisplayUtils.ElectricUnit;
 import mekanism.common.util.UnitDisplayUtils.TemperatureUnit;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.Entity;
@@ -57,10 +59,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.EnumSkyBlock;
@@ -77,6 +76,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.UnaryOperator;
 
 /**
  * Utilities used by Mekanism. All miscellaneous methods are located here.
@@ -1191,6 +1191,7 @@ public final class MekanismUtils {
     public static boolean shouldSpeedUpEffect(PotionEffect effectInstance) {
         return effectInstance.isCurativeItem(MILK);
     }
+
     /**
      * Copy of LivingEntity#onChangedPotionEffect(EffectInstance, boolean) due to not being able to AT the method as it is protected.
      */
@@ -1206,4 +1207,95 @@ public final class MekanismUtils {
             CriteriaTriggers.EFFECTS_CHANGED.trigger(playerMP);
         }
     }
+
+
+    public static boolean hasChunksAt(EntityPlayer player, int pFromX, int pFromY, int pFromZ, int pToX, int pToY, int pToZ) {
+        if (pToY >= 0 && pFromY < 256) {
+            pFromX = pFromX >> 4;
+            pFromZ = pFromZ >> 4;
+            pToX = pToX >> 4;
+            pToZ = pToZ >> 4;
+
+            for (int i = pFromX; i <= pToX; ++i) {
+                for (int j = pFromZ; j <= pToZ; ++j) {
+                    if (!player.world.isChunkGeneratedAt(i, j)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static class FluidInDetails {
+
+        private final List<BlockPos> positions = new ArrayList<>();
+        private final Long2DoubleMap heights = new Long2DoubleArrayMap();
+
+        public List<BlockPos> getPositions() {
+            return positions;
+        }
+
+        public double getMaxHeight() {
+            return heights.values().stream().mapToDouble(value -> value).max().orElse(0);
+        }
+    }
+
+    public static Map<Block, FluidInDetails> getFluidsIn(EntityPlayer player, UnaryOperator<AxisAlignedBB> modifyBoundingBox,Material material) {
+        AxisAlignedBB bb = modifyBoundingBox.apply(player.getEntityBoundingBox().shrink(0.001));
+        int xMin = MathHelper.floor(bb.minX);
+        int xMax = MathHelper.ceil(bb.maxX);
+        int yMin = MathHelper.floor(bb.minY);
+        int yMax = MathHelper.ceil(bb.maxY);
+        int zMin = MathHelper.floor(bb.minZ);
+        int zMax = MathHelper.ceil(bb.maxZ);
+        if (hasChunksAt(player, xMin, yMin, zMin, xMax, yMax, zMax)) {
+            //If the position isn't actually loaded, just return there isn't any fluids
+            return Collections.emptyMap();
+        }
+        Map<Block, FluidInDetails> fluidsIn = new HashMap<>();
+        BlockPos.PooledMutableBlockPos mutablePos = BlockPos.PooledMutableBlockPos.retain();
+        for (int x = xMin; x < xMax; ++x) {
+            for (int y = yMin; y < yMax; ++y) {
+                for (int z = zMin; z < zMax; ++z) {
+                    mutablePos.setPos(x, y, z);
+                    IBlockState fluidState = player.world.getBlockState(mutablePos);
+                    Boolean result = fluidState.getBlock().isAABBInsideMaterial(player.world, mutablePos, new AxisAlignedBB(mutablePos), material);
+                    if (result != null) {
+                        if (!result) {
+                            double fluidY = y + fluidState.getBlock().getBlockLiquidHeight(player.world, mutablePos, fluidState, material);
+                            if (bb.minY <= fluidY) {
+                                Block fluid = fluidState.getBlock();
+
+                                if (fluid instanceof BlockDynamicLiquid) {
+                                    //Almost always will be flowing fluid but check just in case
+                                    // and if it is grab the source state to not have duplicates
+                                    fluid = BlockLiquid.getStaticBlock(material);
+                                }
+                                FluidInDetails details = fluidsIn.computeIfAbsent(fluid, f -> new FluidInDetails());
+                                details.positions.add(mutablePos.toImmutable());
+                                double actualFluidHeight;
+                                if (fluidY > bb.maxY) {
+                                    //Fluid goes past the top of the bounding box, limit it to the top
+                                    // We do the max of the bottom of the bounding box and our current block so that
+                                    // if we are floating above the bottom we don't take the area below us into account
+                                    actualFluidHeight = bb.maxY - Math.max(bb.minY, y);
+                                } else {
+                                    // We do the max of the bottom of the bounding box and our current block so that
+                                    // if we are floating above the bottom we don't take the area below us into account
+                                    actualFluidHeight = fluidY - Math.max(bb.minY, y);
+                                }
+                                details.heights.merge(ChunkPos.asLong(x, z), actualFluidHeight, Double::sum);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return fluidsIn;
+    }
+
+
 }

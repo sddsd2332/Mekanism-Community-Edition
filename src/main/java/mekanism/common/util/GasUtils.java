@@ -82,7 +82,7 @@ public final class GasUtils {
      * @return amount of gas accepted by the IGasItem
      */
     public static int addGas(ItemStack itemStack, GasStack stack) {
-        if (!itemStack.isEmpty() && itemStack.getItem() instanceof IGasItem gasItem && gasItem.canReceiveGas(itemStack, stack.getGas())) {
+        if (!itemStack.isEmpty() && itemStack.getItem() instanceof IGasItem gasItem && gasItem.canReceiveGas(itemStack, stack.getGas()) && (gasItem.getGas(itemStack) == null || (gasItem.getGas(itemStack) != null && gasItem.getGas(itemStack).amount != gasItem.getMaxGas(itemStack)))) {
             return gasItem.addGas(itemStack, stack.copy());
         }
         return 0;

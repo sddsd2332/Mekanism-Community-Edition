@@ -167,16 +167,16 @@ public class GuiSideConfiguration extends GuiMekanismTile<TileEntityContainerBlo
                         }
                     }
 
-                    displayTooltips(info, xAxis, yAxis);
+                    this.olddisplayTooltips(info, xAxis, yAxis);
                 }
                 break;
             }
         }
         if (autoEjectButton.isMouseOver()) {
-            displayTooltip(LangUtils.localize("gui.autoEject"), xAxis, yAxis);
+            this.olddisplayTooltip(LangUtils.localize("gui.autoEject"), xAxis, yAxis);
         }
         if (clearButton.isMouseOver()) {
-            displayTooltip(LangUtils.localize("gui.clear"), xAxis, yAxis);
+            this.olddisplayTooltip(LangUtils.localize("gui.clear"), xAxis, yAxis);
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }

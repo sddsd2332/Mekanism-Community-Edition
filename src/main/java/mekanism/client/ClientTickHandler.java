@@ -202,8 +202,6 @@ public class ClientTickHandler {
                 }
             }
 
-            ItemStack chestStack = minecraft.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-
             if (!jetpack.isEmpty()) {
                 ItemStack primaryJetpack = IJetpackItem.getPrimaryJetpack(minecraft.player);
                 if (!primaryJetpack.isEmpty()) {
@@ -395,6 +393,4 @@ public class ClientTickHandler {
         }
     }
      */
-
-
 }

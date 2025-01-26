@@ -67,7 +67,7 @@ public class CommonPlayerTickHandler {
                     return 0.5F;
                 }
             }
-            IModule<ModuleHydraulicPropulsionUnit>  module = ModuleHelper.get().load(stack, MekanismModules.HYDRAULIC_PROPULSION_UNIT);
+            IModule<ModuleHydraulicPropulsionUnit> module = ModuleHelper.get().load(stack, MekanismModules.HYDRAULIC_PROPULSION_UNIT);
             if (module != null && module.isEnabled()) {
                 return module.getCustomInstance().getStepHeight();
             }
@@ -134,7 +134,7 @@ public class CommonPlayerTickHandler {
 
     public static boolean isGravitationalModulationReady(EntityPlayer player) {
         if (MekanismUtils.isPlayingMode(player)) {
-            IModule<ModuleGravitationalModulatingUnit> module =  ModuleHelper.get().load(player.getItemStackFromSlot(EntityEquipmentSlot.CHEST), MekanismModules.GRAVITATIONAL_MODULATING_UNIT);
+            IModule<ModuleGravitationalModulatingUnit> module = ModuleHelper.get().load(player.getItemStackFromSlot(EntityEquipmentSlot.CHEST), MekanismModules.GRAVITATIONAL_MODULATING_UNIT);
             double usage = MekanismConfig.current().meka.mekaSuitEnergyUsageGravitationalModulation.val();
             return module != null && module.isEnabled() && module.getContainerEnergy() - (usage) >= 0;
         }
@@ -272,7 +272,7 @@ public class CommonPlayerTickHandler {
     @SubscribeEvent
     public void onLivingJump(LivingJumpEvent event) {
         if (event.getEntity() instanceof EntityPlayer player) {
-            IModule<ModuleHydraulicPropulsionUnit> module =  ModuleHelper.get().load(player.getItemStackFromSlot(EntityEquipmentSlot.FEET), MekanismModules.HYDRAULIC_PROPULSION_UNIT);
+            IModule<ModuleHydraulicPropulsionUnit> module = ModuleHelper.get().load(player.getItemStackFromSlot(EntityEquipmentSlot.FEET), MekanismModules.HYDRAULIC_PROPULSION_UNIT);
             if (module != null && module.isEnabled() && Mekanism.keyMap.has(player, KeySync.DESCEND)) {
                 float boost = module.getCustomInstance().getBoost();
                 double usage = MekanismConfig.current().meka.mekaSuitBaseJumpEnergyUsage.val() * (boost / 0.1F);
@@ -280,7 +280,7 @@ public class CommonPlayerTickHandler {
                 if (module.canUseEnergy(player, energyContainer, usage, false)) {
                     // if we're sprinting with the boost module, limit the height
                     IModule<ModuleLocomotiveBoostingUnit> boostModule = ModuleHelper.get().load(player.getItemStackFromSlot(EntityEquipmentSlot.LEGS), MekanismModules.LOCOMOTIVE_BOOSTING_UNIT);
-                    if (boostModule != null && boostModule.isEnabled() && boostModule.getCustomInstance().canFunction(boostModule,player)) {
+                    if (boostModule != null && boostModule.isEnabled() && boostModule.getCustomInstance().canFunction(boostModule, player)) {
                         boost = (float) Math.sqrt(boost);
                     }
                     player.motionY += boost;
@@ -409,5 +409,6 @@ public class CommonPlayerTickHandler {
 
 
  */
+
 
 }

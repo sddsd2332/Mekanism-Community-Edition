@@ -70,7 +70,7 @@ public class GuiLargeChemicalWasher extends GuiMekanismTile<TileEntityLargeChemi
                 info.add(LangUtils.localize("gui.gas_no_space"));
             }
             if (output || energy) {
-                displayTooltips(info, xAxis, yAxis);
+                this.olddisplayTooltips(info, xAxis, yAxis);
             }
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);

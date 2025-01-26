@@ -100,9 +100,9 @@ public class ModuleInhalationPurificationUnit implements ICustomModule<ModuleInh
 
     private boolean canHandle(PotionEffect effectInstance) {
         if (effectInstance.getPotion().isBadEffect()) {
-            return MekanismUtils.shouldSpeedUpEffect(effectInstance) && harmfulEffects.get();
+            return harmfulEffects.get();
         } else {
-            return MekanismUtils.shouldSpeedUpEffect(effectInstance) && beneficialEffects.get();
+            return beneficialEffects.get();
         }
     }
 }

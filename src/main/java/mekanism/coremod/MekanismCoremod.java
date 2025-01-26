@@ -12,6 +12,7 @@ import java.util.Map;
 @SortingIndex(9999)//must be > 1000 so we're after the srg transformer
 public class MekanismCoremod implements IFMLLoadingPlugin, IEarlyMixinLoader {
 
+
     private static final String[] transformers = {
             "mekanism.coremod.KeybindingMigrationHelper"
     };

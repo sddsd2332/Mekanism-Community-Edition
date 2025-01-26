@@ -129,11 +129,11 @@ public abstract class GuiGauge<T> extends GuiElement {
                             }
                         }
                         String localized = data == null ? "" : data.localize();
-                        guiObj.displayTooltip(color + localized + " (" + color.getColoredName() + ")", xAxis, yAxis);
+                        guiObj.olddisplayTooltip(color + localized + " (" + color.getColoredName() + ")", xAxis, yAxis);
                     }
                 }
             } else {
-                guiObj.displayTooltip(getTooltipText(), xAxis, yAxis);
+                guiObj.olddisplayTooltip(getTooltipText(), xAxis, yAxis);
             }
         }
     }

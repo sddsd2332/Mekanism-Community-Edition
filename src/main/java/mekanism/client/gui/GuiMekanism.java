@@ -29,9 +29,11 @@ import java.util.Set;
 @SideOnly(Side.CLIENT)
 public abstract class GuiMekanism extends GuiContainer implements IGuiWrapper {
 
+
     private final ResourceLocation Base = MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "Base.png");
     private Set<GuiElement> guiElements = new ReferenceOpenHashSet<>();
     private boolean atuoBG = true;
+    public static int maxZOffset;
     public GuiMekanism(Container container) {
         super(container);
     }
@@ -143,14 +145,14 @@ public abstract class GuiMekanism extends GuiContainer implements IGuiWrapper {
     }
 
     @Override
-    public void displayTooltip(String s, int x, int y) {
+    public void olddisplayTooltip(String s, int x, int y) {
         drawHoveringText(s, x, y);
         //Fix unwanted lighting changes made by drawHoveringText
         RenderHelper.disableStandardItemLighting();
     }
 
     @Override
-    public void displayTooltips(List<String> list, int xAxis, int yAxis) {
+    public void olddisplayTooltips(List<String> list, int xAxis, int yAxis) {
         drawHoveringText(list, xAxis, yAxis);
         //Fix unwanted lighting changes made by drawHoveringText
         RenderHelper.disableStandardItemLighting();

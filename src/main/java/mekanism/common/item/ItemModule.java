@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Set;
 
-public class ItemModule extends ItemMekanism implements IModuleItem {
+public class ItemModule extends Item implements IModuleItem {
 
     private final ModuleData<?> moduleData;
 

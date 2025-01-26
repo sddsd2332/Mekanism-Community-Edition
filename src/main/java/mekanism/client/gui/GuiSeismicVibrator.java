@@ -52,7 +52,7 @@ public class GuiSeismicVibrator extends GuiMekanismTile<TileEntitySeismicVibrato
                 info.add(LangUtils.localize("gui.no_energy"));
             }
             if (energy) {
-                displayTooltips(info, xAxis, yAxis);
+                this.olddisplayTooltips(info, xAxis, yAxis);
             }
         }
 

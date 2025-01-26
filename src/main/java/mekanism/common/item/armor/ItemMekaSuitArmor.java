@@ -61,6 +61,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "ic2.api.item.ISpecialElectricItem", modid = MekanismHooks.IC2_MOD_ID),
+        @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyContainerItem", modid = MekanismHooks.REDSTONEFLUX_MOD_ID),
+        @Optional.Interface(iface = "ic2.api.item.IHazmatLike", modid = MekanismHooks.IC2_MOD_ID)
+})
 public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedItem, ISpecialArmor, IModuleContainerItem, IModeItem,
         ISpecialElectricItem, IEnergyContainerItem, IHazmatLike {
 
@@ -251,11 +256,11 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         float ratioAbsorbed = 0;
         List<FoundArmorDetails> armorDetails = new ArrayList<>();
         //Start by looping the armor, allowing modules to absorb damage if they can
-        for (ItemStack stack : player.inventory.armorInventory) {
+        for (ItemStack stack : player.getArmorInventoryList()) {
             if (!stack.isEmpty() && stack.getItem() instanceof ItemMekaSuitArmor armor) {
                 IEnergizedItem energyContainer = armor;
                 if (energyContainer != null) {
-                    FoundArmorDetails details = new FoundArmorDetails(energyContainer, (ItemMekaSuitArmor) stack.getItem());
+                    FoundArmorDetails details = new FoundArmorDetails(energyContainer, armor.getEnergy(stack), armor);
                     armorDetails.add(details);
                     for (Module<?> module : details.armor.getModules(stack)) {
                         if (module.isEnabled()) {
@@ -306,10 +311,14 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         for (FoundArmorDetails details : armorDetails) {
             //Use energy/or enqueue usage for each piece as needed
             if (details.usageInfo.energyUsed != 0) {
-                if (energyUseCallbacks == null) {
-                    details.energyContainer.extract(new ItemStack(details.armor), details.usageInfo.energyUsed, true);
-                } else {
-                    energyUseCallbacks.add(() -> details.energyContainer.extract(new ItemStack(details.armor), details.usageInfo.energyUsed, true));
+                for (ItemStack stack : player.getArmorInventoryList()) {
+                    if (stack.getItem() == details.armor) {
+                        if (energyUseCallbacks == null) {
+                            details.energyContainer.extract(stack, details.usageInfo.energyUsed, true);
+                        } else {
+                            energyUseCallbacks.add(() -> details.energyContainer.extract(stack, details.usageInfo.energyUsed, true));
+                        }
+                    }
                 }
             }
         }
@@ -401,6 +410,13 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         return isModuleEnabled(stack, MekanismModules.RADIATION_SHIELDING_UNIT);
     }
 
+    @Override
+    public boolean handleUnblockableDamage(EntityLivingBase entity, @Nonnull ItemStack stack, DamageSource source, double damage, int slot) {
+        if (isModuleEnabled(stack, MekanismModules.RADIATION_SHIELDING_UNIT)) {
+            return source.damageType.equals("radiation") || source.damageType.equals("sulphuric_acid") || source.damageType.equals("acid_burn") || source.damageType.equals("corium_burn") || source.damageType.equals("hot_coolant_burn");
+        }
+        return false;
+    }
 
     //TODO - 1.18: Switch this to a record
     private static class FoundArmorDetails {
@@ -408,12 +424,11 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         private final EnergyUsageInfo usageInfo;
         private final ItemMekaSuitArmor armor;
 
-        public FoundArmorDetails(IEnergizedItem energyContainer, ItemMekaSuitArmor armor) {
+        public FoundArmorDetails(IEnergizedItem energyContainer, double energy, ItemMekaSuitArmor armor) {
             this.energyContainer = energyContainer;
-            this.usageInfo = new EnergyUsageInfo(energyContainer.getEnergy(new ItemStack(armor)));
+            this.usageInfo = new EnergyUsageInfo(energy);
             this.armor = armor;
         }
-
 
     }
 
@@ -479,5 +494,4 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         item.isImmuneToFire = true;
         return item;
     }
-
 }

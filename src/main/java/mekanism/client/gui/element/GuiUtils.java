@@ -20,8 +20,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.NoSuchElementException;
 
-import static mekanism.client.gui.element.GuiElement.mc;
-
 
 @SideOnly(Side.CLIENT)
 public class GuiUtils {
@@ -32,10 +30,15 @@ public class GuiUtils {
         blitNineSlicedSized(resource, left, top, width, height, sideWidth, sideHeight, textureWidth, textureHeight, 0, 0, textureWidth, textureHeight);
     }
 
+    public static void renderBackgroundTexture( ResourceLocation resource, int texSideWidth, int texSideHeight, int left, int top, int width,
+                                               int height, int textureWidth, int textureHeight) {
+        blitNineSlicedSized( resource, left, top, width, height, texSideWidth, texSideHeight, textureWidth, textureHeight, 0, 0, textureWidth, textureHeight);
+    }
+
     public static void drawBarSprite(int xPos, int yPos, int sizeX, int sizeY, int displayInt, TextureAtlasSprite textureSprite, boolean vertical) {
         if (displayInt > 0) {
             if (textureSprite != null) {
-                mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+                Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
                 if (vertical) {
                     drawTiledSprite(xPos + 1, yPos + 1, sizeY - 2, sizeX - 2, displayInt, textureSprite, TilingDirection.DOWN_RIGHT);
                 } else {
@@ -259,7 +262,6 @@ public class GuiUtils {
      *
      * @param pTarget the value to be divided.
      * @param pTotal  the size of each slice.
-     *
      * @return An iterator for iterating over the slices.
      */
     private static IntIterator slices(int pTarget, int pTotal) {
@@ -386,5 +388,6 @@ public class GuiUtils {
         bufferbuilder.pos((float) pX2, (float) pY1, (float) pBlitOffset).tex(pMaxU, pMinV).endVertex();
         Tessellator.getInstance().draw();
     }
+
 
 }

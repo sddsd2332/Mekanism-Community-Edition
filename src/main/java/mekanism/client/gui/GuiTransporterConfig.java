@@ -134,18 +134,18 @@ public class GuiTransporterConfig extends GuiMekanismTile<TileEntityContainerBlo
                             info.add(button.getItem().getItem().getItemStackDisplayName(button.getItem()));
                         }
                     }
-                    displayTooltips(info, xAxis, yAxis);
+                    this.olddisplayTooltips(info, xAxis, yAxis);
                 }
                 break;
             }
         }
         if (strictInputButton.isMouseOver()) {
-            displayTooltip(LangUtils.localize("gui.configuration.strictInput"), xAxis, yAxis);
+            this.olddisplayTooltip(LangUtils.localize("gui.configuration.strictInput"), xAxis, yAxis);
         } else if (colorButton.isMouseOver()) {
             if (configurable.getEjector().getOutputColor() != null) {
-                displayTooltip(configurable.getEjector().getOutputColor().getColoredName(), xAxis, yAxis);
+                this.olddisplayTooltip(configurable.getEjector().getOutputColor().getColoredName(), xAxis, yAxis);
             } else {
-                displayTooltip(LangUtils.localize("gui.none"), xAxis, yAxis);
+                this.olddisplayTooltip(LangUtils.localize("gui.none"), xAxis, yAxis);
             }
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);

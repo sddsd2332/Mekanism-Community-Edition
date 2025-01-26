@@ -137,6 +137,7 @@ public class MekanismItems {
   //  public static final ItemModule MODULE_MAGNETIC_ATTRACTION = new ItemModule(MekanismModules.MAGNETIC_ATTRACTION_UNIT);
     public static final ItemModule MODULE_FROST_WALKER = new ItemModule(MekanismModules.FROST_WALKER_UNIT);
 
+    public static final Item HDPE_REINFORCED_ELYTRA = new ItemHDPEElytra();
 
     /**
      * ADD END
@@ -266,7 +267,7 @@ public class MekanismItems {
         registry.register(initModule(MODULE_HYDRAULIC_PROPULSION));
        // registry.register(initModule(MODULE_MAGNETIC_ATTRACTION));
         registry.register(initModule(MODULE_FROST_WALKER));
-
+        registry.register(init(HDPE_REINFORCED_ELYTRA,"hdpe_elytra"));
         /**
          * ADD END
          */
@@ -275,7 +276,7 @@ public class MekanismItems {
 
     public static Item initModule(ItemModule item) {
         String name = "module_" + item.getModuleData().getName();
-        return item.setTranslationKey(name).setRegistryName(new ResourceLocation(Mekanism.MODID, name));
+        return item.setTranslationKey(name).setRegistryName(new ResourceLocation(Mekanism.MODID, name)).setCreativeTab(Mekanism.tabMekanism);
     }
 
 

@@ -1,11 +1,13 @@
 package mekanism.common.item.armor;
 
+
 import com.google.common.collect.Multimap;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
 import mekanism.api.gear.IModule;
 import mekanism.api.gear.ModuleData;
+import mekanism.api.mixninapi.ElytraMixinHelp;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitBody;
 import mekanism.client.model.mekasuitarmour.ModuleGravitational;
 import mekanism.client.model.mekasuitarmour.ModuleJetpack;
@@ -31,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class ItemMekaSuitBodyArmor extends ItemMekaSuitArmor implements IGasItem, IJetpackItem {
+public class ItemMekaSuitBodyArmor extends ItemMekaSuitArmor implements IGasItem, IJetpackItem, ElytraMixinHelp {
 
     public ItemMekaSuitBodyArmor() {
         super(EntityEquipmentSlot.CHEST);
@@ -156,7 +158,7 @@ public class ItemMekaSuitBodyArmor extends ItemMekaSuitArmor implements IGasItem
 
     @Override
     public boolean canUseJetpack(ItemStack stack) {
-        return armorType == EntityEquipmentSlot.CHEST && isModuleEnabled(stack, MekanismModules.JETPACK_UNIT) ? getStored(stack) > 0 :getModules(stack).stream().allMatch(module -> module.isEnabled() && module.getData().isExclusive(ModuleData.ExclusiveFlag.OVERRIDE_JUMP.getMask()));
+        return armorType == EntityEquipmentSlot.CHEST && isModuleEnabled(stack, MekanismModules.JETPACK_UNIT) ? getStored(stack) > 0 : getModules(stack).stream().allMatch(module -> module.isEnabled() && module.getData().isExclusive(ModuleData.ExclusiveFlag.OVERRIDE_JUMP.getMask()));
     }
 
     @Override
@@ -175,4 +177,34 @@ public class ItemMekaSuitBodyArmor extends ItemMekaSuitArmor implements IGasItem
             setGas(stack, new GasStack(gas.getGas(), gas.amount - 1));
         }
     }
+
+    @Override
+    public boolean canElytraFly(ItemStack stack, EntityLivingBase entity) {
+        if (armorType == EntityEquipmentSlot.CHEST && !entity.isSneaking()) {
+            //Don't allow elytra flight if the player is sneaking. This lets the player exit elytra flight early
+            IModule<?> module = getModule(stack, MekanismModules.ELYTRA_UNIT);
+            if (module != null && module.isEnabled() && module.canUseEnergy(entity, MekanismConfig.current().meka.mekaSuitElytraEnergyUsage.val())) {
+                //If we can use the elytra, check if the jetpack unit is also installed, and if it is,
+                // only mark that we can use the elytra if the jetpack is not set to hover or if it is if it has no hydrogen stored
+                IModule<ModuleJetpackUnit> jetpack = getModule(stack, MekanismModules.JETPACK_UNIT);
+                return jetpack == null || !jetpack.isEnabled() || jetpack.getCustomInstance().getMode() != JetpackMode.HOVER || getGas(stack) == null;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean elytraFlightTick(ItemStack stack, EntityLivingBase entity, int flightTicks) {
+        //Note: As canElytraFly is checked just before this we don't bother validating ahead of time we have the energy
+        // or that we are the correct slot
+        if (!entity.world.isRemote && (flightTicks + 1) % 20 == 0) {
+            IModule<?> module = getModule(stack, MekanismModules.ELYTRA_UNIT);
+            if (module != null && module.isEnabled()) {
+                module.useEnergy(entity, MekanismConfig.current().meka.mekaSuitElytraEnergyUsage.val());
+            }
+        }
+        return true;
+    }
+
+
 }

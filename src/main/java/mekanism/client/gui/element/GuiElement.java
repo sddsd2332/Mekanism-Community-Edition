@@ -29,11 +29,11 @@ public abstract class GuiElement {
     }
 
     public void displayTooltip(String s, int xAxis, int yAxis) {
-        guiObj.displayTooltip(s, xAxis, yAxis);
+        guiObj.olddisplayTooltip(s, xAxis, yAxis);
     }
 
     public void displayTooltips(List<String> list, int xAxis, int yAxis) {
-        guiObj.displayTooltips(list, xAxis, yAxis);
+        guiObj.olddisplayTooltips(list, xAxis, yAxis);
     }
 
     public void offsetX(int xSize) {
@@ -58,6 +58,23 @@ public abstract class GuiElement {
         if (guiObj instanceof GuiContainer) {
             ((GuiContainer) guiObj).guiTop += guiTop;
         }
+    }
+
+
+    public final int getGuiLeft() {
+        return guiObj.getLeft();
+    }
+
+    public final int getGuiTop() {
+        return guiObj.getTop();
+    }
+
+    public final int getGuiWidth() {
+        return guiObj.getWidth();
+    }
+
+    public final int getGuiHeight() {
+        return guiObj.getHeight();
     }
 
     public void renderScaledText(String text, int x, int y, int color, int maxX) {

@@ -261,6 +261,10 @@ public class Mekanism {
         GameRegistry.registerTileEntity(clazz, new ResourceLocation(MODID, name));
     }
 
+    public static ResourceLocation rl(String path) {
+        return new ResourceLocation(Mekanism.MODID, path);
+    }
+
     /**
      * Adds and registers all tile entities.
      */
@@ -530,7 +534,7 @@ public class Mekanism {
         packetHandler.initialize();
 
         //Load proxy
-        proxy.init();
+        Mekanism.proxy.init();
 
         //Completion notification
         logger.info("Loading complete.");
@@ -583,7 +587,7 @@ public class Mekanism {
         hooks.hookPostInit();
 
         MinecraftForge.EVENT_BUS.post(new BoxBlacklistEvent());
-
+        Mekanism.proxy.postInit();
         logger.info("Hooking complete.");
     }
 

@@ -53,6 +53,9 @@ public class ItemMekaSuitPants extends ItemMekaSuitArmor {
 
     @Override
     public int getArmorDisplay(EntityPlayer player, @NotNull ItemStack armor, int slot) {
+        if (armor.getItem() == MekanismItems.MEKASUIT_PANTS) {
+            return MekanismConfig.current().meka.mekaSuitPantsArmor.val();
+        }
         return 0;
     }
 

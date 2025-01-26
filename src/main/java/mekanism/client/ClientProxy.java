@@ -21,6 +21,7 @@ import mekanism.client.render.item.RenderEnergyCubeItem;
 import mekanism.client.render.item.basicblock.RenderBasicBlockItem;
 import mekanism.client.render.item.gear.*;
 import mekanism.client.render.item.machine.RenderMachineItem;
+import mekanism.client.render.layer.MekanismElytraLayer;
 import mekanism.client.render.obj.MekanismOBJLoader;
 import mekanism.client.render.tileentity.*;
 import mekanism.client.render.transmitter.*;
@@ -75,6 +76,7 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
+import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderSkeleton;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -187,7 +189,7 @@ public class ClientProxy extends CommonProxy {
          * ADD Start
          */
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityIsotopicCentrifuge.class, RenderIsotopicCentrifuge.INSTANCE);
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityNutritionalLiquifier.class,  RenderNutritionalLiquifier.INSTANCE);
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityNutritionalLiquifier.class, RenderNutritionalLiquifier.INSTANCE);
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRotaryCondensentrator.class, new RenderConfigurableMachine<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChemicalOxidizer.class, new RenderConfigurableMachine<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChemicalInfuser.class, new RenderConfigurableMachine<>());
@@ -206,7 +208,7 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRecycler.class, new RenderConfigurableMachine<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAmbientAccumulator.class, new RenderConfigurableMachine<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAmbientAccumulatorEnergy.class, new RenderConfigurableMachine<>());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHybridStorage.class,new RenderConfigurableMachine<>());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHybridStorage.class, new RenderConfigurableMachine<>());
     }
 
     @Override
@@ -281,10 +283,10 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.FluoriteClump);
         registerItemRender(MekanismItems.ArmoredFreeRunners);
         registerItemRender(MekanismItems.MekTool);
-   //     registerItemRender(MekanismItems.MekAsuitHelmet);
-    //    registerItemRender(MekanismItems.MekAsuitChestplate);
-   //     registerItemRender(MekanismItems.MekAsuitLeggings);
-  //      registerItemRender(MekanismItems.MekAsuitBoots);
+        //     registerItemRender(MekanismItems.MekAsuitHelmet);
+        //    registerItemRender(MekanismItems.MekAsuitChestplate);
+        //     registerItemRender(MekanismItems.MekAsuitLeggings);
+        //      registerItemRender(MekanismItems.MekAsuitBoots);
         registerItemRender(MekanismItems.ModuleBase);
         registerItemRender(MekanismItems.ModuleUpgrade);
 
@@ -327,7 +329,7 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.MODULE_HYDRAULIC_PROPULSION);
         //registerItemRender(MekanismItems.MODULE_MAGNETIC_ATTRACTION);
         registerItemRender(MekanismItems.MODULE_FROST_WALKER);
-
+        registerItemRender(MekanismItems.HDPE_REINFORCED_ELYTRA);
         /**
          * ADD END
          */
@@ -804,9 +806,10 @@ public class ClientProxy extends CommonProxy {
             case 70 -> new GuiCellExtractor(player.inventory, (TileEntityChanceMachine) tileEntity);
             case 71 -> new GuiCellSeparator(player.inventory, (TileEntityCellSeparator) tileEntity);
             case 72 -> new GuiRecycler(player.inventory, (TileEntityRecycler) tileEntity);
-            case 73 -> new GuiAmbientAccumulatorEnergy(player.inventory, (TileEntityAmbientAccumulatorEnergy) tileEntity);
-            case 74 -> new GuiHybridStorage(player.inventory,(TileEntityHybridStorage) tileEntity);
-            case 75 -> new GuiModificationStation(player.inventory,(TileEntityModificationStation) tileEntity);
+            case 73 ->
+                    new GuiAmbientAccumulatorEnergy(player.inventory, (TileEntityAmbientAccumulatorEnergy) tileEntity);
+            case 74 -> new GuiHybridStorage(player.inventory, (TileEntityHybridStorage) tileEntity);
+            case 75 -> new GuiModificationStation(player.inventory, (TileEntityModificationStation) tileEntity);
             default -> null;
         };
     }
@@ -890,7 +893,7 @@ public class ClientProxy extends CommonProxy {
         }, MekanismItems.Balloon);
 
         MinecraftForge.EVENT_BUS.register(new ClientConnectionHandler());
-      //  MinecraftForge.EVENT_BUS.register(new ClientPlayerTracker());
+        //  MinecraftForge.EVENT_BUS.register(new ClientPlayerTracker());
         MinecraftForge.EVENT_BUS.register(new ClientTickHandler());
         MinecraftForge.EVENT_BUS.register(new RenderFirstPersonMekaSuitArms());
         MinecraftForge.EVENT_BUS.register(new RenderTickHandler());
@@ -1059,5 +1062,15 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void throwApiPresentException() {
         throw new ApiJarPresentException(API_PRESENT_MESSAGE);
+    }
+
+    @Override
+    protected void postInit() {
+        Minecraft.getMinecraft().getRenderManager().entityRenderMap.values().forEach(renderer -> {
+            if (renderer instanceof RenderLivingBase<?> base) {
+                base.addLayer(new MekanismElytraLayer(base));
+            }
+        });
+        Minecraft.getMinecraft().getRenderManager().getSkinMap().values().forEach(renderer -> renderer.addLayer(new MekanismElytraLayer(renderer)));
     }
 }

@@ -66,7 +66,6 @@ public class ItemMekaSuitHelmet extends ItemMekaSuitArmor implements IGasItem {
         ModelMekAsuitHead armorModel = ModelMekAsuitHead.head;
         ModuleSolarHelmet Solar = ModuleSolarHelmet.solar;
 
-        /*
         if (isModuleEnabled(itemStack, MekanismModules.SOLAR_RECHARGING_UNIT)) {
             armorModel.helmet_armor.childModels.remove(armorModel.hide);
             if (!armorModel.bipedHead.childModels.contains(Solar.solar_helmet)) {
@@ -79,7 +78,6 @@ public class ItemMekaSuitHelmet extends ItemMekaSuitArmor implements IGasItem {
             }
         }
 
-         */
         return armorModel;
     }
 

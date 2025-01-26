@@ -14,11 +14,17 @@ import mekanism.common.MekanismLang;
 import mekanism.common.MekanismModules;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.content.gear.ModuleHelper;
+import mekanism.common.util.GasUtils;
+import mekanism.common.util.MekanismUtils;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.Map;
 
 @ParametersAreNotNullByDefault
 public class ModuleElectrolyticBreathingUnit implements ICustomModule<ModuleElectrolyticBreathingUnit> {
@@ -36,7 +42,6 @@ public class ModuleElectrolyticBreathingUnit implements ICustomModule<ModuleElec
         //Check if the mask is underwater
         //Note: Being in water is checked first to ensure that if it is raining and the player is in water
         // they get the full strength production
-        float eyeHeight = player.getEyeHeight();
         if (player.isInsideOfMaterial(Material.WATER) && player.getEyeHeight() >= 0.11) {
             //If the position the bottom of the mask is almost entirely in water set the production rate to our max rate
             // if the mask is only partially in water treat it as not being in it enough to actually function
@@ -52,15 +57,15 @@ public class ModuleElectrolyticBreathingUnit implements ICustomModule<ModuleElec
             GasStack hydrogenStack = new GasStack(MekanismFluids.Hydrogen, maxRate * 2);
             ItemStack chestStack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
             if (checkChestPlate(chestStack)) {
-                if (chestStack.getItem() instanceof IGasItem item && item.canReceiveGas(chestStack, hydrogenStack.getGas()) && item.getMaxGas(chestStack) - item.getGas(chestStack).amount > 0) {
-                    hydrogenUsed = maxRate * 2 - item.addGas(chestStack, hydrogenStack);
+                if (chestStack.getItem() instanceof IGasItem) {
+                    hydrogenUsed = maxRate * 2 - GasUtils.addGas(chestStack, hydrogenStack);
                     hydrogenStack.withAmount(hydrogenStack.amount - hydrogenUsed);
                 }
             }
             if (fillHeld.get()) {
                 ItemStack handStack = player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
-                if (handStack.getItem() instanceof IGasItem item && item.canReceiveGas(handStack, hydrogenStack.getGas()) && item.getMaxGas(handStack) - item.getGas(handStack).amount > 0) {
-                    hydrogenUsed = maxRate * 2 - item.addGas(handStack, hydrogenStack);
+                if (handStack.getItem() instanceof IGasItem) {
+                    hydrogenUsed = maxRate * 2 - GasUtils.addGas(handStack, hydrogenStack);
                 }
             }
             int oxygenUsed = Math.min(maxRate, 300 - player.getAir());

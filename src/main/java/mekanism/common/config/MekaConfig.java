@@ -43,7 +43,7 @@ public class MekaConfig extends BaseConfig {
     public IntOption mekaSuitBootsArmor = new IntOption(this, "meka", "bootsArmor", 3, "Armor value of MekaSuit Boots.", 0, Integer.MAX_VALUE);
     public DoubleOption mekaSuitToughness = new DoubleOption(this, "meka", "toughness", 3, "Toughness value of the MekaSuit.", 0, Double.MAX_VALUE);
     public FloatOption mekaSuitFallDamageRatio = new FloatOption(this, "meka", "fallDamageReductionRatio", 1, "Percent of damage taken from falling that can be absorbed by MekaSuit Boots when they have enough power.", 0, 1);
-    public FloatOption mekaSuitMagicDamageRatio = new FloatOption(this, "meka", "magicDamageReductionRatio", 1, "Percent of damage taken from magic damage that can be absorbed by MekaSuit Helmet with Purification unit when it has enough power.", 0, 1);
+    public FloatOption mekaSuitMagicDamageRatio = new FloatOption(this, "meka", "magicDamageReductionRatio", 1F, "Percent of damage taken from magic damage that can be absorbed by MekaSuit Helmet with Purification unit when it has enough power.", 0F, 1F);
     public FloatOption mekaSuitUnspecifiedDamageRatio = new FloatOption(this, "meka", "unspecifiedDamageReductionRatio", 1, "Percent of damage taken from other non explicitly supported damage types that don't bypass armor when the MekaSuit has enough power and a full suit is equipped.", 0, 1);
     public DoubleOption mekaSuitGeothermalChargingRate = new DoubleOption(this, "meka", "geothermalChargingRate", 10.5, "Geothermal charging rate (Joules) of pants per tick, per degree above ambient, per upgrade installed. This value scales down based on how much of the MekaSuit Pants is submerged. Fire is treated as having a temperature of ~200K above ambient, lava has a temperature of 1,000K above ambient.");
     public FloatOption mekaSuitHeatDamageReductionRatio = new FloatOption(this, "meka", "heatDamageReductionRatio", 0.8F, "Percent of heat damage negated by MekaSuit Pants with maximum geothermal generator units installed. This number scales down linearly based on how many units are actually installed.", 0, 1);
@@ -52,7 +52,7 @@ public class MekaConfig extends BaseConfig {
     public BooleanOption mekaSuitRecovery = new BooleanOption(this, "meka", "mekaSuitRecovery", true, "Enables the default calculation of the full set of Recovery");
     public FloatOption mekaSuitRecoveryRate = new FloatOption(this, "meka", "mekaSuitRecoveryRate", 10, "The recovery rate of the full set of base shields after the default installation", 0.1F, Float.MAX_VALUE);
     public IntOption mekaSuitShieldRestoresEnergy = new IntOption(this, "meka", "mekaSuitShieldRestoresEnergy", 500, "The amount of energy required whenever the shield recovers a little", 0, Integer.MAX_VALUE);
-    //public DoubleOption mekaSuitElytraEnergyUsage = new DoubleOption(this,"meka","elytraEnergyUsage",32000,"Energy usage (Joules) per second of the MekaSuit when flying with the Elytra Unit.");
+    public DoubleOption mekaSuitElytraEnergyUsage = new DoubleOption(this,"meka","elytraEnergyUsage",32000,"Energy usage (Joules) per second of the MekaSuit when flying with the Elytra Unit.");
     public DoubleOption mekaSuitEnergyUsageSprintBoost = new DoubleOption(this, "meka", "energyUsageSprintBoost", 100, "Energy usage (Joules) of MekaSuit when adding 0.1 to sprint motion.");
     public DoubleOption mekaSuitEnergyUsageGravitationalModulation = new DoubleOption(this, "meka", "energyUsageGravitationalModulation", 1000, "Energy usage (Joules) of MekaSuit per tick when flying via Gravitational Modulation.");
     public DoubleOption mekaSuitInventoryChargeRate = new DoubleOption(this, "meka", "inventoryChargeRate", 1000, "Charge rate of inventory items (Joules) per tick.");
@@ -67,7 +67,7 @@ public class MekaConfig extends BaseConfig {
     public final Map<DamageSource, FloatOption> create() {
         Map<DamageSource, FloatOption> map = new LinkedHashMap<>();
         for (DamageSource type : ItemMekaSuitArmor.getSupportedSources()) {
-            map.put(type,new FloatOption(this,"meka",type.getDamageType() + "DamageReductionRatio",1F,"Percent of damage taken from " + type.getDamageType() + " that can be absorbed by the MekaSuit when there is enough power and a full suit is equipped.",0,1));
+            map.put(type,new FloatOption(this,"meka",type.getDamageType() + "DamageReductionRatio",1F,"Percent of damage taken from " + type.getDamageType() + " that can be absorbed by the MekaSuit when there is enough power and a full suit is equipped.",0F,1F));
         }
         return map;
     }

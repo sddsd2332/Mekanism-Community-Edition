@@ -38,7 +38,7 @@ public class MekanismModules {
     public static final ModuleData<ModuleInhalationPurificationUnit> INHALATION_PURIFICATION_UNIT = ModuleHelper.register("inhalation_purification_unit", ModuleInhalationPurificationUnit::new, builder -> builder.rarity(EnumRarity.RARE));
     public static final ModuleData<ModuleVisionEnhancementUnit> VISION_ENHANCEMENT_UNIT = ModuleHelper.register("vision_enhancement_unit", ModuleVisionEnhancementUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.RARE).handlesModeChange().rendersHUD().disabledByDefault());
     public static final ModuleData<ModuleNutritionalInjectionUnit> NUTRITIONAL_INJECTION_UNIT = ModuleHelper.register("nutritional_injection_unit", ModuleNutritionalInjectionUnit::new, builder -> builder.rarity(EnumRarity.RARE).rendersHUD());
-
+    public static final ModuleData<ModuleSolarRechargingUnit> SOLAR_RECHARGING_UNIT = ModuleHelper.register("solar_recharging_unit",ModuleSolarRechargingUnit::new,builder -> builder.maxStackSize(8).rarity(EnumRarity.RARE));
     //Chestplate
     /*
     public static final ModuleData<ModuleDosimeterUnit> DOSIMETER_UNIT = ModuleHelper.register("dosimeter_unit", ModuleDosimeterUnit::new, builder -> builder.rarity(EnumRarity.UNCOMMON).rendersHUD());

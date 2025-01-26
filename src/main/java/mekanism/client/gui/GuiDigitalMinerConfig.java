@@ -208,8 +208,8 @@ public class GuiDigitalMinerConfig extends GuiFilterHolder<TileEntityDigitalMine
             IFilter filter = tileEntity.filters.get(getFilterIndex() + i);
             if (filter != null) {
                 int yStart = i * filterH + filterY;
-                if (filter instanceof IItemStackFilter) {
-                    renderItem(((IItemStackFilter) filter).getItemStack(), 59, yStart + 3);
+                if (filter instanceof IItemStackFilter stackFilter) {
+                    renderItem(stackFilter.getItemStack(), 59, yStart + 3);
                     fontRenderer.drawString(LangUtils.localize("gui.itemFilter"), 78, yStart + 2, 0x404040);
                 } else if (filter instanceof IOreDictFilter oreFilter) {
                     if (!oreDictStacks.containsKey(oreFilter)) {
@@ -230,7 +230,7 @@ public class GuiDigitalMinerConfig extends GuiFilterHolder<TileEntityDigitalMine
             }
         }
         if (inverseButton.isMouseOver()) {
-            displayTooltip(LangUtils.localize("gui.digitalMiner.inverse"), mouseX - guiLeft, mouseY - guiTop);
+            this.olddisplayTooltip(LangUtils.localize("gui.digitalMiner.inverse"), mouseX - guiLeft, mouseY - guiTop);
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }

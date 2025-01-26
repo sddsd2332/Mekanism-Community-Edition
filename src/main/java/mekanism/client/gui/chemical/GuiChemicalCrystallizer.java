@@ -99,7 +99,7 @@ public class GuiChemicalCrystallizer extends GuiMekanismTile<TileEntityChemicalC
                 info.add(LangUtils.localize("gui.item_no_space"));
             }
             if (outslot || energy) {
-                displayTooltips(info, xAxis, yAxis);
+                this.olddisplayTooltips(info, xAxis, yAxis);
             }
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
