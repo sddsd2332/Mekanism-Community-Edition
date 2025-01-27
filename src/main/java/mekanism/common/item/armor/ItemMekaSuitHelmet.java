@@ -4,6 +4,7 @@ import com.google.common.collect.Multimap;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
+import mekanism.api.mixninapi.EnderMaskMixinHelp;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitHead;
 import mekanism.client.model.mekasuitarmour.ModuleSolarHelmet;
 import mekanism.common.MekanismFluids;
@@ -15,6 +16,7 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -26,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class ItemMekaSuitHelmet extends ItemMekaSuitArmor implements IGasItem {
+public class ItemMekaSuitHelmet extends ItemMekaSuitArmor implements IGasItem, EnderMaskMixinHelp {
 
     public ItemMekaSuitHelmet() {
         super(EntityEquipmentSlot.HEAD);
@@ -153,5 +155,10 @@ public class ItemMekaSuitHelmet extends ItemMekaSuitArmor implements IGasItem {
     @Override
     public int getMaxGas(ItemStack itemstack) {
         return MekanismConfig.current().meka.mekaSuitNutritionalMaxStorage.val();
+    }
+
+    @Override
+    public boolean isEnderMask(ItemStack stack, EntityPlayer player, EntityEnderman endermanEntity) {
+        return armorType == EntityEquipmentSlot.HEAD;
     }
 }

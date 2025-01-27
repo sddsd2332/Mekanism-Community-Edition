@@ -24,6 +24,8 @@ import mekanism.common.config.MekanismConfig;
 import mekanism.common.config.MixinConfig;
 import mekanism.common.content.boiler.SynchronizedBoilerData;
 import mekanism.common.content.entangloporter.InventoryFrequency;
+import mekanism.common.content.gear.MekaSuitDispenseBehavior;
+import mekanism.common.content.gear.ModuleDispenseBehavior;
 import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.content.matrix.SynchronizedMatrixData;
 import mekanism.common.content.tank.SynchronizedTankData;
@@ -497,10 +499,8 @@ public class Mekanism {
         //Register with ForgeChunkManager
         ForgeChunkManager.setForcedChunkLoadingCallback(this, new ChunkManager());
 
-        /*
-        registerDispenseBehavior(new ModuleDispenseBehavior(), MekanismItems.MekTool);
+     //   registerDispenseBehavior(new ModuleDispenseBehavior(), MekanismItems.MekTool);
         registerDispenseBehavior(new MekaSuitDispenseBehavior(), MekanismItems.MEKASUIT_HELMET, MekanismItems.MEKASUIT_BODYARMOR, MekanismItems.MEKASUIT_PANTS, MekanismItems.MEKASUIT_BOOTS);
-         */
 
         //Register to receive subscribed events
         MinecraftForge.EVENT_BUS.register(this);

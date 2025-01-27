@@ -4,9 +4,13 @@
  */
 package mekanism.client.render;
 
+import mekanism.api.gear.IModule;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitBodyArm;
+import mekanism.client.model.mekasuitarmour.ModuleElytra;
+import mekanism.common.MekanismModules;
 import mekanism.common.config.MekanismConfig;
-
+import mekanism.common.content.gear.ModuleHelper;
+import mekanism.common.content.gear.mekasuit.ModuleElytraUnit;
 import mekanism.common.item.armor.ItemMekaSuitBodyArmor;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.Minecraft;
@@ -57,6 +61,28 @@ public class RenderFirstPersonMekaSuitArms {
 
     private void renderArm(boolean rightHand, AbstractClientPlayer player) {
         ModelMekAsuitBodyArm armor = ModelMekAsuitBodyArm.armorModel;
+        ModuleElytra elytra = ModuleElytra.Elytra;
+        IModule<ModuleElytraUnit> module = ModuleHelper.get().load(player.getItemStackFromSlot(EntityEquipmentSlot.CHEST), MekanismModules.ELYTRA_UNIT);
+
+        if (!player.isElytraFlying() && module != null && module.isEnabled()) {
+            if (!armor.left_arm_armor.childModels.contains(elytra.inactive_elytra_left_wing)) {
+                armor.left_arm_armor.addChild(elytra.inactive_elytra_left_wing);
+            }
+            if (!armor.right_arm_armor.childModels.contains(elytra.inactive_elytra_right_wing)) {
+                armor.right_arm_armor.addChild(elytra.inactive_elytra_right_wing);
+            }
+        }
+
+        if (player.isElytraFlying() || module == null || (module != null && !module.isEnabled())) {
+            if (armor.left_arm_armor.childModels.contains(elytra.inactive_elytra_left_wing)) {
+                armor.left_arm_armor.childModels.remove(elytra.inactive_elytra_left_wing);
+            }
+            if (armor.right_arm_armor.childModels.contains(elytra.inactive_elytra_right_wing)) {
+                armor.right_arm_armor.childModels.remove(elytra.inactive_elytra_right_wing);
+            }
+        }
+
+
         armor.setVisible(true);
         if (rightHand) {
             armor.rightArmPose = ArmPose.EMPTY;

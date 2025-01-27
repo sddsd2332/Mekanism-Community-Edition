@@ -22,7 +22,6 @@ import mekanism.common.tier.InductionCellTier;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.StackUtils;
 import net.foxmcloud.draconicadditions.DAFeatures;
-import net.foxmcloud.draconicadditions.items.armor.ChaoticArmor;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;

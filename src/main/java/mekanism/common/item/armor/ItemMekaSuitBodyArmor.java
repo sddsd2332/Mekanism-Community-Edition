@@ -9,6 +9,7 @@ import mekanism.api.gear.IModule;
 import mekanism.api.gear.ModuleData;
 import mekanism.api.mixninapi.ElytraMixinHelp;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitBody;
+import mekanism.client.model.mekasuitarmour.ModuleElytra;
 import mekanism.client.model.mekasuitarmour.ModuleGravitational;
 import mekanism.client.model.mekasuitarmour.ModuleJetpack;
 import mekanism.common.MekanismFluids;
@@ -74,7 +75,7 @@ public class ItemMekaSuitBodyArmor extends ItemMekaSuitArmor implements IGasItem
         ModelMekAsuitBody armorModel = ModelMekAsuitBody.armorModel;
         ModuleJetpack jetpack = ModuleJetpack.jetpacks;
         ModuleGravitational gravitational = ModuleGravitational.gravitational;
-
+        ModuleElytra elytra = ModuleElytra.Elytra;
         if (isModuleEnabled(itemStack, MekanismModules.JETPACK_UNIT)) {
             if (!armorModel.bipedBody.childModels.contains(jetpack.jetpack)) {
                 armorModel.bipedBody.addChild(jetpack.jetpack);
@@ -88,6 +89,14 @@ public class ItemMekaSuitBodyArmor extends ItemMekaSuitArmor implements IGasItem
             }
         } else {
             armorModel.bipedBody.childModels.remove(gravitational.gravitational_modulator);
+        }
+
+        if (isModuleEnabled(itemStack,MekanismModules.ELYTRA_UNIT) && !entityLiving.isElytraFlying()){
+            if (!armorModel.bipedBody.childModels.contains(elytra.elytra)) {
+                armorModel.bipedBody.addChild(elytra.elytra);
+            }
+        } else {
+            armorModel.bipedBody.childModels.remove(elytra.elytra);
         }
 
         return armorModel;

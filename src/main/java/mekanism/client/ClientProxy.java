@@ -21,6 +21,7 @@ import mekanism.client.render.item.RenderEnergyCubeItem;
 import mekanism.client.render.item.basicblock.RenderBasicBlockItem;
 import mekanism.client.render.item.gear.*;
 import mekanism.client.render.item.machine.RenderMachineItem;
+import mekanism.client.render.layer.MekaSuitModuleElytra;
 import mekanism.client.render.layer.MekanismElytraLayer;
 import mekanism.client.render.obj.MekanismOBJLoader;
 import mekanism.client.render.tileentity.*;
@@ -1069,8 +1070,13 @@ public class ClientProxy extends CommonProxy {
         Minecraft.getMinecraft().getRenderManager().entityRenderMap.values().forEach(renderer -> {
             if (renderer instanceof RenderLivingBase<?> base) {
                 base.addLayer(new MekanismElytraLayer(base));
+                base.addLayer(new MekaSuitModuleElytra(base));
             }
         });
-        Minecraft.getMinecraft().getRenderManager().getSkinMap().values().forEach(renderer -> renderer.addLayer(new MekanismElytraLayer(renderer)));
+        Minecraft.getMinecraft().getRenderManager().getSkinMap().values().forEach(renderer -> {
+                    renderer.addLayer(new MekanismElytraLayer(renderer));
+                    renderer.addLayer(new MekaSuitModuleElytra(renderer));
+                }
+        );
     }
 }

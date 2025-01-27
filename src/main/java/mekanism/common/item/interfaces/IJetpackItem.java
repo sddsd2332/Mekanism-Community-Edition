@@ -114,7 +114,7 @@ public interface IJetpackItem {
         if (matcher.test(chest)) {
             return chest;
         } else if (Mekanism.hooks.Baubles) {
-            return getBaublesJetpack(entity,matcher);
+            return getBaublesJetpack(entity, matcher);
         }
         return ItemStack.EMPTY;
     }
