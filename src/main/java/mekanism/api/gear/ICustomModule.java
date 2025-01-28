@@ -1,10 +1,5 @@
 package mekanism.api.gear;
 
-import java.util.Objects;
-import java.util.function.Consumer;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import mekanism.api.functions.FloatSupplier;
 import mekanism.api.gear.config.ModuleConfigItemCreator;
 import mekanism.api.text.IHasTextComponent;
@@ -17,8 +12,16 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * Interface used to describe and implement custom modules. Instances of this should be returned via the {@link ModuleData}.
@@ -73,7 +76,6 @@ public interface ICustomModule<MODULE extends ICustomModule<MODULE>> {
      * @param player          Player using the Meka-Tool or wearing the MekaSuit. In general this will be the client player, but is passed to make sidedness safer and
      *                        easier.
      * @param hudElementAdder Accepts and adds HUD elements.
-     *
      * @apiNote See {@link IModuleHelper} for various helpers to create HUD elements.
      */
     default void addHUDElements(IModule<MODULE> module, EntityPlayer player, Consumer<IHUDElement> hudElementAdder) {
@@ -84,7 +86,6 @@ public interface ICustomModule<MODULE extends ICustomModule<MODULE>> {
      * whether the module is active.
      *
      * @param module Module instance.
-     *
      * @return {@code true} if this module can change modes when disabled.
      */
     default boolean canChangeModeWhenDisabled(IModule<MODULE> module) {
@@ -136,7 +137,6 @@ public interface ICustomModule<MODULE extends ICustomModule<MODULE>> {
      *
      * @param module       Module instance.
      * @param damageSource Source of the damage.
-     *
      * @return Information about how damage can be absorbed, or {@code null} if the given damage type cannot be absorbed.
      */
     @Nullable
@@ -147,8 +147,7 @@ public interface ICustomModule<MODULE extends ICustomModule<MODULE>> {
     /**
      * Called when the Meka-Tool is used to allow modules to implement custom use behavior.
      *
-     * @param module  Module instance.
-     *
+     * @param module Module instance.
      * @return Result type or {@link EnumActionResult#PASS} to pass.
      */
     @Nonnull
@@ -163,7 +162,6 @@ public interface ICustomModule<MODULE extends ICustomModule<MODULE>> {
      * @param player Player using the Meka-Tool.
      * @param entity Entity type being interacted with.
      * @param hand   Hand used.
-     *
      * @return Result type or {@link EnumActionResult#PASS} to pass.
      */
     @Nonnull
@@ -177,7 +175,6 @@ public interface ICustomModule<MODULE extends ICustomModule<MODULE>> {
      *
      * @param module Module instance.
      * @param source Dispenser source information.
-     *
      * @return The {@link ModuleDispenseResult} defining how this dispenser should behave.
      */
     @Nonnull
@@ -233,4 +230,25 @@ public interface ICustomModule<MODULE extends ICustomModule<MODULE>> {
          */
         FAIL_PREVENT_DROP
     }
+
+    default void moveRelative(EntityPlayer player, float pAmount, Vec3d pRelative) {
+        Vec3d vec3 = getInputVector(pRelative, pAmount, player.rotationYaw);
+        player.motionX = player.motionX + vec3.x;
+        player.motionY = player.motionY + vec3.y;
+        player.motionZ = player.motionZ + vec3.z;
+    }
+
+    default Vec3d getInputVector(Vec3d pRelative, float pMotionScaler, float pFacing) {
+        double d0 = pRelative.lengthSquared();
+        if (d0 < 1.0E-7D) {
+            return Vec3d.ZERO;
+        } else {
+            Vec3d vec3 = (d0 > 1.0D ? pRelative.normalize() : pRelative).scale((double) pMotionScaler);
+            float f = MathHelper.sin(pFacing * ((float) Math.PI / 180F));
+            float f1 = MathHelper.cos(pFacing * ((float) Math.PI / 180F));
+            return new Vec3d(vec3.x * (double) f1 - vec3.z * (double) f, vec3.y, vec3.z * (double) f1 + vec3.x * (double) f);
+        }
+    }
 }
+
+

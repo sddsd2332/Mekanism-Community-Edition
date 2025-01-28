@@ -59,7 +59,7 @@ public class ItemModule extends Item implements IModuleItem {
             if (!conflicting.isEmpty()) {
                 tooltip.add(MekanismLang.MODULE_CONFLICTING.translateColored(EnumColor.RED).getFormattedText());
                 for (ModuleData<?> module : conflicting) {
-                    tooltip.add(MekanismLang.GENERIC_LIST.translate().getFormattedText() + stack.getItem().getItemStackDisplayName(new ItemStack(new ItemModule(module))));
+                    tooltip.add(MekanismLang.GENERIC_LIST.translate().getFormattedText() + module.getTranslationKey());
                 }
             }
         } else {

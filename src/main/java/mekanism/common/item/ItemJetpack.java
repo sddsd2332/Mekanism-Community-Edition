@@ -8,6 +8,7 @@ import mekanism.api.NBTConstants;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
+import mekanism.api.mixninapi.ElytraMixinHelp;
 import mekanism.client.model.ModelArmoredJetpack;
 import mekanism.client.model.ModelJetpack;
 import mekanism.client.render.MekanismRenderer;
@@ -56,7 +57,7 @@ import java.util.List;
         @Optional.Interface(iface = "baubles.api.IBauble", modid = MekanismHooks.Baubles_MOD_ID),
         @Optional.Interface(iface = "baubles.api.render.IRenderBauble", modid = MekanismHooks.Baubles_MOD_ID)
 })
-public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, IJetpackItem, IItemHUDProvider, IBauble, IRenderBauble, IModeItem {
+public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, IJetpackItem, IItemHUDProvider, IBauble, IRenderBauble, IModeItem, ElytraMixinHelp {
 
     public int TRANSFER_RATE = 16;
 
@@ -167,7 +168,7 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
 
     @Override
     public boolean canUseJetpack(ItemStack stack) {
-        return  getGas(stack) != null && getStored(stack) > 0 ;
+        return getGas(stack) != null && getStored(stack) > 0;
     }
 
     @Override
@@ -181,6 +182,11 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
         if (gas != null) {
             setGas(stack, new GasStack(gas.getGas(), gas.amount - 1));
         }
+    }
+
+    @Override
+    public double getJetpackThrust(ItemStack stack) {
+        return 0.15;
     }
 
 
@@ -304,7 +310,21 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
     }
 
     @Override
-    public  boolean willAutoSync(ItemStack itemstack, EntityLivingBase player){
+    public boolean willAutoSync(ItemStack itemstack, EntityLivingBase player) {
         return true;
     }
+
+    @Override
+    public boolean canElytraFly(ItemStack stack, EntityLivingBase entity) {
+        if (armorType == EntityEquipmentSlot.CHEST && !entity.isSneaking() && getStored(stack) > 0) {
+            return getJetpackMode(stack) == JetpackMode.VECTOR;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean elytraFlightTick(ItemStack stack, EntityLivingBase entity, int flightTicks) {
+        return true;
+    }
+
 }

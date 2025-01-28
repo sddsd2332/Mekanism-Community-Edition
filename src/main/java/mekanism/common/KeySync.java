@@ -3,48 +3,45 @@ package mekanism.common;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class KeySync {
 
     public static int ASCEND = 0;
-    public static int DESCEND = 1;
+    public static int BOOST = 1;
 
-    public Map<EntityPlayer, KeySet> keys = new Object2ObjectOpenHashMap<>();
+    public final Map<UUID, KeySet> keys = new Object2ObjectOpenHashMap<>();
 
-    public KeySet getPlayerKeys(EntityPlayer player) {
-        return keys.get(player);
+    public KeySet getPlayerKeys(UUID playerUUID) {
+        return keys.get(playerUUID);
     }
 
-    public void add(EntityPlayer player, int key) {
-        if (!keys.containsKey(player)) {
-            keys.put(player, new KeySet(key));
-            return;
-        }
-        keys.get(player).keysActive.add(key);
-    }
-
-    public void remove(EntityPlayer player, int key) {
-        if (!keys.containsKey(player)) {
-            return;
-        }
-        keys.get(player).keysActive.remove(key);
-    }
-
-    public boolean has(EntityPlayer player, int key) {
-        if (!keys.containsKey(player)) {
-            return false;
-        }
-        return keys.get(player).keysActive.contains(key);
-    }
-
-    public void update(EntityPlayer player, int key, boolean add) {
-        if (add) {
-            add(player, key);
+    public void add(UUID playerUUID, int key) {
+        if (keys.containsKey(playerUUID)) {
+            keys.get(playerUUID).keysActive.add(key);
         } else {
-            remove(player, key);
+            keys.put(playerUUID, new KeySet(key));
+        }
+    }
+
+    public void remove(UUID playerUUID, int key) {
+        if (keys.containsKey(playerUUID)) {
+            keys.get(playerUUID).keysActive.remove(key);
+        }
+    }
+
+
+    public boolean has(UUID playerUUID, int key) {
+        return keys.containsKey(playerUUID) && keys.get(playerUUID).keysActive.contains(key);
+    }
+
+    public void update(UUID playerUUID, int key, boolean add) {
+        if (add) {
+            add(playerUUID, key);
+        } else {
+            remove(playerUUID, key);
         }
     }
 

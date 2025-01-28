@@ -321,8 +321,8 @@ public class ClientProxy extends CommonProxy {
         //registerItemRender(MekanismItems.MODULE_GEIGER);
         registerItemRender(MekanismItems.MODULE_JETPACK);
         registerItemRender(MekanismItems.MODULE_CHARGE_DISTRIBUTION);
-        //registerItemRender(MekanismItems.MODULE_GRAVITATIONAL_MODULATING);
-        registerItemRender(MekanismItems.MODULE_ELYTRA);
+        registerItemRender(MekanismItems.MODULE_GRAVITATIONAL_MODULATING);
+
         registerItemRender(MekanismItems.MODULE_GYROSCOPIC_STABILIZATION);
         registerItemRender(MekanismItems.MODULE_HYDROSTATIC_REPULSOR);
         registerItemRender(MekanismItems.MODULE_LOCOMOTIVE_BOOSTING);
@@ -330,7 +330,12 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.MODULE_HYDRAULIC_PROPULSION);
         //registerItemRender(MekanismItems.MODULE_MAGNETIC_ATTRACTION);
         registerItemRender(MekanismItems.MODULE_FROST_WALKER);
-        registerItemRender(MekanismItems.HDPE_REINFORCED_ELYTRA);
+        if (Mekanism.hooks.MekanismMixinHelp){
+            registerItemRender(MekanismItems.MODULE_ELYTRA);
+            registerItemRender(MekanismItems.HDPE_REINFORCED_ELYTRA);
+        }
+
+
         /**
          * ADD END
          */

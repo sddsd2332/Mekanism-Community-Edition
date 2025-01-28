@@ -46,7 +46,7 @@ public class CommonPlayerTickHandler {
 
 
     public static boolean isOnGroundOrSleeping(EntityPlayer player) {
-        return player.onGround || player.isSneaking();
+        return player.onGround || player.isSneaking()|| player.capabilities.isFlying;
     }
 
     public static boolean isScubaMaskOn(EntityPlayer player, ItemStack tank) {
@@ -97,10 +97,12 @@ public class CommonPlayerTickHandler {
         if (!jetpack.isEmpty()) {
             ItemStack primaryJetpack = IJetpackItem.getPrimaryJetpack(player);
             if (!primaryJetpack.isEmpty()) {
-                JetpackMode primaryMode = ((IJetpackItem) primaryJetpack.getItem()).getJetpackMode(primaryJetpack);
-                JetpackMode mode = IJetpackItem.getPlayerJetpackMode(player, primaryMode, () -> Mekanism.keyMap.has(player, KeySync.ASCEND));
+                IJetpackItem jetpackItem = (IJetpackItem) primaryJetpack.getItem();
+                JetpackMode primaryMode = jetpackItem.getJetpackMode(primaryJetpack);
+                JetpackMode mode = IJetpackItem.getPlayerJetpackMode(player, primaryMode, p -> Mekanism.keyMap.has(p.getUniqueID(), KeySync.ASCEND));
                 if (mode != JetpackMode.DISABLED) {
-                    if (IJetpackItem.handleJetpackMotion(player, mode, () -> Mekanism.keyMap.has(player, KeySync.ASCEND))) {
+                    double jetpackThrust = jetpackItem.getJetpackThrust(primaryJetpack);
+                    if (IJetpackItem.handleJetpackMotion(player, mode, jetpackThrust, p -> Mekanism.keyMap.has(p.getUniqueID(), KeySync.ASCEND))) {
                         player.fallDistance = 0.0F;
                         if (player instanceof EntityPlayerMP serverPlayer) {
                             serverPlayer.connection.floatingTickCount = 0;
@@ -273,7 +275,7 @@ public class CommonPlayerTickHandler {
     public void onLivingJump(LivingJumpEvent event) {
         if (event.getEntity() instanceof EntityPlayer player) {
             IModule<ModuleHydraulicPropulsionUnit> module = ModuleHelper.get().load(player.getItemStackFromSlot(EntityEquipmentSlot.FEET), MekanismModules.HYDRAULIC_PROPULSION_UNIT);
-            if (module != null && module.isEnabled() && Mekanism.keyMap.has(player, KeySync.DESCEND)) {
+            if (module != null && module.isEnabled() && Mekanism.keyMap.has(player.getUniqueID(), KeySync.BOOST)) {
                 float boost = module.getCustomInstance().getBoost();
                 double usage = MekanismConfig.current().meka.mekaSuitBaseJumpEnergyUsage.val() * (boost / 0.1F);
                 IEnergizedItem energyContainer = module.getEnergyContainer();

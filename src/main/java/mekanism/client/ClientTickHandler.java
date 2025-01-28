@@ -81,7 +81,7 @@ public class ClientTickHandler {
             boolean guiOpen = minecraft.currentScreen != null;
             boolean ascending = minecraft.player.movementInput.jump;
             boolean rising = ascending && !guiOpen;
-            if (mode == JetpackMode.NORMAL) {
+            if (mode == JetpackMode.NORMAL|| mode == JetpackMode.VECTOR) {
                 return rising;
             } else if (mode == JetpackMode.HOVER) {
                 boolean descending = minecraft.player.movementInput.sneak;
@@ -144,6 +144,7 @@ public class ClientTickHandler {
 
     public void tickStart() {
         MekanismClient.ticksPassed++;
+
         if (!Mekanism.proxy.isPaused()) {
             for (Iterator<IClientTicker> iter = tickingSet.iterator(); iter.hasNext(); ) {
                 IClientTicker ticker = iter.next();
@@ -206,9 +207,10 @@ public class ClientTickHandler {
                 ItemStack primaryJetpack = IJetpackItem.getPrimaryJetpack(minecraft.player);
                 if (!primaryJetpack.isEmpty()) {
                     JetpackMode primaryMode = ((IJetpackItem) primaryJetpack.getItem()).getJetpackMode(primaryJetpack);
-                    JetpackMode mode = IJetpackItem.getPlayerJetpackMode(minecraft.player, primaryMode, () -> minecraft.player.movementInput.jump);
+                    JetpackMode mode = IJetpackItem.getPlayerJetpackMode(minecraft.player, primaryMode, p -> p.movementInput.jump);
                     MekanismClient.updateKey(minecraft.player.movementInput.jump, KeySync.ASCEND);
-                    if (jetpackInUse && IJetpackItem.handleJetpackMotion(minecraft.player, mode, () -> minecraft.player.movementInput.jump)) {
+                    double jetpackThrust = ((IJetpackItem) primaryJetpack.getItem()).getJetpackThrust(primaryJetpack);
+                    if (jetpackInUse && IJetpackItem.handleJetpackMotion(minecraft.player, mode, jetpackThrust, p -> p.movementInput.jump)) {
                         minecraft.player.fallDistance = 0.0F;
                     }
                 }
@@ -377,20 +379,4 @@ public class ClientTickHandler {
         }
     }
 
-    /*
-    @SubscribeEvent
-    public void GuiScreenEvent(GuiOpenEvent event) {
-        if (event.getGui() instanceof GuiGameOver) {
-            if (minecraft.world.getWorldInfo().isHardcoreModeEnabled()) {
-                return;
-            }
-            if (minecraft.player instanceof EntityPlayerSP) {
-                ItemStack head = minecraft.player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-                if (!minecraft.player.isEntityAlive() && !head.isEmpty() && head.getItem() instanceof ItemOldMekAsuitHeadArmour armour && ((UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.EMERGENCY_RESCUE) && armour.getEmergency(head)) || (UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT) && armour.getInterception(head)))) {
-                    event.setCanceled(true);
-                }
-            }
-        }
-    }
-     */
 }

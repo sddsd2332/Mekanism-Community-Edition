@@ -19,6 +19,7 @@ import mekanism.common.util.MekanismUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.Map;
@@ -27,12 +28,12 @@ import java.util.UUID;
 
 public class PlayerState {
 
-    private Set<UUID> activeJetpacks = new ObjectOpenHashSet<>();
-    private Set<UUID> activeScubaMasks = new ObjectOpenHashSet<>();
-    private Set<UUID> activeGravitationalModulators = new ObjectOpenHashSet<>();
-    private Set<UUID> activeFlamethrowers = new ObjectOpenHashSet<>();
-    private Object2FloatMap<UUID> stepAssistedPlayers = new Object2FloatOpenHashMap<>();
-    private Map<UUID, FlightInfo> flightInfoMap = new Object2ObjectOpenHashMap<>();
+    private final Set<UUID> activeJetpacks = new ObjectOpenHashSet<>();
+    private final Set<UUID> activeScubaMasks = new ObjectOpenHashSet<>();
+    private final Set<UUID> activeGravitationalModulators = new ObjectOpenHashSet<>();
+    private final Set<UUID> activeFlamethrowers = new ObjectOpenHashSet<>();
+    private final Object2FloatMap<UUID> stepAssistedPlayers = new Object2FloatOpenHashMap<>();
+    private final Map<UUID, FlightInfo> flightInfoMap = new Object2ObjectOpenHashMap<>();
 
     private World world;
 
@@ -194,7 +195,7 @@ public class PlayerState {
     }
 
     private void updateClientServerStepHeight(EntityPlayer player, float value) {
-        player.stepHeight = value;
+        player.stepHeight += value;
         Mekanism.packetHandler.sendTo(new StepHeightSyncMessage(value), (EntityPlayerMP) player);
     }
 
@@ -268,12 +269,12 @@ public class PlayerState {
                 IModule<ModuleGravitationalModulatingUnit> module = ModuleHelper.get().load(player.getItemStackFromSlot(EntityEquipmentSlot.CHEST), MekanismModules.GRAVITATIONAL_MODULATING_UNIT);
                 if (module != null) {//Should not be null but double check
                     double usage = MekanismConfig.current().meka.mekaSuitEnergyUsageGravitationalModulation.val();
-                    if (Mekanism.keyMap.has(player, KeySync.DESCEND)) {
+                    if (Mekanism.keyMap.has(player.getUniqueID(), KeySync.BOOST)) {
                         double boostUsage = usage * 4;
                         if (module.canUseEnergy(player, boostUsage, false)) {
                             float boost = module.getCustomInstance().getBoost();
                             if (boost > 0) {
-                                player.moveRelative(boost, 0, 0, 1);
+                                module.getCustomInstance().moveRelative(player, boost, new Vec3d(0, 0, 1));
                             }
                         }
                     }

@@ -27,19 +27,16 @@ public class MekanismClient extends Mekanism {
     public static long ticksPassed = 0;
 
     public static void updateKey(KeyBinding key, int type) {
-        boolean down = Minecraft.getMinecraft().currentScreen == null && key.isKeyDown();
-        if (down != keyMap.has(Minecraft.getMinecraft().player, type)) {
-            Mekanism.packetHandler.sendToServer(new KeyMessage(type, down));
-            keyMap.update(Minecraft.getMinecraft().player, type, down);
-        }
+        updateKey(key.isKeyDown(), type);
     }
 
     public static void updateKey(boolean pressed, int type) {
         if (Minecraft.getMinecraft().player != null) {
+            UUID playerUUID = Minecraft.getMinecraft().player.getUniqueID();
             boolean down =  Minecraft.getMinecraft().currentScreen == null && pressed;
-            if (down != Mekanism.keyMap.has(Minecraft.getMinecraft().player, type)) {
+            if (down != Mekanism.keyMap.has(playerUUID, type)) {
                 Mekanism.packetHandler.sendToServer(new KeyMessage(type, down));
-                keyMap.update(Minecraft.getMinecraft().player, type, down);
+                Mekanism.keyMap.update(playerUUID, type, down);
             }
         }
     }

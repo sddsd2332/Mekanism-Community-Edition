@@ -19,7 +19,7 @@ public class PacketStepHeightSync implements IMessageHandler<StepHeightSyncMessa
         }
         PacketHandler.handlePacket(() -> {
             if (player instanceof EntityPlayerSP p) {
-                p.stepHeight = message.stepHeight;
+                p.stepHeight += message.stepHeight;
             }
         }, player);
         return null;

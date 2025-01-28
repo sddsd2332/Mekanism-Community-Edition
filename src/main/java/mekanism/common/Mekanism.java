@@ -21,11 +21,9 @@ import mekanism.common.chunkloading.ChunkManager;
 import mekanism.common.command.CommandMek;
 import mekanism.common.concurrent.TaskExecutor;
 import mekanism.common.config.MekanismConfig;
-import mekanism.common.config.MixinConfig;
 import mekanism.common.content.boiler.SynchronizedBoilerData;
 import mekanism.common.content.entangloporter.InventoryFrequency;
 import mekanism.common.content.gear.MekaSuitDispenseBehavior;
-import mekanism.common.content.gear.ModuleDispenseBehavior;
 import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.content.matrix.SynchronizedMatrixData;
 import mekanism.common.content.tank.SynchronizedTankData;
@@ -150,7 +148,6 @@ public class Mekanism {
     public static Configuration configurationMultiblockMachine;
     public static Configuration configurationmekaweapons;
     public static Configuration configurationMeka;
-    public static Configuration configurationMixin;
     /**
      * Mekanism version number
      */
@@ -435,16 +432,10 @@ public class Mekanism {
         configurationMultiblockMachine = new Configuration(new File("config/mekanism/MekanismMultiblockMachine.cfg"));
         configurationmekaweapons = new Configuration(new File("config/mekanism/MekanismWeapons.cfg"));
         configurationMeka = new Configuration(new File("config/mekanism/MekaSuitArmor.cfg"));
-        if (Loader.isModLoaded("mixinbooter") && Loader.isModLoaded("extrabotany")) {
-            configurationMixin = new Configuration(new File("config/mekanism/ExtraBotanyMixin.cfg"));
-        }
 
 
         //Load configuration
         proxy.loadConfiguration();
-        if (Loader.isModLoaded("mixinbooter") && Loader.isModLoaded("extrabotany")) {
-            MixinConfig.initConfig(configurationMixin.getConfigFile());
-        }
 
         proxy.onConfigSync(false);
 
@@ -499,7 +490,7 @@ public class Mekanism {
         //Register with ForgeChunkManager
         ForgeChunkManager.setForcedChunkLoadingCallback(this, new ChunkManager());
 
-     //   registerDispenseBehavior(new ModuleDispenseBehavior(), MekanismItems.MekTool);
+        //   registerDispenseBehavior(new ModuleDispenseBehavior(), MekanismItems.MekTool);
         registerDispenseBehavior(new MekaSuitDispenseBehavior(), MekanismItems.MEKASUIT_HELMET, MekanismItems.MEKASUIT_BODYARMOR, MekanismItems.MEKASUIT_PANTS, MekanismItems.MEKASUIT_BOOTS);
 
         //Register to receive subscribed events
@@ -541,6 +532,10 @@ public class Mekanism {
 
         //Success message
         logger.info("Mod loaded.");
+
+        if (!hooks.MekanismMixinHelp) {
+            logger.info("The Mekanism Mixin Help mod is not installed, which causes some modifications to not be implemented");
+        }
 
     }
 

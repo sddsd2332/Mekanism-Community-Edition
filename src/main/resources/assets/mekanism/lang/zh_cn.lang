@@ -980,6 +980,7 @@ tooltip.balloon=气球
 
 tooltip.jetpack.regular=标准
 tooltip.jetpack.hover=悬浮
+tooltip.jetpack.vector=向量
 tooltip.jetpack.disabled=禁用
 tooltip.jetpack.mode=喷气背包模式：
 tooltip.jetpack.stored=喷气背包燃料：

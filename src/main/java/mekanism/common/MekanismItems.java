@@ -128,13 +128,16 @@ public class MekanismItems {
      */
     public static final ItemModule MODULE_JETPACK = new ItemModule(MekanismModules.JETPACK_UNIT);
     public static final ItemModule MODULE_CHARGE_DISTRIBUTION = new ItemModule(MekanismModules.CHARGE_DISTRIBUTION_UNIT);
+    public static final ItemModule MODULE_GRAVITATIONAL_MODULATING = new ItemModule(MekanismModules.GRAVITATIONAL_MODULATING_UNIT);
     public static final ItemModule MODULE_ELYTRA = new ItemModule(MekanismModules.ELYTRA_UNIT);
+
+    public static final ItemModule MODULE_LOCOMOTIVE_BOOSTING = new ItemModule(MekanismModules.LOCOMOTIVE_BOOSTING_UNIT);
     public static final ItemModule MODULE_GYROSCOPIC_STABILIZATION = new ItemModule(MekanismModules.GYROSCOPIC_STABILIZATION_UNIT);
     public static final ItemModule MODULE_HYDROSTATIC_REPULSOR = new ItemModule(MekanismModules.HYDROSTATIC_REPULSOR_UNIT);
-    public static final ItemModule MODULE_LOCOMOTIVE_BOOSTING = new ItemModule(MekanismModules.LOCOMOTIVE_BOOSTING_UNIT);
-  //  public static final ItemModule MODULE_MOTORIZED_SERVO = new ItemModule(MekanismModules.MOTORIZED_SERVO_UNIT);
+    //  public static final ItemModule MODULE_MOTORIZED_SERVO = new ItemModule(MekanismModules.MOTORIZED_SERVO_UNIT);
+
     public static final ItemModule MODULE_HYDRAULIC_PROPULSION = new ItemModule(MekanismModules.HYDRAULIC_PROPULSION_UNIT);
-  //  public static final ItemModule MODULE_MAGNETIC_ATTRACTION = new ItemModule(MekanismModules.MAGNETIC_ATTRACTION_UNIT);
+    //  public static final ItemModule MODULE_MAGNETIC_ATTRACTION = new ItemModule(MekanismModules.MAGNETIC_ATTRACTION_UNIT);
     public static final ItemModule MODULE_FROST_WALKER = new ItemModule(MekanismModules.FROST_WALKER_UNIT);
 
     public static final Item HDPE_REINFORCED_ELYTRA = new ItemHDPEElytra();
@@ -254,20 +257,24 @@ public class MekanismItems {
         registry.register(initModule(MODULE_INHALATION_PURIFICATION));
         registry.register(initModule(MODULE_VISION_ENHANCEMENT));
         registry.register(initModule(MODULE_NUTRITIONAL_INJECTION));
-      //  registry.register(initModule(MODULE_DOSIMETER));
-      //  registry.register(initModule(MODULE_GEIGER));
+        //  registry.register(initModule(MODULE_DOSIMETER));
+        //  registry.register(initModule(MODULE_GEIGER));
         registry.register(initModule(MODULE_JETPACK));
         registry.register(initModule(MODULE_CHARGE_DISTRIBUTION));
-      //  registry.register(initModule(MODULE_GRAVITATIONAL_MODULATING));
-        registry.register(initModule(MODULE_ELYTRA));
+        registry.register(initModule(MODULE_GRAVITATIONAL_MODULATING));
+
         registry.register(initModule(MODULE_GYROSCOPIC_STABILIZATION));
         registry.register(initModule(MODULE_HYDROSTATIC_REPULSOR));
         registry.register(initModule(MODULE_LOCOMOTIVE_BOOSTING));
-      //  registry.register(initModule(MODULE_MOTORIZED_SERVO));
+        //  registry.register(initModule(MODULE_MOTORIZED_SERVO));
         registry.register(initModule(MODULE_HYDRAULIC_PROPULSION));
-       // registry.register(initModule(MODULE_MAGNETIC_ATTRACTION));
+        // registry.register(initModule(MODULE_MAGNETIC_ATTRACTION));
         registry.register(initModule(MODULE_FROST_WALKER));
-        registry.register(init(HDPE_REINFORCED_ELYTRA,"hdpe_elytra"));
+        if (Mekanism.hooks.MekanismMixinHelp) {
+            registry.register(initModule(MODULE_ELYTRA));
+            registry.register(init(HDPE_REINFORCED_ELYTRA, "hdpe_elytra"));
+        }
+
         /**
          * ADD END
          */

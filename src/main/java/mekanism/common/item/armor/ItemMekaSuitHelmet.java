@@ -5,14 +5,21 @@ import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
 import mekanism.api.mixninapi.EnderMaskMixinHelp;
+import mekanism.client.gui.element.GuiUtils;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitHead;
 import mekanism.client.model.mekasuitarmour.ModuleSolarHelmet;
+import mekanism.client.render.MekanismRenderer;
 import mekanism.common.MekanismFluids;
 import mekanism.common.MekanismItems;
 import mekanism.common.MekanismModules;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.interfaces.IOverlayRenderAware;
 import mekanism.common.util.ItemDataUtils;
+import mekanism.common.util.LangUtils;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -22,13 +29,17 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.UUID;
 
-public class ItemMekaSuitHelmet extends ItemMekaSuitArmor implements IGasItem, EnderMaskMixinHelp {
+public class ItemMekaSuitHelmet extends ItemMekaSuitArmor implements IGasItem, EnderMaskMixinHelp, IOverlayRenderAware {
 
     public ItemMekaSuitHelmet() {
         super(EntityEquipmentSlot.HEAD);
@@ -79,9 +90,22 @@ public class ItemMekaSuitHelmet extends ItemMekaSuitArmor implements IGasItem, E
                 armorModel.helmet_armor.childModels.add(armorModel.hide);
             }
         }
-
         return armorModel;
     }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack stack, World world, List<String> tooltip) {
+        if (hasModule(stack, MekanismModules.NUTRITIONAL_INJECTION_UNIT)) {
+            GasStack gasStack = getGas(stack);
+            if (gasStack == null) {
+                tooltip.add(LangUtils.localize("tooltip.noGas") + ".");
+            } else {
+                tooltip.add(LangUtils.localize("tooltip.stored") + " " + gasStack.getGas().getLocalizedName() + ": " + gasStack.amount);
+            }
+        }
+    }
+
 
     @Override
     public int getRate(ItemStack itemstack) {
@@ -160,5 +184,43 @@ public class ItemMekaSuitHelmet extends ItemMekaSuitArmor implements IGasItem, E
     @Override
     public boolean isEnderMask(ItemStack stack, EntityPlayer player, EntityEnderman endermanEntity) {
         return armorType == EntityEquipmentSlot.HEAD;
+    }
+
+    @Override
+    public void renderItemOverlayIntoGUI(@NotNull ItemStack stack, int xPosition, int yPosition) {
+        if (!stack.isEmpty() && hasModule(stack,MekanismModules.NUTRITIONAL_INJECTION_UNIT)) {
+            GlStateManager.disableLighting();
+            GlStateManager.disableDepth();
+            GlStateManager.disableTexture2D();
+            GlStateManager.disableAlpha();
+            GlStateManager.disableBlend();
+            Tessellator tessellator = Tessellator.getInstance();
+            BufferBuilder bufferbuilder = tessellator.getBuffer();
+            double health = getDurabilityForDisplayGas(stack);
+            int rgbfordisplay = getGASRGBDurabilityForDisplay(stack);
+            int i = Math.round(13.0F - (float) health * 13.0F);
+            GuiUtils.draw(bufferbuilder, xPosition + 2, yPosition + 12, 13, 1, 0, 0, 0, 255);
+            GuiUtils.draw(bufferbuilder, xPosition + 2, yPosition + 12, i, 1, rgbfordisplay >> 16 & 255, rgbfordisplay >> 8 & 255, rgbfordisplay & 255, 255);
+            GlStateManager.enableBlend();
+            GlStateManager.enableAlpha();
+            GlStateManager.enableTexture2D();
+            GlStateManager.enableLighting();
+            GlStateManager.enableDepth();
+        }
+    }
+
+    private double getDurabilityForDisplayGas(ItemStack stack) {
+        return 1D - ((getGas(stack) != null ? (double) getGas(stack).amount : 0D) / (double) getMaxGas(stack));
+    }
+
+
+    public int getGASRGBDurabilityForDisplay(@Nonnull ItemStack stack) {
+        GasStack gas = getGas(stack);
+        if (gas != null) {
+            MekanismRenderer.color(gas);
+            return gas.getGas().getTint();
+        } else {
+            return MathHelper.hsvToRGB(Math.max(0.0F, (float) (1 - getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
+        }
     }
 }

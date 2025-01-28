@@ -4,7 +4,6 @@ import mekanism.api.annotations.ParametersAreNotNullByDefault;
 import mekanism.api.gear.ICustomModule;
 import mekanism.api.gear.IHUDElement;
 import mekanism.api.gear.IModule;
-import mekanism.api.gear.IModuleHelper;
 import mekanism.api.gear.config.IModuleConfigItem;
 import mekanism.api.gear.config.ModuleConfigItemCreator;
 import mekanism.api.gear.config.ModuleEnumData;
@@ -19,6 +18,7 @@ import mekanism.common.util.MekanismUtils.ResourceType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.function.Consumer;
 
@@ -61,7 +61,7 @@ public class ModuleGravitationalModulatingUnit implements ICustomModule<ModuleGr
                 module.canUseEnergy(player, MekanismConfig.current().meka.mekaSuitEnergyUsageGravitationalModulation.val() * (4), false)) {
             float boost = getBoost();
             if (boost > 0) {
-                player.moveRelative(boost, 0, 0, 1);
+                moveRelative(player, boost, new Vec3d(0, 0, 1));
             }
         }
     }

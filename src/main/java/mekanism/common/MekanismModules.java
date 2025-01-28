@@ -38,13 +38,12 @@ public class MekanismModules {
     public static final ModuleData<ModuleInhalationPurificationUnit> INHALATION_PURIFICATION_UNIT = ModuleHelper.register("inhalation_purification_unit", ModuleInhalationPurificationUnit::new, builder -> builder.rarity(EnumRarity.RARE));
     public static final ModuleData<ModuleVisionEnhancementUnit> VISION_ENHANCEMENT_UNIT = ModuleHelper.register("vision_enhancement_unit", ModuleVisionEnhancementUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.RARE).handlesModeChange().rendersHUD().disabledByDefault());
     public static final ModuleData<ModuleNutritionalInjectionUnit> NUTRITIONAL_INJECTION_UNIT = ModuleHelper.register("nutritional_injection_unit", ModuleNutritionalInjectionUnit::new, builder -> builder.rarity(EnumRarity.RARE).rendersHUD());
-    public static final ModuleData<ModuleSolarRechargingUnit> SOLAR_RECHARGING_UNIT = ModuleHelper.register("solar_recharging_unit",ModuleSolarRechargingUnit::new,builder -> builder.maxStackSize(8).rarity(EnumRarity.RARE));
+    public static final ModuleData<ModuleSolarRechargingUnit> SOLAR_RECHARGING_UNIT = ModuleHelper.register("solar_recharging_unit", ModuleSolarRechargingUnit::new, builder -> builder.maxStackSize(8).rarity(EnumRarity.RARE));
     //Chestplate
-    /*
-    public static final ModuleData<ModuleDosimeterUnit> DOSIMETER_UNIT = ModuleHelper.register("dosimeter_unit", ModuleDosimeterUnit::new, builder -> builder.rarity(EnumRarity.UNCOMMON).rendersHUD());
-    public static final ModuleData<ModuleGeigerUnit> GEIGER_UNIT = ModuleHelper.register("geiger_unit", ModuleGeigerUnit::new, builder -> builder.rarity(EnumRarity.UNCOMMON).rendersHUD());
-   */
-    public static final ModuleData<ModuleJetpackUnit> JETPACK_UNIT = ModuleHelper.register("jetpack_unit", ModuleJetpackUnit::new, builder -> builder.rarity(EnumRarity.RARE).handlesModeChange().rendersHUD().exclusive(ModuleData.ExclusiveFlag.OVERRIDE_JUMP));
+
+    //public static final ModuleData<ModuleDosimeterUnit> DOSIMETER_UNIT = ModuleHelper.register("dosimeter_unit", ModuleDosimeterUnit::new, builder -> builder.rarity(EnumRarity.UNCOMMON).rendersHUD());
+    //public static final ModuleData<ModuleGeigerUnit> GEIGER_UNIT = ModuleHelper.register("geiger_unit", ModuleGeigerUnit::new, builder -> builder.rarity(EnumRarity.UNCOMMON).rendersHUD());
+    public static final ModuleData<ModuleJetpackUnit> JETPACK_UNIT = ModuleHelper.register("jetpack_unit", ModuleJetpackUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.RARE).handlesModeChange().rendersHUD().exclusive(ModuleData.ExclusiveFlag.OVERRIDE_JUMP));
     public static final ModuleData<ModuleChargeDistributionUnit> CHARGE_DISTRIBUTION_UNIT = ModuleHelper.register("charge_distribution_unit", ModuleChargeDistributionUnit::new, builder -> builder.rarity(EnumRarity.RARE));
     public static final ModuleData<ModuleGravitationalModulatingUnit> GRAVITATIONAL_MODULATING_UNIT = ModuleHelper.register("gravitational_modulating_unit", ModuleGravitationalModulatingUnit::new, builder -> builder.rarity(EnumRarity.EPIC).handlesModeChange().rendersHUD().exclusive(ModuleData.ExclusiveFlag.OVERRIDE_JUMP));
     public static final ModuleData<ModuleElytraUnit> ELYTRA_UNIT = ModuleHelper.register("elytra_unit", ModuleElytraUnit::new, builder -> builder.rarity(EnumRarity.EPIC).handlesModeChange().modeChangeDisabledByDefault());
@@ -53,7 +52,6 @@ public class MekanismModules {
     public static final ModuleData<ModuleLocomotiveBoostingUnit> LOCOMOTIVE_BOOSTING_UNIT = ModuleHelper.register("locomotive_boosting_unit", ModuleLocomotiveBoostingUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.RARE).handlesModeChange());
     public static final ModuleData<?> GYROSCOPIC_STABILIZATION_UNIT = ModuleHelper.registerMarker("gyroscopic_stabilization_unit", builder -> builder.rarity(EnumRarity.RARE));
     public static final ModuleData<ModuleHydrostaticRepulsorUnit> HYDROSTATIC_REPULSOR_UNIT = ModuleHelper.register("hydrostatic_repulsor_unit", ModuleHydrostaticRepulsorUnit::new, builder -> builder.maxStackSize(3).rarity(EnumRarity.RARE));
-
     //public static final ModuleData<?> MOTORIZED_SERVO_UNIT = ModuleHelper.registerEnchantBased("motorized_servo_unit", () -> Enchantments.SWIFT_SNEAK, builder -> builder.maxStackSize(5).rarity(EnumRarity.RARE));
 
     //Boots

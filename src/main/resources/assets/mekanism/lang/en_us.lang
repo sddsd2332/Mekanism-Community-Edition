@@ -979,6 +979,7 @@ tooltip.balloon=Balloon
 
 tooltip.jetpack.regular=Regular
 tooltip.jetpack.hover=Hover
+tooltip.jetpack.vector=Vector
 tooltip.jetpack.disabled=Disabled
 tooltip.jetpack.mode=Jetpack Mode:
 tooltip.jetpack.stored=Jetpack Fuel:

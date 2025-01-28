@@ -15,6 +15,7 @@ import mekanism.common.MekanismLang;
 import mekanism.common.config.MekanismConfig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 
 @ParametersAreNotNullByDefault
@@ -24,8 +25,7 @@ public class ModuleLocomotiveBoostingUnit implements ICustomModule<ModuleLocomot
 
     @Override
     public void init(IModule<ModuleLocomotiveBoostingUnit> module, ModuleConfigItemCreator configItemCreator) {
-        sprintBoost = configItemCreator.createConfigItem("sprint_boost", MekanismLang.MODULE_SPRINT_BOOST,
-                new ModuleEnumData<>(SprintBoost.LOW, module.getInstalledCount() + 1));
+        sprintBoost = configItemCreator.createConfigItem("sprint_boost", MekanismLang.MODULE_SPRINT_BOOST, new ModuleEnumData<>(SprintBoost.LOW, module.getInstalledCount() + 1));
     }
 
     @Override
@@ -62,7 +62,7 @@ public class ModuleLocomotiveBoostingUnit implements ICustomModule<ModuleLocomot
             if (player.isInWater()) {
                 boost /= 5F; // throttle if we're in the water
             }
-            player.moveRelative(boost, 0, 0, 1);
+            moveRelative(player,boost, new Vec3d(0,0,1));
             return true;
         }
         return false;
