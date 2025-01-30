@@ -855,7 +855,7 @@ public enum MekanismLang implements ILangEntry {
     MODULE_RENDER_HUD("module", "render_hud"),
     MODULE_MODE("module", "mode"),
     MODULE_COLOR("module", "color"),
-    MODULE_BONUS_ATTACK_DAMAGE("module", "bonus_attack_damage"),
+    MODULE_ATTACK_DAMAGE("module", "attack_damage"),
     MODULE_FARMING_RADIUS("module", "farming_radius"),
     MODULE_JUMP_BOOST("module", "jump_boost"),
     MODULE_STEP_ASSIST("module", "step_assist"),
@@ -884,6 +884,9 @@ public enum MekanismLang implements ILangEntry {
     MODULE_PURIFICATION_NEUTRAL("module", "purification.neutral"),
     MODULE_PURIFICATION_HARMFUL("module", "purification.harmful"),
     MODULE_TELEPORT_REQUIRES_BLOCK("module", "teleportation_requires_block"),
+    MODULE_RADIATION_CLEARANCE("module", "radiation_clearance"),
+    MODULE_RADIATION_IMMUNITY("module", "radiation_immunity"),
+    MODULE_RADIATION_RANGE_CLEARING("module", "radiation_range_clearing"),
     ;
 
     private final String key;

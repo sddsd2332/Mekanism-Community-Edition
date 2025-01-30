@@ -1,8 +1,11 @@
 package mekanism.common.item.armor;
 
 import com.google.common.collect.Multimap;
+import mekanism.api.gear.IModule;
+import mekanism.api.gear.SwiftSneakHelp;
 import mekanism.client.model.mekasuitarmour.ModelMekAsuitLeg;
 import mekanism.common.MekanismItems;
+import mekanism.common.MekanismModules;
 import mekanism.common.config.MekanismConfig;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.EntityLivingBase;
@@ -18,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class ItemMekaSuitPants extends ItemMekaSuitArmor {
+public class ItemMekaSuitPants extends ItemMekaSuitArmor implements SwiftSneakHelp {
 
     public ItemMekaSuitPants() {
         super(EntityEquipmentSlot.LEGS);
@@ -59,4 +62,12 @@ public class ItemMekaSuitPants extends ItemMekaSuitArmor {
         return 0;
     }
 
+    @Override
+    public float getSneakingSpeedBonusLevel(ItemStack base) {
+        IModule<?> MotorizedServo = getModule(base, MekanismModules.MOTORIZED_SERVO_UNIT);
+        if (MotorizedServo != null && MotorizedServo.isEnabled()) {
+            return MotorizedServo.getInstalledCount();
+        }
+        return 0;
+    }
 }

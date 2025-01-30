@@ -216,7 +216,7 @@ public class ItemEnergized extends ItemMekanism implements IEnergizedItem, ISpec
 
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
-        return new ItemCapabilityWrapper(stack, new TeslaItemWrapper(), new ForgeEnergyItemWrapper());
+        return new ItemCaspabilityWrapper(stack, new TeslaItemWrapper(), new ForgeEnergyItemWrapper());
     }
 
 }

@@ -328,6 +328,7 @@ public class ModuleData<MODULE extends ICustomModule<MODULE>> implements IHasTra
             disabledByDefault = true;
             return this;
         }
+
     }
 
 

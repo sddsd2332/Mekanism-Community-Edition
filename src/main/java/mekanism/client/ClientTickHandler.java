@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import mekanism.api.IClientTicker;
 import mekanism.api.gear.IModule;
+import mekanism.api.gear.SwiftSneakHelp;
 import mekanism.client.gui.GuiRadialSelector;
 import mekanism.client.render.RenderTickHandler;
 import mekanism.common.CommonPlayerTickHandler;
@@ -39,7 +40,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.MovementInput;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
+import net.minecraftforge.client.event.InputUpdateEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -81,7 +85,7 @@ public class ClientTickHandler {
             boolean guiOpen = minecraft.currentScreen != null;
             boolean ascending = minecraft.player.movementInput.jump;
             boolean rising = ascending && !guiOpen;
-            if (mode == JetpackMode.NORMAL|| mode == JetpackMode.VECTOR) {
+            if (mode == JetpackMode.NORMAL || mode == JetpackMode.VECTOR) {
                 return rising;
             } else if (mode == JetpackMode.HOVER) {
                 boolean descending = minecraft.player.movementInput.sneak;
@@ -379,4 +383,32 @@ public class ClientTickHandler {
         }
     }
 
+
+    @SubscribeEvent
+    public void SneakingSpeedBonus(InputUpdateEvent event) {
+        EntityPlayer player = event.getEntityPlayer();
+        ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
+        MovementInput input = event.getMovementInput();
+        if (stack.getItem() instanceof SwiftSneakHelp help) {
+            float getSneakingSpeedBonus = MathHelper.clamp(0.3F + (help.getSneakingSpeedBonusLevel(stack) * 0.15F), 0.0F, 1.0F);
+            input.moveStrafe = 0.0F;
+            input.moveForward = 0.0F;
+            if (minecraft.gameSettings.keyBindForward.isKeyDown()) {
+                ++input.moveForward;
+            }
+            if (minecraft.gameSettings.keyBindBack.isKeyDown()) {
+                --input.moveForward;
+            }
+            if (minecraft.gameSettings.keyBindLeft.isKeyDown()) {
+                ++input.moveStrafe;
+            }
+            if (minecraft.gameSettings.keyBindRight.isKeyDown()) {
+                --input.moveStrafe;
+            }
+            if (input.sneak) {
+                input.moveStrafe *= getSneakingSpeedBonus;
+                input.moveForward *= getSneakingSpeedBonus;
+            }
+        }
+    }
 }

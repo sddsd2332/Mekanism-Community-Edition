@@ -107,6 +107,7 @@ public class MekanismItems {
     public static final ItemModule MODULE_COLOR_MODULATION = new ItemModule(MekanismModules.COLOR_MODULATION_UNIT);
     public static final ItemModule MODULE_LASER_DISSIPATION = new ItemModule(MekanismModules.LASER_DISSIPATION_UNIT);
     public static final ItemModule MODULE_RADIATION_SHIELDING = new ItemModule(MekanismModules.RADIATION_SHIELDING_UNIT);
+    public static final ItemModule MODULE_ENERGY_SHIELD = new ItemModule(MekanismModules.ENERGY_SHIELD_UNIT);
     /*
     public static final ItemModule MODULE_EXCAVATION_ESCALATION = new ItemModule(MekanismModules.EXCAVATION_ESCALATION_UNIT);
     public static final ItemModule MODULE_ATTACK_AMPLIFICATION = new ItemModule(MekanismModules.ATTACK_AMPLIFICATION_UNIT);
@@ -122,10 +123,10 @@ public class MekanismItems {
     public static final ItemModule MODULE_INHALATION_PURIFICATION = new ItemModule(MekanismModules.INHALATION_PURIFICATION_UNIT);
     public static final ItemModule MODULE_VISION_ENHANCEMENT = new ItemModule(MekanismModules.VISION_ENHANCEMENT_UNIT);
     public static final ItemModule MODULE_NUTRITIONAL_INJECTION = new ItemModule(MekanismModules.NUTRITIONAL_INJECTION_UNIT);
-    /*
+
     public static final ItemModule MODULE_DOSIMETER = new ItemModule(MekanismModules.DOSIMETER_UNIT);
     public static final ItemModule MODULE_GEIGER = new ItemModule(MekanismModules.GEIGER_UNIT);
-     */
+
     public static final ItemModule MODULE_JETPACK = new ItemModule(MekanismModules.JETPACK_UNIT);
     public static final ItemModule MODULE_CHARGE_DISTRIBUTION = new ItemModule(MekanismModules.CHARGE_DISTRIBUTION_UNIT);
     public static final ItemModule MODULE_GRAVITATIONAL_MODULATING = new ItemModule(MekanismModules.GRAVITATIONAL_MODULATING_UNIT);
@@ -241,6 +242,10 @@ public class MekanismItems {
         registry.register(initModule(MODULE_COLOR_MODULATION));
         registry.register(initModule(MODULE_LASER_DISSIPATION));
         registry.register(initModule(MODULE_RADIATION_SHIELDING));
+        if (Mekanism.hooks.DraconicEvolution) {
+            registry.register(initModule(MODULE_ENERGY_SHIELD));
+        }
+
         /*
         registry.register(initModule(MODULE_EXCAVATION_ESCALATION));
         registry.register(initModule(MODULE_ATTACK_AMPLIFICATION));
@@ -257,8 +262,8 @@ public class MekanismItems {
         registry.register(initModule(MODULE_INHALATION_PURIFICATION));
         registry.register(initModule(MODULE_VISION_ENHANCEMENT));
         registry.register(initModule(MODULE_NUTRITIONAL_INJECTION));
-        //  registry.register(initModule(MODULE_DOSIMETER));
-        //  registry.register(initModule(MODULE_GEIGER));
+        registry.register(initModule(MODULE_DOSIMETER));
+        registry.register(initModule(MODULE_GEIGER));
         registry.register(initModule(MODULE_JETPACK));
         registry.register(initModule(MODULE_CHARGE_DISTRIBUTION));
         registry.register(initModule(MODULE_GRAVITATIONAL_MODULATING));
@@ -270,6 +275,7 @@ public class MekanismItems {
         registry.register(initModule(MODULE_HYDRAULIC_PROPULSION));
         // registry.register(initModule(MODULE_MAGNETIC_ATTRACTION));
         registry.register(initModule(MODULE_FROST_WALKER));
+
         if (Mekanism.hooks.MekanismMixinHelp) {
             registry.register(initModule(MODULE_ELYTRA));
             registry.register(init(HDPE_REINFORCED_ELYTRA, "hdpe_elytra"));

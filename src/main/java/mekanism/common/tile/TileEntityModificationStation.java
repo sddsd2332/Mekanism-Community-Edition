@@ -28,7 +28,6 @@ public class TileEntityModificationStation extends TileEntityOperationalMachine 
         upgradeComponent.setSupported(Upgrade.MUFFLING, false);
         upgradeComponent.setSupported(Upgrade.SPEED, false);
         upgradeComponent.setSupported(Upgrade.ENERGY, false);
-
     }
 
     @Override
@@ -71,7 +70,7 @@ public class TileEntityModificationStation extends TileEntityOperationalMachine 
         ItemStack stack = inventory.get(3);
         if (!stack.isEmpty()) {
             IModuleContainerItem container = (IModuleContainerItem) stack.getItem();
-            if (container.hasModule(stack, type) && player.inventory.add(1,new ItemStack(new ItemModule(type)))) {
+            if (container.hasModule(stack, type) && player.inventory.add(1, new ItemStack(new ItemModule(type)))) {
                 container.removeModule(stack, type);
             }
         }

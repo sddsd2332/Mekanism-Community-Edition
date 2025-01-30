@@ -213,7 +213,6 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
             return;
         }
         ItemStack empty = new ItemStack(this);
-        setGas(empty, null);
         list.add(empty);
 
         ItemStack filled = new ItemStack(this);

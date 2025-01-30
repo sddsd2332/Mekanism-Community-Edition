@@ -54,11 +54,8 @@ import net.minecraft.network.play.server.SPacketEntityEffect;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.*;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.ChunkCache;
@@ -76,6 +73,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 /**
@@ -687,6 +685,11 @@ public final class MekanismUtils {
         };
     }
 
+
+    public static RayTraceResult rayTrace(World world, EntityPlayer player) {
+        return rayTrace(world, player, Mekanism.proxy.getReach(player));
+    }
+
     /**
      * Ray-traces what block a player is looking at.
      *
@@ -694,8 +697,7 @@ public final class MekanismUtils {
      * @param player - player to raytrace
      * @return raytraced value
      */
-    public static RayTraceResult rayTrace(World world, EntityPlayer player) {
-        double reach = Mekanism.proxy.getReach(player);
+    public static RayTraceResult rayTrace(World world, EntityPlayer player, double reach) {
         Vec3d headVec = getHeadVec(player);
         Vec3d lookVec = player.getLook(1);
         Vec3d endVec = headVec.add(lookVec.x * reach, lookVec.y * reach, lookVec.z * reach);
@@ -1243,7 +1245,7 @@ public final class MekanismUtils {
         }
     }
 
-    public static Map<Block, FluidInDetails> getFluidsIn(EntityPlayer player, UnaryOperator<AxisAlignedBB> modifyBoundingBox,Material material) {
+    public static Map<Block, FluidInDetails> getFluidsIn(EntityPlayer player, UnaryOperator<AxisAlignedBB> modifyBoundingBox, Material material) {
         AxisAlignedBB bb = modifyBoundingBox.apply(player.getEntityBoundingBox().shrink(0.001));
         int xMin = MathHelper.floor(bb.minX);
         int xMax = MathHelper.ceil(bb.maxX);
@@ -1297,5 +1299,27 @@ public final class MekanismUtils {
         return fluidsIn;
     }
 
+
+    @SafeVarargs
+    public static EnumActionResult performActions(EnumActionResult firstAction, Supplier<EnumActionResult>... secondaryActions) {
+        if (firstAction == EnumActionResult.SUCCESS) {
+            return EnumActionResult.SUCCESS;
+        }
+        EnumActionResult result = firstAction;
+        boolean hasFailed = result == EnumActionResult.FAIL;
+        for (Supplier<EnumActionResult> secondaryAction : secondaryActions) {
+            result = secondaryAction.get();
+            if (result == EnumActionResult.SUCCESS) {
+                //If we were successful
+                return EnumActionResult.SUCCESS;
+            }
+            hasFailed &= result == EnumActionResult.FAIL;
+        }
+        if (hasFailed) {
+            //If at least one step failed, consider ourselves unsuccessful
+            return EnumActionResult.FAIL;
+        }
+        return EnumActionResult.PASS;
+    }
 
 }

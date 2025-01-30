@@ -1803,3 +1803,5 @@ gui.on_caps=开启
 gui.off_caps=关闭
 generic.mekanism.list= -
 jetpack.mekanism.mode_change=喷气背包模式更改为：
+death.attack.mekanism.laser=%s 被焚化了
+death.attack.mekanism.laser.player=%s 在试图逃离 %s 时被焚烧

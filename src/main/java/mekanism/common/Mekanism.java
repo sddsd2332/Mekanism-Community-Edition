@@ -65,6 +65,7 @@ import mekanism.mekanism.Tags;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.dispenser.IBehaviorDispenseItem;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -100,6 +101,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -219,6 +221,8 @@ public class Mekanism {
         //Integrate certain OreDictionary recipes
         MekanismOreDict.registerOreDict();
     }
+
+
 
     @SubscribeEvent
     public static void registerEntities(RegistryEvent.Register<EntityEntry> event) {
@@ -555,16 +559,19 @@ public class Mekanism {
 
         for (Item stack : addMekaSuitModules) {
             ModuleHelper.get().setSupported(stack, MekanismModules.COLOR_MODULATION_UNIT, MekanismModules.LASER_DISSIPATION_UNIT, MekanismModules.RADIATION_SHIELDING_UNIT);
+            if (Mekanism.hooks.DraconicEvolution){
+                ModuleHelper.get().setSupported(stack, MekanismModules.ENERGY_SHIELD_UNIT);
+            }
         }
         // ModuleHelper.get().setSupported(MekanismItems.MekTool, MekanismModules.ATTACK_AMPLIFICATION_UNIT, MekanismModules.SILK_TOUCH_UNIT, MekanismModules.FORTUNE_UNIT, MekanismModules.BLASTING_UNIT, MekanismModules.VEIN_MINING_UNIT, MekanismModules.FARMING_UNIT, MekanismModules.SHEARING_UNIT, MekanismModules.TELEPORTATION_UNIT, MekanismModules.EXCAVATION_ESCALATION_UNIT);
 
         ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_HELMET, MekanismModules.ELECTROLYTIC_BREATHING_UNIT, MekanismModules.INHALATION_PURIFICATION_UNIT, MekanismModules.VISION_ENHANCEMENT_UNIT, MekanismModules.NUTRITIONAL_INJECTION_UNIT);
 
-        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_BODYARMOR, MekanismModules.JETPACK_UNIT, MekanismModules.GRAVITATIONAL_MODULATING_UNIT, MekanismModules.CHARGE_DISTRIBUTION_UNIT, /*MekanismModules.DOSIMETER_UNIT, MekanismModules.GEIGER_UNIT,*/ MekanismModules.ELYTRA_UNIT);
+        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_BODYARMOR, MekanismModules.JETPACK_UNIT, MekanismModules.GRAVITATIONAL_MODULATING_UNIT, MekanismModules.CHARGE_DISTRIBUTION_UNIT, MekanismModules.DOSIMETER_UNIT, MekanismModules.GEIGER_UNIT, MekanismModules.ELYTRA_UNIT);
 
-        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_PANTS, MekanismModules.LOCOMOTIVE_BOOSTING_UNIT, MekanismModules.GYROSCOPIC_STABILIZATION_UNIT, MekanismModules.HYDROSTATIC_REPULSOR_UNIT/*, MekanismModules.MOTORIZED_SERVO_UNIT*/);
+        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_PANTS, MekanismModules.LOCOMOTIVE_BOOSTING_UNIT, MekanismModules.GYROSCOPIC_STABILIZATION_UNIT, MekanismModules.HYDROSTATIC_REPULSOR_UNIT, MekanismModules.MOTORIZED_SERVO_UNIT);
 
-        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_BOOTS, MekanismModules.HYDRAULIC_PROPULSION_UNIT, /*MekanismModules.MAGNETIC_ATTRACTION_UNIT,*/ MekanismModules.FROST_WALKER_UNIT);
+        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_BOOTS, MekanismModules.HYDRAULIC_PROPULSION_UNIT, MekanismModules.MAGNETIC_ATTRACTION_UNIT, MekanismModules.FROST_WALKER_UNIT);
     }
 
 

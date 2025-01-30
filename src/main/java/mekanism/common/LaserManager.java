@@ -2,6 +2,7 @@ package mekanism.common;
 
 import mekanism.api.Coord4D;
 import mekanism.api.Pos3D;
+import mekanism.api.lasers.ILaserDissipation;
 import mekanism.api.lasers.ILaserReceptor;
 import mekanism.common.capabilities.Capabilities;
 import mekanism.common.config.MekanismConfig;
@@ -9,13 +10,19 @@ import mekanism.common.util.CapabilityUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -49,13 +56,38 @@ public class LaserManager {
         to.translateExcludingSide(direction, 0.1);
 
         boolean foundEntity = false;
-        for (Entity e : world.getEntitiesWithinAABB(Entity.class, Pos3D.getAABB(from, to))) {
+        for (Entity entity : world.getEntitiesWithinAABB(Entity.class, Pos3D.getAABB(from, to))) {
             foundEntity = true;
-            if (!e.isImmuneToFire()) {
-                e.setFire((int) (energy / 1000));
+            if (entity.isEntityInvulnerable(MekanismDamageSource.LASER)) {
+                break;
+            }
+            if (entity instanceof EntityLivingBase base) {
+                double dissipationPercent = 0;
+                double refractionPercent = 0;
+                for (ItemStack armor : base.getArmorInventoryList()) {
+                    if (!armor.isEmpty()) {
+                        ILaserDissipation laserDissipation = armor.getCapability(Capabilities.LASER_DISSIPATION_CAPABILITY, null);
+                        if (laserDissipation != null) {
+                            dissipationPercent += laserDissipation.getDissipationPercent();
+                            refractionPercent += laserDissipation.getRefractionPercent();
+                        }
+                    }
+                }
+
+                if (dissipationPercent >= 1) {
+                    //If we will fully dissipate it, don't bother checking the rest of the armor slots
+                    break;
+                }
+                if (refractionPercent >= 1) {
+                    break;
+                }
+            }
+
+            if (!entity.isImmuneToFire()) {
+                entity.setFire((int) (energy / 1000));
             }
             if (energy > 256) {
-                e.attackEntityFrom(DamageSource.GENERIC, (float) energy / 1000F);
+                entity.attackEntityFrom(MekanismDamageSource.LASER, (float) energy / 1000F);
             }
         }
         return new LaserInfo(mop, foundEntity);
@@ -121,4 +153,46 @@ public class LaserManager {
             foundEntity = b;
         }
     }
+
+    public static Pos3D adjustPosition(Pos3D d, EnumFacing direction, Entity entity) {
+        if (direction.getAxis() == EnumFacing.Axis.X) {
+            return new Pos3D(entity.posX, d.y, d.z);
+        } else if (direction.getAxis() == EnumFacing.Axis.Y) {
+            return new Pos3D(d.x, entity.posY, d.z);
+        } //Axis.Z
+        return new Pos3D(d.x, d.y, entity.posZ);
+    }
+
+    private static double damageShield(EntityLivingBase livingEntity, ItemStack activeStack, double damage, int absorptionRatio) {
+        //Absorb part of the damage based on the given absorption ratio
+        double damageBlocked = damage;
+        double effectiveDamage = damage / absorptionRatio;
+        if (effectiveDamage >= 1) {
+            //Allow the shield to absorb sub single unit damage values for free
+            int durabilityNeeded = 1 + MathHelper.floor(effectiveDamage);
+            int activeDurability = activeStack.getMaxDamage() - activeStack.getItemDamage();
+            EnumHand hand = livingEntity.getActiveHand();
+            livingEntity.activeItemStack.damageItem(durabilityNeeded, livingEntity);
+            if (livingEntity instanceof EntityPlayer player) {
+                net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, activeStack, hand);
+            }
+            if (activeStack.isEmpty()) {
+                if (hand == EnumHand.MAIN_HAND) {
+                    livingEntity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStack.EMPTY);
+                } else {
+                    livingEntity.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, ItemStack.EMPTY);
+                }
+                livingEntity.resetActiveHand();
+                livingEntity.playSound(SoundEvents.ITEM_SHIELD_BREAK, 0.8F, 0.8F + 0.4F * livingEntity.world.rand.nextFloat());
+                //Durability needed to block damage - durability we had, is the left-over durability that would have been needed to block it all
+                int unblockedDamage = (durabilityNeeded - activeDurability) * absorptionRatio;
+                damageBlocked = Math.max(0, damage - unblockedDamage);
+            }
+        }
+        if (livingEntity instanceof EntityPlayerMP mp && damageBlocked > 0 && damageBlocked < 3.4028235E37F) {
+            //   mp.awardStat(Stats.DAMAGE_BLOCKED_BY_SHIELD, Math.round(damageBlocked * 10F));
+        }
+        return damageBlocked;
+    }
+
 }

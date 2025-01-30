@@ -7,6 +7,7 @@ import mekanism.api.energy.IStrictEnergyOutputter;
 import mekanism.api.energy.IStrictEnergyStorage;
 import mekanism.api.gas.IGasHandler;
 import mekanism.api.gas.ITubeConnection;
+import mekanism.api.lasers.ILaserDissipation;
 import mekanism.api.lasers.ILaserReceptor;
 import mekanism.api.transmitters.IBlockableConnection;
 import mekanism.api.transmitters.IGridTransmitter;
@@ -68,6 +69,9 @@ public class Capabilities {
     @CapabilityInject(ILaserReceptor.class)
     public static Capability<ILaserReceptor> LASER_RECEPTOR_CAPABILITY = null;
 
+    @CapabilityInject(ILaserDissipation.class)
+    public static Capability<ILaserDissipation> LASER_DISSIPATION_CAPABILITY = null;
+
     @CapabilityInject(ITileNetwork.class)
     public static Capability<ITileNetwork> TILE_NETWORK_CAPABILITY = null;
 
@@ -103,5 +107,6 @@ public class Capabilities {
         DefaultSpecialConfigData.register();
         DefaultEvaporationSolar.register();
         DefaultLaserReceptor.register();
+        DefaultLaserDissipation.register();
     }
 }

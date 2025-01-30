@@ -301,6 +301,9 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.MODULE_COLOR_MODULATION);
         registerItemRender(MekanismItems.MODULE_LASER_DISSIPATION);
         registerItemRender(MekanismItems.MODULE_RADIATION_SHIELDING);
+        if (Mekanism.hooks.DraconicEvolution){
+            registerItemRender(MekanismItems.MODULE_ENERGY_SHIELD);
+        }
         /*
         registerItemRender(MekanismItems.MODULE_EXCAVATION_ESCALATION);
         registerItemRender(MekanismItems.MODULE_ATTACK_AMPLIFICATION);
@@ -317,8 +320,8 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.MODULE_INHALATION_PURIFICATION);
         registerItemRender(MekanismItems.MODULE_VISION_ENHANCEMENT);
         registerItemRender(MekanismItems.MODULE_NUTRITIONAL_INJECTION);
-        //registerItemRender(MekanismItems.MODULE_DOSIMETER);
-        //registerItemRender(MekanismItems.MODULE_GEIGER);
+        registerItemRender(MekanismItems.MODULE_DOSIMETER);
+        registerItemRender(MekanismItems.MODULE_GEIGER);
         registerItemRender(MekanismItems.MODULE_JETPACK);
         registerItemRender(MekanismItems.MODULE_CHARGE_DISTRIBUTION);
         registerItemRender(MekanismItems.MODULE_GRAVITATIONAL_MODULATING);

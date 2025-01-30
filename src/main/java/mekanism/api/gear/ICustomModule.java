@@ -165,8 +165,8 @@ public interface ICustomModule<MODULE extends ICustomModule<MODULE>> {
      * @return Result type or {@link EnumActionResult#PASS} to pass.
      */
     @Nonnull
-    default EnumActionResult onInteract(IModule<MODULE> module, EntityPlayer player, EntityLivingBase entity, EnumHand hand) {
-        return EnumActionResult.PASS;
+    default boolean onInteract(IModule<MODULE> module, EntityPlayer player, EntityLivingBase entity, EnumHand hand) {
+        return false;
     }
 
     /**
