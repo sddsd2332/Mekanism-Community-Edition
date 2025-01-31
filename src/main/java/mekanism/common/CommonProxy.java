@@ -8,8 +8,10 @@ import mekanism.common.base.IGuiProvider;
 import mekanism.common.base.IUpgradeTile;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.content.gear.IModuleContainerItem;
 import mekanism.common.entity.EntityRobit;
 import mekanism.common.inventory.InventoryPersonalChest;
+import mekanism.common.inventory.ModuleTweakerContainer;
 import mekanism.common.inventory.container.*;
 import mekanism.common.inventory.container.robit.*;
 import mekanism.common.item.ItemDictionary;
@@ -170,6 +172,11 @@ public class CommonProxy implements IGuiProvider {
                     return new ContainerNull();
                 }
                 break;
+            case 76:
+                if (stack.getItem() instanceof IModuleContainerItem){
+                    return new ModuleTweakerContainer(player.inventory);
+                }
+                break;
         }
         return null;
     }
@@ -286,6 +293,7 @@ public class CommonProxy implements IGuiProvider {
                     new ContainerAmbientAccumulatorEnergy(player.inventory, (TileEntityAmbientAccumulatorEnergy) tileEntity);
             case 74 -> new ContainerHybridStorage(player.inventory, (TileEntityHybridStorage) tileEntity);
             case 75 -> new ContainerModificationStation(player.inventory, (TileEntityModificationStation) tileEntity);
+            //EMPTY 76
             default -> null;
         };
     }

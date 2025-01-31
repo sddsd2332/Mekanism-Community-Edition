@@ -102,7 +102,7 @@ public class GuiTeleporter extends GuiMekanismTile<TileEntityTeleporter> {
         }
         ySize += 74;
         addGuiElement(new GuiPlayerSlot(this, resource, 7, 157));
-        addGuiElement(new GuiElementScreen(this, getGuiLocation(), 27, 36, 122, 42).isFrame(true));
+        addGuiElement(new GuiElementScreen(this, getGuiLocation(), 27, 36, 122, 42).isFrame());
         addGuiElement(new GuiInnerScreen(this, getGuiLocation(), 48, 111, 101, 13));
         yStart = 14;
     }
@@ -134,7 +134,7 @@ public class GuiTeleporter extends GuiMekanismTile<TileEntityTeleporter> {
             Mekanism.packetHandler.sendToServer(new PortableTeleporterMessage(PortableTeleporterPacketType.DATA_REQUEST, currentHand, clientFreq));
         }
         ySize = 172;
-        addGuiElement(new GuiElementScreen(this, getGuiLocation(), 27, 36, 122, 42).isFrame(true));
+        addGuiElement(new GuiElementScreen(this, getGuiLocation(), 27, 36, 122, 42).isFrame());
         addGuiElement(new GuiInnerScreen(this, getGuiLocation(), 48, 111, 101, 13));
         yStart = 14;
     }

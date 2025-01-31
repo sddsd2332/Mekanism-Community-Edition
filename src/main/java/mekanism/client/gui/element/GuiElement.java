@@ -152,4 +152,10 @@ public abstract class GuiElement {
         return false;
     }
 
+
+    @FunctionalInterface
+    public interface IClickable {
+
+        void onClick(GuiElement element, int mouseX, int mouseY);
+    }
 }

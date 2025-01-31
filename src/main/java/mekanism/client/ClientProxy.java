@@ -47,6 +47,7 @@ import mekanism.common.block.states.BlockStatePlastic.PlasticBlockStateMapper;
 import mekanism.common.block.states.BlockStateTransmitter.TransmitterStateMapper;
 import mekanism.common.block.states.BlockStateTransmitter.TransmitterType;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.content.gear.IModuleContainerItem;
 import mekanism.common.entity.*;
 import mekanism.common.inventory.InventoryPersonalChest;
 import mekanism.common.item.*;
@@ -688,6 +689,11 @@ public class ClientProxy extends CommonProxy {
                     return new GuiSeismicReader(player.world, new Coord4D(player), stack.copy());
                 }
             }
+            case 76 ->{
+                if (stack.getItem() instanceof IModuleContainerItem) {
+                    return new GuiModuleTweaker(player.inventory);
+                }
+            }
         }
         return null;
     }
@@ -819,6 +825,7 @@ public class ClientProxy extends CommonProxy {
                     new GuiAmbientAccumulatorEnergy(player.inventory, (TileEntityAmbientAccumulatorEnergy) tileEntity);
             case 74 -> new GuiHybridStorage(player.inventory, (TileEntityHybridStorage) tileEntity);
             case 75 -> new GuiModificationStation(player.inventory, (TileEntityModificationStation) tileEntity);
+            //EMPTY 76
             default -> null;
         };
     }

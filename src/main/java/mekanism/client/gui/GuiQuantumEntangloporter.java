@@ -69,7 +69,7 @@ public class GuiQuantumEntangloporter extends GuiMekanismTile<TileEntityQuantumE
             privateMode = !tileEntity.frequency.publicFreq;
         }
         addGuiElement(new GuiPlayerSlot(this, resource, 7, 157));
-        addGuiElement(new GuiElementScreen(this, getGuiLocation(), 27, 36, 122, 42).isFrame(true));
+        addGuiElement(new GuiElementScreen(this, getGuiLocation(), 27, 36, 122, 42).isFrame());
         addGuiElement(new GuiInnerScreen(this, getGuiLocation(), 48, 111, 101, 13));
         ySize += 74;
         yStart = 14;

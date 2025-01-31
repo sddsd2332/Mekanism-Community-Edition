@@ -8,7 +8,9 @@ import mekanism.common.InfuseStorage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldVertexBufferUploader;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -30,9 +32,8 @@ public class GuiUtils {
         blitNineSlicedSized(resource, left, top, width, height, sideWidth, sideHeight, textureWidth, textureHeight, 0, 0, textureWidth, textureHeight);
     }
 
-    public static void renderBackgroundTexture( ResourceLocation resource, int texSideWidth, int texSideHeight, int left, int top, int width,
-                                               int height, int textureWidth, int textureHeight) {
-        blitNineSlicedSized( resource, left, top, width, height, texSideWidth, texSideHeight, textureWidth, textureHeight, 0, 0, textureWidth, textureHeight);
+    public static void renderBackgroundTexture(ResourceLocation resource, int texSideWidth, int texSideHeight, int left, int top, int width, int height, int textureWidth, int textureHeight) {
+        blitNineSlicedSized(resource, left, top, width, height, texSideWidth, texSideHeight, textureWidth, textureHeight, 0, 0, textureWidth, textureHeight);
     }
 
     public static void drawBarSprite(int xPos, int yPos, int sizeX, int sizeY, int displayInt, TextureAtlasSprite textureSprite, boolean vertical) {
@@ -396,6 +397,42 @@ public class GuiUtils {
         renderer.pos(x + width, y + height, 0.0D).color(red, green, blue, alpha).endVertex();
         renderer.pos(x + width, y, 0.0D).color(red, green, blue, alpha).endVertex();
         Tessellator.getInstance().draw();
+    }
+
+
+    public static void fill(int pMinX, int pMinY, int pMaxX, int pMaxY, int pColor) {
+        innerFill(pMinX, pMinY, pMaxX, pMaxY, pColor);
+    }
+
+    private static void innerFill(int pMinX, int pMinY, int pMaxX, int pMaxY, int pColor) {
+        if (pMinX < pMaxX) {
+            int i = pMinX;
+            pMinX = pMaxX;
+            pMaxX = i;
+        }
+
+        if (pMinY < pMaxY) {
+            int j = pMinY;
+            pMinY = pMaxY;
+            pMaxY = j;
+        }
+
+        float f3 = (float) (pColor >> 24 & 255) / 255.0F;
+        float f = (float) (pColor >> 16 & 255) / 255.0F;
+        float f1 = (float) (pColor >> 8 & 255) / 255.0F;
+        float f2 = (float) (pColor & 255) / 255.0F;
+        BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        bufferbuilder.pos((float) pMinX, (float) pMaxY, 0.0F).color(f, f1, f2, f3).endVertex();
+        bufferbuilder.pos((float) pMaxX, (float) pMaxY, 0.0F).color(f, f1, f2, f3).endVertex();
+        bufferbuilder.pos((float) pMaxX, (float) pMinY, 0.0F).color(f, f1, f2, f3).endVertex();
+        bufferbuilder.pos((float) pMinX, (float) pMinY, 0.0F).color(f, f1, f2, f3).endVertex();
+        Tessellator.getInstance().draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
     }
 
 }
