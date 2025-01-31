@@ -37,19 +37,17 @@ public class MekanismKeyHandler extends MekKeyHandler {
     public static KeyBinding legsModeSwitchKey = new KeyBinding(MekanismLang.KEY_LEGS_MODE.getTranslationKey(), Keyboard.KEY_J, keybindCategory);
     public static KeyBinding feetModeSwitchKey = new KeyBinding(MekanismLang.KEY_FEET_MODE.getTranslationKey(), Keyboard.KEY_B, keybindCategory);
 
-    public static KeyBinding voiceKey = new KeyBinding("mekanism.key.voice", Keyboard.KEY_U, keybindCategory);
-
+    public static KeyBinding voiceKey = new KeyBinding(MekanismLang.KEY_VOICE.getTranslationKey(), Keyboard.KEY_U, keybindCategory);
     /**
      * 替换 为 detailsKey ？
      */
     public static KeyBinding sneakKey = Minecraft.getMinecraft().gameSettings.keyBindSneak;
     public static KeyBinding jumpKey = Minecraft.getMinecraft().gameSettings.keyBindJump;
 
-    public static KeyBinding hudKey = new KeyBinding("mekanism.key.enableHUD", Keyboard.KEY_H, keybindCategory);
+    public static KeyBinding hudKey = new KeyBinding(MekanismLang.KEY_HUD.getTranslationKey(), Keyboard.KEY_H, keybindCategory);
 
     public static KeyBinding boostKey = new KeyBinding(MekanismLang.KEY_BOOST.getTranslationKey(), Keyboard.KEY_N, keybindCategory);
     public static KeyBinding moduleTweakerKey = new KeyBinding(MekanismLang.KEY_MODULE_TWEAKER.getTranslationKey(), Keyboard.KEY_BACKSLASH, keybindCategory);
-    public static KeyBinding ModuleRadiationShielding = new KeyBinding("ModuleRadiationShielding", Keyboard.KEY_0, keybindCategory);
 
     private static Builder BINDINGS = new Builder()
             .addBinding(handModeSwitchKey, false)
@@ -60,8 +58,7 @@ public class MekanismKeyHandler extends MekKeyHandler {
             .addBinding(voiceKey, true)
             .addBinding(hudKey, false)
             .addBinding(boostKey, false)
-            .addBinding(moduleTweakerKey, false)
-            .addBinding(ModuleRadiationShielding, false);
+            .addBinding(moduleTweakerKey, false);
 
     public MekanismKeyHandler() {
         super(BINDINGS);
@@ -79,7 +76,6 @@ public class MekanismKeyHandler extends MekKeyHandler {
         ClientRegistry.registerKeyBinding(hudKey);
         ClientRegistry.registerKeyBinding(boostKey);
         ClientRegistry.registerKeyBinding(moduleTweakerKey);
-        ClientRegistry.registerKeyBinding(ModuleRadiationShielding);
         MinecraftForge.EVENT_BUS.register(this);
     }
 

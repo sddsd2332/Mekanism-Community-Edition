@@ -54,7 +54,7 @@ public class ModuleJetpackUnit implements ICustomModule<ModuleJetpackUnit> {
         if (currentMode != newMode) {
             jetpackMode.set(newMode);
             if (displayChangeMessage) {
-                module.displayModeChange(player, MekanismLang.MODULE_JETPACK_MODE.translate(), newMode);
+                module.displayModeChange(player, MekanismLang.MODULE_JETPACK_MODE.getTranslationKey(), newMode);
             }
         }
     }

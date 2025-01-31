@@ -6,12 +6,14 @@ import mekanism.api.EnumColor;
 import mekanism.api.energy.IEnergizedItem;
 import mekanism.api.gear.ICustomModule;
 import mekanism.api.gear.IModule;
+import mekanism.api.gear.ModuleData;
 import mekanism.client.MekKeyHandler;
 import mekanism.client.MekanismKeyHandler;
 import mekanism.common.MekanismModules;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.content.gear.IModuleContainerItem;
 import mekanism.common.content.gear.Module;
+import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.content.gear.mekatool.ModuleAttackAmplificationUnit;
 import mekanism.common.content.gear.mekatool.ModuleExcavationEscalationUnit;
 import mekanism.common.content.gear.mekatool.ModuleTeleportationUnit;
@@ -24,6 +26,7 @@ import net.minecraft.block.BlockTripWire;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -58,6 +61,26 @@ public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem,
         ImmutableMultimap.Builder<String, AttributeModifier> builder = ImmutableMultimap.builder();
         builder.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", -2.4D, 0));
         this.attributes = builder.build();
+    }
+
+    @Override
+    public void getSubItems(@Nonnull CreativeTabs tabs, @Nonnull NonNullList<ItemStack> list) {
+        if (!isInCreativeTab(tabs)) {
+            return;
+        }
+        ItemStack discharged = new ItemStack(this);
+        list.add(discharged);
+        ItemStack charged = new ItemStack(this);
+        setEnergy(charged, ((IEnergizedItem) charged.getItem()).getMaxEnergy(charged));
+        list.add(charged);
+        ItemStack FullStack = new ItemStack(this);
+        for (ModuleData<?> module : ModuleHelper.get().getAll()) {
+            if (ModuleHelper.get().getSupported(FullStack).contains(module)) {
+                setModule(FullStack, module);
+            }
+        }
+        setEnergy(FullStack, ((IEnergizedItem) FullStack.getItem()).getMaxEnergy(FullStack));
+        list.add(FullStack);
     }
 
 

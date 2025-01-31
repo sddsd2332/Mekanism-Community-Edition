@@ -1,20 +1,17 @@
 package mekanism.common.content.gear;
 
 import mekanism.api.EnumColor;
-import mekanism.api.MekanismAPI;
 import mekanism.api.NBTConstants;
 import mekanism.api.gear.*;
-import mekanism.api.text.TextComponentGroup;
-import mekanism.common.MekanismLang;
 import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.util.ItemDataUtils;
+import mekanism.common.util.LangUtils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants.NBT;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,10 +39,9 @@ public interface IModuleContainerItem extends IItemHUDProvider {
         for (Module<?> module : getModules(stack)) {
             ModuleData<?> data = module.getData();
             if (module.getInstalledCount() > 1) {
-                ITextComponent amount = MekanismLang.GENERIC_FRACTION.translate(module.getInstalledCount(), data.getMaxStackSize());
-                tooltip.add(MekanismLang.GENERIC_WITH_PARENTHESIS.translateColored(EnumColor.GREY, data, amount).getFormattedText());
+                tooltip.add(EnumColor.GREY + LangUtils.localize(data.getTranslationKey()) + " " + "(" + module.getInstalledCount() + "/" + data.getMaxStackSize() + ")");
             } else {
-                tooltip.add(new TextComponentGroup(EnumColor.GREY.textFormatting).translation(data.getTranslationKey()).getFormattedText());
+                tooltip.add(EnumColor.GREY + LangUtils.localize(data.getTranslationKey()));
             }
         }
     }

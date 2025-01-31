@@ -36,6 +36,6 @@ public class ModuleVisionEnhancementUnit implements ICustomModule<ModuleVisionEn
 
     @Override
     public void changeMode(IModule<ModuleVisionEnhancementUnit> module, EntityPlayer player, ItemStack stack, int shift, boolean displayChangeMessage) {
-        module.toggleEnabled(player, MekanismLang.MODULE_VISION_ENHANCEMENT.translate());
+        module.toggleEnabled(player, MekanismLang.MODULE_VISION_ENHANCEMENT.getTranslationKey());
     }
 }

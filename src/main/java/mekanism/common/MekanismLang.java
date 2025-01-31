@@ -98,6 +98,7 @@ public enum MekanismLang implements ILangEntry {
     KEY_MODULE_TWEAKER("key", "module_tweaker"),
     KEY_BOOST("key", "key_boost"),
     KEY_HUD("key", "key_hud"),
+    KEY_VOICE("key", "voice"),
     //Holiday
     HOLIDAY_BORDER("holiday", "border"),
     HOLIDAY_SIGNATURE("holiday", "signature"),

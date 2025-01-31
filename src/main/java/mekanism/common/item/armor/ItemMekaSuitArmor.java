@@ -624,4 +624,9 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
             setEnergy(stack, energy);
         }
     }
+
+    @Override
+    public String getItemStackDisplayName(@Nonnull ItemStack itemstack) {
+        return EnumRarity.EPIC.getColor() + super.getItemStackDisplayName(itemstack);
+    }
 }

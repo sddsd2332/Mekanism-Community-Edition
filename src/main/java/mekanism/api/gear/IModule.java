@@ -64,7 +64,7 @@ public interface IModule<MODULE extends ICustomModule<MODULE>> {
      * @param modeName Name of the mode being changed.
      * @param mode     New mode value.
      */
-    void displayModeChange(EntityPlayer player, ITextComponent modeName, IHasTextComponent mode);
+    void displayModeChange(EntityPlayer player, String modeName, IHasTextComponent mode);
 
     /**
      * Helper to toggle the enabled state of this module and send a message saying the given module was enabled or disabled.
@@ -72,7 +72,7 @@ public interface IModule<MODULE extends ICustomModule<MODULE>> {
      * @param player   Player to send the message to.
      * @param modeName Text to display that was either enabled or disabled.
      */
-    void toggleEnabled(EntityPlayer player, ITextComponent modeName);
+    void toggleEnabled(EntityPlayer player, String modeName);
 
     /**
      * Gets the item this module is installed on.

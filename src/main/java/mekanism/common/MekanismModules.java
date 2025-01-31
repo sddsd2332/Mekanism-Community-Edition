@@ -4,7 +4,6 @@ import mekanism.api.gear.ModuleData;
 import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.content.gear.mekasuit.*;
 import mekanism.common.content.gear.mekatool.*;
-import mekanism.common.content.gear.shared.ModuleColorModulationUnit;
 import mekanism.common.content.gear.shared.ModuleEnergyUnit;
 import mekanism.common.content.gear.shared.ModuleRadiationShieldingUnit;
 import net.minecraft.init.Enchantments;
@@ -16,13 +15,12 @@ public class MekanismModules {
     public static final ModuleData<ModuleEnergyUnit> ENERGY_UNIT = ModuleHelper.register("energy_unit", ModuleEnergyUnit::new, builder -> builder.maxStackSize(8).rarity(EnumRarity.UNCOMMON).noDisable());
 
     //Shared Armor
-    public static final ModuleData<ModuleColorModulationUnit> COLOR_MODULATION_UNIT = ModuleHelper.register("color_modulation_unit", ModuleColorModulationUnit::new, builder -> builder.rarity(EnumRarity.UNCOMMON).noDisable());
+    // public static final ModuleData<ModuleColorModulationUnit> COLOR_MODULATION_UNIT = ModuleHelper.register("color_modulation_unit", ModuleColorModulationUnit::new, builder -> builder.rarity(EnumRarity.UNCOMMON).noDisable());
     public static final ModuleData<?> LASER_DISSIPATION_UNIT = ModuleHelper.registerMarker("laser_dissipation_unit", builder -> builder.rarity(EnumRarity.UNCOMMON));
     public static final ModuleData<ModuleRadiationShieldingUnit> RADIATION_SHIELDING_UNIT = ModuleHelper.register("radiation_shielding_unit", ModuleRadiationShieldingUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.UNCOMMON));
     public static final ModuleData<?> ENERGY_SHIELD_UNIT = ModuleHelper.registerMarker("energy_shield_unit", builder -> builder.maxStackSize(10).rarity(EnumRarity.RARE));
 
     //Meka-Tool
-
     public static final ModuleData<ModuleExcavationEscalationUnit> EXCAVATION_ESCALATION_UNIT = ModuleHelper.register("excavation_escalation_unit", ModuleExcavationEscalationUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.UNCOMMON).handlesModeChange().rendersHUD());
     public static final ModuleData<ModuleAttackAmplificationUnit> ATTACK_AMPLIFICATION_UNIT = ModuleHelper.register("attack_amplification_unit", ModuleAttackAmplificationUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.UNCOMMON).rendersHUD());
     public static final ModuleData<ModuleFarmingUnit> FARMING_UNIT = ModuleHelper.register("farming_unit", ModuleFarmingUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.UNCOMMON).exclusive(ModuleData.ExclusiveFlag.INTERACT_BLOCK));

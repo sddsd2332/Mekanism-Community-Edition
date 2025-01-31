@@ -1,3 +1,4 @@
+/*
 package mekanism.api.gear.config;
 
 import mekanism.api.annotations.NothingNullByDefault;
@@ -7,6 +8,7 @@ import mekanism.api.annotations.NothingNullByDefault;
  *
  * @since 10.3.3
  */
+/*
 @NothingNullByDefault
 public final class ModuleColorData extends ModuleIntegerData {
 
@@ -15,6 +17,7 @@ public final class ModuleColorData extends ModuleIntegerData {
      *
      * @implNote Color format is ARGB.
      */
+/*
     public static ModuleColorData argb() {
         return argb(0xFFFFFFFF);
     }
@@ -25,6 +28,7 @@ public final class ModuleColorData extends ModuleIntegerData {
      * @param defaultColor Default color.
      * @implNote Color format is ARGB.
      */
+/*
     public static ModuleColorData argb(int defaultColor) {
         return new ModuleColorData(defaultColor, true);
     }
@@ -34,6 +38,7 @@ public final class ModuleColorData extends ModuleIntegerData {
      *
      * @implNote Color format is ARGB with the alpha component being locked to {@code 0xFF}.
      */
+/*
     public static ModuleColorData rgb() {
         return rgb(0xFFFFFFFF);
     }
@@ -44,6 +49,7 @@ public final class ModuleColorData extends ModuleIntegerData {
      * @param defaultColor Default color.
      * @implNote Color format is ARGB with the alpha component being locked to {@code 0xFF}.
      */
+/*
     public static ModuleColorData rgb(int defaultColor) {
         return new ModuleColorData(defaultColor, false);
     }
@@ -56,6 +62,7 @@ public final class ModuleColorData extends ModuleIntegerData {
      * @param defaultColor Default value.
      * @param handlesAlpha Whether this data supports changing the alpha component.
      */
+/*
     private ModuleColorData(int defaultColor, boolean handlesAlpha) {
         super(handlesAlpha ? defaultColor : defaultColor | 0xFF000000);
         this.handlesAlpha = handlesAlpha;
@@ -72,7 +79,9 @@ public final class ModuleColorData extends ModuleIntegerData {
      *
      * @return {@code true} if this data can handle alpha.
      */
+/*
     public boolean handlesAlpha() {
         return handlesAlpha;
     }
 }
+ */

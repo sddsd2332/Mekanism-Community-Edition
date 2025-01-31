@@ -123,7 +123,6 @@ public class ItemMekaSuitBodyArmor extends ItemMekaSuitArmor implements IGasItem
         } else {
             armorModel.bipedBody.childModels.remove(elytra.elytra);
         }
-
         return armorModel;
     }
 

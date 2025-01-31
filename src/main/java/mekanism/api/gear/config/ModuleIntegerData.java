@@ -1,3 +1,4 @@
+/*
 package mekanism.api.gear.config;
 
 import java.util.Objects;
@@ -10,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
  * @apiNote Currently the only creatable version of this is via {@link ModuleConfigData} as there is currently no generic support for integers in the module screen.
  * @since 10.3.3
  */
+/*
 @NothingNullByDefault
 public  class ModuleIntegerData implements ModuleConfigData<Integer>  {
 
@@ -20,6 +22,7 @@ public  class ModuleIntegerData implements ModuleConfigData<Integer>  {
      *
      * @param def Default value.
      */
+/*
     protected ModuleIntegerData(int def) {
         value = def;
     }
@@ -31,6 +34,7 @@ public  class ModuleIntegerData implements ModuleConfigData<Integer>  {
      *
      * @return Sanitized value.
      */
+    /*
     protected int sanitizeValue(int value) {
         return value;
     }
@@ -60,3 +64,4 @@ public  class ModuleIntegerData implements ModuleConfigData<Integer>  {
         tag.setInteger(name, value);
     }
 }
+*/

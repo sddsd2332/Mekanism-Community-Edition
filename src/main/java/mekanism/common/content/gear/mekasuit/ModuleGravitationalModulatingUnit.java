@@ -47,7 +47,7 @@ public class ModuleGravitationalModulatingUnit implements ICustomModule<ModuleGr
 
     @Override
     public void changeMode(IModule<ModuleGravitationalModulatingUnit> module, EntityPlayer player, ItemStack stack, int shift, boolean displayChangeMessage) {
-        module.toggleEnabled(player, MekanismLang.MODULE_GRAVITATIONAL_MODULATION.translate());
+        module.toggleEnabled(player, MekanismLang.MODULE_GRAVITATIONAL_MODULATION.getTranslationKey());
     }
 
     public float getBoost() {

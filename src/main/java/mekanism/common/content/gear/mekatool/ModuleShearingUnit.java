@@ -50,8 +50,7 @@ public class ModuleShearingUnit implements ICustomModule<ModuleShearingUnit> {
     public boolean onInteract(IModule<ModuleShearingUnit> module, EntityPlayer player, EntityLivingBase entity, EnumHand hand) {
         if (entity instanceof IShearable) {
             IEnergizedItem energyContainer = module.getEnergyContainer();
-            if (energyContainer != null && energyContainer.getEnergy(module.getContainer()) < (MekanismConfig.current().meka.mekaToolEnergyUsageShearEntity.val()) &&
-                    shearEntity(energyContainer, entity, module.getContainer(), entity.world, entity.getPosition())) {
+            if (energyContainer != null && energyContainer.getEnergy(module.getContainer()) > (MekanismConfig.current().meka.mekaToolEnergyUsageShearEntity.val()) && shearEntity(energyContainer, entity, module.getContainer(), entity.world, entity.getPosition())) {
                 return true;
             }
         }
@@ -155,7 +154,7 @@ public class ModuleShearingUnit implements ICustomModule<ModuleShearingUnit> {
 
     //Modified copy of BeehiveDispenseBehavior#tryShearLivingEntity to work with IShearable
     private boolean tryShearLivingEntity(IEnergizedItem energyContainer, World world, BlockPos pos, ItemStack stack) {
-        if (energyContainer.getEnergy(stack) < (MekanismConfig.current().meka.mekaToolEnergyUsageShearEntity.val())) {
+        if (energyContainer.getEnergy(stack) > (MekanismConfig.current().meka.mekaToolEnergyUsageShearEntity.val())) {
             for (EntityLivingBase entity : world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(pos), entity -> (entity instanceof EntityPlayer player && !player.isSpectator()) && entity instanceof IShearable)) {
                 if (shearEntity(energyContainer, entity, stack, world, pos)) {
                     return true;

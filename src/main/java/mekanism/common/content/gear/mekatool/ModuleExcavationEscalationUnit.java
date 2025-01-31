@@ -37,7 +37,7 @@ public class ModuleExcavationEscalationUnit implements ICustomModule<ModuleExcav
             if (excavationMode.get() != newMode) {
                 excavationMode.set(newMode);
                 if (displayChangeMessage) {
-                    module.displayModeChange(player, MekanismLang.MODULE_EFFICIENCY.translate(), newMode);
+                    module.displayModeChange(player, MekanismLang.MODULE_EFFICIENCY.getTranslationKey(), newMode);
                 }
             }
         }
@@ -46,7 +46,7 @@ public class ModuleExcavationEscalationUnit implements ICustomModule<ModuleExcav
     @Override
     public void addHUDStrings(IModule<ModuleExcavationEscalationUnit> module, EntityPlayer player, Consumer<String> hudStringAdder) {
         if (module.isEnabled()) {
-            hudStringAdder.accept(MekanismLang.DISASSEMBLER_EFFICIENCY.translateColored(EnumColor.DARK_GREY, EnumColor.INDIGO, excavationMode.get().getEfficiency()).getFormattedText());
+            hudStringAdder.accept(MekanismLang.DISASSEMBLER_EFFICIENCY.translateColored(EnumColor.DARK_GREY).getFormattedText() + " " + EnumColor.INDIGO + excavationMode.get().getEfficiency());
         }
     }
 

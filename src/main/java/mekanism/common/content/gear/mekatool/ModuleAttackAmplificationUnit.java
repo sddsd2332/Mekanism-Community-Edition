@@ -32,7 +32,7 @@ public class ModuleAttackAmplificationUnit implements ICustomModule<ModuleAttack
     @Override
     public void addHUDStrings(IModule<ModuleAttackAmplificationUnit> module, EntityPlayer player, Consumer<String> hudStringAdder) {
         if (module.isEnabled()) {
-            hudStringAdder.accept(MekanismLang.MODULE_DAMAGE.translateColored(EnumColor.DARK_GREY, EnumColor.INDIGO, attackDamage.get().getDamage()).getFormattedText());
+            hudStringAdder.accept(MekanismLang.MODULE_DAMAGE.translateColored(EnumColor.DARK_GREY).getFormattedText() + " " + EnumColor.INDIGO + attackDamage.get().getDamage());
         }
     }
 

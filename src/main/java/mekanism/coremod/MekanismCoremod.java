@@ -15,9 +15,7 @@ public class MekanismCoremod implements IFMLLoadingPlugin {
     public static boolean runtimeDeobfEnabled = false;
 
     private static final String[] transformers = {
-            "mekanism.coremod.KeybindingMigrationHelper",
             "mekanism.coremod.MekanismCoreTransformer"
-
     };
 
     @Override

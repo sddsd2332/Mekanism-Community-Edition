@@ -18,6 +18,6 @@ public class ModuleElytraUnit implements ICustomModule<ModuleElytraUnit> {
 
     @Override
     public void changeMode(IModule<ModuleElytraUnit> module, EntityPlayer player, ItemStack stack, int shift, boolean displayChangeMessage) {
-        module.toggleEnabled(player, new TextComponentGroup().string(MekanismModules.ELYTRA_UNIT.getTranslationKey()));
+        module.toggleEnabled(player, MekanismModules.ELYTRA_UNIT.getTranslationKey());
     }
 }

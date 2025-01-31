@@ -298,24 +298,23 @@ public class ClientProxy extends CommonProxy {
 
 
         registerItemRender(MekanismItems.MODULE_ENERGY);
-        registerItemRender(MekanismItems.MODULE_COLOR_MODULATION);
+        // registerItemRender(MekanismItems.MODULE_COLOR_MODULATION);
         registerItemRender(MekanismItems.MODULE_LASER_DISSIPATION);
         registerItemRender(MekanismItems.MODULE_RADIATION_SHIELDING);
-        if (Mekanism.hooks.DraconicEvolution){
+        if (Mekanism.hooks.DraconicEvolution) {
             registerItemRender(MekanismItems.MODULE_ENERGY_SHIELD);
         }
-        /*
+
         registerItemRender(MekanismItems.MODULE_EXCAVATION_ESCALATION);
         registerItemRender(MekanismItems.MODULE_ATTACK_AMPLIFICATION);
         registerItemRender(MekanismItems.MODULE_FARMING);
         registerItemRender(MekanismItems.MODULE_SHEARING);
         registerItemRender(MekanismItems.MODULE_SILK_TOUCH);
-        registerItemRender(MekanismItems.MODULE_SOLAR_RECHARGING);
         registerItemRender(MekanismItems.MODULE_FORTUNE);
-        registerItemRender(MekanismItems.MODULE_BLASTING);
-        registerItemRender(MekanismItems.MODULE_VEIN_MINING);
+        //registerItemRender(MekanismItems.MODULE_BLASTING);
+        // registerItemRender(MekanismItems.MODULE_VEIN_MINING);
         registerItemRender(MekanismItems.MODULE_TELEPORTATION);
-        */
+
         registerItemRender(MekanismItems.MODULE_ELECTROLYTIC_BREATHING);
         registerItemRender(MekanismItems.MODULE_INHALATION_PURIFICATION);
         registerItemRender(MekanismItems.MODULE_VISION_ENHANCEMENT);
@@ -329,11 +328,11 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.MODULE_GYROSCOPIC_STABILIZATION);
         registerItemRender(MekanismItems.MODULE_HYDROSTATIC_REPULSOR);
         registerItemRender(MekanismItems.MODULE_LOCOMOTIVE_BOOSTING);
-        //registerItemRender(MekanismItems.MODULE_MOTORIZED_SERVO);
+        registerItemRender(MekanismItems.MODULE_MOTORIZED_SERVO);
         registerItemRender(MekanismItems.MODULE_HYDRAULIC_PROPULSION);
-        //registerItemRender(MekanismItems.MODULE_MAGNETIC_ATTRACTION);
+        registerItemRender(MekanismItems.MODULE_MAGNETIC_ATTRACTION);
         registerItemRender(MekanismItems.MODULE_FROST_WALKER);
-        if (Mekanism.hooks.MekanismMixinHelp){
+        if (Mekanism.hooks.MekanismMixinHelp) {
             registerItemRender(MekanismItems.MODULE_ELYTRA);
             registerItemRender(MekanismItems.HDPE_REINFORCED_ELYTRA);
         }
@@ -368,6 +367,7 @@ public class ClientProxy extends CommonProxy {
         Item.getItemFromBlock(MekanismBlocks.MachineBlock4).setTileEntityItemStackRenderer(new RenderMachineItem());
         MekanismItems.ArmoredFreeRunners.setTileEntityItemStackRenderer(new RenderArmoredFreeRunners());
         MekanismItems.MekTool.setTileEntityItemStackRenderer(new RenderMekTool());
+        MekanismItems.MEKA_TOOL.setTileEntityItemStackRenderer(new RenderMekTool());
     }
 
     private ModelResourceLocation getInventoryMRL(String type) {
@@ -913,6 +913,7 @@ public class ClientProxy extends CommonProxy {
         HolidayManager.init();
     }
 
+
     @Override
     public void onConfigSync(boolean fromPacket) {
         super.onConfigSync(fromPacket);
@@ -972,6 +973,8 @@ public class ClientProxy extends CommonProxy {
         modelRegistry.putObject(ArmorFreeRunnerRL, RenderArmoredFreeRunners.model = new ItemLayerWrapper(modelRegistry.getObject(FreeRunnerRL)));
         ModelResourceLocation MekToolRL = getInventoryMRL("MekTool");
         modelRegistry.putObject(MekToolRL, RenderMekTool.model = new ItemLayerWrapper(modelRegistry.getObject(MekToolRL)));
+        ModelResourceLocation MekaToolRL = getInventoryMRL("meka_tool");
+        modelRegistry.putObject(MekaToolRL, RenderMekTool.model = new ItemLayerWrapper(modelRegistry.getObject(MekaToolRL)));
         /**
          * ADD END
          */

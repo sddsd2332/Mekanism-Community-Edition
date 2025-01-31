@@ -35,7 +35,7 @@ public class ModuleLocomotiveBoostingUnit implements ICustomModule<ModuleLocomot
         if (currentMode != newMode) {
             sprintBoost.set(newMode);
             if (displayChangeMessage) {
-                module.displayModeChange(player, MekanismLang.MODULE_SPRINT_BOOST.translate(), newMode);
+                module.displayModeChange(player, MekanismLang.MODULE_SPRINT_BOOST.getTranslationKey(), newMode);
             }
         }
     }

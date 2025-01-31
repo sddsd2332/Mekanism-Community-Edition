@@ -59,14 +59,14 @@ public class ItemModule extends Item implements IModuleItem {
             if (!conflicting.isEmpty()) {
                 tooltip.add(MekanismLang.MODULE_CONFLICTING.translateColored(EnumColor.RED).getFormattedText());
                 for (ModuleData<?> module : conflicting) {
-                    tooltip.add(MekanismLang.GENERIC_LIST.translate().getFormattedText() + module.getTranslationKey());
+                    tooltip.add(MekanismLang.GENERIC_LIST.translate().getFormattedText() + " " + module.getModuleData().getRarity().getColor() + LangUtils.localize(module.getTranslationKey()));
                 }
             }
         } else {
             ModuleData<?> moduleData = getModuleData();
             tooltip.add(LangUtils.localize(moduleData.getDescriptionTranslationKey()));
-            tooltip.add(MekanismLang.MODULE_STACKABLE.translateColored(EnumColor.GREY).getFormattedText() + EnumColor.AQUA + moduleData.getMaxStackSize());
-            tooltip.add(LangUtils.localize("tooltip.hold") + " " + EnumColor.INDIGO + GameSettings.getKeyDisplayString(MekanismKeyHandler.sneakKey.getKeyCode()) + EnumColor.GREY + " " + LangUtils.localize("tooltip.forDetails") + ".");
+            tooltip.add(MekanismLang.MODULE_STACKABLE.translateColored(EnumColor.GREY).getFormattedText() + " " + EnumColor.AQUA + moduleData.getMaxStackSize());
+            tooltip.add(EnumColor.GREY + LangUtils.localize("tooltip.hold") + " " + EnumColor.INDIGO + GameSettings.getKeyDisplayString(MekanismKeyHandler.sneakKey.getKeyCode()) + EnumColor.GREY + " " + LangUtils.localize("tooltip.hold_for_supported_items") + ".");
         }
     }
 

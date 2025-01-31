@@ -24,6 +24,7 @@ import mekanism.common.config.MekanismConfig;
 import mekanism.common.content.boiler.SynchronizedBoilerData;
 import mekanism.common.content.entangloporter.InventoryFrequency;
 import mekanism.common.content.gear.MekaSuitDispenseBehavior;
+import mekanism.common.content.gear.ModuleDispenseBehavior;
 import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.content.matrix.SynchronizedMatrixData;
 import mekanism.common.content.tank.SynchronizedTankData;
@@ -65,7 +66,6 @@ import mekanism.mekanism.Tags;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.dispenser.IBehaviorDispenseItem;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -101,7 +101,6 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -494,7 +493,7 @@ public class Mekanism {
         //Register with ForgeChunkManager
         ForgeChunkManager.setForcedChunkLoadingCallback(this, new ChunkManager());
 
-        //   registerDispenseBehavior(new ModuleDispenseBehavior(), MekanismItems.MekTool);
+           registerDispenseBehavior(new ModuleDispenseBehavior(), MekanismItems.MEKA_TOOL);
         registerDispenseBehavior(new MekaSuitDispenseBehavior(), MekanismItems.MEKASUIT_HELMET, MekanismItems.MEKASUIT_BODYARMOR, MekanismItems.MEKASUIT_PANTS, MekanismItems.MEKASUIT_BOOTS);
 
         //Register to receive subscribed events
@@ -550,7 +549,7 @@ public class Mekanism {
     }
 
     private void imcQueue() {
-        Item[] addModulesToAll = {MekanismItems.MEKASUIT_HELMET, MekanismItems.MEKASUIT_BODYARMOR, MekanismItems.MEKASUIT_PANTS, MekanismItems.MEKASUIT_BOOTS/*, MekanismItems.MekTool*/};
+        Item[] addModulesToAll = {MekanismItems.MEKASUIT_HELMET, MekanismItems.MEKASUIT_BODYARMOR, MekanismItems.MEKASUIT_PANTS, MekanismItems.MEKASUIT_BOOTS , MekanismItems.MEKA_TOOL};
         Item[] addMekaSuitModules = {MekanismItems.MEKASUIT_HELMET, MekanismItems.MEKASUIT_BODYARMOR, MekanismItems.MEKASUIT_PANTS, MekanismItems.MEKASUIT_BOOTS};
 
         for (Item stack : addModulesToAll) {
@@ -558,12 +557,12 @@ public class Mekanism {
         }
 
         for (Item stack : addMekaSuitModules) {
-            ModuleHelper.get().setSupported(stack, MekanismModules.COLOR_MODULATION_UNIT, MekanismModules.LASER_DISSIPATION_UNIT, MekanismModules.RADIATION_SHIELDING_UNIT);
+            ModuleHelper.get().setSupported(stack, /*MekanismModules.COLOR_MODULATION_UNIT,*/ MekanismModules.LASER_DISSIPATION_UNIT, MekanismModules.RADIATION_SHIELDING_UNIT);
             if (Mekanism.hooks.DraconicEvolution){
                 ModuleHelper.get().setSupported(stack, MekanismModules.ENERGY_SHIELD_UNIT);
             }
         }
-        // ModuleHelper.get().setSupported(MekanismItems.MekTool, MekanismModules.ATTACK_AMPLIFICATION_UNIT, MekanismModules.SILK_TOUCH_UNIT, MekanismModules.FORTUNE_UNIT, MekanismModules.BLASTING_UNIT, MekanismModules.VEIN_MINING_UNIT, MekanismModules.FARMING_UNIT, MekanismModules.SHEARING_UNIT, MekanismModules.TELEPORTATION_UNIT, MekanismModules.EXCAVATION_ESCALATION_UNIT);
+        ModuleHelper.get().setSupported(MekanismItems.MEKA_TOOL, MekanismModules.ATTACK_AMPLIFICATION_UNIT, MekanismModules.SILK_TOUCH_UNIT, MekanismModules.FORTUNE_UNIT,/* MekanismModules.BLASTING_UNIT, MekanismModules.VEIN_MINING_UNIT,*/MekanismModules.FARMING_UNIT, MekanismModules.SHEARING_UNIT, MekanismModules.TELEPORTATION_UNIT, MekanismModules.EXCAVATION_ESCALATION_UNIT);
 
         ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_HELMET, MekanismModules.ELECTROLYTIC_BREATHING_UNIT, MekanismModules.INHALATION_PURIFICATION_UNIT, MekanismModules.VISION_ENHANCEMENT_UNIT, MekanismModules.NUTRITIONAL_INJECTION_UNIT);
 

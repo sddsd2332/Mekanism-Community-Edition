@@ -11,6 +11,7 @@ import mekanism.api.EnumColor;
 import mekanism.api.IMekWrench;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
+import mekanism.api.text.TextComponentGroup;
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.common.*;
 import mekanism.common.base.*;
@@ -58,6 +59,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.*;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
@@ -1170,14 +1172,6 @@ public final class MekanismUtils {
         public String getPrefix() {
             return prefix + "/";
         }
-    }
-
-    public static ITextComponent logFormat(Object message) {
-        return logFormat(EnumColor.GREY, message);
-    }
-
-    public static ITextComponent logFormat(EnumColor messageColor, Object message) {
-        return MekanismLang.LOG_FORMAT.translateColored(EnumColor.DARK_BLUE, MekanismLang.MEKANISM, messageColor, message);
     }
 
 

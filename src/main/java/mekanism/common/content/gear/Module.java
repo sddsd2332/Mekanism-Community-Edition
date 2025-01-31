@@ -14,6 +14,8 @@ import mekanism.api.gear.config.ModuleConfigData;
 import mekanism.api.gear.config.ModuleConfigItemCreator;
 import mekanism.api.text.IHasTextComponent;
 import mekanism.api.text.ILangEntry;
+import mekanism.api.text.TextComponentGroup;
+import mekanism.common.Mekanism;
 import mekanism.common.MekanismLang;
 import mekanism.common.content.gear.ModuleConfigItem.DisableableModuleConfigItem;
 import mekanism.common.util.ItemDataUtils;
@@ -23,6 +25,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants.NBT;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +35,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -102,7 +104,7 @@ public final class Module<MODULE extends ICustomModule<MODULE>> implements IModu
             handleModeChange = addConfigItem(new ModuleConfigItem<>(this, "handleModeChange", MekanismLang.MODULE_HANDLE_MODE_CHANGE,
                     new ModuleBooleanData(!data.isModeChangeDisabledByDefault())) {
                 @Override
-                protected void checkValidity(@NotNull Boolean value, @org.jetbrains.annotations.Nullable Runnable callback) {
+                protected void checkValidity(@NotNull Boolean value, @Nullable Runnable callback) {
                     //If the mode change is being enabled, and we handle mode changes
                     if (value && handlesModeChange()) {
                         for (Module<?> m : ModuleHelper.get().loadAll(getContainer())) {
@@ -365,19 +367,19 @@ public final class Module<MODULE extends ICustomModule<MODULE>> implements IModu
     }
 
     @Override
-    public void displayModeChange(EntityPlayer player, ITextComponent modeName, IHasTextComponent mode) {
-        player.sendMessage(MekanismUtils.logFormat(MekanismLang.MODULE_MODE_CHANGE.translate(modeName, EnumColor.INDIGO, mode)));
+    public void displayModeChange(EntityPlayer player, String modeName, IHasTextComponent mode) {
+        player.sendMessage(new TextComponentGroup(EnumColor.GREY.textFormatting).string(Mekanism.LOG_TAG, TextFormatting.DARK_BLUE).string(" ").translation(modeName).translation(MekanismLang.MODULE_MODE_CHANGE.getTranslationKey()).string(mode.getTextComponent().getFormattedText(), EnumColor.INDIGO.textFormatting));
     }
 
     @Override
-    public void toggleEnabled(EntityPlayer player, ITextComponent modeName) {
+    public void toggleEnabled(EntityPlayer player, String modeName) {
         enabled.set(!isEnabled());
         ITextComponent message;
         if (isEnabled()) {
-            message = MekanismLang.GENERIC_STORED.translate(modeName, EnumColor.BRIGHT_GREEN, MekanismLang.MODULE_ENABLED_LOWER);
+            message = new TextComponentGroup().getString(modeName).translation(MekanismLang.GENERIC_STORED.getTranslationKey()).string(MekanismLang.MODULE_ENABLED_LOWER.getTranslationKey(), EnumColor.BRIGHT_GREEN.textFormatting);
         } else {
-            message = MekanismLang.GENERIC_STORED.translate(modeName, EnumColor.DARK_RED, MekanismLang.MODULE_DISABLED_LOWER);
+            message = new TextComponentGroup().getString(modeName).translation(MekanismLang.GENERIC_STORED.getTranslationKey()).string(MekanismLang.MODULE_DISABLED_LOWER.getTranslationKey(), EnumColor.DARK_RED.textFormatting);
         }
-        player.sendMessage(MekanismUtils.logFormat(message));
+        player.sendMessage(new TextComponentGroup(EnumColor.GREY.textFormatting).string(Mekanism.LOG_TAG, TextFormatting.DARK_BLUE).string(" ").appendSibling(message));
     }
 }
