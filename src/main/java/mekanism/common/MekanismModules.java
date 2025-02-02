@@ -31,13 +31,14 @@ public class MekanismModules {
     //public static final ModuleData<ModuleVeinMiningUnit> VEIN_MINING_UNIT = ModuleHelper.register("vein_mining_unit", ModuleVeinMiningUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.RARE).handlesModeChange().rendersHUD());
     public static final ModuleData<ModuleTeleportationUnit> TELEPORTATION_UNIT = ModuleHelper.register("teleportation_unit", ModuleTeleportationUnit::new, builder -> builder.rarity(EnumRarity.EPIC).exclusive(ModuleData.ExclusiveFlag.INTERACT_ANY));
 
-
     //Helmet
     public static final ModuleData<ModuleElectrolyticBreathingUnit> ELECTROLYTIC_BREATHING_UNIT = ModuleHelper.register("electrolytic_breathing_unit", ModuleElectrolyticBreathingUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.UNCOMMON));
     public static final ModuleData<ModuleInhalationPurificationUnit> INHALATION_PURIFICATION_UNIT = ModuleHelper.register("inhalation_purification_unit", ModuleInhalationPurificationUnit::new, builder -> builder.rarity(EnumRarity.RARE));
     public static final ModuleData<ModuleVisionEnhancementUnit> VISION_ENHANCEMENT_UNIT = ModuleHelper.register("vision_enhancement_unit", ModuleVisionEnhancementUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.RARE).handlesModeChange().rendersHUD().disabledByDefault());
     public static final ModuleData<ModuleNutritionalInjectionUnit> NUTRITIONAL_INJECTION_UNIT = ModuleHelper.register("nutritional_injection_unit", ModuleNutritionalInjectionUnit::new, builder -> builder.rarity(EnumRarity.RARE).rendersHUD());
     public static final ModuleData<ModuleSolarRechargingUnit> SOLAR_RECHARGING_UNIT = ModuleHelper.register("solar_recharging_unit", ModuleSolarRechargingUnit::new, builder -> builder.maxStackSize(8).rarity(EnumRarity.RARE));
+    public static final ModuleData<?> EMERGENCY_RESCUE_UNIT = ModuleHelper.registerMarker("emergency_rescue_unit", builder -> builder.maxStackSize(10).rarity(EnumRarity.EPIC));
+    public static final ModuleData<?> ADVANCED_INTERCEPTION_SYSTEM_UNIT = ModuleHelper.registerMarker("advanced_interception_system_unit", builder -> builder.rarity(EnumRarity.EPIC));
 
     //Chestplate
     public static final ModuleData<ModuleDosimeterUnit> DOSIMETER_UNIT = ModuleHelper.register("dosimeter_unit", ModuleDosimeterUnit::new, builder -> builder.rarity(EnumRarity.UNCOMMON).rendersHUD());
@@ -46,6 +47,7 @@ public class MekanismModules {
     public static final ModuleData<ModuleChargeDistributionUnit> CHARGE_DISTRIBUTION_UNIT = ModuleHelper.register("charge_distribution_unit", ModuleChargeDistributionUnit::new, builder -> builder.rarity(EnumRarity.RARE));
     public static final ModuleData<ModuleGravitationalModulatingUnit> GRAVITATIONAL_MODULATING_UNIT = ModuleHelper.register("gravitational_modulating_unit", ModuleGravitationalModulatingUnit::new, builder -> builder.rarity(EnumRarity.EPIC).handlesModeChange().rendersHUD().exclusive(ModuleData.ExclusiveFlag.OVERRIDE_JUMP));
     public static final ModuleData<ModuleElytraUnit> ELYTRA_UNIT = ModuleHelper.register("elytra_unit", ModuleElytraUnit::new, builder -> builder.rarity(EnumRarity.EPIC).handlesModeChange().modeChangeDisabledByDefault());
+    public static final ModuleData<ModuleHealthRegenerationUnit> HEALTH_REGENERATION_UNIT = ModuleHelper.register("health_regeneration_unit", ModuleHealthRegenerationUnit::new, builder -> builder.maxStackSize(10).rarity(EnumRarity.RARE));
 
     //Pants
     public static final ModuleData<ModuleLocomotiveBoostingUnit> LOCOMOTIVE_BOOSTING_UNIT = ModuleHelper.register("locomotive_boosting_unit", ModuleLocomotiveBoostingUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.RARE).handlesModeChange());

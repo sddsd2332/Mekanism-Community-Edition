@@ -5,6 +5,7 @@ import mekanism.client.gui.element.GuiModuleScreen;
 import mekanism.client.gui.element.GuiSlot;
 import mekanism.common.content.gear.Module;
 import mekanism.common.inventory.ModuleTweakerContainer;
+import mekanism.common.util.MekanismUtils;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -24,8 +25,8 @@ public class GuiModuleTweaker extends GuiMekanism {
         container = new ModuleTweakerContainer(inventory);
         ResourceLocation resource = getGuiLocation();
         addGuiElement(moduleScreen = new GuiModuleScreen(this, resource, 138, 20, () -> container.inventorySlots.get(selected).getSlotIndex()));
-       // addGuiElement(new GuiElementScreen(this, resource, 30, 136, 108, 18));
-
+        addGuiElement(new GuiElementScreen(this, getGuiLocation(), 30, 20, 108, 134));
+        // addGuiElement(new GuiElementScreen(this, resource, 30, 136, 108, 18));
         int size = container.inventorySlots.size();
         for (int i = 0; i < size; i++) {
             Slot slot = container.inventorySlots.get(i);
@@ -76,6 +77,14 @@ public class GuiModuleTweaker extends GuiMekanism {
             return ItemStack.EMPTY;
         }
         return container.inventorySlots.get(index).getStack();
+    }
+
+
+    @Override
+    protected void drawGuiContainerBackgroundLayer(int xAxis, int yAxis) {
+        super.drawGuiContainerBackgroundLayer(xAxis, yAxis);
+        mc.renderEngine.bindTexture(MekanismUtils.getResource(MekanismUtils.ResourceType.GUI_ELEMENT, "GuiScrollList.png"));
+        drawTexturedModalRect(guiLeft + 131, guiTop + 21, 31, 0, 6, 132);
     }
 }
 

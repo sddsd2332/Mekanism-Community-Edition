@@ -3,24 +3,28 @@ package mekanism.client.gui.element;
 import com.google.common.annotations.VisibleForTesting;
 import it.unimi.dsi.fastutil.ints.IntIterator;
 import mekanism.api.gas.GasStack;
+import mekanism.client.newgui.element.Widget;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.common.InfuseStorage;
+import mekanism.common.Mekanism;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldVertexBufferUploader;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.Predicate;
 
 
 @SideOnly(Side.CLIENT)
@@ -33,7 +37,65 @@ public class GuiUtils {
     }
 
     public static void renderBackgroundTexture(ResourceLocation resource, int texSideWidth, int texSideHeight, int left, int top, int width, int height, int textureWidth, int textureHeight) {
-        blitNineSlicedSized(resource, left, top, width, height, texSideWidth, texSideHeight, textureWidth, textureHeight, 0, 0, textureWidth, textureHeight);
+        // render as much side as we can, based on element dimensions
+        int sideWidth = Math.min(texSideWidth, width / 2);
+        int sideHeight = Math.min(texSideHeight, height / 2);
+
+        // Adjustment for small odd-height and odd-width GUIs
+        int leftWidth = sideWidth < texSideWidth ? sideWidth + (width % 2) : sideWidth;
+        int topHeight = sideHeight < texSideHeight ? sideHeight + (height % 2) : sideHeight;
+
+        int texCenterWidth = textureWidth - texSideWidth * 2, texCenterHeight = textureHeight - texSideHeight * 2;
+        int centerWidth = width - leftWidth - sideWidth, centerHeight = height - topHeight - sideHeight;
+
+        int leftEdgeEnd = left + leftWidth;
+        int rightEdgeStart = leftEdgeEnd + centerWidth;
+        int topEdgeEnd = top + topHeight;
+        int bottomEdgeStart = topEdgeEnd + centerHeight;
+        MekanismRenderer.bindTexture(resource);
+
+        //Top Left Corner
+        blit(left, top, 0, 0, leftWidth, topHeight, textureWidth, textureHeight);
+        //Bottom Left Corner
+        blit(left, bottomEdgeStart, 0, textureHeight - sideHeight, leftWidth, sideHeight, textureWidth, textureHeight);
+
+        //Middle
+        if (centerWidth > 0) {
+            //Top Middle
+            blitTiled( leftEdgeEnd, top, centerWidth, topHeight, texSideWidth, 0, texCenterWidth, texSideHeight, textureWidth, textureHeight);
+            if (centerHeight > 0) {
+                //Center
+                blitTiled( leftEdgeEnd, topEdgeEnd, centerWidth, centerHeight, texSideWidth, texSideHeight, texCenterWidth, texCenterHeight, textureWidth, textureHeight);
+            }
+            //Bottom Middle
+            blitTiled( leftEdgeEnd, bottomEdgeStart, centerWidth, sideHeight, texSideWidth, textureHeight - sideHeight, texCenterWidth, texSideHeight, textureWidth, textureHeight);
+        }
+
+        if (centerHeight > 0) {
+            //Left Middle
+            blitTiled( left, topEdgeEnd, leftWidth, centerHeight, 0, texSideHeight, texSideWidth, texCenterHeight, textureWidth, textureHeight);
+            //Right Middle
+            blitTiled( rightEdgeStart, topEdgeEnd, sideWidth, centerHeight, textureWidth - sideWidth, texSideHeight, texSideWidth, texCenterHeight, textureWidth, textureHeight);
+        }
+
+        //Top Right Corner
+        blit( rightEdgeStart, top, textureWidth - sideWidth, 0, sideWidth, topHeight, textureWidth, textureHeight);
+        //Bottom Right Corner
+        blit( rightEdgeStart, bottomEdgeStart, textureWidth - sideWidth, textureHeight - sideHeight, sideWidth, sideHeight, textureWidth, textureHeight);
+    }
+
+    public static void blitTiled(int x, int y, int width, int height, int texX, int texY, int texDrawWidth, int texDrawHeight, int textureWidth, int textureHeight) {
+        int xTiles = (int) Math.ceil((float) width / texDrawWidth), yTiles = (int) Math.ceil((float) height / texDrawHeight);
+
+        int drawWidth = width, drawHeight = height;
+        for (int tileX = 0; tileX < xTiles; tileX++) {
+            for (int tileY = 0; tileY < yTiles; tileY++) {
+                blit( x + texDrawWidth * tileX, y + texDrawHeight * tileY, texX, texY, Math.min(drawWidth, texDrawWidth), Math.min(drawHeight, texDrawHeight), textureWidth, textureHeight);
+                drawHeight -= texDrawHeight;
+            }
+            drawWidth -= texDrawWidth;
+            drawHeight = height;
+        }
     }
 
     public static void drawBarSprite(int xPos, int yPos, int sizeX, int sizeY, int displayInt, TextureAtlasSprite textureSprite, boolean vertical) {
@@ -434,5 +496,52 @@ public class GuiUtils {
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
     }
+
+    // reverse-order iteration over children w/ built-in GuiElement check, runs a basic anyMatch with checker
+    public static boolean checkChildren(List<? extends Widget> children, Predicate<mekanism.client.newgui.element.GuiElement> checker) {
+        for (int i = children.size() - 1; i >= 0; i--) {
+            Object obj = children.get(i);
+            if (obj instanceof mekanism.client.newgui.element.GuiElement element && checker.test(element)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void renderItem(RenderItem renderer, @Nonnull ItemStack stack, int xAxis, int yAxis, float scale, FontRenderer font, @Nullable String text, boolean overlay) {
+        if (!stack.isEmpty()) {
+            try {
+                GlStateManager.pushMatrix();
+                GlStateManager.enableDepth();
+                GlStateManager.enableLighting();
+                GlStateManager.enableColorMaterial();
+                GlStateManager.colorMaterial(1032, 5634);
+                if (scale != 1) {
+                    //Translate before scaling, and then set xAxis and yAxis to zero so that we don't translate a second time
+                    GlStateManager.translate(xAxis, yAxis, 0);
+                    GlStateManager.scale(scale, scale, scale);
+                    xAxis = 0;
+                    yAxis = 0;
+                }
+                //Apply our matrix stack to the render system and pass an unmodified one to the render methods
+                // Vanilla still renders the items using render system transformations so this is required to
+                // have things render in the correct order
+                GlStateManager.pushMatrix();
+               // GlStateManager.multMatrix(matrix.last().pose());
+                renderer.renderItemAndEffectIntoGUI(stack, xAxis, yAxis);
+                if (overlay) {
+                    renderer.renderItemOverlayIntoGUI(font, stack, xAxis, yAxis, text);
+                }
+                GlStateManager.popMatrix();
+                GlStateManager.disableLighting();
+                GlStateManager.disableColorMaterial();
+                GlStateManager.disableDepth();
+                GlStateManager.popMatrix();
+            } catch (Exception e) {
+                Mekanism.logger.error("Failed to render stack into gui: {}", stack, e);
+            }
+        }
+    }
+
 
 }

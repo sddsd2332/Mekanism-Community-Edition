@@ -70,7 +70,7 @@ public class TileEntityModificationStation extends TileEntityOperationalMachine 
         ItemStack stack = inventory.get(3);
         if (!stack.isEmpty()) {
             IModuleContainerItem container = (IModuleContainerItem) stack.getItem();
-            if (container.hasModule(stack, type) && player.inventory.add(1, new ItemStack(new ItemModule(type)))) {
+            if (container.hasModule(stack, type) && player.inventory.add(1, type.getStack())) {
                 container.removeModule(stack, type);
             }
         }

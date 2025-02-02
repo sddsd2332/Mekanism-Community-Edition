@@ -386,14 +386,6 @@ public final class MekanismUtils {
         return def * Math.pow(MekanismConfig.current().general.maxUpgradeMultiplier.val(), numUpgrades / (float) Upgrade.ENERGY.getMax());
     }
 
-    public static double getModuleMaxEnergy(ItemStack itemStack, double def) {
-        int module = UpgradeHelper.getUpgradeLevel(itemStack, moduleUpgrade.EnergyUnit);
-        if (module == 0) {
-            return def;
-        } else {
-            return def * Math.pow(2, module);
-        }
-    }
 
     /**
      * Better version of the World.getRedstonePowerFromNeighbors() method that doesn't load chunks.
@@ -646,6 +638,10 @@ public final class MekanismUtils {
         player.openGui(Mekanism.instance, 1, player.world, entity.getEntityId(), guiID, 0);
     }
 
+    public static ResourceLocation getResource(ResourceType type, String name) {
+        return getResource(Mekanism.MODID, type,name);
+    }
+
     /**
      * Gets a ResourceLocation with a defined resource type and name.
      *
@@ -653,8 +649,8 @@ public final class MekanismUtils {
      * @param name - simple name of file to retrieve as a ResourceLocation
      * @return the corresponding ResourceLocation
      */
-    public static ResourceLocation getResource(ResourceType type, String name) {
-        return new ResourceLocation(Mekanism.MODID, type.getPrefix() + name);
+    public static ResourceLocation getResource(String modid,ResourceType type, String name) {
+        return new ResourceLocation(modid, type.getPrefix() + name);
     }
 
     /**
@@ -1148,8 +1144,10 @@ public final class MekanismUtils {
         GUI_ICONS("gui/icons"),
         GUI_BAR("gui/bar"),
         GUI_ELEMENT("gui/elements"),
+        GUI_SLOT("gui/slot"),
         BUTTON("gui/button"),
         BUTTON_TAB("gui/button_tab"),
+        GUI_RADIAL("gui/radial"),
         GAUGE("gui/gauge"),
         GUI_HUD("gui/hud"),
         PROGRESS("gui/progress"),
@@ -1162,6 +1160,7 @@ public final class MekanismUtils {
         TEXTURE_ITEMS("textures/items"),
         MODEL("models"),
         INFUSE("infuse");
+
 
         private String prefix;
 

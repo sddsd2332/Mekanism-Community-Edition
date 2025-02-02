@@ -286,6 +286,7 @@ public class ItemMekaSuitBodyArmor extends ItemMekaSuitArmor implements IGasItem
             int i = Math.round(13.0F - (float) health * 13.0F);
             GuiUtils.draw(bufferbuilder, xPosition + 2, yPosition + 12, 13, 1, 0, 0, 0, 255);
             GuiUtils.draw(bufferbuilder, xPosition + 2, yPosition + 12, i, 1, rgbfordisplay >> 16 & 255, rgbfordisplay >> 8 & 255, rgbfordisplay & 255, 255);
+            MekanismRenderer.resetColor();
             GlStateManager.enableBlend();
             GlStateManager.enableAlpha();
             GlStateManager.enableTexture2D();

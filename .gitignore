@@ -1,6 +1,5 @@
 build
 output
-.idea
 *.iml
 *.ipr
 *.iws

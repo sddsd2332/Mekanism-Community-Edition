@@ -172,11 +172,6 @@ public class CommonProxy implements IGuiProvider {
                     return new ContainerNull();
                 }
                 break;
-            case 76:
-                if (stack.getItem() instanceof IModuleContainerItem){
-                    return new ModuleTweakerContainer(player.inventory);
-                }
-                break;
         }
         return null;
     }
@@ -293,7 +288,6 @@ public class CommonProxy implements IGuiProvider {
                     new ContainerAmbientAccumulatorEnergy(player.inventory, (TileEntityAmbientAccumulatorEnergy) tileEntity);
             case 74 -> new ContainerHybridStorage(player.inventory, (TileEntityHybridStorage) tileEntity);
             case 75 -> new ContainerModificationStation(player.inventory, (TileEntityModificationStation) tileEntity);
-            //EMPTY 76
             default -> null;
         };
     }

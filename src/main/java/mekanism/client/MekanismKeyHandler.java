@@ -110,11 +110,7 @@ public class MekanismKeyHandler extends MekKeyHandler {
             MekanismConfig.current().client.enableHUD.set(!MekanismConfig.current().client.enableHUD.val());
         } else if (kb == moduleTweakerKey) {
             if (player != null && ModuleTweakerContainer.hasTweakableItem(player)) {
-                if (!player.getHeldItemMainhand().isEmpty()) {
-                    MekanismUtils.openItemGui(player, EnumHand.MAIN_HAND, 76);
-                } else if (!player.getHeldItemOffhand().isEmpty()) {
-                    MekanismUtils.openItemGui(player, EnumHand.OFF_HAND, 76);
-                }
+                MekanismUtils.openItemGui(player, EnumHand.MAIN_HAND, 76);
             }
         }
     }

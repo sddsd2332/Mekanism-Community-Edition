@@ -1873,6 +1873,9 @@ item.module_gyroscopic_stabilization_unit.name=Gyroscopic Stabilization Unit
 item.module_hydrostatic_repulsor_unit.name=Hydrostatic Repulsor Unit
 item.module_hydraulic_propulsion_unit.name=Hydraulic Propulsion Unit
 item.module_energy_shield_unit.name=Energy shield unit
+item.module_motorized_servo_unit.name=Motorized Servo Unit
+item.module_fortune_unit.name=Ore Refinement Unit
+item.module_geothermal_generator_unit.name=Geothermal Generator Unit
 
 module.mekanism.attack_amplification_unit=Attack Amplification Unit
 module.mekanism.attack_damage=Attack Damage
@@ -1935,6 +1938,7 @@ module.mekanism.vision_enhancement_unit=Vision Enhancement Unit
 module.mekanism.color_modulation_unit=Color Modulation Unit
 module.mekanism.gyroscopic_stabilization_unit=Gyroscopic Stabilization Unit
 module.mekanism.hydrostatic_repulsor_unit=Hydrostatic Repulsor Unit
+module.mekanism.geothermal_generator_unit=Geothermal Generator Unit
 
 module.mekanism.energy_shield_unit=Energy shield unit
 
@@ -1967,4 +1971,17 @@ description.mekanism.color_modulation_unit=Uses advanced holographic projectors 
 description.mekanism.gyroscopic_stabilization_unit=Allows the user to act as though they are on solid ground.
 description.mekanism.hydrostatic_repulsor_unit=Uses advanced technology to repel water, lowering the resistance felt while moving through it.
 description.mekanism.energy_shield_unit=Use energy shields to block damage
+description.mekanism.fortune_unit=Increases ore yields.
+description.mekanism.motorized_servo_unit=Uses motorized servos to reduce the strain of sneaking.
+description.mekanism.geothermal_generator_unit=Harnesses geothermal energy from the surrounding environment, and improves protection against damage from heat sources. Install multiple for faster charging and greater protection.
 generic.mekanism.stored=:
+gui.mekanism.true=True
+gui.mekanism.false=False
+module.mekanism.jetpack_mult=Thrust Multiplier
+module.mekanism.jetpack_mult.hover=Hover Thrust Multiplier
+module.mekanism.radiation_clearance=Radiation clearance
+module.mekanism.radiation_immunity=Radiation protection
+module.mekanism.radiation_range_clearing=Range Radiation Clearance
+module.mekanism.swim_boost=Swim Boost
+module.mekanism.motorized_servo_unit=Motorized Servo Unit
+module.mekanism.fortune_unit=Ore Refinement Unit

@@ -23,6 +23,7 @@ public class ModuleData<MODULE extends ICustomModule<MODULE>> implements IHasTra
 
     private final String name;
     private final NonNullSupplier<MODULE> supplier;
+    private ItemStack stack;
     private final int maxStackSize;
     private final EnumRarity rarity;
     private final int exclusive;
@@ -42,6 +43,7 @@ public class ModuleData<MODULE extends ICustomModule<MODULE>> implements IHasTra
     public ModuleData(ModuleDataBuilder<MODULE> builder) {
         this.name = builder.name;
         this.supplier = builder.supplier;
+        this.stack = builder.stack;
         this.rarity = builder.rarity;
         this.maxStackSize = builder.maxStackSize;
         this.exclusive = builder.exclusive;
@@ -61,6 +63,13 @@ public class ModuleData<MODULE extends ICustomModule<MODULE>> implements IHasTra
         return name;
     }
 
+    public void setStack(Item item) {
+        this.stack = new ItemStack(item);
+    }
+
+    public ItemStack getStack() {
+        return stack;
+    }
 
     /**
      * Gets a new instance of the custom module this data is for.
@@ -203,6 +212,7 @@ public class ModuleData<MODULE extends ICustomModule<MODULE>> implements IHasTra
 
         private final NonNullSupplier<MODULE> supplier;
         private String name;
+        private ItemStack stack;
         private EnumRarity rarity = EnumRarity.COMMON;
         private int maxStackSize = 1;
         private int exclusive;
@@ -234,6 +244,11 @@ public class ModuleData<MODULE extends ICustomModule<MODULE>> implements IHasTra
          */
         public ModuleDataBuilder<MODULE> rarity(@Nonnull EnumRarity rarity) {
             this.rarity = Objects.requireNonNull(rarity, "Rarity cannot be null.");
+            return this;
+        }
+
+        public ModuleDataBuilder<MODULE> stack(ItemStack stack) {
+            this.stack = Objects.requireNonNull(stack, "ItemStack cannot be null.");
             return this;
         }
 

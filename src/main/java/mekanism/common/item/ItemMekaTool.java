@@ -57,6 +57,7 @@ public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem,
     public ItemMekaTool() {
         super(MekanismConfig.current().general.toolBatteryCapacity.val());
         setRarity(EnumRarity.EPIC);
+        setMaxStackSize(1);
         setNoRepair();
         ImmutableMultimap.Builder<String, AttributeModifier> builder = ImmutableMultimap.builder();
         builder.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", -2.4D, 0));

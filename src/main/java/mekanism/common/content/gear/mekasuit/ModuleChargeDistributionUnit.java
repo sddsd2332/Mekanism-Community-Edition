@@ -1,38 +1,18 @@
 package mekanism.common.content.gear.mekasuit;
 
-import baubles.api.BaublesApi;
-import cofh.redstoneflux.api.IEnergyContainerItem;
-import ic2.api.item.ElectricItem;
 import mekanism.api.annotations.ParametersAreNotNullByDefault;
-import mekanism.api.energy.EnergizedItemManager;
-import mekanism.api.energy.IEnergizedItem;
 import mekanism.api.gear.ICustomModule;
 import mekanism.api.gear.IModule;
 import mekanism.api.gear.config.IModuleConfigItem;
 import mekanism.api.gear.config.ModuleBooleanData;
 import mekanism.api.gear.config.ModuleConfigItemCreator;
-import mekanism.common.Mekanism;
 import mekanism.common.MekanismLang;
-import mekanism.common.capabilities.Capabilities;
-import mekanism.common.integration.MekanismHooks;
-import mekanism.common.integration.forgeenergy.ForgeEnergyIntegration;
-import mekanism.common.integration.ic2.IC2Integration;
-import mekanism.common.integration.redstoneflux.RFIntegration;
-import mekanism.common.integration.tesla.TeslaIntegration;
 import mekanism.common.item.armor.ItemMekaSuitBodyArmor;
 import mekanism.common.item.armor.ItemMekaSuitBoots;
 import mekanism.common.item.armor.ItemMekaSuitHelmet;
 import mekanism.common.item.armor.ItemMekaSuitPants;
-import mekanism.common.util.MekanismUtils;
-import net.darkhax.tesla.api.ITeslaConsumer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.items.IItemHandler;
-
-import static mekanism.common.util.ChargeUtils.isIC2Chargeable;
 
 @ParametersAreNotNullByDefault
 public class ModuleChargeDistributionUnit implements ICustomModule<ModuleChargeDistributionUnit> {

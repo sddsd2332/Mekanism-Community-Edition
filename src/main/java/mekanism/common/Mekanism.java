@@ -222,7 +222,6 @@ public class Mekanism {
     }
 
 
-
     @SubscribeEvent
     public static void registerEntities(RegistryEvent.Register<EntityEntry> event) {
         EntityRegistry.registerModEntity(new ResourceLocation(MODID, "ObsidianTNT"), EntityObsidianTNT.class, "ObsidianTNT", 0, Mekanism.instance, 64, 5, true);
@@ -453,7 +452,6 @@ public class Mekanism {
         }
 
         Mekanism.proxy.preInit();
-
         //Register infuses
         InfuseRegistry.registerInfuseType(new InfuseType("CARBON", new ResourceLocation(Mekanism.MODID, "blocks/infuse/Carbon")).setTranslationKey("carbon"));
         InfuseRegistry.registerInfuseType(new InfuseType("TIN", new ResourceLocation(Mekanism.MODID, "blocks/infuse/Tin")).setTranslationKey("tin"));
@@ -493,7 +491,7 @@ public class Mekanism {
         //Register with ForgeChunkManager
         ForgeChunkManager.setForcedChunkLoadingCallback(this, new ChunkManager());
 
-           registerDispenseBehavior(new ModuleDispenseBehavior(), MekanismItems.MEKA_TOOL);
+        registerDispenseBehavior(new ModuleDispenseBehavior(), MekanismItems.MEKA_TOOL);
         registerDispenseBehavior(new MekaSuitDispenseBehavior(), MekanismItems.MEKASUIT_HELMET, MekanismItems.MEKASUIT_BODYARMOR, MekanismItems.MEKASUIT_PANTS, MekanismItems.MEKASUIT_BOOTS);
 
         //Register to receive subscribed events
@@ -549,7 +547,7 @@ public class Mekanism {
     }
 
     private void imcQueue() {
-        Item[] addModulesToAll = {MekanismItems.MEKASUIT_HELMET, MekanismItems.MEKASUIT_BODYARMOR, MekanismItems.MEKASUIT_PANTS, MekanismItems.MEKASUIT_BOOTS , MekanismItems.MEKA_TOOL};
+        Item[] addModulesToAll = {MekanismItems.MEKASUIT_HELMET, MekanismItems.MEKASUIT_BODYARMOR, MekanismItems.MEKASUIT_PANTS, MekanismItems.MEKASUIT_BOOTS, MekanismItems.MEKA_TOOL};
         Item[] addMekaSuitModules = {MekanismItems.MEKASUIT_HELMET, MekanismItems.MEKASUIT_BODYARMOR, MekanismItems.MEKASUIT_PANTS, MekanismItems.MEKASUIT_BOOTS};
 
         for (Item stack : addModulesToAll) {
@@ -558,15 +556,15 @@ public class Mekanism {
 
         for (Item stack : addMekaSuitModules) {
             ModuleHelper.get().setSupported(stack, /*MekanismModules.COLOR_MODULATION_UNIT,*/ MekanismModules.LASER_DISSIPATION_UNIT, MekanismModules.RADIATION_SHIELDING_UNIT);
-            if (Mekanism.hooks.DraconicEvolution){
+            if (Mekanism.hooks.DraconicEvolution) {
                 ModuleHelper.get().setSupported(stack, MekanismModules.ENERGY_SHIELD_UNIT);
             }
         }
         ModuleHelper.get().setSupported(MekanismItems.MEKA_TOOL, MekanismModules.ATTACK_AMPLIFICATION_UNIT, MekanismModules.SILK_TOUCH_UNIT, MekanismModules.FORTUNE_UNIT,/* MekanismModules.BLASTING_UNIT, MekanismModules.VEIN_MINING_UNIT,*/MekanismModules.FARMING_UNIT, MekanismModules.SHEARING_UNIT, MekanismModules.TELEPORTATION_UNIT, MekanismModules.EXCAVATION_ESCALATION_UNIT);
 
-        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_HELMET, MekanismModules.ELECTROLYTIC_BREATHING_UNIT, MekanismModules.INHALATION_PURIFICATION_UNIT, MekanismModules.VISION_ENHANCEMENT_UNIT, MekanismModules.NUTRITIONAL_INJECTION_UNIT);
+        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_HELMET, MekanismModules.ELECTROLYTIC_BREATHING_UNIT, MekanismModules.INHALATION_PURIFICATION_UNIT, MekanismModules.VISION_ENHANCEMENT_UNIT, MekanismModules.NUTRITIONAL_INJECTION_UNIT, MekanismModules.EMERGENCY_RESCUE_UNIT, MekanismModules.ADVANCED_INTERCEPTION_SYSTEM_UNIT);
 
-        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_BODYARMOR, MekanismModules.JETPACK_UNIT, MekanismModules.GRAVITATIONAL_MODULATING_UNIT, MekanismModules.CHARGE_DISTRIBUTION_UNIT, MekanismModules.DOSIMETER_UNIT, MekanismModules.GEIGER_UNIT, MekanismModules.ELYTRA_UNIT);
+        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_BODYARMOR, MekanismModules.JETPACK_UNIT, MekanismModules.GRAVITATIONAL_MODULATING_UNIT, MekanismModules.CHARGE_DISTRIBUTION_UNIT, MekanismModules.DOSIMETER_UNIT, MekanismModules.GEIGER_UNIT, MekanismModules.ELYTRA_UNIT, MekanismModules.HEALTH_REGENERATION_UNIT);
 
         ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_PANTS, MekanismModules.LOCOMOTIVE_BOOSTING_UNIT, MekanismModules.GYROSCOPIC_STABILIZATION_UNIT, MekanismModules.HYDROSTATIC_REPULSOR_UNIT, MekanismModules.MOTORIZED_SERVO_UNIT);
 

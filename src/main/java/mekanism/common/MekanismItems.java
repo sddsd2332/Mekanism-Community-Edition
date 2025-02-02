@@ -97,7 +97,6 @@ public class MekanismItems {
     //   public static final Item MekAsuitBoots = new ItemOldMekAsuitFeetArmour();
 
     public static final Item ModuleBase = new ItemMekanism();
-    public static final Item ModuleUpgrade = new ItemModuleUpgrade();
     public static final Item MEKASUIT_HELMET = new ItemMekaSuitHelmet();
     public static final Item MEKASUIT_BODYARMOR = new ItemMekaSuitBodyArmor();
     public static final Item MEKASUIT_PANTS = new ItemMekaSuitPants();
@@ -115,8 +114,8 @@ public class MekanismItems {
     public static final ItemModule MODULE_SHEARING = new ItemModule(MekanismModules.SHEARING_UNIT);
     public static final ItemModule MODULE_SILK_TOUCH = new ItemModule(MekanismModules.SILK_TOUCH_UNIT);
     public static final ItemModule MODULE_FORTUNE = new ItemModule(MekanismModules.FORTUNE_UNIT);
-   /// public static final ItemModule MODULE_BLASTING = new ItemModule(MekanismModules.BLASTING_UNIT);
-   // public static final ItemModule MODULE_VEIN_MINING = new ItemModule(MekanismModules.VEIN_MINING_UNIT);
+    /// public static final ItemModule MODULE_BLASTING = new ItemModule(MekanismModules.BLASTING_UNIT);
+    // public static final ItemModule MODULE_VEIN_MINING = new ItemModule(MekanismModules.VEIN_MINING_UNIT);
     public static final ItemModule MODULE_TELEPORTATION = new ItemModule(MekanismModules.TELEPORTATION_UNIT);
 
     public static final ItemModule MODULE_ELECTROLYTIC_BREATHING = new ItemModule(MekanismModules.ELECTROLYTIC_BREATHING_UNIT);
@@ -135,14 +134,18 @@ public class MekanismItems {
     public static final ItemModule MODULE_LOCOMOTIVE_BOOSTING = new ItemModule(MekanismModules.LOCOMOTIVE_BOOSTING_UNIT);
     public static final ItemModule MODULE_GYROSCOPIC_STABILIZATION = new ItemModule(MekanismModules.GYROSCOPIC_STABILIZATION_UNIT);
     public static final ItemModule MODULE_HYDROSTATIC_REPULSOR = new ItemModule(MekanismModules.HYDROSTATIC_REPULSOR_UNIT);
-      public static final ItemModule MODULE_MOTORIZED_SERVO = new ItemModule(MekanismModules.MOTORIZED_SERVO_UNIT);
+    public static final ItemModule MODULE_MOTORIZED_SERVO = new ItemModule(MekanismModules.MOTORIZED_SERVO_UNIT);
 
     public static final ItemModule MODULE_HYDRAULIC_PROPULSION = new ItemModule(MekanismModules.HYDRAULIC_PROPULSION_UNIT);
-     public static final ItemModule MODULE_MAGNETIC_ATTRACTION = new ItemModule(MekanismModules.MAGNETIC_ATTRACTION_UNIT);
+    public static final ItemModule MODULE_MAGNETIC_ATTRACTION = new ItemModule(MekanismModules.MAGNETIC_ATTRACTION_UNIT);
     public static final ItemModule MODULE_FROST_WALKER = new ItemModule(MekanismModules.FROST_WALKER_UNIT);
 
     public static final Item HDPE_REINFORCED_ELYTRA = new ItemHDPEElytra();
     public static final ItemMekaTool MEKA_TOOL = new ItemMekaTool();
+
+    public static final ItemModule MODULE_EMERGENCY_RESCUE = new ItemModule(MekanismModules.EMERGENCY_RESCUE_UNIT);
+    public static final ItemModule MODULE_ADVANCED_INTERCEPTION_SYSTEM = new ItemModule(MekanismModules.ADVANCED_INTERCEPTION_SYSTEM_UNIT);
+    public static final ItemModule MODULE_HEALTH_REGENERATION = new ItemModule(MekanismModules.HEALTH_REGENERATION_UNIT);
     /**
      * ADD END
      */
@@ -231,7 +234,6 @@ public class MekanismItems {
         //  registry.register(init(MekAsuitLeggings, "MekAsuitLeggings"));
         //  registry.register(init(MekAsuitBoots, "MekAsuitBoots"));
         registry.register(init(ModuleBase, "ModuleBase"));
-        registry.register(init(ModuleUpgrade, "ModuleUpgrade"));
 
         registry.register(init(MEKASUIT_HELMET, "mekasuit_helmet"));
         registry.register(init(MEKASUIT_BODYARMOR, "mekasuit_bodyarmor"));
@@ -239,13 +241,10 @@ public class MekanismItems {
         registry.register(init(MEKASUIT_BOOTS, "mekasuit_boots"));
 
         registry.register(initModule(MODULE_ENERGY));
-       // registry.register(initModule(MODULE_COLOR_MODULATION));
+        // registry.register(initModule(MODULE_COLOR_MODULATION));
         registry.register(initModule(MODULE_LASER_DISSIPATION));
         registry.register(initModule(MODULE_RADIATION_SHIELDING));
-        if (Mekanism.hooks.DraconicEvolution) {
-            registry.register(initModule(MODULE_ENERGY_SHIELD));
-        }
-
+        registry.register(initModule(MODULE_ENERGY_SHIELD));
 
         registry.register(initModule(MODULE_EXCAVATION_ESCALATION));
         registry.register(initModule(MODULE_ATTACK_AMPLIFICATION));
@@ -253,8 +252,8 @@ public class MekanismItems {
         registry.register(initModule(MODULE_SHEARING));
         registry.register(initModule(MODULE_SILK_TOUCH));
         registry.register(initModule(MODULE_FORTUNE));
-       // registry.register(initModule(MODULE_BLASTING));
-       // registry.register(initModule(MODULE_VEIN_MINING));
+        // registry.register(initModule(MODULE_BLASTING));
+        // registry.register(initModule(MODULE_VEIN_MINING));
         registry.register(initModule(MODULE_TELEPORTATION));
 
         registry.register(initModule(MODULE_ELECTROLYTIC_BREATHING));
@@ -270,9 +269,9 @@ public class MekanismItems {
         registry.register(initModule(MODULE_GYROSCOPIC_STABILIZATION));
         registry.register(initModule(MODULE_HYDROSTATIC_REPULSOR));
         registry.register(initModule(MODULE_LOCOMOTIVE_BOOSTING));
-          registry.register(initModule(MODULE_MOTORIZED_SERVO));
+        registry.register(initModule(MODULE_MOTORIZED_SERVO));
         registry.register(initModule(MODULE_HYDRAULIC_PROPULSION));
-         registry.register(initModule(MODULE_MAGNETIC_ATTRACTION));
+        registry.register(initModule(MODULE_MAGNETIC_ATTRACTION));
         registry.register(initModule(MODULE_FROST_WALKER));
 
         if (Mekanism.hooks.MekanismMixinHelp) {
@@ -280,6 +279,9 @@ public class MekanismItems {
             registry.register(init(HDPE_REINFORCED_ELYTRA, "hdpe_elytra"));
         }
         registry.register(init(MEKA_TOOL, "meka_tool"));
+        registry.register(initModule(MODULE_EMERGENCY_RESCUE));
+        registry.register(initModule(MODULE_ADVANCED_INTERCEPTION_SYSTEM));
+        registry.register(initModule(MODULE_HEALTH_REGENERATION));
         /**
          * ADD END
          */

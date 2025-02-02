@@ -449,6 +449,7 @@ public class MekanismRecipe {
 
     @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
     public static void addDRrecipes() {
+        /*
         addDRSimpleFusionRecipe(new ItemStack(MekanismItems.ModuleUpgrade, 1, 24), new ItemStack(MekanismItems.ModuleBase), 256000000L, 3,
                 DEFeatures.chaoticCore, "PoloniumPellet", new ItemStack(MekanismItems.Polyethene, 1, 2), DEFeatures.chaosShard, new ItemStack(MekanismItems.Polyethene, 1, 2), "PoloniumPellet", DEFeatures.chaoticCore,
                 "PoloniumPellet", MekanismItems.CosmicMatter, "alloyUltimate", "circuitUltimate", "alloyUltimate", MekanismItems.CosmicMatter, "PoloniumPellet",
@@ -457,6 +458,7 @@ public class MekanismRecipe {
                 new ItemStack(MekanismItems.Polyethene, 1, 2), "alloyUltimate", "PlutoniumPellet", new ItemStack(DEFeatures.toolUpgrade, 1, 8), "PlutoniumPellet", "alloyUltimate", new ItemStack(MekanismItems.Polyethene, 1, 2),
                 "PoloniumPellet", MekanismItems.CosmicMatter, "alloyUltimate", "circuitUltimate", "alloyUltimate", MekanismItems.CosmicMatter, "PoloniumPellet",
                 DEFeatures.chaoticCore, "PoloniumPellet", new ItemStack(MekanismItems.Polyethene, 1, 2), DEFeatures.chaosShard, new ItemStack(MekanismItems.Polyethene, 1, 2), "PoloniumPellet", DEFeatures.chaoticCore);
+         */
     }
 
     @Optional.Method(modid = MekanismHooks.DraconicAdditions_MOD_ID)
@@ -510,6 +512,7 @@ public class MekanismRecipe {
         DAFeatures.chaoticBoots.modifyEnergy(chaoticBoots, DAFeatures.chaoticBoots.getMaxEnergyStored(chaoticBoots));
         chaoticBoots.getTagCompound().setBoolean("isStable", true);
 
+        /*
         addDRSimpleFusionRecipe(new ItemStack(MekanismItems.ModuleUpgrade, 1, 25), new ItemStack(MekanismItems.ModuleBase), Integer.MAX_VALUE * 53L, 3,
                 DAFeatures.chaosHeart, inductionCell, DAFeatures.chaosStabilizerCore, inductionCell, DAFeatures.chaosHeart,
                 DAFeatures.chaosHeart, chaoticHelm, "PlutoniumPellet", chaoticChest, DAFeatures.chaosHeart,
@@ -521,6 +524,8 @@ public class MekanismRecipe {
                 DAFeatures.chaosHeart, chaoticLegs, "PlutoniumPellet", chaoticBoots, DAFeatures.chaosHeart,
                 DAFeatures.chaosHeart, inductionCell, DAFeatures.chaosStabilizerCore, inductionCell, DAFeatures.chaosHeart
         );
+
+         */
     }
 
 

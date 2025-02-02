@@ -85,6 +85,8 @@ public class ClientConfig extends BaseConfig {
 
     public final IntOption hudDangerColor = new IntOption(this,"client","hudDangerColor",0xFF383C,"Color (RGB) of danger HUD elements used by MekaSuit.",0,0xFFFFFF);
 
+    public final IntOption energyColor = new IntOption(this,"client","energyColor",0x3CFE9A,"Color of energy in item durability display.");
+
     @Override
     public void write(ByteBuf config) {
         throw new UnsupportedOperationException("Client config shouldn't be synced");

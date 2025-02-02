@@ -8,15 +8,16 @@ import mekanism.api.gear.config.ModuleEnumData;
 import mekanism.api.text.IHasTextComponent;
 import mekanism.client.SpecialColors;
 import mekanism.client.gui.IGuiWrapper;
+import mekanism.client.sound.SoundHandler;
 import mekanism.common.Mekanism;
 import mekanism.common.MekanismLang;
 import mekanism.common.MekanismSounds;
 import mekanism.common.content.gear.Module;
 import mekanism.common.content.gear.ModuleConfigItem;
 import mekanism.common.content.gear.ModuleConfigItem.DisableableModuleConfigItem;
+import mekanism.common.network.PacketUpdateModuleSettings;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -48,8 +49,8 @@ public class GuiModuleScreen extends GuiElement {
 
     private Runnable getCallback(ModuleConfigData<?> configData, int dataIndex) {
         return () -> {
-            if (currentModule != null) {//Shouldn't be null but validate just in case
-               // Mekanism.packetHandler.sendToServer(PacketUpdateModuleSettings.create(slotIdSupplier.getAsInt(), currentModule.getData(), dataIndex, configData));
+            if (currentModule != null && currentModule.getData() !=null) {//Shouldn't be null but validate just in case
+                Mekanism.packetHandler.sendToServer(PacketUpdateModuleSettings.create(slotIdSupplier.getAsInt(), currentModule.getData(), dataIndex, configData));
             }
         };
     }
@@ -220,12 +221,12 @@ public class GuiModuleScreen extends GuiElement {
         public void click(double mouseX, double mouseY) {
             if (!data.get() && mouseX >= getX() + 4 && mouseX < getX() + 12 && mouseY >= getY() + 11 && mouseY < getY() + 19) {
                 data.set(true, getCallback(data.getData(), dataIndex));
-                mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(MekanismSounds.BEEP, 1.0F));
+                SoundHandler.playSound(MekanismSounds.BEEP);
             }
 
             if (data.get() && mouseX >= getX() + 50 && mouseX < getX() + 58 && mouseY >= getY() + 11 && mouseY < getY() + 19) {
                 data.set(false, getCallback(data.getData(), dataIndex));
-                mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(MekanismSounds.BEEP, 1.0F));
+                SoundHandler.playSound(MekanismSounds.BEEP);
             }
         }
     }

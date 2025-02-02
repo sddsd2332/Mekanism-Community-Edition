@@ -4,7 +4,9 @@ import mekanism.api.energy.IEnergizedItem;
 import mekanism.api.functions.FloatSupplier;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gear.IModule;
+import mekanism.api.text.TextComponentGroup;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.content.gear.IModuleContainerItem;
 import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.content.gear.mekasuit.ModuleGravitationalModulatingUnit;
 import mekanism.common.content.gear.mekasuit.ModuleHydraulicPropulsionUnit;
@@ -23,12 +25,16 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -46,7 +52,7 @@ public class CommonPlayerTickHandler {
 
 
     public static boolean isOnGroundOrSleeping(EntityPlayer player) {
-        return player.onGround || player.isSneaking()|| player.capabilities.isFlying;
+        return player.onGround || player.isSneaking() || player.capabilities.isFlying;
     }
 
     public static boolean isScubaMaskOn(EntityPlayer player, ItemStack tank) {
@@ -352,30 +358,33 @@ public class CommonPlayerTickHandler {
 
     }
 
-    /*
+
     //When the player dies
     @SubscribeEvent
     public void onDeath(LivingDeathEvent event) {
         if (event.getEntityLiving() instanceof EntityPlayer player) {
             ItemStack head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-            if (!head.isEmpty() && head.getItem() instanceof ItemOldMekAsuitHeadArmour armour &&
-                    ((UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.EMERGENCY_RESCUE) && armour.getEmergency(head)) ||
-                            (UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT) && armour.getInterception(head)))) {
-                event.setCanceled(true);
-                if (!UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT)) {
-                    int installed = UpgradeHelper.getUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE);
-                    int toAdd = Math.max(installed - 1, 0);
-                    UpgradeHelper.setUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE, toAdd);
+            if (head.getItem() instanceof IModuleContainerItem item) {
+                if (item.isModuleEnabled(head, MekanismModules.EMERGENCY_RESCUE_UNIT) || item.isModuleEnabled(head, MekanismModules.ADVANCED_INTERCEPTION_SYSTEM_UNIT)) {
+                    event.setCanceled(true);
+                    if (!item.isModuleEnabled(head, MekanismModules.ADVANCED_INTERCEPTION_SYSTEM_UNIT)) {
+                        item.removeModule(head, MekanismModules.EMERGENCY_RESCUE_UNIT);
+                    }
+                    player.setHealth(5F);
+                    player.clearActivePotions();
+                    player.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 800, 2));
+                    player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 900, 2));
+                    player.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION, 100, 2));
+                    player.setAir(300);
+                    player.getFoodStats().addStats(20, 20);
+                    if (item.isModuleEnabled(head, MekanismModules.ADVANCED_INTERCEPTION_SYSTEM_UNIT)) {
+                        player.sendMessage(new TextComponentGroup(TextFormatting.GRAY).string("[", TextFormatting.RED).translation(MekanismModules.ADVANCED_INTERCEPTION_SYSTEM_UNIT.getTranslationKey(), TextFormatting.RED).string("]", TextFormatting.RED).string(":").translation("module.emergency_rescue.use", TextFormatting.YELLOW));
+                    } else if (item.isModuleEnabled(head, MekanismModules.EMERGENCY_RESCUE_UNIT)) {
+                        player.sendMessage(new TextComponentGroup(TextFormatting.GRAY).string("[", TextFormatting.RED).translation(MekanismModules.EMERGENCY_RESCUE_UNIT.getTranslationKey(), TextFormatting.RED).string("]", TextFormatting.RED).string(":").translation("module.emergency_rescue.use", TextFormatting.YELLOW));
+                    }
                 }
-                player.setHealth(5F);
-                player.clearActivePotions();
-                player.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 800, 2));
-                player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 900, 2));
-                player.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION, 100, 2));
-                player.setAir(300);
-                player.getFoodStats().addStats(20, 20);
-                player.sendMessage(new TextComponentGroup(TextFormatting.GRAY).string("[", TextFormatting.RED).translation("item.module.emergency_rescue.name", TextFormatting.RED).string("]", TextFormatting.RED).string(":").translation("module.emergency_rescue.use", TextFormatting.YELLOW));
             }
+
         }
     }
 
@@ -386,31 +395,28 @@ public class CommonPlayerTickHandler {
         if (MekanismConfig.current().mekce.MekAsuitOverloadProtection.val()) {
             if (event.getEntityLiving() instanceof EntityPlayer player) {
                 ItemStack head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-                if (!player.isEntityAlive() && !head.isEmpty() && head.getItem() instanceof ItemOldMekAsuitHeadArmour armour &&
-                        ((UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.EMERGENCY_RESCUE) && armour.getEmergency(head)) ||
-                                (UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT) && armour.getInterception(head)))) {
-                    player.hurtResistantTime = 20;
-                    player.deathTime = 0;
-                    player.isDead = false;
-                    player.setHealth(5F);
-                    player.clearActivePotions();
-                    player.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 800, 2));
-                    player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 900, 2));
-                    player.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION, 100, 2));
-                    player.setAir(300);
-                    player.getFoodStats().addStats(20, 20);
-                    if (!UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT)) {
-                        int installed = UpgradeHelper.getUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE);
-                        int toAdd = Math.max(installed - 1, 0);
-                        UpgradeHelper.setUpgradeLevel(head, moduleUpgrade.EMERGENCY_RESCUE, toAdd);
+                if (!player.isEntityAlive()) {
+                    if (head.getItem() instanceof IModuleContainerItem item) {
+                        if (item.isModuleEnabled(head, MekanismModules.EMERGENCY_RESCUE_UNIT) || item.isModuleEnabled(head, MekanismModules.ADVANCED_INTERCEPTION_SYSTEM_UNIT)) {
+                            if (!item.isModuleEnabled(head, MekanismModules.ADVANCED_INTERCEPTION_SYSTEM_UNIT)) {
+                                item.removeModule(head, MekanismModules.EMERGENCY_RESCUE_UNIT);
+                            }
+                            player.hurtResistantTime = 20;
+                            player.deathTime = 0;
+                            player.isDead = false;
+                            player.setHealth(5F);
+                            player.clearActivePotions();
+                            player.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 800, 2));
+                            player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 900, 2));
+                            player.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION, 100, 2));
+                            player.setAir(300);
+                            player.getFoodStats().addStats(20, 20);
+                        }
                     }
                 }
             }
         }
     }
-
-
- */
 
 
 }

@@ -290,7 +290,6 @@ public class ClientProxy extends CommonProxy {
         //     registerItemRender(MekanismItems.MekAsuitLeggings);
         //      registerItemRender(MekanismItems.MekAsuitBoots);
         registerItemRender(MekanismItems.ModuleBase);
-        registerItemRender(MekanismItems.ModuleUpgrade);
 
         registerItemRender(MekanismItems.MEKASUIT_HELMET);
         registerItemRender(MekanismItems.MEKASUIT_BODYARMOR);
@@ -337,8 +336,10 @@ public class ClientProxy extends CommonProxy {
             registerItemRender(MekanismItems.MODULE_ELYTRA);
             registerItemRender(MekanismItems.HDPE_REINFORCED_ELYTRA);
         }
-
-
+        registerItemRender(MekanismItems.MODULE_EMERGENCY_RESCUE);
+        registerItemRender(MekanismItems.MODULE_ADVANCED_INTERCEPTION_SYSTEM);
+        registerItemRender(MekanismItems.MODULE_HEALTH_REGENERATION);
+        registerItemRender(MekanismItems.MEKA_TOOL);
         /**
          * ADD END
          */
@@ -368,7 +369,7 @@ public class ClientProxy extends CommonProxy {
         Item.getItemFromBlock(MekanismBlocks.MachineBlock4).setTileEntityItemStackRenderer(new RenderMachineItem());
         MekanismItems.ArmoredFreeRunners.setTileEntityItemStackRenderer(new RenderArmoredFreeRunners());
         MekanismItems.MekTool.setTileEntityItemStackRenderer(new RenderMekTool());
-        MekanismItems.MEKA_TOOL.setTileEntityItemStackRenderer(new RenderMekTool());
+        MekanismItems.MEKA_TOOL.setTileEntityItemStackRenderer(new RenderMekaTool());
     }
 
     private ModelResourceLocation getInventoryMRL(String type) {
@@ -689,11 +690,6 @@ public class ClientProxy extends CommonProxy {
                     return new GuiSeismicReader(player.world, new Coord4D(player), stack.copy());
                 }
             }
-            case 76 ->{
-                if (stack.getItem() instanceof IModuleContainerItem) {
-                    return new GuiModuleTweaker(player.inventory);
-                }
-            }
         }
         return null;
     }
@@ -825,7 +821,6 @@ public class ClientProxy extends CommonProxy {
                     new GuiAmbientAccumulatorEnergy(player.inventory, (TileEntityAmbientAccumulatorEnergy) tileEntity);
             case 74 -> new GuiHybridStorage(player.inventory, (TileEntityHybridStorage) tileEntity);
             case 75 -> new GuiModificationStation(player.inventory, (TileEntityModificationStation) tileEntity);
-            //EMPTY 76
             default -> null;
         };
     }
@@ -980,8 +975,10 @@ public class ClientProxy extends CommonProxy {
         modelRegistry.putObject(ArmorFreeRunnerRL, RenderArmoredFreeRunners.model = new ItemLayerWrapper(modelRegistry.getObject(FreeRunnerRL)));
         ModelResourceLocation MekToolRL = getInventoryMRL("MekTool");
         modelRegistry.putObject(MekToolRL, RenderMekTool.model = new ItemLayerWrapper(modelRegistry.getObject(MekToolRL)));
-        ModelResourceLocation MekaToolRL = getInventoryMRL("meka_tool");
-        modelRegistry.putObject(MekaToolRL, RenderMekTool.model = new ItemLayerWrapper(modelRegistry.getObject(MekaToolRL)));
+
+        ModelResourceLocation Meka_Tool = getInventoryMRL("meka_tool");
+        modelRegistry.putObject(Meka_Tool, RenderMekaTool.model = new ItemLayerWrapper(modelRegistry.getObject(Meka_Tool)));
+
         /**
          * ADD END
          */

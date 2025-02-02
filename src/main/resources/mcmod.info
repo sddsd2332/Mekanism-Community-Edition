@@ -89,23 +89,5 @@
       "mekanism@[${mod_version}]",
       "mekanismgenerators@[${mod_version}]"
     ]
-  },  {
-  "modid": "mekaweapons",
-  "name": "${mod_name}: Weapons",
-  "description": "Weapons for Mekanism.",
-  "version": "${mod_version}",
-  "mcversion": "1.12.2",
-  "authorList": [sddsd2332,oMeranha],
-  "credits": "sddsd2332, oMeranha",
-  "url": "${mod_url}",
-  "updateJSON": "${mod_update_json}",
-  "logoFile": "${mod_logo_path}",
-  "useDependencyInformation": true,
-  "dependencies": [
-    "mekanism@[${mod_version}]"
-  ],
-  "requiredMods": [
-    "mekanism@[${mod_version}]"
-  ]
-}
+  }
 ]
