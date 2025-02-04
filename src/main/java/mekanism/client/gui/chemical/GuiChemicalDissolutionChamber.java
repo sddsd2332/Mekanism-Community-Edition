@@ -75,7 +75,7 @@ public class GuiChemicalDissolutionChamber extends GuiMekanismTile<TileEntityChe
                 info.add(LangUtils.localize("gui.gas_no_space"));
             }
             if (output || energy) {
-                displayTooltips(info, xAxis, yAxis);
+                this.displayTooltips(info, xAxis, yAxis);
             }
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);

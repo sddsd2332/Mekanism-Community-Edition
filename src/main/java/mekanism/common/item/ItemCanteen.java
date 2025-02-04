@@ -1,7 +1,6 @@
 package mekanism.common.item;
 
 
-import mekanism.api.EnumColor;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
@@ -14,12 +13,10 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
@@ -50,12 +47,9 @@ public class ItemCanteen extends ItemMekanism implements IGasItem {
         GasStack gasStack = getGas(itemstack);
         if (gasStack == null) {
             list.add(LangUtils.localize("tooltip.noGas") + ".");
-            list.addAll(MekanismUtils.splitTooltip(LangUtils.localize("tooltip.canteen1"), itemstack));
-            list.addAll(MekanismUtils.splitTooltip(LangUtils.localize("tooltip.canteen2"), itemstack));
         } else {
-            list.add(LangUtils.localize("tooltip.stored") + " " + gasStack.getGas().getLocalizedName() + ": " + gasStack.amount);
+            list.add(LangUtils.localize("tooltip.stored") + " " + gasStack.getGas().getLocalizedName() + ": " + getStored(itemstack));
         }
-
     }
 
     @Override
@@ -157,28 +151,16 @@ public class ItemCanteen extends ItemMekanism implements IGasItem {
         list.add(filled);
     }
 
+
     @Nonnull
     @Override
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
         if (!worldIn.isRemote && entityLiving instanceof EntityPlayer player && player.canEat(false)) {
-                int needed = Math.min(20 - player.getFoodStats().getFoodLevel(), getGas(stack).amount / 50);
-                if (needed > 0) {
-                    player.getFoodStats().addStats(needed, 0.8F);
-                    useGas(stack, needed * 50);
-                    if (MekanismConfig.current().mekce.EnableBuff.val()){
-                        player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 2000, 5));
-                        player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 4000, 5));
-                        player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 4000, 5));
-                        player.addPotionEffect(new PotionEffect(MobEffects.INSTANT_HEALTH, 20, 5));
-                        player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, 2000, 5));
-                        player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 4000, 5));
-                        player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 4000, 5));
-                        player.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 4000, 5));
-                        player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION,  2000, 5));
-                        player.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION, 4000, 5));
-                        player.addPotionEffect(new PotionEffect(MobEffects.SATURATION, 4000, 5));
-                    }
-                }
+            int needed = Math.min(20 - player.getFoodStats().getFoodLevel(), getStored(stack) / MekanismConfig.current().general.nutritionalPasteMBPerFood.val());
+            if (needed > 0) {
+                player.getFoodStats().addStats(needed, MekanismConfig.current().general.nutritionalPasteSaturation.val());
+                useGas(stack, needed * MekanismConfig.current().general.nutritionalPasteMBPerFood.val());
+            }
         }
         return stack;
     }

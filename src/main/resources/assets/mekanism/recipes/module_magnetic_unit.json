@@ -1,0 +1,24 @@
+{
+  "result": {
+    "item": "mekanism:module_magnetic_unit"
+  },
+  "pattern": [
+    "ABA",
+    "BCB",
+    "ABA"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "A": {
+      "ore": "ingotSteel",
+      "type": "forge:ore_dict"
+    },
+    "B": {
+      "ore": "ingotIron",
+      "type": "forge:ore_dict"
+    },
+    "C": {
+      "item": "mekanism:modulebase"
+    }
+  }
+}

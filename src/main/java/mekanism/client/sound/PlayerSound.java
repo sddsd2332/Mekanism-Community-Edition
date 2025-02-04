@@ -111,6 +111,7 @@ public abstract class PlayerSound extends PositionedSound implements ITickableSo
     public enum SoundType {
         FLAMETHROWER,
         JETPACK,
-        GAS_MASK
+        GAS_MASK,
+        GRAVITATIONAL_MODULATOR
     }
 }

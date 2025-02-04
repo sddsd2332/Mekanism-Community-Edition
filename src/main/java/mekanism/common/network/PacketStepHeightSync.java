@@ -37,13 +37,13 @@ public class PacketStepHeightSync implements IMessageHandler<StepHeightSyncMessa
         }
 
         @Override
-        public void fromBytes(ByteBuf buf) {
-
+        public void fromBytes(ByteBuf dataStream) {
+            stepHeight = dataStream.readFloat();
         }
 
         @Override
-        public void toBytes(ByteBuf buf) {
-
+        public void toBytes(ByteBuf dataStream) {
+            dataStream.writeFloat(stepHeight);
         }
     }
 }

@@ -35,6 +35,6 @@ public interface ILangEntry extends IHasTranslationKey {
      */
 
     default ITextComponent translateColored(TextFormatting color, Object... args) {
-        return new TextComponentGroup().translation(getTranslationKey(),color, args);
+        return new TextComponentGroup(color).translation(getTranslationKey(), args);
     }
 }

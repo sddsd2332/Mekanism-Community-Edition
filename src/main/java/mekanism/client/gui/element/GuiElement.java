@@ -60,6 +60,23 @@ public abstract class GuiElement {
         }
     }
 
+
+    public final int getGuiLeft() {
+        return guiObj.getLeft();
+    }
+
+    public final int getGuiTop() {
+        return guiObj.getTop();
+    }
+
+    public final int getGuiWidth() {
+        return guiObj.getWidth();
+    }
+
+    public final int getGuiHeight() {
+        return guiObj.getHeight();
+    }
+
     public void renderScaledText(String text, int x, int y, int color, int maxX) {
         int length = getFontRenderer().getStringWidth(text);
 
@@ -133,5 +150,12 @@ public abstract class GuiElement {
 
     protected boolean inBounds(int xAxis, int yAxis) {
         return false;
+    }
+
+
+    @FunctionalInterface
+    public interface IClickable {
+
+        void onClick(GuiElement element, int mouseX, int mouseY);
     }
 }

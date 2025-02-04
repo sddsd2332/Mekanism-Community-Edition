@@ -3,33 +3,35 @@ package mekanism.client;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import mekanism.api.IClientTicker;
-import mekanism.api.gas.GasStack;
+import mekanism.api.gear.IModule;
+import mekanism.api.gear.SwiftSneakHelp;
 import mekanism.client.gui.GuiRadialSelector;
+import mekanism.client.newgui.GuiModuleTweaker;
 import mekanism.client.render.RenderTickHandler;
 import mekanism.common.CommonPlayerTickHandler;
 import mekanism.common.KeySync;
 import mekanism.common.Mekanism;
+import mekanism.common.MekanismModules;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.content.gear.IModuleContainerItem;
+import mekanism.common.content.gear.ModuleHelper;
+import mekanism.common.content.gear.mekasuit.ModuleVisionEnhancementUnit;
 import mekanism.common.frequency.Frequency;
+import mekanism.common.inventory.ModuleTweakerContainer;
 import mekanism.common.item.ItemFlamethrower;
-import mekanism.common.item.ItemFreeRunners;
-import mekanism.common.item.ItemScubaTank;
-import mekanism.common.item.armor.ItemMekAsuitFeetArmour;
-import mekanism.common.item.armor.ItemMekAsuitHeadArmour;
-import mekanism.common.item.armor.ItemMekaSuitArmor;
+import mekanism.common.item.armor.ItemMekaSuitBodyArmor;
+import mekanism.common.item.armor.ItemMekaSuitHelmet;
+import mekanism.common.item.armor.ItemMekaSuitPants;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.item.interfaces.IJetpackItem.JetpackMode;
 import mekanism.common.item.interfaces.IModeItem;
 import mekanism.common.item.interfaces.IRadialModeItem;
 import mekanism.common.item.interfaces.IRadialSelectorEnum;
-import mekanism.common.moduleUpgrade;
-import mekanism.common.network.PacketJumpBoostData;
 import mekanism.common.network.PacketModeChange.ModeChangMessage;
 import mekanism.common.network.PacketPortableTeleporter.PortableTeleporterMessage;
 import mekanism.common.network.PacketPortableTeleporter.PortableTeleporterPacketType;
 import mekanism.common.network.PacketRadialModeChange.RadialModeChangeMessage;
-import mekanism.common.network.PacketStepAssistData;
-import mekanism.common.util.UpgradeHelper;
+import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiGameOver;
@@ -43,12 +45,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.client.event.MouseEvent;
-import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraft.util.MovementInput;
+import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
@@ -68,36 +68,29 @@ import java.util.Map.Entry;
 @SideOnly(Side.CLIENT)
 public class ClientTickHandler {
 
-    public static Minecraft mc = FMLClientHandler.instance().getClient();
+    public static Minecraft minecraft = Minecraft.getMinecraft();
     public static Random rand = new Random();
     public static Set<IClientTicker> tickingSet = new ReferenceOpenHashSet<>();
     public static Map<EntityPlayer, TeleportData> portableTeleports = new Object2ObjectOpenHashMap<>();
     public static int wheelStatus = 0;
     public static boolean visionEnhancement = false;
+
     public boolean initHoliday = false;
     public boolean shouldReset = false;
+
     private static long lastScrollTime = -1;
     private static double scrollDelta;
 
-    public static void killDeadNetworks() {
-        tickingSet.removeIf(iClientTicker -> !iClientTicker.needsTicks());
-    }
-
     public static boolean isJetpackInUse(EntityPlayer player, ItemStack jetpack) {
-        /*
-        if (player != mc.player) {
-            return Mekanism.playerState.isJetpackOn(player);
-        }
-         */
         if (!player.isSpectator() && !jetpack.isEmpty()) {
             JetpackMode mode = ((IJetpackItem) jetpack.getItem()).getJetpackMode(jetpack);
-            boolean guiOpen = mc.currentScreen != null;
-            boolean ascending = mc.player.movementInput.jump;
+            boolean guiOpen = minecraft.currentScreen != null;
+            boolean ascending = minecraft.player.movementInput.jump;
             boolean rising = ascending && !guiOpen;
-            if (mode == JetpackMode.NORMAL) {
+            if (mode == JetpackMode.NORMAL || mode == JetpackMode.VECTOR) {
                 return rising;
             } else if (mode == JetpackMode.HOVER) {
-                boolean descending = mc.player.movementInput.sneak;
+                boolean descending = minecraft.player.movementInput.sneak;
                 if (!rising || descending) {
                     return !CommonPlayerTickHandler.isOnGroundOrSleeping(player);
                 }
@@ -107,41 +100,31 @@ public class ClientTickHandler {
         return false;
     }
 
-    public static boolean isGasMaskOn(EntityPlayer player) {
-        if (player != mc.player) {
+    public static boolean isScubaMaskOn(EntityPlayer player) {
+        if (player != minecraft.player) {
             return Mekanism.playerState.isScubaMaskOn(player);
         }
         return CommonPlayerTickHandler.isScubaMaskOn(player, player.getItemStackFromSlot(EntityEquipmentSlot.CHEST));
     }
 
-
-    public static boolean isJumpBooston(EntityPlayer player) {
-        if (player != mc.player) {
-            return Mekanism.jumpBoostOn.contains(player.getUniqueID());
+    public static boolean isGravitationalModulationOn(EntityPlayer player) {
+        if (player != minecraft.player) {
+            return Mekanism.playerState.isGravitationalModulationOn(player);
         }
-        ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-        if (!stack.isEmpty() && stack.getItem() instanceof ItemMekAsuitFeetArmour feet) {
-            return feet.getJumpBoostMode(stack) == ItemMekAsuitFeetArmour.JumpBoost.OFF;
-        }
-        return false;
+        return CommonPlayerTickHandler.isGravitationalModulationOn(player);
     }
 
-    public static boolean isStepAssist(EntityPlayer player) {
-        if (player != mc.player) {
-            return Mekanism.stepAssistOn.contains(player.getUniqueID());
-        }
-        ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-        if (!stack.isEmpty() && stack.getItem() instanceof ItemMekAsuitFeetArmour feet) {
-            return feet.getStepAssistMode(stack) == ItemMekAsuitFeetArmour.StepAssist.OFF;
-        }
-        return false;
+    public static boolean isVisionEnhancementOn(EntityPlayer player) {
+        IModule<ModuleVisionEnhancementUnit> module = ModuleHelper.get().load(player.getItemStackFromSlot(EntityEquipmentSlot.HEAD), MekanismModules.VISION_ENHANCEMENT_UNIT);
+        return module != null && module.isEnabled() && module.getContainerEnergy() > MekanismConfig.current().meka.mekaSuitEnergyUsageVisionEnhancement.val();
     }
+
 
     public static boolean isFlamethrowerOn(EntityPlayer player) {
-        if (player != mc.player) {
+        if (player != minecraft.player) {
             return Mekanism.playerState.isFlamethrowerOn(player);
         }
-        return hasFlamethrower(player) && mc.gameSettings.keyBindUseItem.isKeyDown();
+        return hasFlamethrower(player) && minecraft.gameSettings.keyBindUseItem.isKeyDown();
     }
 
     public static boolean hasFlamethrower(EntityPlayer player) {
@@ -154,56 +137,8 @@ public class ClientTickHandler {
         if (delay == 0) {
             Mekanism.packetHandler.sendToServer(new PortableTeleporterMessage(PortableTeleporterPacketType.TELEPORT, hand, freq));
         } else {
-            portableTeleports.put(player, new TeleportData(hand, freq, mc.world.getWorldTime() + delay));
+            portableTeleports.put(player, new TeleportData(hand, freq, minecraft.world.getWorldTime() + delay));
         }
-    }
-
-    private static void setModelVisibility(EntityPlayer entity, Render<?> entityModel, boolean showModel) {
-        if (entityModel instanceof RenderPlayer renderPlayer) {
-            if (entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() instanceof ItemMekaSuitArmor) {
-                renderPlayer.getMainModel().bipedHead.showModel = showModel;
-                renderPlayer.getMainModel().bipedHeadwear.showModel = showModel;
-                renderPlayer.getMainModel().bipedHead.isHidden = !showModel;
-                renderPlayer.getMainModel().bipedHeadwear.isHidden = !showModel;
-            }
-            if (entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() instanceof ItemMekaSuitArmor) {
-                renderPlayer.getMainModel().bipedLeftArmwear.showModel = showModel;
-                renderPlayer.getMainModel().bipedRightArmwear.showModel = showModel;
-                renderPlayer.getMainModel().bipedBodyWear.showModel = showModel;
-                renderPlayer.getMainModel().bipedLeftArmwear.isHidden = !showModel;
-                renderPlayer.getMainModel().bipedRightArmwear.isHidden = !showModel;
-                renderPlayer.getMainModel().bipedBodyWear.isHidden = !showModel;
-            }
-            if (entity.getItemStackFromSlot(EntityEquipmentSlot.LEGS).getItem() instanceof ItemMekaSuitArmor) {
-                renderPlayer.getMainModel().bipedLeftLegwear.showModel = showModel;
-                renderPlayer.getMainModel().bipedRightLegwear.showModel = showModel;
-                renderPlayer.getMainModel().bipedBodyWear.showModel = showModel;
-                renderPlayer.getMainModel().bipedLeftLegwear.isHidden = !showModel;
-                renderPlayer.getMainModel().bipedRightLegwear.isHidden = !showModel;
-                renderPlayer.getMainModel().bipedBodyWear.isHidden = !showModel;
-            }
-        }
-    }
-
-    public static boolean isVisionEnhancementOn(EntityPlayer player) {
-        ItemStack head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-        return !head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour armour && UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.VisionEnhancementUnit) && armour.isVision;
-    }
-
-    @SubscribeEvent
-    public void renderEntityPre(RenderPlayerEvent.Pre evt) {
-        setModelVisibility(evt.getEntityPlayer(), evt.getRenderer(), false);
-    }
-
-    @SubscribeEvent
-    public void renderEntityPost(RenderPlayerEvent.Post evt) {
-        setModelVisibility(evt.getEntityPlayer(), evt.getRenderer(), true);
-    }
-
-    //Maybe it works
-    @SubscribeEvent
-    public void remove(WorldEvent.Unload event) {
-        portableTeleports.remove(mc.player);
     }
 
     @SubscribeEvent
@@ -228,54 +163,35 @@ public class ClientTickHandler {
             }
         }
 
-        if (mc.world != null) {
+        if (minecraft.world != null) {
             shouldReset = true;
         } else if (shouldReset) {
             MekanismClient.reset();
             shouldReset = false;
         }
 
-        if (mc.world != null && mc.player != null && !Mekanism.proxy.isPaused()) {
+
+        if (minecraft.world != null && minecraft.player != null && !Mekanism.proxy.isPaused()) {
             if (!initHoliday || MekanismClient.ticksPassed % 1200 == 0) {
                 HolidayManager.check();
                 initHoliday = true;
             }
 
-            if (mc.world.getWorldTime() - lastScrollTime > 20) {
+            if (minecraft.world.getWorldTime() - lastScrollTime > 20) {
                 scrollDelta = 0;
             }
 
-            UUID playerUUID = mc.player.getUniqueID();
+            UUID playerUUID = minecraft.player.getUniqueID();
 
-            boolean jumpBoostonOn = isJumpBooston(mc.player);
-            if (Mekanism.jumpBoostOn.contains(playerUUID) != jumpBoostonOn) {
-                if (jumpBoostonOn && mc.currentScreen == null) {
-                    Mekanism.jumpBoostOn.add(playerUUID);
-                } else {
-                    Mekanism.jumpBoostOn.remove(playerUUID);
-                }
-                Mekanism.packetHandler.sendToServer(new PacketJumpBoostData.JumpBoostDataMessage(PacketJumpBoostData.JumpBoostPacket.UPDATE, playerUUID, jumpBoostonOn));
-            }
-
-            boolean stepAssistOn = isStepAssist(mc.player);
-            if (Mekanism.stepAssistOn.contains(playerUUID) != stepAssistOn) {
-                if (stepAssistOn && mc.currentScreen == null) {
-                    Mekanism.stepAssistOn.add(playerUUID);
-                } else {
-                    Mekanism.stepAssistOn.remove(playerUUID);
-                }
-                Mekanism.packetHandler.sendToServer(new PacketStepAssistData.StepAssistDataMessage(PacketStepAssistData.StepAssistPacket.UPDATE, playerUUID, stepAssistOn));
-            }
-
-            mc.player.stepHeight = CommonPlayerTickHandler.getStepBoost(mc.player);
 
             // Update player's state for various items; this also automatically notifies server if something changed and
             // kicks off sounds as necessary
-            ItemStack jetpack = IJetpackItem.getActiveJetpack(mc.player);
-            boolean jetpackInUse = isJetpackInUse(mc.player, jetpack);
+            ItemStack jetpack = IJetpackItem.getActiveJetpack(minecraft.player);
+            boolean jetpackInUse = isJetpackInUse(minecraft.player, jetpack);
             Mekanism.playerState.setJetpackState(playerUUID, jetpackInUse, true);
-            Mekanism.playerState.setScubaMaskState(playerUUID, isGasMaskOn(mc.player), true);
-            Mekanism.playerState.setFlamethrowerState(playerUUID, hasFlamethrower(mc.player), isFlamethrowerOn(mc.player), true);
+            Mekanism.playerState.setScubaMaskState(playerUUID, isScubaMaskOn(minecraft.player), true);
+            Mekanism.playerState.setGravitationalModulationState(playerUUID, isGravitationalModulationOn(minecraft.player), true);
+            Mekanism.playerState.setFlamethrowerState(playerUUID, hasFlamethrower(minecraft.player), isFlamethrowerOn(minecraft.player), true);
 
             for (Iterator<Entry<EntityPlayer, TeleportData>> iter = portableTeleports.entrySet().iterator(); iter.hasNext(); ) {
                 Entry<EntityPlayer, TeleportData> entry = iter.next();
@@ -284,100 +200,98 @@ public class ClientTickHandler {
                     double x = player.posX + rand.nextDouble() - 0.5D;
                     double y = player.posY + rand.nextDouble() * 2 - 2D;
                     double z = player.posZ + rand.nextDouble() - 0.5D;
-                    mc.world.spawnParticle(EnumParticleTypes.PORTAL, x, y, z, 0, 1, 0);
+                    minecraft.world.spawnParticle(EnumParticleTypes.PORTAL, x, y, z, 0, 1, 0);
                 }
-
-                if (mc.world.getWorldTime() == entry.getValue().teleportTime) {
-                    Mekanism.packetHandler.sendToServer(new PortableTeleporterMessage(PortableTeleporterPacketType.TELEPORT, entry.getValue().hand, entry.getValue().freq));
+                TeleportData data = entry.getValue();
+                if (minecraft.world.getWorldTime() == data.teleportTime) {
+                    Mekanism.packetHandler.sendToServer(new PortableTeleporterMessage(PortableTeleporterPacketType.TELEPORT, data.hand, data.freq));
                     iter.remove();
                 }
             }
 
-            ItemStack chestStack = mc.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-
-            if (!mc.player.isCreative() && !mc.player.isSpectator()) {
-                if (isFlamethrowerOn(mc.player)) {
-                    ItemFlamethrower flamethrower = (ItemFlamethrower) mc.player.inventory.getCurrentItem().getItem();
-                    flamethrower.useGas(mc.player.inventory.getCurrentItem());
-                }
-            }
-
             if (!jetpack.isEmpty()) {
-                ItemStack primaryJetpack = IJetpackItem.getPrimaryJetpack(mc.player);
+                ItemStack primaryJetpack = IJetpackItem.getPrimaryJetpack(minecraft.player);
                 if (!primaryJetpack.isEmpty()) {
                     JetpackMode primaryMode = ((IJetpackItem) primaryJetpack.getItem()).getJetpackMode(primaryJetpack);
-                    JetpackMode mode = IJetpackItem.getPlayerJetpackMode(mc.player, primaryMode, () -> mc.player.movementInput.jump);
-                    MekanismClient.updateKey(mc.player.movementInput.jump, KeySync.ASCEND);
-                    if (jetpackInUse && IJetpackItem.handleJetpackMotion(mc.player, mode, () -> mc.player.movementInput.jump)) {
-                        mc.player.fallDistance = 0.0F;
+                    JetpackMode mode = IJetpackItem.getPlayerJetpackMode(minecraft.player, primaryMode, p -> p.movementInput.jump);
+                    MekanismClient.updateKey(minecraft.player.movementInput.jump, KeySync.ASCEND);
+                    double jetpackThrust = ((IJetpackItem) primaryJetpack.getItem()).getJetpackThrust(primaryJetpack);
+                    if (jetpackInUse && IJetpackItem.handleJetpackMotion(minecraft.player, mode, jetpackThrust, p -> p.movementInput.jump)) {
+                        minecraft.player.fallDistance = 0.0F;
                     }
                 }
             }
 
-            if (isGasMaskOn(mc.player)) {
-                ItemScubaTank tank = (ItemScubaTank) chestStack.getItem();
-                final int max = 300;
-                tank.useGas(chestStack);
-                GasStack received = tank.useGas(chestStack, max - mc.player.getAir());
-
-                if (received != null) {
-                    mc.player.setAir(mc.player.getAir() + received.amount);
-                }
-                if (mc.player.getAir() == max) {
-                    for (PotionEffect effect : mc.player.getActivePotionEffects()) {
+            if (isScubaMaskOn(minecraft.player) && minecraft.player.getAir() == 300) {
+                for (PotionEffect effect : minecraft.player.getActivePotionEffects()) {
+                    if (MekanismUtils.shouldSpeedUpEffect(effect)) {
                         for (int i = 0; i < 9; i++) {
-                            effect.onUpdate(mc.player);
+                            MekanismUtils.speedUpEffectSafely(minecraft.player, effect);
                         }
                     }
                 }
             }
 
-            if (isVisionEnhancementOn(mc.player)) {
+            if (isVisionEnhancementOn(minecraft.player)) {
                 visionEnhancement = true;
                 // adds if it doesn't exist, otherwise tops off duration to 220. equal or less than 200 will make vision flickers
-                mc.player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 220, 0, false, false));
+                minecraft.player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 220, 0, false, false));
             } else if (visionEnhancement) {
                 visionEnhancement = false;
-                PotionEffect effect = mc.player.getActivePotionEffect(MobEffects.NIGHT_VISION);
+                PotionEffect effect = minecraft.player.getActivePotionEffect(MobEffects.NIGHT_VISION);
                 if (effect != null && effect.getDuration() <= 220) {
                     //Only remove it if it is our effect and not one that has a longer remaining duration
-                    mc.player.removePotionEffect(MobEffects.NIGHT_VISION);
+                    minecraft.player.removePotionEffect(MobEffects.NIGHT_VISION);
                 }
             }
 
-            ItemStack stack = mc.player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
-            if (MekKeyHandler.getIsKeyPressed(MekanismKeyHandler.modeSwitchKey) && stack.getItem() instanceof IRadialModeItem) {
-                if (mc.currentScreen == null || mc.currentScreen instanceof GuiRadialSelector) {
+            ItemStack stack = minecraft.player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
+            if (MekKeyHandler.getIsKeyPressed(MekanismKeyHandler.handModeSwitchKey) && stack.getItem() instanceof IRadialModeItem) {
+                if (minecraft.currentScreen == null || minecraft.currentScreen instanceof GuiRadialSelector) {
                     updateSelectorRenderer((IRadialModeItem<?>) stack.getItem());
                 }
-            } else if (mc.currentScreen instanceof GuiRadialSelector) {
-                mc.displayGuiScreen(null);
+            } else if (minecraft.currentScreen instanceof GuiRadialSelector) {
+                minecraft.displayGuiScreen(null);
+            }
+
+            if (MekKeyHandler.getIsKeyPressed(MekanismKeyHandler.moduleTweakerKey)){
+                if (minecraft.player != null && ModuleTweakerContainer.hasTweakableItem(minecraft.player)) {
+                    minecraft.displayGuiScreen(new GuiModuleTweaker(minecraft.player.inventory));
+                }
             }
         }
     }
 
     private <TYPE extends Enum<TYPE> & IRadialSelectorEnum<TYPE>> void updateSelectorRenderer(IRadialModeItem<TYPE> modeItem) {
         Class<TYPE> modeClass = modeItem.getModeClass();
-        if (!(mc.currentScreen instanceof GuiRadialSelector) || ((GuiRadialSelector<?>) mc.currentScreen).getEnumClass() != modeClass) {
-            mc.displayGuiScreen(new GuiRadialSelector<>(modeClass, () -> {
-                if (mc.player != null) {
-                    ItemStack s = mc.player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
+        if (!(minecraft.currentScreen instanceof GuiRadialSelector) || ((GuiRadialSelector<?>) minecraft.currentScreen).getEnumClass() != modeClass) {
+            minecraft.displayGuiScreen(new GuiRadialSelector<>(modeClass, () -> {
+                if (minecraft.player != null) {
+                    ItemStack s = minecraft.player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
                     if (s.getItem() instanceof IRadialModeItem) {
                         return ((IRadialModeItem<TYPE>) s.getItem()).getMode(s);
                     }
                 }
                 return modeItem.getDefaultMode();
             }, type -> {
-                if (mc.player != null) {
+                if (minecraft.player != null) {
                     Mekanism.packetHandler.sendToServer(new RadialModeChangeMessage(EntityEquipmentSlot.MAINHAND, type.ordinal()));
                 }
             }));
         }
     }
 
+    @SubscribeEvent
+    public void onMouseEvent(MouseEvent event) {
+        if (minecraft.player != null && minecraft.player.isSneaking()) {
+            if (MekanismConfig.current().client.allowModeScroll.val()) {
+                handleModeScroll(event, Mouse.getEventDWheel());
+            }
+        }
+    }
 
     private void handleModeScroll(Event event, double delta) {
-        if (delta != 0 && IModeItem.isModeItem(mc.player, EntityEquipmentSlot.MAINHAND)) {
+        if (delta != 0 && IModeItem.isModeItem(minecraft.player, EntityEquipmentSlot.MAINHAND)) {
             wheelStatus += Mouse.getEventDWheel();
             int shift = wheelStatus / 120;
             wheelStatus = wheelStatus % 120;
@@ -390,30 +304,6 @@ public class ClientTickHandler {
             RenderTickHandler.modeSwitchTimer = 100;
             Mekanism.packetHandler.sendToServer(new ModeChangMessage(EntityEquipmentSlot.MAINHAND, handoff));
             event.setCanceled(true);
-        }
-    }
-
-    @SubscribeEvent
-    public void onMouseEvent(MouseEvent event) {
-        if (mc.player != null && mc.player.isSneaking()) {
-            if (MekanismConfig.current().client.allowModeScroll.val()) {
-                handleModeScroll(event, Mouse.getEventDWheel());
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public void GuiScreenEvent(GuiOpenEvent event) {
-        if (event.getGui() instanceof GuiGameOver) {
-            if (mc.world.getWorldInfo().isHardcoreModeEnabled()) {
-                return;
-            }
-            if (mc.player instanceof EntityPlayerSP) {
-                ItemStack head = mc.player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-                if (!mc.player.isEntityAlive() && !head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour armour && ((UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.EMERGENCY_RESCUE) && armour.getEmergency(head)) || (UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.ADVANCED_INTERCEPTION_SYSTEM_UNIT) && armour.getInterception(head)))) {
-                    event.setCanceled(true);
-                }
-            }
         }
     }
 
@@ -435,13 +325,56 @@ public class ClientTickHandler {
     public void onFog(EntityViewRenderEvent.RenderFogEvent event) {
         if (visionEnhancement) {
             float fog = 0.1F;
-            ItemStack head = mc.player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-            if (!head.isEmpty() && head.getItem() instanceof ItemMekAsuitHeadArmour && UpgradeHelper.isUpgradeInstalled(head, moduleUpgrade.VisionEnhancementUnit)) {
-                fog -= UpgradeHelper.getUpgradeLevel(head, moduleUpgrade.VisionEnhancementUnit) * 0.022F;
+            IModule<ModuleVisionEnhancementUnit> module = ModuleHelper.get().load(minecraft.player.getItemStackFromSlot(EntityEquipmentSlot.HEAD), MekanismModules.VISION_ENHANCEMENT_UNIT);
+            if (module != null) {
+                fog -= module.getInstalledCount() * 0.022F;
             }
             GlStateManager.setFogDensity(fog);
             GlStateManager.setFog(GlStateManager.FogMode.EXP2);
         }
+    }
+
+    @SubscribeEvent
+    public void renderEntityPre(RenderPlayerEvent.Pre evt) {
+        setModelVisibility(evt.getEntityPlayer(), evt.getRenderer(), false);
+    }
+
+    @SubscribeEvent
+    public void renderEntityPost(RenderPlayerEvent.Post evt) {
+        setModelVisibility(evt.getEntityPlayer(), evt.getRenderer(), true);
+    }
+
+    private static void setModelVisibility(EntityPlayer entity, Render<?> entityModel, boolean showModel) {
+        if (entityModel instanceof RenderPlayer renderPlayer) {
+            if (entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() instanceof ItemMekaSuitHelmet) {
+                renderPlayer.getMainModel().bipedHead.showModel = showModel;
+                renderPlayer.getMainModel().bipedHeadwear.showModel = showModel;
+                renderPlayer.getMainModel().bipedHead.isHidden = !showModel;
+                renderPlayer.getMainModel().bipedHeadwear.isHidden = !showModel;
+            }
+            if (entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() instanceof ItemMekaSuitBodyArmor) {
+                renderPlayer.getMainModel().bipedLeftArmwear.showModel = showModel;
+                renderPlayer.getMainModel().bipedRightArmwear.showModel = showModel;
+                renderPlayer.getMainModel().bipedBodyWear.showModel = showModel;
+                renderPlayer.getMainModel().bipedLeftArmwear.isHidden = !showModel;
+                renderPlayer.getMainModel().bipedRightArmwear.isHidden = !showModel;
+                renderPlayer.getMainModel().bipedBodyWear.isHidden = !showModel;
+            }
+            if (entity.getItemStackFromSlot(EntityEquipmentSlot.LEGS).getItem() instanceof ItemMekaSuitPants) {
+                renderPlayer.getMainModel().bipedLeftLegwear.showModel = showModel;
+                renderPlayer.getMainModel().bipedRightLegwear.showModel = showModel;
+                renderPlayer.getMainModel().bipedBodyWear.showModel = showModel;
+                renderPlayer.getMainModel().bipedLeftLegwear.isHidden = !showModel;
+                renderPlayer.getMainModel().bipedRightLegwear.isHidden = !showModel;
+                renderPlayer.getMainModel().bipedBodyWear.isHidden = !showModel;
+            }
+        }
+    }
+
+    //Maybe it works
+    @SubscribeEvent
+    public void remove(WorldEvent.Unload event) {
+        portableTeleports.remove(minecraft.player);
     }
 
     private static class TeleportData {
@@ -454,6 +387,52 @@ public class ClientTickHandler {
             hand = h;
             freq = f;
             teleportTime = t;
+        }
+    }
+
+
+    @SubscribeEvent
+    public void GuiScreenEvent(GuiOpenEvent event) {
+        if (event.getGui() instanceof GuiGameOver) {
+            if (minecraft.player instanceof EntityPlayerSP) {
+                ItemStack head = minecraft.player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+                if (!minecraft.player.isEntityAlive()){
+                    if (head.getItem() instanceof IModuleContainerItem item){
+                        if (item.isModuleEnabled(head,MekanismModules.EMERGENCY_RESCUE_UNIT) || item.isModuleEnabled(head,MekanismModules.ADVANCED_INTERCEPTION_SYSTEM_UNIT)){
+                            event.setCanceled(true);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    @SubscribeEvent
+    public void SneakingSpeedBonus(InputUpdateEvent event) {
+        EntityPlayer player = event.getEntityPlayer();
+        ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
+        MovementInput input = event.getMovementInput();
+        if (stack.getItem() instanceof SwiftSneakHelp help) {
+            float getSneakingSpeedBonus = MathHelper.clamp(0.3F + (help.getSneakingSpeedBonusLevel(stack) * 0.15F), 0.0F, 1.0F);
+            input.moveStrafe = 0.0F;
+            input.moveForward = 0.0F;
+            if (minecraft.gameSettings.keyBindForward.isKeyDown()) {
+                ++input.moveForward;
+            }
+            if (minecraft.gameSettings.keyBindBack.isKeyDown()) {
+                --input.moveForward;
+            }
+            if (minecraft.gameSettings.keyBindLeft.isKeyDown()) {
+                ++input.moveStrafe;
+            }
+            if (minecraft.gameSettings.keyBindRight.isKeyDown()) {
+                --input.moveStrafe;
+            }
+            if (input.sneak) {
+                input.moveStrafe *= getSneakingSpeedBonus;
+                input.moveForward *= getSneakingSpeedBonus;
+            }
         }
     }
 

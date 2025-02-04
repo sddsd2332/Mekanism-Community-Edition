@@ -7,6 +7,7 @@ import mekanism.api.EnumColor;
 import mekanism.api.IConfigurable;
 import mekanism.api.IMekWrench;
 import mekanism.api.NBTConstants;
+import mekanism.api.annotations.FieldsAreNonnullByDefault;
 import mekanism.api.math.MathUtils;
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.common.Mekanism;

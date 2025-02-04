@@ -29,9 +29,11 @@ import java.util.Set;
 @SideOnly(Side.CLIENT)
 public abstract class GuiMekanism extends GuiContainer implements IGuiWrapper {
 
+
     private final ResourceLocation Base = MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "Base.png");
     private Set<GuiElement> guiElements = new ReferenceOpenHashSet<>();
     private boolean atuoBG = true;
+    public static int maxZOffset;
     public GuiMekanism(Container container) {
         super(container);
     }

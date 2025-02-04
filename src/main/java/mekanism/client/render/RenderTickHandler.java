@@ -8,6 +8,7 @@ import mekanism.client.render.particle.EntityJetpackFlameFX;
 import mekanism.client.render.particle.EntityJetpackSmokeFX;
 import mekanism.client.render.particle.EntityScubaBubbleFX;
 import mekanism.common.Mekanism;
+import mekanism.common.content.gear.IModuleContainerItem;
 import mekanism.common.item.ItemFlamethrower;
 import mekanism.common.item.interfaces.IModeItem;
 import mekanism.common.lib.Color;
@@ -20,11 +21,13 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
@@ -38,11 +41,18 @@ import java.util.UUID;
 @SideOnly(Side.CLIENT)
 public class RenderTickHandler {
 
-    private static final EntityEquipmentSlot[] EQUIPMENT_ORDER = {EntityEquipmentSlot.OFFHAND, EntityEquipmentSlot.MAINHAND, EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS,
-            EntityEquipmentSlot.FEET};
     public static int modeSwitchTimer = 0;
     public Random rand = new Random();
     public Minecraft mc = Minecraft.getMinecraft();
+
+
+    @SubscribeEvent
+    public void filterTooltips(ItemTooltipEvent event) {
+        ItemStack stack = event.getItemStack();
+        if (stack.getItem() instanceof IModuleContainerItem containerItem) {
+            containerItem.filterTooltips(stack, event.getToolTip());
+        }
+    }
 
     @SubscribeEvent
     public void tickEnd(RenderTickEvent event) {
@@ -78,23 +88,6 @@ public class RenderTickHandler {
                         font.drawStringWithShadow("Side: " + pos.sideHit, 1, 37, 0x404040);
                     }
                 }
-
-                /*
-                //todo use vanilla status bar text?
-                if (modeSwitchTimer > 1 && mc.currentScreen == null && player.getHeldItemMainhand().getItem() instanceof ItemConfigurator) {
-                    ItemStack stack = player.getHeldItemMainhand();
-                    ScaledResolution scaledresolution = new ScaledResolution(mc);
-                    ConfiguratorMode mode = ((ItemConfigurator) stack.getItem()).getMode(stack);
-
-                    int x = scaledresolution.getScaledWidth();
-                    int y = scaledresolution.getScaledHeight();
-                    int stringWidth = font.getStringWidth(mode.getName());
-                    int color = new ColourRGBA(1, 1, 1, (float) modeSwitchTimer / 100F).argb();
-                    font.drawString(mode.getColor() + mode.getName(), x / 2 - stringWidth / 2, y - 60, color);
-                }
-                modeSwitchTimer = Math.max(modeSwitchTimer - 1, 0);
-                 */
-
                 if (modeSwitchTimer == 0) {
                     ClientTickHandler.wheelStatus = 0;
                 }
@@ -105,7 +98,7 @@ public class RenderTickHandler {
                     if (p != null) {
                         Pos3D playerPos = new Pos3D(p).translate(0, p.getEyeHeight(), 0);
                         Vec3d playerMotion = new Vec3d(player.motionX, player.motionY, player.motionZ);
-                        float random = (rand.nextFloat() - 0.5F) * 0.1F;
+                        float random = (world.rand.nextFloat() - 0.5F) * 0.1F;
                         //This positioning code is somewhat cursed, but it seems to be mostly working and entity pose code seems cursed in general
                         float xRot;
                         if (p.isSneaking()) {
@@ -116,27 +109,27 @@ public class RenderTickHandler {
                             if (p.isElytraFlying()) {
                                 float f1 = (float) p.getTicksElytraFlying() + event.renderTickTime;
                                 float f2 = clamp(f1 * f1 / 100.0F, 0.0F, 1.0F);
-                                xRot = f2 * (-90.0F - p.rotationYaw);
+                                xRot = f2 * (-90.0F - p.rotationPitch);
                             } else {
-                                float f3 = p.isInWater() ? -90.0F - p.rotationYaw : -90.0F;
+                                float f3 = p.isInWater() ? -90.0F - p.rotationPitch : -90.0F;
                                 xRot = lerp(f, 0.0F, f3);
                             }
                             xRot = -xRot;
                             Pos3D eyeAdjustments;
                             if (p.isElytraFlying() && (p != player || mc.gameSettings.thirdPersonView != 0)) {
-                                eyeAdjustments = new Pos3D(0, p.getEyeHeight(), 0).rotatePitch(xRot).rotateYaw(p.renderYawOffset);
+                                eyeAdjustments = new Pos3D(0, p.getEyeHeight(), 0).rotatePitch(xRot).rotateYaw(p.rotationYaw);
                             }  /*else if (p.getSwingProgress()) {
-                                eyeAdjustments = new Pos3D(0, p.getEyeHeight(), 0).rotatePitch(xRot).rotateYaw(p.renderYawOffset).translate(0, 0.5, 0);
+                                eyeAdjustments = new Pos3D(0, p.getEyeHeight(), 0).rotatePitch(xRot).rotateYaw(p.rotationYaw).translate(0, 0.5, 0);
                             } */ else {
-                                eyeAdjustments = new Pos3D(0, p.getEyeHeight(), 0).rotatePitch(xRot).rotateYaw(p.renderYawOffset);
+                                eyeAdjustments = new Pos3D(0, p.getEyeHeight(), 0).rotatePitch(xRot).rotateYaw(p.rotationYaw);
                             }
                             playerPos = new Pos3D(p.posX + eyeAdjustments.x, p.posY + eyeAdjustments.y, p.posZ + eyeAdjustments.z);
                         }
-                        Pos3D vLeft = new Pos3D(-0.43, -0.55, -0.54).rotatePitch(xRot).rotateYaw(p.renderYawOffset);
+                        Pos3D vLeft = new Pos3D(-0.43, -0.55, -0.54).rotatePitch(xRot).rotateYaw(p.rotationYaw);
                         renderJetpackSmoke(world, playerPos.translate(vLeft).translate(playerMotion), vLeft.scale(0.2).translate(playerMotion).translate(vLeft.scale(random)));
-                        Pos3D vRight = new Pos3D(0.43, -0.55, -0.54).rotatePitch(xRot).rotateYaw(p.renderYawOffset);
+                        Pos3D vRight = new Pos3D(0.43, -0.55, -0.54).rotatePitch(xRot).rotateYaw(p.rotationYaw);
                         renderJetpackSmoke(world, playerPos.translate(vRight).translate(playerMotion), vRight.scale(0.2).translate(playerMotion).translate(vRight.scale(random)));
-                        Pos3D vCenter = new Pos3D((rand.nextFloat() - 0.5) * 0.4, -0.86, -0.30).rotatePitch(xRot).rotateYaw(p.renderYawOffset);
+                        Pos3D vCenter = new Pos3D((world.rand.nextFloat() - 0.5) * 0.4, -0.86, -0.30).rotatePitch(xRot).rotateYaw(p.rotationYaw);
                         renderJetpackSmoke(world, playerPos.translate(vCenter).translate(playerMotion), vCenter.scale(0.2).translate(playerMotion));
                     }
                 }
@@ -145,59 +138,44 @@ public class RenderTickHandler {
                 if (world.getWorldTime() % 4 == 0) {
                     for (UUID uuid : Mekanism.playerState.getActiveScubaMask()) {
                         EntityPlayer p = mc.world.getPlayerEntityByUUID(uuid);
-                        if (p == null || !p.isInWater()) {
-                            continue;
+                        if (p != null && p.isInWater()) {
+                            Pos3D vec = new Pos3D(0.4, 0.4, 0.4).multiply(p.getLook(1)).translate(0, -0.2, 0);
+                            Pos3D motion = vec.scale(0.2).translate(new Pos3D(p.motionX, p.motionY, p.motionZ));
+                            Pos3D v = new Pos3D(p).translate(0, p.getEyeHeight(), 0).translate(vec);
+                            spawnAndSetParticle(EnumParticleTypes.WATER_BUBBLE, world, v.x, v.y, v.z, motion.x, motion.y + 0.2, motion.z);
                         }
-
-                        Pos3D playerPos = new Pos3D(p).translate(0, 1.7, 0);
-
-                        float xRand = (rand.nextFloat() - 0.5F) * 0.08F;
-                        float yRand = (rand.nextFloat() - 0.5F) * 0.05F;
-
-                        Pos3D vec = new Pos3D(0.4, 0.4, 0.4).multiply(new Pos3D(p.getLook(1))).translate(0, -0.2, 0);
-                        Pos3D motion = vec.scale(0.2).translate(new Pos3D(p.motionX, p.motionY, p.motionZ));
-
-                        Pos3D v = playerPos.translate(vec);
-                        spawnAndSetParticle(EnumParticleTypes.WATER_BUBBLE, world, v.x, v.y, v.z, motion.x, motion.y + 0.2, motion.z);
                     }
-                }
 
-                // Traverse a copy of flamethrower state and do animations
-                if (world.getWorldTime() % 4 == 0) {
                     for (EntityPlayer p : world.playerEntities) {
                         if (!Mekanism.playerState.isFlamethrowerOn(p) && !p.isSwingInProgress) {
-                            ItemStack currentItem = p.inventory.getCurrentItem();
-                            if (!currentItem.isEmpty() && currentItem.getItem() instanceof ItemFlamethrower && ((ItemFlamethrower) currentItem.getItem()).getGas(currentItem) != null) {
-                                Pos3D playerPos = new Pos3D(p);
+                            ItemStack currentItem = p.getHeldItemMainhand();
+                            if (!currentItem.isEmpty() && currentItem.getItem() instanceof ItemFlamethrower flamethrower && flamethrower.getGas(currentItem) != null) {
                                 Pos3D flameVec;
-                                double flameXCoord = 0;
-                                double flameYCoord = 1.5;
-                                double flameZCoord = 0;
-                                Pos3D flameMotion = new Pos3D(p.motionX, p.onGround ? 0 : p.motionY, p.motionZ);
+                                boolean rightHanded = p.getPrimaryHand() == EnumHandSide.RIGHT;
                                 if (player == p && mc.gameSettings.thirdPersonView == 0) {
-                                    flameVec = new Pos3D(1, 1, 1).multiply(p.getLook(1)).rotateYaw(5).translate(flameXCoord, flameYCoord + 0.1, flameZCoord);
+                                    flameVec = new Pos3D(1, 1, 1)
+                                            .multiply(p.getLook(event.renderTickTime))
+                                            .rotateYaw(rightHanded ? 15 : -15)
+                                            .translate(0, p.getEyeHeight() - 0.1, 0);
                                 } else {
-                                    flameXCoord += 0.25F;
-                                    flameXCoord -= 0.45F;
-                                    flameZCoord += 0.15F;
+                                    double flameXCoord = rightHanded ? -0.2 : 0.2;
+                                    double flameYCoord = 1;
+                                    double flameZCoord = 1.2;
                                     if (p.isSneaking()) {
-                                        flameYCoord -= 0.55F;
-                                        flameZCoord -= 0.15F;
+                                        flameYCoord -= 0.65;
+                                        flameZCoord -= 0.15;
                                     }
-                                    if (player == p) {
-                                        flameYCoord -= 0.5F;
-                                    } else {
-                                        flameYCoord -= 0.5F;
-                                    }
-                                    flameZCoord += 1.05F;
-                                    flameVec = new Pos3D(flameXCoord, flameYCoord, flameZCoord).rotateYaw(p.renderYawOffset);
+                                    flameVec = new Pos3D(flameXCoord, flameYCoord, flameZCoord).rotateYaw(p.rotationYaw);
                                 }
-                                Pos3D mergedVec = playerPos.translate(flameVec);
+                                Vec3d motion = new Vec3d(p.motionX, p.motionY, p.motionZ);
+                                Vec3d flameMotion = new Vec3d(motion.x, p.onGround ? 0 : motion.y, motion.z);
+                                Vec3d mergedVec = new Vec3d(p.posX, p.posY, p.posZ).add(flameVec);
                                 spawnAndSetParticle(EnumParticleTypes.FLAME, world, mergedVec.x, mergedVec.y, mergedVec.z, flameMotion.x, flameMotion.y, flameMotion.z);
                             }
                         }
                     }
                 }
+
             }
         }
     }
@@ -248,17 +226,6 @@ public class RenderTickHandler {
             fx = new EntityScubaBubbleFX(world, x, y, z, velX, velY, velZ);
         }
         mc.effectRenderer.addEffect(fx);
-    }
-
-    private void drawString(ScaledResolution res, String s, boolean leftSide, int y, int color) {
-        FontRenderer font = mc.fontRenderer;
-        // Note that we always offset by 2 pixels when left or right aligned
-        if (leftSide) {
-            font.drawStringWithShadow(s, 2, y, color);
-        } else {
-            int width = font.getStringWidth(s) + 2;
-            font.drawStringWithShadow(s, res.getScaledWidth() - width, y, color);
-        }
     }
 
 

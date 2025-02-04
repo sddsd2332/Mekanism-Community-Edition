@@ -1,0 +1,27 @@
+{
+      "result": {
+            "item": "mekanism:module_laser_dissipation_unit"
+      },
+      "pattern": [
+            "ABA",
+            "ACA",
+            "DDD"
+      ],
+      "type": "mekanism:ore_shaped",
+      "key": {
+            "A": {
+                  "ore": "alloyAdvanced",
+                  "type": "forge:ore_dict"
+            },
+            "B": {
+                  "item": "mekanism:machineblock2",
+                  "data": 14
+            },
+            "C": {
+                  "item": "mekanism:modulebase"
+            },
+            "D": {
+                  "item": "mekanism:hdpe_sheet"
+            }
+      }
+}

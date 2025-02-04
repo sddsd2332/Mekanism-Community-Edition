@@ -87,7 +87,7 @@ public class GuiChanceMachine2<RECIPE extends Chance2MachineRecipe<RECIPE>> exte
                 info.add(LangUtils.localize("gui.item_no_space"));
             }
             if (energy || outslot) {
-                displayTooltips(info, xAxis, yAxis);
+                this.displayTooltips(info, xAxis, yAxis);
             }
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);

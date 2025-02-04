@@ -164,7 +164,6 @@ public class GuiScrollList extends GuiElement {
     public void mouseClicked(int xAxis, int yAxis, int button) {
         if (button == 0) {
             int xStart = xPosition + xSize - 5;
-
             if (xAxis >= xStart && xAxis <= xStart + 4 && yAxis >= getScroll() + yPosition + 1 && yAxis <= getScroll() + 4 + yPosition + 1) {
                 if (textEntries.size() > size) {
                     dragOffset = yAxis - (getScroll() + yPosition + 1);

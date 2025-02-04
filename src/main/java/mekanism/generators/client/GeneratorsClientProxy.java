@@ -66,6 +66,8 @@ public class GeneratorsClientProxy extends GeneratorsCommonProxy {
         registerItemRender(GeneratorsItems.SolarPanel);
         registerItemRender(GeneratorsItems.Hohlraum);
         registerItemRender(GeneratorsItems.TurbineBlade);
+        registerItemRender(GeneratorsItems.MODULE_SOLAR_RECHARGING);
+        registerItemRender(GeneratorsItems.MODULE_GEOTHERMAL_GENERATOR);
 
         Item.getItemFromBlock(GeneratorsBlocks.Generator).setTileEntityItemStackRenderer(new RenderGeneratorItem());
     }

@@ -82,7 +82,7 @@ public class GuiLaserAmplifier extends GuiMekanismTile<TileEntityLaserAmplifier>
                 info.add(LangUtils.localize("gui.no_energy"));
             }
             if (energy) {
-                displayTooltips(info, xAxis, yAxis);
+                this.displayTooltips(info, xAxis, yAxis);
             }
         }
 

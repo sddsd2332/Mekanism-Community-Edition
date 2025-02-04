@@ -1,7 +1,6 @@
 {
   "result": {
-    "item": "mekanism:moduleupgrade",
-    "data": 15
+    "item": "mekanism:module_frost_walker_unit"
   },
   "pattern": [
     "CDC",

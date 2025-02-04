@@ -21,9 +21,11 @@ import mekanism.common.chunkloading.ChunkManager;
 import mekanism.common.command.CommandMek;
 import mekanism.common.concurrent.TaskExecutor;
 import mekanism.common.config.MekanismConfig;
-import mekanism.common.config.MixinConfig;
 import mekanism.common.content.boiler.SynchronizedBoilerData;
 import mekanism.common.content.entangloporter.InventoryFrequency;
+import mekanism.common.content.gear.MekaSuitDispenseBehavior;
+import mekanism.common.content.gear.ModuleDispenseBehavior;
+import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.content.matrix.SynchronizedMatrixData;
 import mekanism.common.content.tank.SynchronizedTankData;
 import mekanism.common.content.transporter.PathfinderCache;
@@ -35,7 +37,6 @@ import mekanism.common.frequency.FrequencyManager;
 import mekanism.common.integration.IMCHandler;
 import mekanism.common.integration.MekanismHooks;
 import mekanism.common.integration.multipart.MultipartMekanism;
-import mekanism.common.item.armor.ItemMekaSuitArmor;
 import mekanism.common.multiblock.MultiblockManager;
 import mekanism.common.network.PacketDataRequest.DataRequestMessage;
 import mekanism.common.network.PacketSimpleGui;
@@ -63,6 +64,8 @@ import mekanism.common.voice.VoiceServerManager;
 import mekanism.common.world.GenHandler;
 import mekanism.mekanism.Tags;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDispenser;
+import net.minecraft.dispenser.IBehaviorDispenseItem;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -84,7 +87,6 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.world.ChunkDataEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -114,8 +116,6 @@ public class Mekanism {
     public static final String MOD_NAME = "Mekanism";
     public static final String LOG_TAG = '[' + MOD_NAME + ']';
     public static final PlayerState playerState = new PlayerState();
-    public static final Set<UUID> jumpBoostOn = new ObjectOpenHashSet<>();
-    public static final Set<UUID> stepAssistOn = new ObjectOpenHashSet<>();
     /**
      * Mekanism Packet Pipeline
      */
@@ -149,7 +149,6 @@ public class Mekanism {
     public static Configuration configurationMultiblockMachine;
     public static Configuration configurationmekaweapons;
     public static Configuration configurationMeka;
-    public static Configuration configurationMixin;
     /**
      * Mekanism version number
      */
@@ -222,6 +221,7 @@ public class Mekanism {
         MekanismOreDict.registerOreDict();
     }
 
+
     @SubscribeEvent
     public static void registerEntities(RegistryEvent.Register<EntityEntry> event) {
         EntityRegistry.registerModEntity(new ResourceLocation(MODID, "ObsidianTNT"), EntityObsidianTNT.class, "ObsidianTNT", 0, Mekanism.instance, 64, 5, true);
@@ -260,6 +260,10 @@ public class Mekanism {
 
     private static void registerTileEntity(Class<? extends TileEntity> clazz, String name) {
         GameRegistry.registerTileEntity(clazz, new ResourceLocation(MODID, name));
+    }
+
+    public static ResourceLocation rl(String path) {
+        return new ResourceLocation(Mekanism.MODID, path);
     }
 
     /**
@@ -381,6 +385,7 @@ public class Mekanism {
             voiceManager.start();
         }
         CommandMek.register(event);
+        ModuleHelper.get().processSupportedContainers();
     }
 
     @EventHandler
@@ -395,8 +400,6 @@ public class Mekanism {
         worldTickHandler.resetRegenChunks();
         privateTeleporters.clear();
         privateEntangloporters.clear();
-        jumpBoostOn.clear();
-        stepAssistOn.clear();
 
         //Reset consistent managers
         MultiblockManager.reset();
@@ -404,11 +407,13 @@ public class Mekanism {
         TransporterManager.reset();
         PathfinderCache.reset();
         TransmitterNetworkRegistry.reset();
+        ModuleHelper.get().resetSupportedContainers();
     }
 
     @EventHandler
     public void loadComplete(FMLInterModComms.IMCEvent event) {
         new IMCHandler().onIMCEvent(event.getMessages());
+
     }
 
     @EventHandler
@@ -429,16 +434,10 @@ public class Mekanism {
         configurationMultiblockMachine = new Configuration(new File("config/mekanism/MekanismMultiblockMachine.cfg"));
         configurationmekaweapons = new Configuration(new File("config/mekanism/MekanismWeapons.cfg"));
         configurationMeka = new Configuration(new File("config/mekanism/MekaSuitArmor.cfg"));
-        if (Loader.isModLoaded("mixinbooter") && Loader.isModLoaded("extrabotany")) {
-            configurationMixin = new Configuration(new File("config/mekanism/ExtraBotanyMixin.cfg"));
-        }
 
 
         //Load configuration
         proxy.loadConfiguration();
-        if (Loader.isModLoaded("mixinbooter") && Loader.isModLoaded("extrabotany")) {
-            MixinConfig.initConfig(configurationMixin.getConfigFile());
-        }
 
         proxy.onConfigSync(false);
 
@@ -453,7 +452,6 @@ public class Mekanism {
         }
 
         Mekanism.proxy.preInit();
-
         //Register infuses
         InfuseRegistry.registerInfuseType(new InfuseType("CARBON", new ResourceLocation(Mekanism.MODID, "blocks/infuse/Carbon")).setTranslationKey("carbon"));
         InfuseRegistry.registerInfuseType(new InfuseType("TIN", new ResourceLocation(Mekanism.MODID, "blocks/infuse/Tin")).setTranslationKey("tin"));
@@ -481,15 +479,20 @@ public class Mekanism {
         //Register the mod's GUI handler
         NetworkRegistry.INSTANCE.registerGuiHandler(this, new CoreGuiHandler());
 
+
         //Register player tracker
         MinecraftForge.EVENT_BUS.register(new CommonPlayerTracker());
         MinecraftForge.EVENT_BUS.register(new CommonPlayerTickHandler());
+
 
         //Initialization notification
         logger.info("Version " + versionNumber + " initializing...");
 
         //Register with ForgeChunkManager
         ForgeChunkManager.setForcedChunkLoadingCallback(this, new ChunkManager());
+
+        registerDispenseBehavior(new ModuleDispenseBehavior(), MekanismItems.MEKA_TOOL);
+        registerDispenseBehavior(new MekaSuitDispenseBehavior(), MekanismItems.MEKASUIT_HELMET, MekanismItems.MEKASUIT_BODYARMOR, MekanismItems.MEKASUIT_PANTS, MekanismItems.MEKASUIT_BOOTS);
 
         //Register to receive subscribed events
         MinecraftForge.EVENT_BUS.register(this);
@@ -518,19 +521,65 @@ public class Mekanism {
         registerTileEntities();
 
         hooks.hookInit();
-
+        imcQueue();
         //Packet registrations
         packetHandler.initialize();
 
         //Load proxy
-        proxy.init();
+        Mekanism.proxy.init();
 
         //Completion notification
         logger.info("Loading complete.");
 
         //Success message
         logger.info("Mod loaded.");
+
+        if (!hooks.MekanismMixinHelp) {
+            logger.info("The Mekanism Mixin Help mod is not installed, which causes some modifications to not be implemented");
+        }
+
     }
+
+    private static void registerDispenseBehavior(IBehaviorDispenseItem behavior, Item... itemProviders) {
+        for (Item itemProvider : itemProviders) {
+            BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(itemProvider, behavior);
+        }
+    }
+
+    private void imcQueue() {
+        Item[] addModulesToAll = {MekanismItems.MEKASUIT_HELMET, MekanismItems.MEKASUIT_BODYARMOR, MekanismItems.MEKASUIT_PANTS, MekanismItems.MEKASUIT_BOOTS, MekanismItems.MEKA_TOOL};
+        Item[] addMekaSuitModules = {MekanismItems.MEKASUIT_HELMET, MekanismItems.MEKASUIT_BODYARMOR, MekanismItems.MEKASUIT_PANTS, MekanismItems.MEKASUIT_BOOTS};
+
+        for (Item stack : addModulesToAll) {
+            ModuleHelper.get().setSupported(stack, MekanismModules.ENERGY_UNIT);
+            if (Mekanism.hooks.MekanismMixinHelp) {
+                ModuleHelper.get().setSupported(stack, MekanismModules.MAGNETIC_UNIT);
+            }
+        }
+
+        for (Item stack : addMekaSuitModules) {
+            ModuleHelper.get().setSupported(stack, /*MekanismModules.COLOR_MODULATION_UNIT,*/ MekanismModules.LASER_DISSIPATION_UNIT, MekanismModules.RADIATION_SHIELDING_UNIT);
+            if (Mekanism.hooks.DraconicEvolution) {
+                ModuleHelper.get().setSupported(stack, MekanismModules.ENERGY_SHIELD_UNIT);
+            }
+        }
+
+
+        ModuleHelper.get().setSupported(MekanismItems.MEKA_TOOL, MekanismModules.ATTACK_AMPLIFICATION_UNIT, MekanismModules.SILK_TOUCH_UNIT, MekanismModules.FORTUNE_UNIT,/* MekanismModules.BLASTING_UNIT, MekanismModules.VEIN_MINING_UNIT,*/MekanismModules.FARMING_UNIT, MekanismModules.SHEARING_UNIT, MekanismModules.TELEPORTATION_UNIT, MekanismModules.EXCAVATION_ESCALATION_UNIT);
+
+        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_HELMET, MekanismModules.ELECTROLYTIC_BREATHING_UNIT, MekanismModules.INHALATION_PURIFICATION_UNIT, MekanismModules.VISION_ENHANCEMENT_UNIT, MekanismModules.NUTRITIONAL_INJECTION_UNIT, MekanismModules.EMERGENCY_RESCUE_UNIT, MekanismModules.ADVANCED_INTERCEPTION_SYSTEM_UNIT);
+
+        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_BODYARMOR, MekanismModules.JETPACK_UNIT, MekanismModules.GRAVITATIONAL_MODULATING_UNIT, MekanismModules.CHARGE_DISTRIBUTION_UNIT, MekanismModules.DOSIMETER_UNIT, MekanismModules.GEIGER_UNIT, MekanismModules.HEALTH_REGENERATION_UNIT);
+
+        if (Mekanism.hooks.MekanismMixinHelp) {
+            ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_BODYARMOR, MekanismModules.ELYTRA_UNIT);
+        }
+
+        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_PANTS, MekanismModules.LOCOMOTIVE_BOOSTING_UNIT, MekanismModules.GYROSCOPIC_STABILIZATION_UNIT, MekanismModules.HYDROSTATIC_REPULSOR_UNIT, MekanismModules.MOTORIZED_SERVO_UNIT);
+
+        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_BOOTS, MekanismModules.HYDRAULIC_PROPULSION_UNIT, MekanismModules.MAGNETIC_ATTRACTION_UNIT, MekanismModules.FROST_WALKER_UNIT);
+    }
+
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
@@ -546,7 +595,7 @@ public class Mekanism {
         hooks.hookPostInit();
 
         MinecraftForge.EVENT_BUS.post(new BoxBlacklistEvent());
-
+        Mekanism.proxy.postInit();
         logger.info("Hooking complete.");
     }
 

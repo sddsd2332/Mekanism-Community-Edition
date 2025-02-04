@@ -1,7 +1,6 @@
 {
       "result": {
-            "item": "mekanism:moduleupgrade",
-            "data":21
+            "item": "mekanism:module_gravitational_modulating_unit"
       },
       "pattern": [
             "CDC",

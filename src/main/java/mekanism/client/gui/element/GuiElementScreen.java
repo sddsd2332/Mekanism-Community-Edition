@@ -35,8 +35,8 @@ public class GuiElementScreen extends GuiElement {
         return xAxis >= xPosition && xAxis <= xPosition + xSize && yAxis >= yPosition && yAxis <= yPosition + ySize;
     }
 
-    public GuiElementScreen isFrame(boolean isFrame) {
-        this.isFrame = isFrame;
+    public GuiElementScreen isFrame() {
+        this.isFrame = true;
         return this;
     }
 

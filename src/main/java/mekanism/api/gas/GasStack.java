@@ -74,6 +74,7 @@ public class GasStack {
         return this;
     }
 
+
     /**
      * Writes this GasStack to a defined tag compound.
      *

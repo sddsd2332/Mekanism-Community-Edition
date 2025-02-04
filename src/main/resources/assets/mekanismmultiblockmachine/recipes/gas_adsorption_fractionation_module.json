@@ -14,8 +14,7 @@
       "type": "forge:ore_dict"
     },
     "B": {
-      "item": "mekanism:polyethene",
-      "data": 2
+      "item": "mekanism:hdpe_sheet"
     },
     "C": {
       "nbt": {"tier": 3},
@@ -24,8 +23,7 @@
       "type": "mekanism:item_nbt"
     },
     "D": {
-      "item": "mekanism:polyethene",
-      "data": 3
+      "item": "mekanism:hdpe_stick"
     }
   }
 }

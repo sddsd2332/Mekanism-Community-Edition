@@ -98,6 +98,7 @@ public enum MekanismLang implements ILangEntry {
     KEY_MODULE_TWEAKER("key", "module_tweaker"),
     KEY_BOOST("key", "key_boost"),
     KEY_HUD("key", "key_hud"),
+    KEY_VOICE("key", "voice"),
     //Holiday
     HOLIDAY_BORDER("holiday", "border"),
     HOLIDAY_SIGNATURE("holiday", "signature"),
@@ -778,6 +779,8 @@ public enum MekanismLang implements ILangEntry {
     INJECTING("factory", "injecting"),
     INFUSING("factory", "infusing"),
     SAWING("factory", "sawing"),
+
+
     //Radial Menu
     RADIAL_VEIN("radial", "vein"),
     RADIAL_VEIN_NORMAL("radial", "vein.normal"),
@@ -797,6 +800,47 @@ public enum MekanismLang implements ILangEntry {
     RADIAL_BLASTING_POWER_HIGH("radial", "blasting_power.high"),
     RADIAL_BLASTING_POWER_EXTREME("radial", "blasting_power.extreme"),
 
+    MODULE_ENERGY_UNIT("module", "energy_unit"),
+    MODULE_EXCAVATION_ESCALATION_UNIT("module", "excavation_escalation"),
+    MODULE_ATTACK_AMPLIFICATION_UNIT("module", "attack_amplification_unit"),
+    MODULE_SILK_TOUCH_UNIT("module", "silk_touch_unit"),
+    MODULE_VEIN_MINING_UNIT("module", "vein_mining_unit"),
+    MODULE_FARMING_UNIT("module", "farming_unit"),
+    MODULE_TELEPORTATION_UNIT("module", "teleportation_unit"),
+    MODULE_ELECTROLYTIC_BREATHING_UNIT("module", "electrolytic_breathing_unit"),
+    MODULE_INHALATION_PURIFICATION_UNIT("module", "inhalation_purification_unit"),
+    MODULE_VISION_ENHANCEMENT_UNIT("module", "vision_enhancement_unit"),
+    MODULE_SOLAR_RECHARGING_UNIT("module", "solar_recharging_unit"),
+    MODULE_NUTRITIONAL_INJECTION_UNIT("module", "nutritional_injection_unit"),
+    MODULE_RADIATION_SHIELDING_UNIT("module", "radiation_shielding_unit"),
+    MODULE_JETPACK_UNIT("module", "jetpack_unit"),
+    MODULE_GRAVITATIONAL_MODULATING_UNIT("module", "gravitational_modulating_unit"),
+    MODULE_CHARGE_DISTRIBUTION_UNIT("module", "charge_distribution_unit"),
+    MODULE_DOSIMETER_UNIT("module", "dosimeter_unit"),
+    MODULE_LOCOMOTIVE_BOOSTING_UNIT("module", "locomotive_boosting_unit"),
+    MODULE_HYDRAULIC_PROPULSION_UNIT("module", "hydraulic_propulsion_unit"),
+    MODULE_MAGNETIC_ATTRACTION_UNIT("module", "magnetic_attraction_unit"),
+    DESCRIPTION_ENERGY_UNIT("description", "energy_unit"),
+    DESCRIPTION_EXCAVATION_ESCALATION_UNIT("description", "excavation_escalation_unit"),
+    DESCRIPTION_ATTACK_AMPLIFICATION_UNIT("description", "attack_amplification_unit"),
+    DESCRIPTION_SILK_TOUCH_UNIT("description", "silk_touch_unit"),
+    DESCRIPTION_VEIN_MINING_UNIT("description", "vein_mining_unit"),
+    DESCRIPTION_FARMING_UNIT("description", "farming_unit"),
+    DESCRIPTION_TELEPORTATION_UNIT("description", "teleportation_unit"),
+    DESCRIPTION_ELECTROLYTIC_BREATHING_UNIT("description", "electrolytic_breathing_unit"),
+    DESCRIPTION_INHALATION_PURIFICATION_UNIT("description", "inhalation_purification_unit"),
+    DESCRIPTION_VISION_ENHANCEMENT_UNIT("description", "vision_enhancement_unit"),
+    DESCRIPTION_SOLAR_RECHARGING_UNIT("description", "solar_recharging_unit"),
+    DESCRIPTION_NUTRITIONAL_INJECTION_UNIT("description", "nutritional_injection_unit"),
+    DESCRIPTION_RADIATION_SHIELDING_UNIT("description", "radiation_shielding_unit"),
+    DESCRIPTION_JETPACK_UNIT("description", "jetpack_unit"),
+    DESCRIPTION_GRAVITATIONAL_MODULATING_UNIT("description", "gravitational_modulating_unit"),
+    DESCRIPTION_CHARGE_DISTRIBUTION_UNIT("description", "charge_distribution_unit"),
+    DESCRIPTION_DOSIMETER_UNIT("description", "dosimeter_unit"),
+    DESCRIPTION_LOCOMOTIVE_BOOSTING_UNIT("description", "locomotive_boosting_unit"),
+    DESCRIPTION_HYDRAULIC_PROPULSION_UNIT("description", "hydraulic_propulsion_unit"),
+    DESCRIPTION_MAGNETIC_ATTRACTION_UNIT("description", "magnetic_attraction_unit"),
+
     //Modules
     MODULE_ENABLED("module", "enabled"),
     MODULE_ENABLED_LOWER("module", "enabled_lower"),
@@ -812,7 +856,7 @@ public enum MekanismLang implements ILangEntry {
     MODULE_RENDER_HUD("module", "render_hud"),
     MODULE_MODE("module", "mode"),
     MODULE_COLOR("module", "color"),
-    MODULE_BONUS_ATTACK_DAMAGE("module", "bonus_attack_damage"),
+    MODULE_ATTACK_DAMAGE("module", "attack_damage"),
     MODULE_FARMING_RADIUS("module", "farming_radius"),
     MODULE_JUMP_BOOST("module", "jump_boost"),
     MODULE_STEP_ASSIST("module", "step_assist"),
@@ -828,6 +872,8 @@ public enum MekanismLang implements ILangEntry {
     MODULE_EFFICIENCY("module", "efficiency"),
     MODULE_BREATHING_HELD("module", "breathing.held"),
     MODULE_JETPACK_MODE("module", "jetpack_mode"),
+    MODULE_JETPACK_MULT("module", "jetpack_mult"),
+    MODULE_JETPACK_HOVER_MULT("module", "jetpack_mult.hover"),
     MODULE_GRAVITATIONAL_MODULATION("module", "gravitational_modulation"),
     MODULE_MAGNETIC_ATTRACTION("module", "magnetic_attraction"),
     MODULE_MODE_CHANGE("module", "mode_change"),
@@ -839,6 +885,9 @@ public enum MekanismLang implements ILangEntry {
     MODULE_PURIFICATION_NEUTRAL("module", "purification.neutral"),
     MODULE_PURIFICATION_HARMFUL("module", "purification.harmful"),
     MODULE_TELEPORT_REQUIRES_BLOCK("module", "teleportation_requires_block"),
+    MODULE_RADIATION_CLEARANCE("module", "radiation_clearance"),
+    MODULE_RADIATION_IMMUNITY("module", "radiation_immunity"),
+    MODULE_RADIATION_RANGE_CLEARING("module", "radiation_range_clearing"),
     ;
 
     private final String key;
@@ -862,7 +911,7 @@ public enum MekanismLang implements ILangEntry {
 
     @Override
     public String getTranslationKey() {
-        return LangUtils.localize(key) ;
+        return LangUtils.localize(key);
     }
 
     public static MekanismLang get(EntityEquipmentSlot type) {

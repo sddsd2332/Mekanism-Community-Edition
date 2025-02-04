@@ -1,7 +1,6 @@
 {
       "result": {
-            "item": "mekanism:moduleupgrade",
-            "data": 10
+            "item": "mekanism:module_gyroscopic_stabilization_unit"
       },
       "pattern": [
             "CDC",

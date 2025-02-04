@@ -8,6 +8,7 @@ import mekanism.api.NBTConstants;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
+import mekanism.api.mixninapi.ElytraMixinHelp;
 import mekanism.client.model.ModelArmoredJetpack;
 import mekanism.client.model.ModelJetpack;
 import mekanism.client.render.MekanismRenderer;
@@ -56,7 +57,7 @@ import java.util.List;
         @Optional.Interface(iface = "baubles.api.IBauble", modid = MekanismHooks.Baubles_MOD_ID),
         @Optional.Interface(iface = "baubles.api.render.IRenderBauble", modid = MekanismHooks.Baubles_MOD_ID)
 })
-public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, IJetpackItem, IItemHUDProvider, IBauble, IRenderBauble, IModeItem {
+public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, IJetpackItem, IItemHUDProvider, IBauble, IRenderBauble, IModeItem, ElytraMixinHelp {
 
     public int TRANSFER_RATE = 16;
 
@@ -167,7 +168,7 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
 
     @Override
     public boolean canUseJetpack(ItemStack stack) {
-        return  getGas(stack) != null && getStored(stack) > 0 ;
+        return getGas(stack) != null && getStored(stack) > 0;
     }
 
     @Override
@@ -181,6 +182,11 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
         if (gas != null) {
             setGas(stack, new GasStack(gas.getGas(), gas.amount - 1));
         }
+    }
+
+    @Override
+    public double getJetpackThrust(ItemStack stack) {
+        return 0.15;
     }
 
 
@@ -207,7 +213,6 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
             return;
         }
         ItemStack empty = new ItemStack(this);
-        setGas(empty, null);
         list.add(empty);
 
         ItemStack filled = new ItemStack(this);
@@ -277,13 +282,13 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
         return BaubleType.BODY;
     }
 
-    private static ModelJetpack jetpack = new ModelJetpack();
-    private static ModelArmoredJetpack armoredJetpack = new ModelArmoredJetpack();
 
     @SideOnly(Side.CLIENT)
     @Override
     @Optional.Method(modid = MekanismHooks.Baubles_MOD_ID)
     public void onPlayerBaubleRender(ItemStack itemStack, EntityPlayer entityPlayer, RenderType renderType, float v) {
+        ModelJetpack jetpack = new ModelJetpack();
+        ModelArmoredJetpack armoredJetpack = new ModelArmoredJetpack();
         if (renderType == RenderType.BODY) {
             GlStateManager.pushMatrix();
             GlStateManager.translate(0, 0, 0.06F);
@@ -304,7 +309,21 @@ public class ItemJetpack extends ItemArmor implements IGasItem, ISpecialArmor, I
     }
 
     @Override
-    public  boolean willAutoSync(ItemStack itemstack, EntityLivingBase player){
+    public boolean willAutoSync(ItemStack itemstack, EntityLivingBase player) {
         return true;
     }
+
+    @Override
+    public boolean canElytraFly(ItemStack stack, EntityLivingBase entity) {
+        if (armorType == EntityEquipmentSlot.CHEST && !entity.isSneaking() && getStored(stack) > 0) {
+            return getJetpackMode(stack) == JetpackMode.VECTOR;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean elytraFlightTick(ItemStack stack, EntityLivingBase entity, int flightTicks) {
+        return true;
+    }
+
 }

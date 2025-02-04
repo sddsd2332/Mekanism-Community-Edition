@@ -1,0 +1,30 @@
+{
+      "result": {
+            "item": "mekanism:mekasuit_helmet"
+      },
+      "pattern": [
+            "ACA",
+            "ADA",
+            "BEB"
+      ],
+      "type": "mekanism:ore_shaped",
+      "key": {
+            "A": {
+                  "item": "mekanism:hdpe_sheet"
+            },
+            "B": {
+                  "ore": "PoloniumPellet",
+                  "type": "forge:ore_dict"
+            },
+            "C": {
+                  "item": "#CIRCUITULTIMATE"
+            },
+            "D": {
+                  "item": "minecraft:diamond_helmet"
+            },
+            "E": {
+                  "item": "mekanism:basicblock2",
+                  "data": 3
+            }
+      }
+}

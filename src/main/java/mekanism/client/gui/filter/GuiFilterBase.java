@@ -68,7 +68,7 @@ public abstract class GuiFilterBase<FILTER extends IFilter, TILE extends TileEnt
             renderItem(stack, 12, 19);
             renderItem(mFilter.replaceStack, 149, 19);
             if (replaceButton.isMouseOver()) {
-                displayTooltip(LangUtils.localize("gui.digitalMiner.requireReplace") + ": " + LangUtils.transYesNo(mFilter.requireStack), mouseX - guiLeft, mouseY - guiTop);
+                this.displayTooltip(LangUtils.localize("gui.digitalMiner.requireReplace") + ": " + LangUtils.transYesNo(mFilter.requireStack), mouseX - guiLeft, mouseY - guiTop);
             }
         }
     }
@@ -83,12 +83,12 @@ public abstract class GuiFilterBase<FILTER extends IFilter, TILE extends TileEnt
 
     protected void drawTransporterForegroundText(int xAxis, int yAxis, TransporterFilter filter) {
         if (defaultButton.isMouseOver()) {
-            displayTooltip(LangUtils.localize("gui.allowDefault"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.allowDefault"), xAxis, yAxis);
         } else if (colorButton.isMouseOver()) {
             if (filter.color != null) {
-                displayTooltip(filter.color.getColoredName(), xAxis, yAxis);
+                this.displayTooltip(filter.color.getColoredName(), xAxis, yAxis);
             } else {
-                displayTooltip(LangUtils.localize("gui.none"), xAxis, yAxis);
+                this.displayTooltip(LangUtils.localize("gui.none"), xAxis, yAxis);
             }
         }
     }

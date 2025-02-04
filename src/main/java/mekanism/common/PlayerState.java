@@ -4,22 +4,22 @@ import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import mekanism.api.gear.IModule;
 import mekanism.client.sound.PlayerSound.SoundType;
 import mekanism.client.sound.SoundHandler;
 import mekanism.common.config.MekanismConfig;
-import mekanism.common.item.armor.ItemMekAsuitBodyArmour;
-import mekanism.common.item.armor.ItemMekAsuitLegsArmour;
+import mekanism.common.content.gear.ModuleHelper;
+import mekanism.common.content.gear.mekasuit.ModuleGravitationalModulatingUnit;
 import mekanism.common.network.PacketFlyingSync.FlyingSyncMessage;
 import mekanism.common.network.PacketGearStateUpdate.GearStateUpdateMessage;
 import mekanism.common.network.PacketGearStateUpdate.GearType;
 import mekanism.common.network.PacketResetPlayerClient.ResetPlayerClientMessage;
 import mekanism.common.network.PacketStepHeightSync.StepHeightSyncMessage;
 import mekanism.common.util.MekanismUtils;
-import mekanism.common.util.UpgradeHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.Map;
@@ -28,18 +28,19 @@ import java.util.UUID;
 
 public class PlayerState {
 
-    private Set<UUID> activeJetpacks = new ObjectOpenHashSet<>();
-    private Set<UUID> activeScubaMasks = new ObjectOpenHashSet<>();
-    private Set<UUID> activeGravitationalModulators = new ObjectOpenHashSet<>();
-    private Set<UUID> activeFlamethrowers = new ObjectOpenHashSet<>();
-    private Object2FloatMap<UUID> stepAssistedPlayers = new Object2FloatOpenHashMap<>();
-    private Map<UUID, FlightInfo> flightInfoMap = new Object2ObjectOpenHashMap<>();
+    private final Set<UUID> activeJetpacks = new ObjectOpenHashSet<>();
+    private final Set<UUID> activeScubaMasks = new ObjectOpenHashSet<>();
+    private final Set<UUID> activeGravitationalModulators = new ObjectOpenHashSet<>();
+    private final Set<UUID> activeFlamethrowers = new ObjectOpenHashSet<>();
+    private final Object2FloatMap<UUID> stepAssistedPlayers = new Object2FloatOpenHashMap<>();
+    private final Map<UUID, FlightInfo> flightInfoMap = new Object2ObjectOpenHashMap<>();
 
     private World world;
 
     public void clear(boolean isRemote) {
         activeJetpacks.clear();
         activeScubaMasks.clear();
+        activeGravitationalModulators.clear();
         activeFlamethrowers.clear();
         if (isRemote) {
             SoundHandler.clearPlayerSounds();
@@ -52,6 +53,7 @@ public class PlayerState {
     public void clearPlayer(UUID uuid, boolean isRemote) {
         activeJetpacks.remove(uuid);
         activeScubaMasks.remove(uuid);
+        activeGravitationalModulators.remove(uuid);
         activeFlamethrowers.remove(uuid);
         if (isRemote) {
             SoundHandler.clearPlayerSounds(uuid);
@@ -220,7 +222,7 @@ public class PlayerState {
 
             // Start a sound playing if the person is now using a gravitational modulator
             if (isActive && MekanismConfig.current().client.enablePlayerSounds.val()) {
-                //  SoundHandler.startSound(world, uuid, SoundType.GRAVITATIONAL_MODULATOR);
+                SoundHandler.startSound(world, uuid, SoundType.GRAVITATIONAL_MODULATOR);
             }
         }
     }
@@ -264,26 +266,19 @@ public class PlayerState {
 
             if (player.capabilities.isFlying && hasGravitationalModulator) {
                 //If the player is actively flying (not just allowed to), and has the gravitational modulator ready then apply movement boost if active, and use energy
-                //  IModule<ModuleGravitationalModulatingUnit> module = MekanismAPI.getModuleHelper().load(player.getItemStackFromSlot(EntityEquipmentSlot.CHEST), MekanismModules.GRAVITATIONAL_MODULATING_UNIT);
-                ItemStack chest = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-
-                if (chest.getItem() instanceof ItemMekAsuitBodyArmour armour && UpgradeHelper.isUpgradeInstalled(chest, moduleUpgrade.GRAVITATIONAL_MODULATING_UNIT)) {//Should not be null but double check
+                IModule<ModuleGravitationalModulatingUnit> module = ModuleHelper.get().load(player.getItemStackFromSlot(EntityEquipmentSlot.CHEST), MekanismModules.GRAVITATIONAL_MODULATING_UNIT);
+                if (module != null) {//Should not be null but double check
                     double usage = MekanismConfig.current().meka.mekaSuitEnergyUsageGravitationalModulation.val();
-                    if (Mekanism.keyMap.has(player, KeySync.DESCEND)) {
+                    if (Mekanism.keyMap.has(player.getUniqueID(), KeySync.BOOST)) {
                         double boostUsage = usage * 4;
-                        if (armour.getEnergy(chest) > usage) {
-                            ItemStack leg = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
-                            if (!leg.isEmpty() && leg.getItem() instanceof ItemMekAsuitLegsArmour legarmour) {
-                                //      float boost = legarmour.getLocomotive(leg);
-                                //      if (boost > 0) {
-                                player.moveRelative(/*boost*/ 0.5F, 0, 0, 1);
-                                usage = boostUsage;
-                                //      }
+                        if (module.canUseEnergy(player, boostUsage, false)) {
+                            float boost = module.getCustomInstance().getBoost();
+                            if (boost > 0) {
+                                module.getCustomInstance().moveRelative(player, boost, new Vec3d(0, 0, 1));
                             }
-
                         }
                     }
-                    armour.setEnergy(chest, usage);
+                    module.useEnergy(player, usage);
                 }
             }
         } else {
@@ -330,7 +325,7 @@ public class PlayerState {
 
         if (world == null) {
             //world is set from the OnWorldLoad event, a tick should never have happened before that.
-            throw new NullPointerException("mekanism.common.base.PlayerState#world is null. This should not happen. Optifine is known to cause this on client side.");
+            throw new NullPointerException("mekanism.common.PlayerState#world is null. This should not happen. Optifine is known to cause this on client side.");
         }
 
         if (world.isRemote) {

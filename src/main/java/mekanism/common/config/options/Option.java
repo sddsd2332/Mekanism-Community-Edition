@@ -2,7 +2,7 @@ package mekanism.common.config.options;
 
 import io.netty.buffer.ByteBuf;
 import mekanism.common.config.BaseConfig;
-import mekanism.common.util.FieldsAreNonnullByDefault;
+import mekanism.api.annotations.FieldsAreNonnullByDefault;
 import net.minecraftforge.common.config.Configuration;
 
 import javax.annotation.Nullable;

@@ -1,0 +1,37 @@
+{
+  "result": {
+    "item": "mekanism:meka_tool"
+  },
+  "pattern": [
+    "AEA",
+    "BCB",
+    "DOD"
+  ],
+  "type": "mekanism:ore_shaped",
+  "key": {
+    "A": {
+      "item": "#CIRCUITULTIMATE"
+    },
+    "E": {
+      "item": "mekanism:configurator"
+    },
+    "B": {
+      "item": "mekanism:hdpe_sheet"
+    },
+    "C": {
+      "item": "mekanism:atomicdisassembler"
+    },
+    "D": {
+      "ore": "PoloniumPellet",
+      "type": "forge:ore_dict"
+    },
+    "O": {
+      "nbt": {
+        "tier": 0
+      },
+      "item": "mekanism:basicblock2",
+      "data": 4,
+      "type": "mekanism:item_nbt"
+    }
+  }
+}

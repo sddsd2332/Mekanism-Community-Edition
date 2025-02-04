@@ -241,6 +241,11 @@ public class ItemFreeRunners extends ItemArmor implements IEnergizedItem, ISpeci
     }
 
     @Override
+    public boolean supportsSlotType(ItemStack stack, @Nonnull EntityEquipmentSlot slotType) {
+        return slotType == armorType;
+    }
+
+    @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
         return new ItemCapabilityWrapper(stack, new TeslaItemWrapper(), new ForgeEnergyItemWrapper());
     }

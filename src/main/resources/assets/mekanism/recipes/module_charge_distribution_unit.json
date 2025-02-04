@@ -1,7 +1,6 @@
 {
       "result": {
-            "item": "mekanism:moduleupgrade",
-            "data": 9
+            "item": "mekanism:module_charge_distribution_unit"
       },
       "pattern": [
             "CDC",

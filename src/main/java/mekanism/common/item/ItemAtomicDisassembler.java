@@ -158,7 +158,6 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemHUDPro
                         player.world.playEvent(WorldEvents.BREAK_BLOCK_EFFECTS, coord.getPos(), Block.getStateId(state));
                         block2.dropBlockAsItem(player.world, coord.getPos(), state, 0);
                         player.world.setBlockToAir(coord.getPos());
-                        ;
                         setEnergy(itemstack, getEnergy(itemstack) - destroyEnergy);
                     }
                 }

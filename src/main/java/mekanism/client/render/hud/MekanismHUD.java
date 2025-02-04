@@ -1,13 +1,12 @@
 package mekanism.client.render.hud;
 
 import baubles.api.BaublesApi;
-import mekanism.client.gui.element.GuiUtils;
 import mekanism.client.render.HUDRenderer;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.common.Mekanism;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.MekanismHooks;
-import mekanism.common.item.armor.ItemMekAsuitHeadArmour;
+import mekanism.common.item.armor.ItemMekaSuitHelmet;
 import mekanism.common.item.interfaces.IItemHUDProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -17,7 +16,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.fml.client.SplashProgress;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -79,7 +77,7 @@ public class MekanismHUD {
                     GlStateManager.popMatrix();
                 }
 
-                if (player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() instanceof ItemMekAsuitHeadArmour) {
+                if (player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() instanceof ItemMekaSuitHelmet) {
                     hudRenderer.renderHUD(minecraft, font, event.getPartialTicks(), event.getResolution().getScaledWidth(), event.getResolution().getScaledHeight(), maxTextHeight, reverseHud);
                     minecraft.renderEngine.bindTexture(Gui.ICONS);
                 }

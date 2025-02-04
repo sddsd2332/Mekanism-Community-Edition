@@ -8,12 +8,10 @@ import mekanism.api.MekanismAPI;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasRegistry;
 import mekanism.api.infuse.InfuseRegistry;
-import mekanism.common.FuelHandler;
-import mekanism.common.Mekanism;
-import mekanism.common.MekanismFluids;
-import mekanism.common.Version;
+import mekanism.common.*;
 import mekanism.common.base.IModule;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.fixers.MekanismDataFixers.MekFixers;
 import mekanism.common.integration.redstoneflux.RFIntegration;
 import mekanism.common.multiblock.MultiblockManager;
@@ -114,7 +112,7 @@ public class MekanismGenerators implements IModule {
         ModFixs fixes = fixer.init(MODID, DATA_VERSION);
         //Fix old tile entity names
         fixes.registerFix(FixTypes.BLOCK_ENTITY, new GeneratorTEFixer(MekFixers.TILE_ENTITIES));
-
+        imcQueue();
         //Finalization
         Mekanism.logger.info("Loaded MekanismGenerators module.");
     }
@@ -186,4 +184,10 @@ public class MekanismGenerators implements IModule {
         MekanismAPI.addBoxBlacklist(GeneratorsBlocks.Generator, 5); // Advanced Solar Generator
         MekanismAPI.addBoxBlacklist(GeneratorsBlocks.Generator, 6); // Wind Generator
     }
+
+    private void imcQueue(){
+        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_HELMET,MekanismModules.SOLAR_RECHARGING_UNIT);
+        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_PANTS,GeneratorsModules.GEOTHERMAL_GENERATOR_UNIT);
+    }
+
 }

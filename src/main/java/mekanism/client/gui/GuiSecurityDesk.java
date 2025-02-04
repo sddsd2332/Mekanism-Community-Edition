@@ -44,7 +44,7 @@ public class GuiSecurityDesk extends GuiMekanismTile<TileEntitySecurityDesk> {
 
     public GuiSecurityDesk(InventoryPlayer inventory, TileEntitySecurityDesk tile) {
         super(tile, new ContainerSecurityDesk(inventory, tile));
-        addGuiElement(new GuiElementScreen(this, getGuiLocation(), 13, 13, 122, 42).isFrame(true));
+        addGuiElement(new GuiElementScreen(this, getGuiLocation(), 13, 13, 122, 42).isFrame());
         addGuiElement(scrollList = new GuiScrollList(this, getGuiLocation(), 14, 14, 120, 4));
         ySize += 64;
         addGuiElement(new GuiPlayerSlot(this, getGuiLocation(), 7, 147));
@@ -178,13 +178,13 @@ public class GuiSecurityDesk extends GuiMekanismTile<TileEntitySecurityDesk> {
         int xAxis = mouseX - guiLeft;
         int yAxis = mouseY - guiTop;
         if (tileEntity.frequency != null && overrideButton.isMouseOver()) {
-            displayTooltip(LangUtils.localize("gui.securityOverride") + ": " + LangUtils.transOnOff(tileEntity.frequency.override), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.securityOverride") + ": " + LangUtils.transOnOff(tileEntity.frequency.override), xAxis, yAxis);
         } else if (publicButton.isMouseOver()) {
-            displayTooltip(LangUtils.localize("gui.publicMode"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.publicMode"), xAxis, yAxis);
         } else if (privateButton.isMouseOver()) {
-            displayTooltip(LangUtils.localize("gui.privateMode"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.privateMode"), xAxis, yAxis);
         } else if (trustedButton.isMouseOver()) {
-            displayTooltip(LangUtils.localize("gui.trustedMode"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.trustedMode"), xAxis, yAxis);
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }

@@ -18,16 +18,14 @@
       "type": "forge:ore_dict"
     },
     "C": {
-      "item": "mekanism:polyethene",
-      "data": 2
+      "item": "mekanism:hdpe_sheet"
     },
     "D": {
       "item": "mekanism:machineblock2",
       "data": 13
     },
     "E": {
-      "item": "mekanism:polyethene",
-      "data": 3
+      "item": "mekanism:hdpe_stick"
     },
     "F": {
       "item": "mekanism:cosmicmatter"

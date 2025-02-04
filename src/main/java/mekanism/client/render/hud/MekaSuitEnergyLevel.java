@@ -1,15 +1,10 @@
 package mekanism.client.render.hud;
 
 import mekanism.client.gui.element.GuiUtils;
-import mekanism.common.config.MekanismConfig;
 import mekanism.common.item.armor.ItemMekaSuitArmor;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.GuiIngameForge;

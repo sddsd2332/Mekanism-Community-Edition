@@ -20,6 +20,6 @@ public class GasMaskSound extends PlayerSound {
 
     @Override
     public boolean shouldPlaySound(@Nonnull EntityPlayer player) {
-        return ClientTickHandler.isGasMaskOn(player);
+        return ClientTickHandler.isScubaMaskOn(player);
     }
 }

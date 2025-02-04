@@ -2,6 +2,8 @@ package mekanism.common.util;
 
 import com.mojang.authlib.GameProfile;
 import ic2.api.energy.EnergyNet;
+import it.unimi.dsi.fastutil.longs.Long2DoubleArrayMap;
+import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import mekanism.api.Chunk3D;
 import mekanism.api.Coord4D;
@@ -9,6 +11,7 @@ import mekanism.api.EnumColor;
 import mekanism.api.IMekWrench;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
+import mekanism.api.text.TextComponentGroup;
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.common.*;
 import mekanism.common.base.*;
@@ -31,29 +34,32 @@ import mekanism.common.tile.base.TileEntitySynchronized;
 import mekanism.common.tile.component.SideConfig;
 import mekanism.common.util.UnitDisplayUtils.ElectricUnit;
 import mekanism.common.util.UnitDisplayUtils.TemperatureUnit;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.SPacketEntityEffect;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.*;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
@@ -69,6 +75,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 /**
  * Utilities used by Mekanism. All miscellaneous methods are located here.
@@ -78,7 +86,7 @@ import java.util.function.BiConsumer;
 public final class MekanismUtils {
 
     public static final EnumFacing[] SIDE_DIRS = new EnumFacing[]{EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST};
-
+    private static final ItemStack MILK = new ItemStack(Items.MILK_BUCKET);
     public static final Map<String, Class<?>> classesFound = new Object2ObjectOpenHashMap<>();
     public static final ThreadLocal<Boolean> isInjecting = ThreadLocal.withInitial(() -> false);
     public static final BiConsumer<Integer, Runnable> inject = (reqTime, process) -> {
@@ -378,14 +386,6 @@ public final class MekanismUtils {
         return def * Math.pow(MekanismConfig.current().general.maxUpgradeMultiplier.val(), numUpgrades / (float) Upgrade.ENERGY.getMax());
     }
 
-    public static double getModuleMaxEnergy(ItemStack itemStack, double def) {
-        int module = UpgradeHelper.getUpgradeLevel(itemStack, moduleUpgrade.EnergyUnit);
-        if (module == 0) {
-            return def;
-        } else {
-            return def * Math.pow(2, module);
-        }
-    }
 
     /**
      * Better version of the World.getRedstonePowerFromNeighbors() method that doesn't load chunks.
@@ -638,6 +638,10 @@ public final class MekanismUtils {
         player.openGui(Mekanism.instance, 1, player.world, entity.getEntityId(), guiID, 0);
     }
 
+    public static ResourceLocation getResource(ResourceType type, String name) {
+        return getResource(Mekanism.MODID, type,name);
+    }
+
     /**
      * Gets a ResourceLocation with a defined resource type and name.
      *
@@ -645,8 +649,8 @@ public final class MekanismUtils {
      * @param name - simple name of file to retrieve as a ResourceLocation
      * @return the corresponding ResourceLocation
      */
-    public static ResourceLocation getResource(ResourceType type, String name) {
-        return new ResourceLocation(Mekanism.MODID, type.getPrefix() + name);
+    public static ResourceLocation getResource(String modid,ResourceType type, String name) {
+        return new ResourceLocation(modid, type.getPrefix() + name);
     }
 
     /**
@@ -679,6 +683,11 @@ public final class MekanismUtils {
         };
     }
 
+
+    public static RayTraceResult rayTrace(World world, EntityPlayer player) {
+        return rayTrace(world, player, Mekanism.proxy.getReach(player));
+    }
+
     /**
      * Ray-traces what block a player is looking at.
      *
@@ -686,8 +695,7 @@ public final class MekanismUtils {
      * @param player - player to raytrace
      * @return raytraced value
      */
-    public static RayTraceResult rayTrace(World world, EntityPlayer player) {
-        double reach = Mekanism.proxy.getReach(player);
+    public static RayTraceResult rayTrace(World world, EntityPlayer player, double reach) {
         Vec3d headVec = getHeadVec(player);
         Vec3d lookVec = player.getLook(1);
         Vec3d endVec = headVec.add(lookVec.x * reach, lookVec.y * reach, lookVec.z * reach);
@@ -931,6 +939,7 @@ public final class MekanismUtils {
         return !player.isCreative() && !player.isSpectator();
     }
 
+
     /**
      * Whether or not a given EntityPlayer is considered an Op.
      *
@@ -1135,8 +1144,10 @@ public final class MekanismUtils {
         GUI_ICONS("gui/icons"),
         GUI_BAR("gui/bar"),
         GUI_ELEMENT("gui/elements"),
+        GUI_SLOT("gui/slot"),
         BUTTON("gui/button"),
         BUTTON_TAB("gui/button_tab"),
+        GUI_RADIAL("gui/radial"),
         GAUGE("gui/gauge"),
         GUI_HUD("gui/hud"),
         PROGRESS("gui/progress"),
@@ -1150,6 +1161,7 @@ public final class MekanismUtils {
         MODEL("models"),
         INFUSE("infuse");
 
+
         private String prefix;
 
         ResourceType(String s) {
@@ -1161,11 +1173,146 @@ public final class MekanismUtils {
         }
     }
 
-    public static ITextComponent logFormat(Object message) {
-        return logFormat(EnumColor.GREY, message);
+
+    public static void speedUpEffectSafely(EntityLivingBase entity, PotionEffect effectInstance) {
+        if (effectInstance.getDuration() > 0) {
+            int remainingDuration = effectInstance.deincrementDuration();
+            if (remainingDuration == 0) {
+                onChangedPotionEffect(entity, effectInstance, true);
+            }
+        }
     }
 
-    public static ITextComponent logFormat(EnumColor messageColor, Object message) {
-        return MekanismLang.LOG_FORMAT.translateColored(EnumColor.DARK_BLUE, MekanismLang.MEKANISM, messageColor, message);
+    public static boolean shouldSpeedUpEffect(PotionEffect effectInstance) {
+        return effectInstance.isCurativeItem(MILK);
     }
+
+    /**
+     * Copy of LivingEntity#onChangedPotionEffect(EffectInstance, boolean) due to not being able to AT the method as it is protected.
+     */
+    private static void onChangedPotionEffect(EntityLivingBase entity, PotionEffect effectInstance, boolean reapply) {
+        entity.potionsNeedUpdate = true;
+        if (reapply && !entity.world.isRemote) {
+            Potion effect = effectInstance.getPotion();
+            effect.removeAttributesModifiersFromEntity(entity, entity.getAttributeMap(), effectInstance.getAmplifier());
+            effect.applyAttributesModifiersToEntity(entity, entity.getAttributeMap(), effectInstance.getAmplifier());
+        }
+        if (entity instanceof EntityPlayerMP playerMP) {
+            playerMP.connection.sendPacket(new SPacketEntityEffect(entity.getEntityId(), effectInstance));
+            CriteriaTriggers.EFFECTS_CHANGED.trigger(playerMP);
+        }
+    }
+
+
+    public static boolean hasChunksAt(EntityPlayer player, int pFromX, int pFromY, int pFromZ, int pToX, int pToY, int pToZ) {
+        if (pToY >= 0 && pFromY < 256) {
+            pFromX = pFromX >> 4;
+            pFromZ = pFromZ >> 4;
+            pToX = pToX >> 4;
+            pToZ = pToZ >> 4;
+
+            for (int i = pFromX; i <= pToX; ++i) {
+                for (int j = pFromZ; j <= pToZ; ++j) {
+                    if (!player.world.isChunkGeneratedAt(i, j)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static class FluidInDetails {
+
+        private final List<BlockPos> positions = new ArrayList<>();
+        private final Long2DoubleMap heights = new Long2DoubleArrayMap();
+
+        public List<BlockPos> getPositions() {
+            return positions;
+        }
+
+        public double getMaxHeight() {
+            return heights.values().stream().mapToDouble(value -> value).max().orElse(0);
+        }
+    }
+
+    public static Map<Block, FluidInDetails> getFluidsIn(EntityPlayer player, UnaryOperator<AxisAlignedBB> modifyBoundingBox, Material material) {
+        AxisAlignedBB bb = modifyBoundingBox.apply(player.getEntityBoundingBox().shrink(0.001));
+        int xMin = MathHelper.floor(bb.minX);
+        int xMax = MathHelper.ceil(bb.maxX);
+        int yMin = MathHelper.floor(bb.minY);
+        int yMax = MathHelper.ceil(bb.maxY);
+        int zMin = MathHelper.floor(bb.minZ);
+        int zMax = MathHelper.ceil(bb.maxZ);
+        if (hasChunksAt(player, xMin, yMin, zMin, xMax, yMax, zMax)) {
+            //If the position isn't actually loaded, just return there isn't any fluids
+            return Collections.emptyMap();
+        }
+        Map<Block, FluidInDetails> fluidsIn = new HashMap<>();
+        BlockPos.PooledMutableBlockPos mutablePos = BlockPos.PooledMutableBlockPos.retain();
+        for (int x = xMin; x < xMax; ++x) {
+            for (int y = yMin; y < yMax; ++y) {
+                for (int z = zMin; z < zMax; ++z) {
+                    mutablePos.setPos(x, y, z);
+                    IBlockState fluidState = player.world.getBlockState(mutablePos);
+                    Boolean result = fluidState.getBlock().isAABBInsideMaterial(player.world, mutablePos, new AxisAlignedBB(mutablePos), material);
+                    if (result != null) {
+                        if (!result) {
+                            double fluidY = y + fluidState.getBlock().getBlockLiquidHeight(player.world, mutablePos, fluidState, material);
+                            if (bb.minY <= fluidY) {
+                                Block fluid = fluidState.getBlock();
+
+                                if (fluid instanceof BlockDynamicLiquid) {
+                                    //Almost always will be flowing fluid but check just in case
+                                    // and if it is grab the source state to not have duplicates
+                                    fluid = BlockLiquid.getStaticBlock(material);
+                                }
+                                FluidInDetails details = fluidsIn.computeIfAbsent(fluid, f -> new FluidInDetails());
+                                details.positions.add(mutablePos.toImmutable());
+                                double actualFluidHeight;
+                                if (fluidY > bb.maxY) {
+                                    //Fluid goes past the top of the bounding box, limit it to the top
+                                    // We do the max of the bottom of the bounding box and our current block so that
+                                    // if we are floating above the bottom we don't take the area below us into account
+                                    actualFluidHeight = bb.maxY - Math.max(bb.minY, y);
+                                } else {
+                                    // We do the max of the bottom of the bounding box and our current block so that
+                                    // if we are floating above the bottom we don't take the area below us into account
+                                    actualFluidHeight = fluidY - Math.max(bb.minY, y);
+                                }
+                                details.heights.merge(ChunkPos.asLong(x, z), actualFluidHeight, Double::sum);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return fluidsIn;
+    }
+
+
+    @SafeVarargs
+    public static EnumActionResult performActions(EnumActionResult firstAction, Supplier<EnumActionResult>... secondaryActions) {
+        if (firstAction == EnumActionResult.SUCCESS) {
+            return EnumActionResult.SUCCESS;
+        }
+        EnumActionResult result = firstAction;
+        boolean hasFailed = result == EnumActionResult.FAIL;
+        for (Supplier<EnumActionResult> secondaryAction : secondaryActions) {
+            result = secondaryAction.get();
+            if (result == EnumActionResult.SUCCESS) {
+                //If we were successful
+                return EnumActionResult.SUCCESS;
+            }
+            hasFailed &= result == EnumActionResult.FAIL;
+        }
+        if (hasFailed) {
+            //If at least one step failed, consider ourselves unsuccessful
+            return EnumActionResult.FAIL;
+        }
+        return EnumActionResult.PASS;
+    }
+
 }

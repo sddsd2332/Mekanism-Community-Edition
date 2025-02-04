@@ -1,7 +1,6 @@
 {
       "result": {
-            "item": "mekanism:moduleupgrade",
-            "data": 13
+            "item": "mekanism:module_locomotive_boosting_unit"
       },
       "pattern": [
             "CDC",

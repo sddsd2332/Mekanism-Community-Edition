@@ -1,7 +1,6 @@
 {
       "result": {
-            "item": "mekanism:moduleupgrade",
-            "data": 4
+            "item": "mekanism:module_electrolytic_breathing_unit"
       },
       "pattern": [
             "CDC",
@@ -11,8 +10,7 @@
       "type": "mekanism:ore_shaped",
       "key": {
             "A": {
-                  "item": "mekanism:polyethene",
-                  "data": 2
+                  "item": "mekanism:hdpe_sheet"
             },
             "B": {
                   "item": "mekanism:modulebase"

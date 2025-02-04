@@ -7,12 +7,13 @@ import net.minecraftforge.common.config.Property;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.function.BooleanSupplier;
 
 /**
  * Created by Thiakil on 15/03/2019.
  */
 @ParametersAreNonnullByDefault
-public class BooleanOption extends Option<BooleanOption> {
+public class BooleanOption extends Option<BooleanOption> implements BooleanSupplier {
 
     private boolean value;
     private final boolean defaultValue;
@@ -55,5 +56,10 @@ public class BooleanOption extends Option<BooleanOption> {
     @Override
     public void read(ByteBuf buf) {
         this.value = buf.readBoolean();
+    }
+
+    @Override
+    public boolean getAsBoolean() {
+        return value;
     }
 }

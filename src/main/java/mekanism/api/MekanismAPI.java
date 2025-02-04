@@ -8,6 +8,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -20,7 +21,8 @@ public class MekanismAPI {
      * The version of the api classes - may not always match the mod's version
      */
     public static final String API_VERSION = "9.8.1";
-
+    public static final String MEKANISM_MODID = "mekanism";
+    public static final Logger logger = LogManager.getLogger(MEKANISM_MODID + "_api");
     /**
      * Mekanism debug mode
      */
@@ -117,4 +119,6 @@ public class MekanismAPI {
             removeBoxBlacklistMod(modid);
         }
     }
+
+
 }

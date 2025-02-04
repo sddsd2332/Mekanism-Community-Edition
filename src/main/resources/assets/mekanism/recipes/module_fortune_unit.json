@@ -1,0 +1,32 @@
+{
+      "result": {
+            "item": "mekanism:module_fortune_unit"
+      },
+      "pattern": [
+            "ABA",
+            "CDC",
+            "EEE"
+      ],
+      "type": "mekanism:ore_shaped",
+      "key": {
+            "A": {
+                  "ore": "alloyElite",
+                  "type": "forge:ore_dict"
+            },
+            "B": {
+                  "item": "mekanism:basicblock",
+                  "data": 4
+            },
+            "C": {
+                  "ore": "blockDiamond",
+                  "type": "forge:ore_dict"
+            },
+            "D": {
+                  "item": "mekanism:modulebase"
+            },
+            "E": {
+                  "ore": "PoloniumPellet",
+                  "type": "forge:ore_dict"
+            }
+      }
+}

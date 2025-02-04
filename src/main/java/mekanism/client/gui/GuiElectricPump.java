@@ -84,7 +84,7 @@ public class GuiElectricPump extends GuiMekanismTile<TileEntityElectricPump> {
                 info.add(LangUtils.localize("gui.fluid_no_space"));
             }
             if (input || energy) {
-                displayTooltips(info, xAxis, yAxis);
+                this.displayTooltips(info, xAxis, yAxis);
             }
         }
 

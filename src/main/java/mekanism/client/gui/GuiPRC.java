@@ -89,7 +89,7 @@ public class GuiPRC extends GuiMekanismTile<TileEntityPRC> {
                 info.add(LangUtils.localize("gui.gas_no_space"));
             }
             if (inputgas || inputfluid || energy || outslot || outputgas) {
-                displayTooltips(info, xAxis, yAxis);
+                this.displayTooltips(info, xAxis, yAxis);
             }
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);

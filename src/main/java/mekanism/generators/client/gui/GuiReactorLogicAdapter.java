@@ -78,11 +78,11 @@ public class GuiReactorLogicAdapter extends GuiMekanismTile<TileEntityReactorLog
             renderItem(type.getRenderStack(), 27, 35 + typeOffset);
             fontRenderer.drawString(EnumColor.WHITE + type.getLocalizedName(), 46, 34 + typeOffset, 0x404040);
             if (button.isMouseOver()) {
-                displayTooltips(MekanismUtils.splitTooltip(type.getDescription(), ItemStack.EMPTY), xAxis, yAxis);
+                this.displayTooltips(MekanismUtils.splitTooltip(type.getDescription(), ItemStack.EMPTY), xAxis, yAxis);
             }
         }
         if (inBounds(xAxis, yAxis)) {
-            displayTooltip(LangUtils.localize("gui.toggleCooling"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.toggleCooling"), xAxis, yAxis);
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }

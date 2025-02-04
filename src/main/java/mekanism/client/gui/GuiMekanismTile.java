@@ -46,7 +46,7 @@ public abstract class GuiMekanismTile<TILE extends TileEntityContainerBlock> ext
             if (!stack.isEmpty() && stack.getItem() instanceof ItemConfigurator && hovering != null) {
                 SideData data = getFromSlot(hovering);
                 if (data != null) {
-                    displayTooltip(data.color + data.localize() + " (" + data.color.getColoredName() + ")", xAxis, yAxis);
+                    this.displayTooltip(data.color + data.localize() + " (" + data.color.getColoredName() + ")", xAxis, yAxis);
                 }
             }
         }

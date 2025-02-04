@@ -146,11 +146,11 @@ public class GuiUpgradeManagement extends GuiMekanism {
             fontRenderer.drawString(upgrade.getName(), xPos + 12, yPos + 2, 0x404040);
             renderUpgrade(upgrade, xPos + 2, yPos + 2, 0.5F, true);
             if (overUpgradeType(xAxis, yAxis, xPos, yPos)) {
-                displayTooltips(MekanismUtils.splitTooltip(upgrade.getDescription(), upgrade.getStack()), xAxis, yAxis);
+                this.displayTooltips(MekanismUtils.splitTooltip(upgrade.getDescription(), upgrade.getStack()), xAxis, yAxis);
             }
         }
         if (removeButton.isMouseOver() && removeButton.enabled) {
-            displayTooltip(LangUtils.localize("gui.upgrades.uninstall"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.upgrades.uninstall"), xAxis, yAxis);
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }

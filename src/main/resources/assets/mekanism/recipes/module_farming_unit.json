@@ -1,0 +1,27 @@
+{
+  "result": {
+    "item": "mekanism:module_farming_unit"
+  },
+  "pattern": [
+    "CDC",
+    "CBC",
+    "AAA"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "A": {
+      "ore": "PoloniumPellet",
+      "type": "forge:ore_dict"
+    },
+    "B": {
+      "item": "mekanism:modulebase"
+    },
+    "C": {
+      "ore": "alloyAdvanced",
+      "type": "forge:ore_dict"
+    },
+    "D": {
+      "item": "minecraft:iron_hoe"
+    }
+  }
+}

@@ -10,11 +10,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ModelMekAsuitBodyArm extends ModelBiped {
 
     public static final ModelMekAsuitBodyArm armorModel = new ModelMekAsuitBodyArm();
-    ModelRenderer left_arm_armor;
+    public final ModelRenderer left_arm_armor;
     ModelRenderer chest_left_arm_exo_brace1_r1;
     ModelRenderer chest_left_arm_exo_brace2_r1;
     ModelRenderer chest_left_arm_exo_brace3_r1;
-    ModelRenderer right_arm_armor;
+    public final ModelRenderer right_arm_armor;
     ModelRenderer chest_right_arm_exo_brace1_r1;
     ModelRenderer chest_right_arm_exo_brace2_r1;
     ModelRenderer chest_right_arm_exo_brace3_r1;

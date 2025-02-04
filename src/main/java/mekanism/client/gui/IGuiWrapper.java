@@ -1,7 +1,7 @@
 package mekanism.client.gui;
 
 import mekanism.common.Mekanism;
-import mekanism.common.inventory.warning.WarningTracker;
+import mekanism.common.inventory.warning.WarningTracker.WarningType;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -23,6 +23,8 @@ public interface IGuiWrapper {
     void displayTooltip(String s, int xAxis, int yAxis);
 
     void displayTooltips(List<String> list, int xAxis, int yAxis);
+
+
 
     @Nullable
     FontRenderer getFont();
@@ -56,7 +58,7 @@ public interface IGuiWrapper {
     }
 
     @Nonnull
-    default BooleanSupplier trackWarning(@Nonnull WarningTracker.WarningType type, @Nonnull BooleanSupplier warningSupplier) {
+    default BooleanSupplier trackWarning(@Nonnull WarningType type, @Nonnull BooleanSupplier warningSupplier) {
         Mekanism.logger.error("Tried to call 'trackWarning' but unsupported in {}", getClass().getName());
         return warningSupplier;
     }

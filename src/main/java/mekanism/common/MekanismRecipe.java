@@ -3,7 +3,6 @@ package mekanism.common;
 import com.brandon3055.draconicevolution.DEFeatures;
 import com.brandon3055.draconicevolution.api.fusioncrafting.IFusionRecipe;
 import com.brandon3055.draconicevolution.api.fusioncrafting.SimpleFusionRecipe;
-import com.brandon3055.draconicevolution.api.itemupgrade.IUpgradableItem;
 import com.brandon3055.draconicevolution.api.itemupgrade.UpgradeHelper;
 import com.brandon3055.draconicevolution.lib.RecipeManager;
 import mekanism.api.EnumColor;
@@ -22,7 +21,6 @@ import mekanism.common.tier.InductionCellTier;
 import mekanism.common.util.ItemDataUtils;
 import mekanism.common.util.StackUtils;
 import net.foxmcloud.draconicadditions.DAFeatures;
-import net.foxmcloud.draconicadditions.items.armor.ChaoticArmor;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -75,7 +73,7 @@ public class MekanismRecipe {
             RecipeHandler.addEnrichmentChamberRecipe(new ItemStack(Blocks.CLAY), new ItemStack(Items.CLAY_BALL, 4));
             RecipeHandler.addEnrichmentChamberRecipe(new ItemStack(MekanismBlocks.SaltBlock), new ItemStack(MekanismItems.Salt, 4));
             RecipeHandler.addEnrichmentChamberRecipe(new ItemStack(Items.DIAMOND), new ItemStack(MekanismItems.CompressedDiamond));
-            RecipeHandler.addEnrichmentChamberRecipe(new ItemStack(MekanismItems.Polyethene, 3, 0), new ItemStack(MekanismItems.Polyethene, 1, 2));
+            RecipeHandler.addEnrichmentChamberRecipe(new ItemStack(MekanismItems.HDPE_PELLET, 3), new ItemStack(MekanismItems.HDPE_SHEET, 1));
             RecipeHandler.addEnrichmentChamberRecipe(new ItemStack(MekanismItems.OtherDust, 1, 7), new ItemStack(MekanismItems.FluoriteClump, 1));
             RecipeHandler.addEnrichmentChamberRecipe(new ItemStack(Items.COAL, 1, 1), new ItemStack(MekanismItems.OtherDust, 1, 8));
             RecipeHandler.addEnrichmentChamberRecipe(new ItemStack(MekanismBlocks.OreBlock, 1, 3), new ItemStack(MekanismItems.FluoriteClump, 6));
@@ -305,7 +303,7 @@ public class MekanismRecipe {
             RecipeHandler.addPRCRecipe(new ItemStack(MekanismItems.BioFuel, 2), new FluidStack(FluidRegistry.WATER, 10), new GasStack(MekanismFluids.Hydrogen, 100),
                     new ItemStack(MekanismItems.Substrate), new GasStack(MekanismFluids.Ethene, 100), 0, 100);
             RecipeHandler.addPRCRecipe(new ItemStack(MekanismItems.Substrate), new FluidStack(MekanismFluids.Ethene.getFluid(), 50),
-                    new GasStack(MekanismFluids.Oxygen, 10), new ItemStack(MekanismItems.Polyethene), new GasStack(MekanismFluids.Oxygen, 5), 1000, 60);
+                    new GasStack(MekanismFluids.Oxygen, 10), new ItemStack(MekanismItems.HDPE_PELLET), new GasStack(MekanismFluids.Oxygen, 5), 1000, 60);
             RecipeHandler.addPRCRecipe(new ItemStack(MekanismItems.Substrate), new FluidStack(FluidRegistry.WATER, 200), new GasStack(MekanismFluids.Ethene, 100),
                     new ItemStack(MekanismItems.Substrate, 8), new GasStack(MekanismFluids.Oxygen, 10), 200, 400);
             RecipeHandler.addPRCRecipe(new ItemStack(Items.COAL, 1, OreDictionary.WILDCARD_VALUE), new FluidStack(FluidRegistry.WATER, 100), new GasStack(MekanismFluids.Oxygen, 100),
@@ -437,7 +435,7 @@ public class MekanismRecipe {
          * ADD END
          */
         if (Mekanism.hooks.DraconicEvolution) {
-            if (MekanismConfig.current().mekce.DRrecipes.val()){
+            if (MekanismConfig.current().mekce.DRrecipes.val()) {
                 addDRrecipes();
             }
             if (Mekanism.hooks.DraconicAdditions) {
@@ -450,14 +448,16 @@ public class MekanismRecipe {
 
     @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
     public static void addDRrecipes() {
-        addDRSimpleFusionRecipe(new ItemStack(MekanismItems.ModuleUpgrade, 1, 24), new ItemStack(MekanismItems.ModuleBase), 256000000L, 3,
-                DEFeatures.chaoticCore, "PoloniumPellet", new ItemStack(MekanismItems.Polyethene, 1, 2), DEFeatures.chaosShard, new ItemStack(MekanismItems.Polyethene, 1, 2), "PoloniumPellet", DEFeatures.chaoticCore,
+
+        addDRSimpleFusionRecipe(new ItemStack(MekanismItems.MODULE_ENERGY_SHIELD), new ItemStack(MekanismItems.ModuleBase), 256000000L, 3,
+                DEFeatures.chaoticCore, "PoloniumPellet", MekanismItems.HDPE_SHEET, DEFeatures.chaosShard, MekanismItems.HDPE_SHEET, "PoloniumPellet", DEFeatures.chaoticCore,
                 "PoloniumPellet", MekanismItems.CosmicMatter, "alloyUltimate", "circuitUltimate", "alloyUltimate", MekanismItems.CosmicMatter, "PoloniumPellet",
-                new ItemStack(MekanismItems.Polyethene, 1, 2), "alloyUltimate", "PlutoniumPellet", new ItemStack(DEFeatures.toolUpgrade, 1, 8), "PlutoniumPellet", "alloyUltimate", new ItemStack(MekanismItems.Polyethene, 1, 2),
+                MekanismItems.HDPE_SHEET, "alloyUltimate", "PlutoniumPellet", new ItemStack(DEFeatures.toolUpgrade, 1, 8), "PlutoniumPellet", "alloyUltimate", MekanismItems.HDPE_SHEET,
                 DEFeatures.chaosShard, "circuitUltimate", new ItemStack(DEFeatures.toolUpgrade, 1, 9), new ItemStack(DEFeatures.toolUpgrade, 1, 9), "circuitUltimate", DEFeatures.chaosShard,
-                new ItemStack(MekanismItems.Polyethene, 1, 2), "alloyUltimate", "PlutoniumPellet", new ItemStack(DEFeatures.toolUpgrade, 1, 8), "PlutoniumPellet", "alloyUltimate", new ItemStack(MekanismItems.Polyethene, 1, 2),
+                MekanismItems.HDPE_SHEET, "alloyUltimate", "PlutoniumPellet", new ItemStack(DEFeatures.toolUpgrade, 1, 8), "PlutoniumPellet", "alloyUltimate", MekanismItems.HDPE_SHEET,
                 "PoloniumPellet", MekanismItems.CosmicMatter, "alloyUltimate", "circuitUltimate", "alloyUltimate", MekanismItems.CosmicMatter, "PoloniumPellet",
-                DEFeatures.chaoticCore, "PoloniumPellet", new ItemStack(MekanismItems.Polyethene, 1, 2), DEFeatures.chaosShard, new ItemStack(MekanismItems.Polyethene, 1, 2), "PoloniumPellet", DEFeatures.chaoticCore);
+                DEFeatures.chaoticCore, "PoloniumPellet", MekanismItems.HDPE_SHEET, DEFeatures.chaosShard, MekanismItems.HDPE_SHEET, "PoloniumPellet", DEFeatures.chaoticCore);
+
     }
 
     @Optional.Method(modid = MekanismHooks.DraconicAdditions_MOD_ID)
@@ -475,7 +475,7 @@ public class MekanismRecipe {
         if (!chaoticHelm.hasTagCompound()) {
             chaoticHelm.setTagCompound(new NBTTagCompound());
         }
-        for (String upgrade :  DAFeatures.chaoticHelm.getValidUpgrades(chaoticHelm)) {
+        for (String upgrade : DAFeatures.chaoticHelm.getValidUpgrades(chaoticHelm)) {
             UpgradeHelper.setUpgradeLevel(chaoticHelm, upgrade, DAFeatures.chaoticHelm.getMaxUpgradeLevel(chaoticHelm, upgrade));
         }
         DAFeatures.chaoticHelm.modifyEnergy(chaoticHelm, DAFeatures.chaoticHelm.getMaxEnergyStored(chaoticHelm));
@@ -485,7 +485,7 @@ public class MekanismRecipe {
         if (!chaoticChest.hasTagCompound()) {
             chaoticChest.setTagCompound(new NBTTagCompound());
         }
-        for (String upgrade :  DAFeatures.chaoticChest.getValidUpgrades(chaoticChest)) {
+        for (String upgrade : DAFeatures.chaoticChest.getValidUpgrades(chaoticChest)) {
             UpgradeHelper.setUpgradeLevel(chaoticChest, upgrade, DAFeatures.chaoticChest.getMaxUpgradeLevel(chaoticChest, upgrade));
         }
         DAFeatures.chaoticChest.modifyEnergy(chaoticChest, DAFeatures.chaoticChest.getMaxEnergyStored(chaoticChest));
@@ -495,7 +495,7 @@ public class MekanismRecipe {
         if (!chaoticLegs.hasTagCompound()) {
             chaoticLegs.setTagCompound(new NBTTagCompound());
         }
-        for (String upgrade :  DAFeatures.chaoticLegs.getValidUpgrades(chaoticLegs)) {
+        for (String upgrade : DAFeatures.chaoticLegs.getValidUpgrades(chaoticLegs)) {
             UpgradeHelper.setUpgradeLevel(chaoticLegs, upgrade, DAFeatures.chaoticLegs.getMaxUpgradeLevel(chaoticLegs, upgrade));
         }
         DAFeatures.chaoticLegs.modifyEnergy(chaoticLegs, DAFeatures.chaoticLegs.getMaxEnergyStored(chaoticLegs));
@@ -505,23 +505,25 @@ public class MekanismRecipe {
         if (!chaoticBoots.hasTagCompound()) {
             chaoticBoots.setTagCompound(new NBTTagCompound());
         }
-        for (String upgrade :  DAFeatures.chaoticBoots.getValidUpgrades(chaoticBoots)) {
+        for (String upgrade : DAFeatures.chaoticBoots.getValidUpgrades(chaoticBoots)) {
             UpgradeHelper.setUpgradeLevel(chaoticBoots, upgrade, DAFeatures.chaoticBoots.getMaxUpgradeLevel(chaoticBoots, upgrade));
         }
         DAFeatures.chaoticBoots.modifyEnergy(chaoticBoots, DAFeatures.chaoticBoots.getMaxEnergyStored(chaoticBoots));
         chaoticBoots.getTagCompound().setBoolean("isStable", true);
 
-        addDRSimpleFusionRecipe(new ItemStack(MekanismItems.ModuleUpgrade, 1, 25), new ItemStack(MekanismItems.ModuleBase), Integer.MAX_VALUE * 53L, 3,
+
+        addDRSimpleFusionRecipe(new ItemStack(MekanismItems.MODULE_ADVANCED_INTERCEPTION_SYSTEM), new ItemStack(MekanismItems.ModuleBase), Integer.MAX_VALUE * 53L, 3,
                 DAFeatures.chaosHeart, inductionCell, DAFeatures.chaosStabilizerCore, inductionCell, DAFeatures.chaosHeart,
                 DAFeatures.chaosHeart, chaoticHelm, "PlutoniumPellet", chaoticChest, DAFeatures.chaosHeart,
-                inductionCell, MekanismItems.CosmicMatter, "PoloniumPellet", new ItemStack(MekanismItems.ModuleUpgrade, 1, 23), "PoloniumPellet", MekanismItems.CosmicMatter, inductionCell,
-                "PoloniumPellet", new ItemStack(MekanismItems.ModuleUpgrade, 1, 23), new ItemStack(MekanismItems.ModuleUpgrade, 1, 24), new ItemStack(MekanismItems.ModuleUpgrade, 1, 23), "PoloniumPellet",
-                DAFeatures.chaosStabilizerCore, "PlutoniumPellet", new ItemStack(MekanismItems.ModuleUpgrade, 1, 23), new ItemStack(MekanismItems.ModuleUpgrade, 1, 24), "circuitUltimate", new ItemStack(MekanismItems.ModuleUpgrade, 1, 24), new ItemStack(MekanismItems.ModuleUpgrade, 1, 23), "PlutoniumPellet", DAFeatures.chaosStabilizerCore,
-                "PoloniumPellet", new ItemStack(MekanismItems.ModuleUpgrade, 1, 23), new ItemStack(MekanismItems.ModuleUpgrade, 1, 24), new ItemStack(MekanismItems.ModuleUpgrade, 1, 23), "PoloniumPellet",
-                inductionCell, MekanismItems.CosmicMatter, "PoloniumPellet", new ItemStack(MekanismItems.ModuleUpgrade, 1, 23), "PoloniumPellet", MekanismItems.CosmicMatter, inductionCell,
+                inductionCell, MekanismItems.CosmicMatter, "PoloniumPellet", MekanismItems.MODULE_EMERGENCY_RESCUE, "PoloniumPellet", MekanismItems.CosmicMatter, inductionCell,
+                "PoloniumPellet", MekanismItems.MODULE_EMERGENCY_RESCUE, MekanismItems.MODULE_ENERGY_SHIELD, MekanismItems.MODULE_EMERGENCY_RESCUE, "PoloniumPellet",
+                DAFeatures.chaosStabilizerCore, "PlutoniumPellet", MekanismItems.MODULE_EMERGENCY_RESCUE, MekanismItems.MODULE_ENERGY_SHIELD, "circuitUltimate", MekanismItems.MODULE_ENERGY_SHIELD, MekanismItems.MODULE_EMERGENCY_RESCUE, "PlutoniumPellet", DAFeatures.chaosStabilizerCore,
+                "PoloniumPellet", MekanismItems.MODULE_EMERGENCY_RESCUE, MekanismItems.MODULE_ENERGY_SHIELD, MekanismItems.MODULE_EMERGENCY_RESCUE, "PoloniumPellet",
+                inductionCell, MekanismItems.CosmicMatter, "PoloniumPellet", MekanismItems.MODULE_EMERGENCY_RESCUE, "PoloniumPellet", MekanismItems.CosmicMatter, inductionCell,
                 DAFeatures.chaosHeart, chaoticLegs, "PlutoniumPellet", chaoticBoots, DAFeatures.chaosHeart,
                 DAFeatures.chaosHeart, inductionCell, DAFeatures.chaosStabilizerCore, inductionCell, DAFeatures.chaosHeart
         );
+
     }
 
 

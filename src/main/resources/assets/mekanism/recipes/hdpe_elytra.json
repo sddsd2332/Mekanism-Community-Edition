@@ -1,0 +1,23 @@
+{
+  "result": {
+    "item": "mekanism:hdpe_elytra"
+  },
+  "pattern": [
+    "ABA",
+    "BCB",
+    "B B"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "A": {
+      "ore": "alloyUltimate",
+      "type": "forge:ore_dict"
+    },
+    "B": {
+      "item": "mekanism:hdpe_sheet"
+    },
+    "C": {
+      "item": "minecraft:elytra"
+    }
+  }
+}

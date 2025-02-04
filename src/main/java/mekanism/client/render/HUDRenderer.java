@@ -5,9 +5,10 @@ import mekanism.api.gear.IHUDElement;
 import mekanism.client.gui.element.GuiUtils;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.content.gear.HUDElement;
+import mekanism.common.content.gear.IModuleContainerItem;
+import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.item.ItemMekTool;
-import mekanism.common.item.armor.ItemMekAsuitBodyArmour;
-import mekanism.common.item.armor.ItemMekAsuitHeadArmour;
+import mekanism.common.item.ItemMekaTool;
 import mekanism.common.item.armor.ItemMekaSuitArmor;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.moduleUpgrade;
@@ -105,7 +106,7 @@ public class HUDRenderer {
         for (int i = 0; i < ARMOR_SLOTS.length; i++) {
             posX += renderEnergyIcon(player, font, posX, color, ARMOR_ICONS[i], ARMOR_SLOTS[i], showArmorPercent);
         }
-        Predicate<Item> showToolPercent = item -> item instanceof ItemMekTool;
+        Predicate<Item> showToolPercent = item -> item instanceof ItemMekTool || item instanceof ItemMekaTool;
         for (EntityEquipmentSlot hand : HAND_SLOTS) {
             posX += renderEnergyIcon(player, font, posX, color, TOOL_ICON, hand, showToolPercent);
         }
@@ -118,7 +119,7 @@ public class HUDRenderer {
         ItemStack stack = player.getItemStackFromSlot(slot);
         if (showPercent.test(stack.getItem())) {
             if (stack.getItem() instanceof IEnergizedItem item) {
-                renderHUDElement(font, posX, 0, hudElementPercent(icon, item.getEnergyRatio(stack)), color, false);
+                renderHUDElement(font, posX, 0,  ModuleHelper.get().hudElementPercent(icon, item.getEnergyRatio(stack)), color, false);
                 return 48;
             }
         }
@@ -130,48 +131,17 @@ public class HUDRenderer {
         int startX = screenWidth - 10;
         int curY = screenHeight - 10;
         GlStateManager.pushMatrix();
-        for (ItemStack stack : player.getArmorInventoryList()) {
-            if (stack.getItem() instanceof ItemMekAsuitHeadArmour headArmour) {
-                if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.VisionEnhancementUnit)) {
-                    boolean Vision = headArmour.isVision;
+        for (EntityEquipmentSlot type : EQUIPMENT_ORDER){
+            ItemStack stack = player.getItemStackFromSlot(type);
+            if (stack.getItem() instanceof IModuleContainerItem item) {
+                for (IHUDElement element : item.getHUDElements(player, stack)) {
                     curY -= 18;
                     if (reverseHud) {
-                        renderHUDElement(font, 10, curY, hudElementEnabled(VisionICON, Vision), color, false);
+                        //Align the mekasuit module icons to the left of the screen
+                        renderHUDElement(font, 10, curY, element, color, false);
                     } else {
-                        int elementWidth = 24 + font.getStringWidth(LangUtils.transOnOffcap(Vision));
-                        renderHUDElement(font, startX - elementWidth, curY, hudElementEnabled(VisionICON, Vision), color, true);
-                    }
-                }
-                if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.NutritionalInjectionUnit) && headArmour.getNutritional(stack)) {
-                    double getGasStored = (double) headArmour.getStored(stack) / headArmour.getMaxGas(stack);
-                    curY -= 18;
-                    if (reverseHud) {
-                        renderHUDElement(font, 10, curY, hudElementPercent(InjectionUnitICON, getGasStored), color, false);
-                    } else {
-                        int elementWidth = 24 + font.getStringWidth(TextUtils.getPercent(getGasStored));
-                        renderHUDElement(font, startX - elementWidth, curY, hudElementPercent(InjectionUnitICON, getGasStored), color, true);
-                    }
-                }
-            }
-            if (stack.getItem() instanceof ItemMekAsuitBodyArmour bodyArmour) {
-                if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.JETPACK_UNIT)) {
-                    double getGasStored = (double) bodyArmour.getStored(stack) / bodyArmour.getMaxGas(stack);
-                    curY -= 18;
-                    if (reverseHud) {
-                        renderHUDElement(font, 10, curY, hudElementPercent(bodyArmour.getJetpackMode(stack).getHUDIcon(), getGasStored), color, false);
-                    } else {
-                        int elementWidth = 24 + font.getStringWidth(TextUtils.getPercent(getGasStored));
-                        renderHUDElement(font, startX - elementWidth, curY, hudElementPercent(bodyArmour.getJetpackMode(stack).getHUDIcon(), getGasStored), color, true);
-                    }
-                }
-                if (UpgradeHelper.isUpgradeInstalled(stack, moduleUpgrade.GRAVITATIONAL_MODULATING_UNIT)) {
-                    boolean isEnabled = bodyArmour.getJetpackMode(stack) == IJetpackItem.JetpackMode.DISABLED;
-                    curY -= 18;
-                    if (reverseHud) {
-                        renderHUDElement(font, 10, curY, hudElementEnabled(GravitationaIcon, isEnabled), color, false);
-                    } else {
-                        int elementWidth = 24 + font.getStringWidth(LangUtils.transOnOffcap(isEnabled));
-                        renderHUDElement(font, startX - elementWidth, curY, hudElementEnabled(GravitationaIcon, isEnabled), color, true);
+                        int elementWidth = 24 + font.getStringWidth(element.getText());
+                        renderHUDElement(font, startX - elementWidth, curY, element, color, true);
                     }
                 }
             }
@@ -179,18 +149,6 @@ public class HUDRenderer {
         GlStateManager.popMatrix();
     }
 
-
-    public IHUDElement hudElementEnabled(ResourceLocation icon, boolean enabled) {
-        return hudElement(icon, LangUtils.transOnOffcap(enabled), enabled ? IHUDElement.HUDColor.REGULAR : IHUDElement.HUDColor.FADED);
-    }
-
-    public IHUDElement hudElementPercent(ResourceLocation icon, double ratio) {
-        return hudElement(icon, TextUtils.getPercent(ratio), ratio > 0.2 ? IHUDElement.HUDColor.REGULAR : (ratio > 0.1 ? IHUDElement.HUDColor.WARNING : IHUDElement.HUDColor.DANGER));
-    }
-
-    public IHUDElement hudElement(ResourceLocation icon, String text, IHUDElement.HUDColor color) {
-        return HUDElement.of(icon, text, HUDElement.HUDColor.from(color));
-    }
 
     private void renderHUDElement(FontRenderer font, int x, int y, IHUDElement element, int color, boolean iconRight) {
         GlStateManager.enableBlend();

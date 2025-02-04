@@ -117,7 +117,7 @@ public class GuiElectrolyticSeparator extends GuiMekanismTile<TileEntityElectrol
                 info.add(LangUtils.localize("gui.gas_no_space"));
             }
             if (outLeft || energy || outRight) {
-                displayTooltips(info, xAxis, yAxis);
+                this.displayTooltips(info, xAxis, yAxis);
             }
         }
 

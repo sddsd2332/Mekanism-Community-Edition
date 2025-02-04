@@ -3,7 +3,6 @@ package mekanism.common.config;
 import mekanism.generators.common.MekanismGenerators;
 import mekanism.multiblockmachine.common.MekanismMultiblockMachine;
 import mekanism.tools.common.MekanismTools;
-import mekanism.weapons.common.MekanismWeapons;
 import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nullable;
@@ -51,6 +50,4 @@ public class MekanismConfig {
     public ToolsConfig tools = Loader.isModLoaded(MekanismTools.MODID) ? new ToolsConfig() : null;
 
     public MultiblockMachineConfig multiblock = Loader.isModLoaded(MekanismMultiblockMachine.MODID) ? new MultiblockMachineConfig() : null;
-
-    public WeaponsConfig weapons = Loader.isModLoaded(MekanismWeapons.MODID) ? new WeaponsConfig(): null;
 }

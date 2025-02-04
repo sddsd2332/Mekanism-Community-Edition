@@ -86,8 +86,7 @@ public class TextComponentGroup extends TextComponentString {
     }
 
     public TextComponentGroup getString(String component) {
-
-        return this;
+        return new TextComponentGroup().string(cleanString(component));
     }
 
     private static String cleanString(String component) {

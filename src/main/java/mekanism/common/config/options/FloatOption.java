@@ -1,6 +1,7 @@
 package mekanism.common.config.options;
 
 import io.netty.buffer.ByteBuf;
+import mekanism.api.functions.FloatSupplier;
 import mekanism.common.config.BaseConfig;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -12,7 +13,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Created by Thiakil on 15/03/2019.
  */
 @ParametersAreNonnullByDefault
-public class FloatOption extends Option<FloatOption> {
+public class FloatOption extends Option<FloatOption> implements FloatSupplier {
 
     private float value;
     private final float defaultValue;
@@ -71,5 +72,10 @@ public class FloatOption extends Option<FloatOption> {
     @Override
     public void read(ByteBuf buf) {
         this.value = buf.readFloat();
+    }
+
+    @Override
+    public float getAsFloat() {
+        return value;
     }
 }

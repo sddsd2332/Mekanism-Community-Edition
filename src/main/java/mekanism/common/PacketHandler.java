@@ -19,7 +19,6 @@ import mekanism.common.network.PacketEditFilter.EditFilterMessage;
 import mekanism.common.network.PacketEntityMove.EntityMoveMessage;
 import mekanism.common.network.PacketFlyingSync.FlyingSyncMessage;
 import mekanism.common.network.PacketGearStateUpdate.GearStateUpdateMessage;
-import mekanism.common.network.PacketJumpBoostData.JumpBoostDataMessage;
 import mekanism.common.network.PacketKey.KeyMessage;
 import mekanism.common.network.PacketLogisticalSorterGui.LogisticalSorterGuiMessage;
 import mekanism.common.network.PacketModeChange.ModeChangMessage;
@@ -36,10 +35,10 @@ import mekanism.common.network.PacketRobit.RobitMessage;
 import mekanism.common.network.PacketSecurityMode.SecurityModeMessage;
 import mekanism.common.network.PacketSecurityUpdate.SecurityUpdateMessage;
 import mekanism.common.network.PacketSimpleGui.SimpleGuiMessage;
-import mekanism.common.network.PacketStepAssistData.StepAssistDataMessage;
 import mekanism.common.network.PacketStepHeightSync.StepHeightSyncMessage;
 import mekanism.common.network.PacketTileEntity.TileEntityMessage;
 import mekanism.common.network.PacketTransmitterUpdate.TransmitterUpdateMessage;
+import mekanism.common.network.PacketUpdateModuleSettings.UpdateModuleSettingsMessage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -200,10 +199,8 @@ public class PacketHandler {
         netHandler.registerMessage(PacketDropperUse.class, DropperUseMessage.class, 28, Side.SERVER);
         netHandler.registerMessage(PacketEntityMove.class, EntityMoveMessage.class, 29, Side.CLIENT);
         netHandler.registerMessage(PacketSecurityUpdate.class, SecurityUpdateMessage.class, 30, Side.CLIENT);
-        netHandler.registerMessage(PacketJumpBoostData.class, JumpBoostDataMessage.class, 32, Side.CLIENT);
-        netHandler.registerMessage(PacketJumpBoostData.class, JumpBoostDataMessage.class, 32, Side.SERVER);
-        netHandler.registerMessage(PacketStepAssistData.class, StepAssistDataMessage.class, 33, Side.CLIENT);
-        netHandler.registerMessage(PacketStepAssistData.class, StepAssistDataMessage.class, 33, Side.SERVER);
+        //FREE ID 32
+        //FREE ID 33
 
         netHandler.registerMessage(PacketModeChange.class, ModeChangMessage.class, 34, Side.SERVER);
 
@@ -216,7 +213,9 @@ public class PacketHandler {
         if (Mekanism.hooks.Baubles) {
             registerBaublesMessage();
         }
-
+        netHandler.registerMessage(PacketUpdateModuleSettings.class, UpdateModuleSettingsMessage.class, 42, Side.CLIENT);
+        netHandler.registerMessage(PacketUpdateModuleSettings.class, UpdateModuleSettingsMessage.class, 42, Side.SERVER);
+        // netHandler.registerMessage(PacketRemoveModule.class, RemoveModuleMessage.class, 43, Side.SERVER);
     }
 
     @Optional.Method(modid = MekanismHooks.Baubles_MOD_ID)
@@ -316,6 +315,7 @@ public class PacketHandler {
         netHandler.sendToAllTracking(message, entity);
     }
 
+
     //TODO: change Network stuff over to using this
     public void sendToReceivers(IMessage message, Range4D range) {
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
@@ -332,6 +332,7 @@ public class PacketHandler {
     public static UUID readUUID(ByteBuf dataStream) {
         return new UUID(dataStream.readLong(), dataStream.readLong());
     }
+
 
     public static void writeUUID(ByteBuf dataStream, UUID uuid) {
         dataStream.writeLong(uuid.getMostSignificantBits());

@@ -21,6 +21,8 @@ import mekanism.client.render.item.RenderEnergyCubeItem;
 import mekanism.client.render.item.basicblock.RenderBasicBlockItem;
 import mekanism.client.render.item.gear.*;
 import mekanism.client.render.item.machine.RenderMachineItem;
+import mekanism.client.render.layer.MekaSuitModuleElytra;
+import mekanism.client.render.layer.MekanismElytraLayer;
 import mekanism.client.render.obj.MekanismOBJLoader;
 import mekanism.client.render.tileentity.*;
 import mekanism.client.render.transmitter.*;
@@ -45,6 +47,7 @@ import mekanism.common.block.states.BlockStatePlastic.PlasticBlockStateMapper;
 import mekanism.common.block.states.BlockStateTransmitter.TransmitterStateMapper;
 import mekanism.common.block.states.BlockStateTransmitter.TransmitterType;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.content.gear.IModuleContainerItem;
 import mekanism.common.entity.*;
 import mekanism.common.inventory.InventoryPersonalChest;
 import mekanism.common.item.*;
@@ -75,6 +78,7 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
+import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderSkeleton;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -187,7 +191,7 @@ public class ClientProxy extends CommonProxy {
          * ADD Start
          */
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityIsotopicCentrifuge.class, RenderIsotopicCentrifuge.INSTANCE);
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityNutritionalLiquifier.class,  RenderNutritionalLiquifier.INSTANCE);
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityNutritionalLiquifier.class, RenderNutritionalLiquifier.INSTANCE);
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRotaryCondensentrator.class, new RenderConfigurableMachine<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChemicalOxidizer.class, new RenderConfigurableMachine<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChemicalInfuser.class, new RenderConfigurableMachine<>());
@@ -206,7 +210,7 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRecycler.class, new RenderConfigurableMachine<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAmbientAccumulator.class, new RenderConfigurableMachine<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAmbientAccumulatorEnergy.class, new RenderConfigurableMachine<>());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHybridStorage.class,new RenderConfigurableMachine<>());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHybridStorage.class, new RenderConfigurableMachine<>());
     }
 
     @Override
@@ -257,7 +261,6 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.ConfigurationCard);
         registerItemRender(MekanismItems.SeismicReader);
         registerItemRender(MekanismItems.Substrate);
-        registerItemRender(MekanismItems.Polyethene);
         registerItemRender(MekanismItems.BioFuel);
         registerItemRender(MekanismItems.Flamethrower);
         registerItemRender(MekanismItems.GaugeDropper);
@@ -281,12 +284,62 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.FluoriteClump);
         registerItemRender(MekanismItems.ArmoredFreeRunners);
         registerItemRender(MekanismItems.MekTool);
-        registerItemRender(MekanismItems.MekAsuitHelmet);
-        registerItemRender(MekanismItems.MekAsuitChestplate);
-        registerItemRender(MekanismItems.MekAsuitLeggings);
-        registerItemRender(MekanismItems.MekAsuitBoots);
+        //     registerItemRender(MekanismItems.MekAsuitHelmet);
+        //    registerItemRender(MekanismItems.MekAsuitChestplate);
+        //     registerItemRender(MekanismItems.MekAsuitLeggings);
+        //      registerItemRender(MekanismItems.MekAsuitBoots);
         registerItemRender(MekanismItems.ModuleBase);
-        registerItemRender(MekanismItems.ModuleUpgrade);
+
+        registerItemRender(MekanismItems.MEKASUIT_HELMET);
+        registerItemRender(MekanismItems.MEKASUIT_BODYARMOR);
+        registerItemRender(MekanismItems.MEKASUIT_PANTS);
+        registerItemRender(MekanismItems.MEKASUIT_BOOTS);
+
+
+        registerItemRender(MekanismItems.MODULE_ENERGY);
+        registerItemRender(MekanismItems.MODULE_MAGNETIC);
+        // registerItemRender(MekanismItems.MODULE_COLOR_MODULATION);
+        registerItemRender(MekanismItems.MODULE_LASER_DISSIPATION);
+        registerItemRender(MekanismItems.MODULE_RADIATION_SHIELDING);
+        registerItemRender(MekanismItems.MODULE_ENERGY_SHIELD);
+        registerItemRender(MekanismItems.MODULE_EXCAVATION_ESCALATION);
+        registerItemRender(MekanismItems.MODULE_ATTACK_AMPLIFICATION);
+        registerItemRender(MekanismItems.MODULE_FARMING);
+        registerItemRender(MekanismItems.MODULE_SHEARING);
+        registerItemRender(MekanismItems.MODULE_SILK_TOUCH);
+        registerItemRender(MekanismItems.MODULE_FORTUNE);
+        //registerItemRender(MekanismItems.MODULE_BLASTING);
+        // registerItemRender(MekanismItems.MODULE_VEIN_MINING);
+        registerItemRender(MekanismItems.MODULE_TELEPORTATION);
+
+        registerItemRender(MekanismItems.MODULE_ELECTROLYTIC_BREATHING);
+        registerItemRender(MekanismItems.MODULE_INHALATION_PURIFICATION);
+        registerItemRender(MekanismItems.MODULE_VISION_ENHANCEMENT);
+        registerItemRender(MekanismItems.MODULE_NUTRITIONAL_INJECTION);
+        registerItemRender(MekanismItems.MODULE_DOSIMETER);
+        registerItemRender(MekanismItems.MODULE_GEIGER);
+        registerItemRender(MekanismItems.MODULE_JETPACK);
+        registerItemRender(MekanismItems.MODULE_CHARGE_DISTRIBUTION);
+        registerItemRender(MekanismItems.MODULE_GRAVITATIONAL_MODULATING);
+
+        registerItemRender(MekanismItems.MODULE_GYROSCOPIC_STABILIZATION);
+        registerItemRender(MekanismItems.MODULE_HYDROSTATIC_REPULSOR);
+        registerItemRender(MekanismItems.MODULE_LOCOMOTIVE_BOOSTING);
+        registerItemRender(MekanismItems.MODULE_MOTORIZED_SERVO);
+        registerItemRender(MekanismItems.MODULE_HYDRAULIC_PROPULSION);
+        registerItemRender(MekanismItems.MODULE_MAGNETIC_ATTRACTION);
+        registerItemRender(MekanismItems.MODULE_FROST_WALKER);
+        registerItemRender(MekanismItems.MODULE_ELYTRA);
+        registerItemRender(MekanismItems.HDPE_REINFORCED_ELYTRA);
+        registerItemRender(MekanismItems.MODULE_EMERGENCY_RESCUE);
+        registerItemRender(MekanismItems.MODULE_ADVANCED_INTERCEPTION_SYSTEM);
+        registerItemRender(MekanismItems.MODULE_HEALTH_REGENERATION);
+        registerItemRender(MekanismItems.MEKA_TOOL);
+        registerItemRender(MekanismItems.HDPE_PELLET);
+        registerItemRender(MekanismItems.HDPE_ROD);
+        registerItemRender(MekanismItems.HDPE_SHEET);
+        registerItemRender(MekanismItems.HDPE_STICK);
+
         /**
          * ADD END
          */
@@ -316,6 +369,7 @@ public class ClientProxy extends CommonProxy {
         Item.getItemFromBlock(MekanismBlocks.MachineBlock4).setTileEntityItemStackRenderer(new RenderMachineItem());
         MekanismItems.ArmoredFreeRunners.setTileEntityItemStackRenderer(new RenderArmoredFreeRunners());
         MekanismItems.MekTool.setTileEntityItemStackRenderer(new RenderMekTool());
+        MekanismItems.MEKA_TOOL.setTileEntityItemStackRenderer(new RenderMekaTool());
     }
 
     private ModelResourceLocation getInventoryMRL(String type) {
@@ -763,9 +817,10 @@ public class ClientProxy extends CommonProxy {
             case 70 -> new GuiCellExtractor(player.inventory, (TileEntityChanceMachine) tileEntity);
             case 71 -> new GuiCellSeparator(player.inventory, (TileEntityCellSeparator) tileEntity);
             case 72 -> new GuiRecycler(player.inventory, (TileEntityRecycler) tileEntity);
-            case 73 -> new GuiAmbientAccumulatorEnergy(player.inventory, (TileEntityAmbientAccumulatorEnergy) tileEntity);
-            case 74 -> new GuiHybridStorage(player.inventory,(TileEntityHybridStorage) tileEntity);
-            case 75 -> new GuiModificationStation(player.inventory,(TileEntityModificationStation) tileEntity);
+            case 73 ->
+                    new GuiAmbientAccumulatorEnergy(player.inventory, (TileEntityAmbientAccumulatorEnergy) tileEntity);
+            case 74 -> new GuiHybridStorage(player.inventory, (TileEntityHybridStorage) tileEntity);
+            case 75 -> new GuiModificationStation(player.inventory, (TileEntityModificationStation) tileEntity);
             default -> null;
         };
     }
@@ -849,7 +904,7 @@ public class ClientProxy extends CommonProxy {
         }, MekanismItems.Balloon);
 
         MinecraftForge.EVENT_BUS.register(new ClientConnectionHandler());
-      //  MinecraftForge.EVENT_BUS.register(new ClientPlayerTracker());
+        //  MinecraftForge.EVENT_BUS.register(new ClientPlayerTracker());
         MinecraftForge.EVENT_BUS.register(new ClientTickHandler());
         MinecraftForge.EVENT_BUS.register(new RenderFirstPersonMekaSuitArms());
         MinecraftForge.EVENT_BUS.register(new RenderTickHandler());
@@ -859,6 +914,7 @@ public class ClientProxy extends CommonProxy {
 
         HolidayManager.init();
     }
+
 
     @Override
     public void onConfigSync(boolean fromPacket) {
@@ -919,6 +975,10 @@ public class ClientProxy extends CommonProxy {
         modelRegistry.putObject(ArmorFreeRunnerRL, RenderArmoredFreeRunners.model = new ItemLayerWrapper(modelRegistry.getObject(FreeRunnerRL)));
         ModelResourceLocation MekToolRL = getInventoryMRL("MekTool");
         modelRegistry.putObject(MekToolRL, RenderMekTool.model = new ItemLayerWrapper(modelRegistry.getObject(MekToolRL)));
+
+        ModelResourceLocation Meka_Tool = getInventoryMRL("meka_tool");
+        modelRegistry.putObject(Meka_Tool, RenderMekaTool.model = new ItemLayerWrapper(modelRegistry.getObject(Meka_Tool)));
+
         /**
          * ADD END
          */
@@ -1018,5 +1078,20 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void throwApiPresentException() {
         throw new ApiJarPresentException(API_PRESENT_MESSAGE);
+    }
+
+    @Override
+    protected void postInit() {
+        Minecraft.getMinecraft().getRenderManager().entityRenderMap.values().forEach(renderer -> {
+            if (renderer instanceof RenderLivingBase<?> base) {
+                base.addLayer(new MekanismElytraLayer(base));
+                base.addLayer(new MekaSuitModuleElytra(base));
+            }
+        });
+        Minecraft.getMinecraft().getRenderManager().getSkinMap().values().forEach(renderer -> {
+                    renderer.addLayer(new MekanismElytraLayer(renderer));
+                    renderer.addLayer(new MekaSuitModuleElytra(renderer));
+                }
+        );
     }
 }

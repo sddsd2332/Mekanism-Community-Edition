@@ -35,6 +35,10 @@ public class ItemDataUtils {
         return getDataMap(stack).hasKey(key);
     }
 
+    public static boolean hasData(ItemStack stack, String key, int type) {
+        return hasDataTag(stack) && getDataMap(stack).hasKey(key, type);
+    }
+
     public static void removeData(ItemStack stack, String key) {
         if (!hasDataTag(stack)) {
             return;

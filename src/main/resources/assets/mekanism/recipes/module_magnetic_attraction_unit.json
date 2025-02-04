@@ -1,0 +1,31 @@
+{
+      "result": {
+            "item": "mekanism:module_magnetic_attraction_unit"
+      },
+      "pattern": [
+            "ABA",
+            "CDC",
+            "EEE"
+      ],
+      "type": "mekanism:ore_shaped",
+      "key": {
+            "A": {
+                  "ore": "alloyElite",
+                  "type": "forge:ore_dict"
+            },
+            "B": {
+                  "item": "minecraft:iron_bars"
+            },
+            "C": {
+                  "ore": "circuitElite",
+                  "type": "forge:ore_dict"
+            },
+            "D": {
+                  "item":"mekanism:modulebase"
+            },
+            "E": {
+                  "ore": "PoloniumPellet",
+                  "type": "forge:ore_dict"
+            }
+      }
+}

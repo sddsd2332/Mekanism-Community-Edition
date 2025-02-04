@@ -3,7 +3,7 @@ package mekanism.common.config;
 import mekanism.common.config.options.DoubleOption;
 import mekanism.common.config.options.FloatOption;
 import mekanism.common.config.options.IntOption;
-import mekanism.common.util.FieldsAreNonnullByDefault;
+import mekanism.api.annotations.FieldsAreNonnullByDefault;
 
 /**
  * Created by Thiakil on 15/03/2019.

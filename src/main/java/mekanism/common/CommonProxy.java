@@ -8,8 +8,10 @@ import mekanism.common.base.IGuiProvider;
 import mekanism.common.base.IUpgradeTile;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.content.gear.IModuleContainerItem;
 import mekanism.common.entity.EntityRobit;
 import mekanism.common.inventory.InventoryPersonalChest;
+import mekanism.common.inventory.ModuleTweakerContainer;
 import mekanism.common.inventory.container.*;
 import mekanism.common.inventory.container.robit.*;
 import mekanism.common.item.ItemDictionary;
@@ -281,7 +283,7 @@ public class CommonProxy implements IGuiProvider {
                 return new ContainerCultivateElectricMachine<>(player.inventory, (TileEntityCultivateElectricMachine) tileEntity);
             */
             case 70 -> new ContainerChanceMachine<>(player.inventory, (TileEntityChanceMachine) tileEntity);
-            case 72 -> new ContainerChanceMachine2(player.inventory, (TileEntityChanceMachine2) tileEntity);
+            case 72 -> new ContainerChanceMachine2<>(player.inventory, (TileEntityChanceMachine2) tileEntity);
             case 73 ->
                     new ContainerAmbientAccumulatorEnergy(player.inventory, (TileEntityAmbientAccumulatorEnergy) tileEntity);
             case 74 -> new ContainerHybridStorage(player.inventory, (TileEntityHybridStorage) tileEntity);
@@ -293,6 +295,8 @@ public class CommonProxy implements IGuiProvider {
     public void preInit() {
 
     }
+
+    protected void postInit() {}
 
     public double getReach(EntityPlayer player) {
         if (player instanceof EntityPlayerMP) {
