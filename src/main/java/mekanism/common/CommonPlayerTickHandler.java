@@ -156,8 +156,6 @@ public class CommonPlayerTickHandler {
         return isGravitationalModulationReady(player) && player.capabilities.isFlying;
     }
 
-     */
-
 
     @SubscribeEvent
     public void onEntityAttacked(LivingAttackEvent event) {

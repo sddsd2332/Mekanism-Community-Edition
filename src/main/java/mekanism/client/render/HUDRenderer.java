@@ -10,12 +10,8 @@ import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.item.ItemMekTool;
 import mekanism.common.item.ItemMekaTool;
 import mekanism.common.item.armor.ItemMekaSuitArmor;
-import mekanism.common.item.interfaces.IJetpackItem;
-import mekanism.common.moduleUpgrade;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
-import mekanism.common.util.UpgradeHelper;
-import mekanism.common.util.text.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -43,10 +39,6 @@ public class HUDRenderer {
     private static final ResourceLocation TOOL_ICON = MekanismUtils.getResource(MekanismUtils.ResourceType.GUI_HUD, "hud_mekatool.png");
 
     private static final ResourceLocation COMPASS = MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "Compass.png");
-
-    private static final ResourceLocation InjectionUnitICON = MekanismUtils.getResource(MekanismUtils.ResourceType.GUI_HUD, "nutritional_injection_unit.png");
-    private static final ResourceLocation VisionICON = MekanismUtils.getResource(MekanismUtils.ResourceType.GUI_HUD, "vision_enhancement_unit.png");
-    private static final ResourceLocation GravitationaIcon = MekanismUtils.getResource(MekanismUtils.ResourceType.GUI_HUD, "gravitational_modulation_unit.png");
 
     private long lastTick = -1;
     private float prevRotationYaw;

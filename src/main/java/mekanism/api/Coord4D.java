@@ -392,4 +392,5 @@ public class Coord4D {
         code = 31 * code + dimensionId;
         return code;
     }
+
 }
