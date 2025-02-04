@@ -3,22 +3,20 @@ package mekanism.client;
 import baubles.api.BaublesApi;
 import mekanism.api.gas.IGasItem;
 import mekanism.client.sound.SoundHandler;
+import mekanism.common.KeySync;
 import mekanism.common.Mekanism;
 import mekanism.common.MekanismLang;
 import mekanism.common.MekanismSounds;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.MekanismHooks;
-import mekanism.common.inventory.ModuleTweakerContainer;
 import mekanism.common.item.interfaces.IModeItem;
 import mekanism.common.network.PacketBaublesModeChange.BaublesModeChangMessage;
 import mekanism.common.network.PacketModeChange.ModeChangMessage;
-import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -108,10 +106,8 @@ public class MekanismKeyHandler extends MekKeyHandler {
             handlePotentialModeItem(EntityEquipmentSlot.FEET);
         } else if (kb == hudKey) {
             MekanismConfig.current().client.enableHUD.set(!MekanismConfig.current().client.enableHUD.val());
-        } else if (kb == moduleTweakerKey) {
-            if (player != null && ModuleTweakerContainer.hasTweakableItem(player)) {
-                MekanismUtils.openItemGui(player, EnumHand.MAIN_HAND, 76);
-            }
+        } else if (kb == boostKey) {
+            MekanismClient.updateKey(boostKey, KeySync.BOOST);
         }
     }
 
@@ -146,6 +142,8 @@ public class MekanismKeyHandler extends MekKeyHandler {
 
     @Override
     public void keyUp(KeyBinding kb) {
-
+        if (kb == boostKey) {
+            MekanismClient.updateKey(boostKey, KeySync.BOOST);
+        }
     }
 }

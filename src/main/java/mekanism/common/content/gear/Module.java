@@ -19,6 +19,7 @@ import mekanism.common.Mekanism;
 import mekanism.common.MekanismLang;
 import mekanism.common.content.gear.ModuleConfigItem.DisableableModuleConfigItem;
 import mekanism.common.util.ItemDataUtils;
+import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -368,7 +369,7 @@ public final class Module<MODULE extends ICustomModule<MODULE>> implements IModu
 
     @Override
     public void displayModeChange(EntityPlayer player, String modeName, IHasTextComponent mode) {
-        player.sendMessage(new TextComponentGroup(EnumColor.GREY.textFormatting).string(Mekanism.LOG_TAG, TextFormatting.DARK_BLUE).string(" ").translation(modeName).translation(MekanismLang.MODULE_MODE_CHANGE.getTranslationKey()).string(mode.getTextComponent().getFormattedText(), EnumColor.INDIGO.textFormatting));
+        player.sendMessage(new TextComponentGroup(EnumColor.GREY.textFormatting).string(Mekanism.LOG_TAG, TextFormatting.DARK_BLUE).string(" ").translation(LangUtils.localize(modeName)).translation(MekanismLang.MODULE_MODE_CHANGE.getTranslationKey()).string(mode.getTextComponent().getFormattedText(), EnumColor.INDIGO.textFormatting));
     }
 
     @Override
@@ -376,9 +377,9 @@ public final class Module<MODULE extends ICustomModule<MODULE>> implements IModu
         enabled.set(!isEnabled());
         ITextComponent message;
         if (isEnabled()) {
-            message = new TextComponentGroup().getString(modeName).translation(MekanismLang.GENERIC_STORED.getTranslationKey()).string(MekanismLang.MODULE_ENABLED_LOWER.getTranslationKey(), EnumColor.BRIGHT_GREEN.textFormatting);
+            message = new TextComponentGroup().string(modeName).translation(MekanismLang.GENERIC_STORED.getTranslationKey()).string(MekanismLang.MODULE_ENABLED_LOWER.getTranslationKey(), EnumColor.BRIGHT_GREEN.textFormatting);
         } else {
-            message = new TextComponentGroup().getString(modeName).translation(MekanismLang.GENERIC_STORED.getTranslationKey()).string(MekanismLang.MODULE_DISABLED_LOWER.getTranslationKey(), EnumColor.DARK_RED.textFormatting);
+            message = new TextComponentGroup().string(modeName).translation(MekanismLang.GENERIC_STORED.getTranslationKey()).string(MekanismLang.MODULE_DISABLED_LOWER.getTranslationKey(), EnumColor.DARK_RED.textFormatting);
         }
         player.sendMessage(new TextComponentGroup(EnumColor.GREY.textFormatting).string(Mekanism.LOG_TAG, TextFormatting.DARK_BLUE).string(" ").appendSibling(message));
     }

@@ -39,7 +39,6 @@ import mekanism.common.network.PacketStepHeightSync.StepHeightSyncMessage;
 import mekanism.common.network.PacketTileEntity.TileEntityMessage;
 import mekanism.common.network.PacketTransmitterUpdate.TransmitterUpdateMessage;
 import mekanism.common.network.PacketUpdateModuleSettings.UpdateModuleSettingsMessage;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -214,9 +213,9 @@ public class PacketHandler {
         if (Mekanism.hooks.Baubles) {
             registerBaublesMessage();
         }
-        netHandler.registerMessage(PacketUpdateModuleSettings.class, UpdateModuleSettingsMessage.class,42,Side.CLIENT);
-        netHandler.registerMessage(PacketUpdateModuleSettings.class, UpdateModuleSettingsMessage.class,42,Side.SERVER);
-
+        netHandler.registerMessage(PacketUpdateModuleSettings.class, UpdateModuleSettingsMessage.class, 42, Side.CLIENT);
+        netHandler.registerMessage(PacketUpdateModuleSettings.class, UpdateModuleSettingsMessage.class, 42, Side.SERVER);
+        // netHandler.registerMessage(PacketRemoveModule.class, RemoveModuleMessage.class, 43, Side.SERVER);
     }
 
     @Optional.Method(modid = MekanismHooks.Baubles_MOD_ID)

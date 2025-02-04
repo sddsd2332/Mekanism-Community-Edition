@@ -80,7 +80,7 @@ public class GuiModuleScrollList extends GuiScrollList {
     protected void setSelected(int index) {
         if (index >= 0 && index < currentList.size()) {
             selectIndex = index;
-            callback.accept(ModuleHelper.INSTANCE.load(currentItem, currentList.get(index)));
+            callback.accept(ModuleHelper.get().load(currentItem, currentList.get(index)));
         }
     }
 

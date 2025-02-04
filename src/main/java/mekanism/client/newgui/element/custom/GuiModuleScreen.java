@@ -40,7 +40,7 @@ public class GuiModuleScreen extends GuiElement {
     private List<MiniElement> miniElements = new ArrayList<>();
 
     public GuiModuleScreen(IGuiWrapper gui, int x, int y, IntSupplier slotIdSupplier) {
-        super(gui, x, y, 102, 202);
+        super(gui, x, y, 102, 204);
         this.slotIdSupplier = slotIdSupplier;
     }
 

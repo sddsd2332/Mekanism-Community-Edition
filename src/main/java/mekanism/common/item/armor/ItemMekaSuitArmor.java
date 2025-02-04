@@ -192,6 +192,9 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         ItemStack FullStack = new ItemStack(this);
         for (ModuleData<?> module : ModuleHelper.get().getAll()) {
             if (ModuleHelper.get().getSupported(FullStack).contains(module)) {
+                if (module.getStack().isEmpty()){
+                    continue; //检查模块是否注册模块物品，防止全状态下出现问题打开模块配置器的问题
+                }
                 setModule(FullStack, module);
             }
         }

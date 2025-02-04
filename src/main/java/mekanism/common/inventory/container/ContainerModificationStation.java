@@ -19,6 +19,11 @@ public class ContainerModificationStation extends ContainerMekanism<TileEntityMo
         super(tile, inventory);
     }
 
+    @Override
+    protected int getInventorYOffset() {
+        return 138;
+    }
+
     @Nonnull
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int slotID) {

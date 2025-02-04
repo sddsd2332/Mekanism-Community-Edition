@@ -12,6 +12,7 @@ import mekanism.common.content.gear.Module;
 import mekanism.common.inventory.ModuleTweakerContainer;
 import mekanism.common.inventory.container.slot.SlotOverlay;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Keyboard;
@@ -26,16 +27,16 @@ public class GuiModuleTweaker extends GuiMekanism<ModuleTweakerContainer> {
 
     public GuiModuleTweaker(InventoryPlayer inventory) {
         super(new ModuleTweakerContainer(inventory));
-        xSize = 248;
-        ySize += 64;
+        xSize = 302;
+        ySize += 66;
     }
 
 
     @Override
     protected void addGuiElements() {
         super.addGuiElements();
-        moduleScreen = addButton(new GuiModuleScreen(this, 138, 20, () -> inventorySlots.inventorySlots.get(selected).getSlotIndex()));
-        scrollList = addButton(new GuiModuleScrollList(this, 30, 20, 108, 202, () -> getStack(selected), this::onModuleSelected));
+        moduleScreen = addButton(new GuiModuleScreen(this, 192, 20, () -> inventorySlots.inventorySlots.get(selected).getSlotIndex()));
+        scrollList = addButton(new GuiModuleScrollList(this, 84, 20, 108, 204, () -> getStack(selected), this::onModuleSelected));
         int size = inventorySlots.inventorySlots.size();
         for (int i = 0; i < size; i++) {
             Slot slot = inventorySlots.inventorySlots.get(i);
@@ -120,5 +121,10 @@ public class GuiModuleTweaker extends GuiMekanism<ModuleTweakerContainer> {
             return ItemStack.EMPTY;
         }
         return inventorySlots.inventorySlots.get(index).getStack();
+    }
+
+    @Override
+    protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type) {
+        //Overlays prevent clicks to pick up items
     }
 }

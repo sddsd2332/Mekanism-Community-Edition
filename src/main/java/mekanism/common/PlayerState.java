@@ -195,7 +195,7 @@ public class PlayerState {
     }
 
     private void updateClientServerStepHeight(EntityPlayer player, float value) {
-        player.stepHeight += value;
+        player.stepHeight = value;
         Mekanism.packetHandler.sendTo(new StepHeightSyncMessage(value), (EntityPlayerMP) player);
     }
 
