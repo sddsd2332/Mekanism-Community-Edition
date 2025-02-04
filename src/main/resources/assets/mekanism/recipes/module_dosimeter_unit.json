@@ -1,0 +1,26 @@
+{
+      "result": {
+            "item": "mekanism:module_dosimeter_unit"
+      },
+      "pattern": [
+            "ABA",
+            "ACA",
+            "DDD"
+      ],
+      "type": "mekanism:ore_shaped",
+      "key": {
+            "A": {
+                  "ore": "alloyAdvanced",
+                  "type": "forge:ore_dict"
+            },
+            "B": {
+                  "item": "nuclearcraft:geiger_counter"
+            },
+            "C": {
+                  "item": "mekanism:modulebase"
+            },
+            "D": {
+                  "item": "mekanism:hdpe_sheet"
+            }
+      }
+}

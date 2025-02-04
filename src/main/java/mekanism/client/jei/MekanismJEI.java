@@ -1,5 +1,7 @@
 package mekanism.client.jei;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasRegistry;
 import mekanism.api.gas.GasStack;
@@ -8,6 +10,7 @@ import mekanism.client.jei.gas.GasStackRenderer;
 import mekanism.client.jei.machine.*;
 import mekanism.client.jei.machine.chemical.*;
 import mekanism.client.jei.machine.other.*;
+import mekanism.common.Mekanism;
 import mekanism.common.MekanismBlocks;
 import mekanism.common.MekanismItems;
 import mekanism.common.base.IFactory;
@@ -29,8 +32,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @JEIPlugin
@@ -210,6 +215,25 @@ public class MekanismJEI implements IModPlugin {
         RecipeRegistryHelper.registerRecycler(registry);
         RecipeRegistryHelper.registerAmbientAccumulator(registry);
 
+
+        if (Mekanism.hooks.MekanismMixinHelp) {
+            Map<ItemStack, List<ItemStack>> items = Maps.newHashMap();
+            ItemStack hdpe = new ItemStack(MekanismItems.HDPE_SHEET);
+            items.put(hdpe, Lists.newArrayList(new ItemStack(MekanismItems.HDPE_REINFORCED_ELYTRA)));
+            for (Map.Entry<ItemStack, List<ItemStack>> entry : items.entrySet()) {
+                ItemStack repairMaterial = entry.getKey();
+                for (ItemStack ingredient : entry.getValue()) {
+                    ItemStack damaged1 = ingredient.copy();
+                    damaged1.setItemDamage(damaged1.getMaxDamage());
+                    ItemStack damaged2 = ingredient.copy();
+                    damaged2.setItemDamage(damaged2.getMaxDamage() * 3 / 4);
+                    ItemStack damaged3 = ingredient.copy();
+                    damaged3.setItemDamage(247);
+                    registry.addAnvilRecipe(damaged1, Collections.singletonList(repairMaterial), Collections.singletonList(damaged2));
+                    registry.addAnvilRecipe(damaged2, Collections.singletonList(damaged2), Collections.singletonList(damaged3));
+                }
+            }
+        }
         /**
          * ADD END
          */

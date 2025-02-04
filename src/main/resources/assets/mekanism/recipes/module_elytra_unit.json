@@ -1,0 +1,31 @@
+{
+      "result": {
+            "item": "mekanism:module_elytra_unit"
+      },
+      "pattern": [
+            "ABA",
+            "ACA",
+            "DED"
+      ],
+      "type": "mekanism:ore_shaped",
+      "key": {
+            "A": {
+                  "ore": "alloyElite",
+                  "type": "forge:ore_dict"
+            },
+            "B": {
+                  "item": "mekanism:hdpe_elytra"
+            },
+            "C": {
+                  "item": "mekanism:modulebase"
+            },
+            "D": {
+                  "ore": "PoloniumPellet",
+                  "type": "forge:ore_dict"
+            },
+            "E":{
+              "ore": "Antimatter",
+              "type": "forge:ore_dict"
+            }
+      }
+}

@@ -137,12 +137,12 @@ public class GuiLargeWindGenerator extends GuiMekanismTile<TileEntityLargeWindGe
                 List<String> info = new ArrayList<>();
                 info.add(LangUtils.localize("gui.Blades_damaged"));
                 info.add(LangUtils.localize("gui.Blades_damaged_number") + ": " + tileEntity.getBladeDamageNumber());
-                this.olddisplayTooltips(info, xAxis, yAxis);
+                this.displayTooltips(info, xAxis, yAxis);
             }
         } else if (ForcedRun.isMouseOver()) {
-            this.olddisplayTooltip(tileEntity.getMachineStop() ? LangUtils.localize("gui.forced_run") : LangUtils.localize("gui.forced_run_off"), xAxis, yAxis);
+            this.displayTooltip(tileEntity.getMachineStop() ? LangUtils.localize("gui.forced_run") : LangUtils.localize("gui.forced_run_off"), xAxis, yAxis);
         } else if (updateRun.isMouseOver() && tileEntity.getMachineStop2()) {
-            this.olddisplayTooltip(LangUtils.localize("gui.updateRun"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.updateRun"), xAxis, yAxis);
         }
 
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);

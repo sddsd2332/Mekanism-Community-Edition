@@ -67,7 +67,7 @@ public class GuiDigitalAssemblyTable extends GuiMekanismTile<TileEntityDigitalAs
         int xAxis = mouseX - guiLeft;
         int yAxis = mouseY - guiTop;
         if (xAxis >= 12 && xAxis <= 215 && yAxis >= 78 && yAxis <= 81) {
-            this.olddisplayTooltip(MekanismUtils.getEnergyDisplay(tileEntity.getEnergy(), tileEntity.getMaxEnergy()), xAxis, yAxis);
+            this.displayTooltip(MekanismUtils.getEnergyDisplay(tileEntity.getEnergy(), tileEntity.getMaxEnergy()), xAxis, yAxis);
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }

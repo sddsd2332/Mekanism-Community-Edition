@@ -109,7 +109,7 @@ public class GuiResistiveHeater extends GuiMekanismTile<TileEntityResistiveHeate
                 info.add(LangUtils.localize("gui.no_energy"));
             }
             if (energy) {
-                this.olddisplayTooltips(info, xAxis, yAxis);
+                this.displayTooltips(info, xAxis, yAxis);
             }
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);

@@ -144,7 +144,7 @@ public class GuiTItemStackFilter extends GuiItemStackFilter<TItemStackFilter, Ti
             if (tileEntity.singleItem && filter.sizeMode) {
                 sizeModeTooltip += " - " + LangUtils.localize("mekanism.gui.sizeModeConflict");
             }
-            this.olddisplayTooltips(MekanismUtils.splitTooltip(sizeModeTooltip, ItemStack.EMPTY), xAxis, yAxis);
+            this.displayTooltips(MekanismUtils.splitTooltip(sizeModeTooltip, ItemStack.EMPTY), xAxis, yAxis);
         }
     }
 

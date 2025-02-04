@@ -211,7 +211,7 @@ public class GuiQuantumEntangloporter extends GuiMekanismTile<TileEntityQuantumE
                 info.add(LangUtils.localize("gui.no_freq"));
             }
             if (!freq) {
-                this.olddisplayTooltips(info, xAxis, yAxis);
+                this.displayTooltips(info, xAxis, yAxis);
             }
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);

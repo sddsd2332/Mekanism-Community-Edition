@@ -48,4 +48,5 @@ public class ItemMekanism extends Item {
     public EnumRarity getRarity(ItemStack stack) {
         return isRarity ? rarity : super.getRarity(stack);
     }
+
 }

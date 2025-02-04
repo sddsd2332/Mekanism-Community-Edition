@@ -13,7 +13,7 @@ import mekanism.api.gas.IGasItem;
 import mekanism.api.gear.ICustomModule;
 import mekanism.api.gear.ICustomModule.ModuleDamageAbsorbInfo;
 import mekanism.api.gear.IModule;
-import mekanism.api.gear.ModuleData;
+import mekanism.api.gear.Magnetic;
 import mekanism.client.MekKeyHandler;
 import mekanism.client.MekanismKeyHandler;
 import mekanism.common.Mekanism;
@@ -25,9 +25,8 @@ import mekanism.common.capabilities.laser.item.LaserDissipationHandler;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.content.gear.IModuleContainerItem;
 import mekanism.common.content.gear.Module;
-import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.content.gear.shared.ModuleEnergyUnit;
-import mekanism.common.entity.EntityMekaSuitArmor;
+import mekanism.common.entity.EntityMeka;
 import mekanism.common.integration.MekanismHooks;
 import mekanism.common.integration.forgeenergy.ForgeEnergyItemWrapper;
 import mekanism.common.integration.ic2.IC2ItemManager;
@@ -75,7 +74,7 @@ import java.util.*;
         @Optional.Interface(iface = "com.brandon3055.draconicevolution.items.armor.ICustomArmor", modid = MekanismHooks.DraconicEvolution_MOD_ID)
 })
 public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedItem, ISpecialArmor, IModuleContainerItem, IModeItem,
-        ISpecialElectricItem, IEnergyContainerItem, IHazmatLike, ICustomArmor {
+        ISpecialElectricItem, IEnergyContainerItem, IHazmatLike, ICustomArmor, Magnetic {
 
     private static final Set<DamageSource> ALWAYS_SUPPORTED_SOURCES = new LinkedHashSet<>(Arrays.asList(
             DamageSource.ANVIL, DamageSource.CACTUS, DamageSource.CRAMMING, DamageSource.DRAGON_BREATH,
@@ -190,14 +189,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         items.add(stack);
 
         ItemStack FullStack = new ItemStack(this);
-        for (ModuleData<?> module : ModuleHelper.get().getAll()) {
-            if (ModuleHelper.get().getSupported(FullStack).contains(module)) {
-                if (module.getStack().isEmpty()){
-                    continue; //检查模块是否注册模块物品，防止全状态下出现问题打开模块配置器的问题
-                }
-                setModule(FullStack, module);
-            }
-        }
+        setAllModule(FullStack);
         setEnergy(FullStack, ((IEnergizedItem) FullStack.getItem()).getMaxEnergy(FullStack));
         if (FullStack.getItem() instanceof IGasItem gasItem) {
             if (FullStack.getItem() == MekanismItems.MEKASUIT_HELMET) {
@@ -514,8 +506,11 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
 
     @Override
     public Entity createEntity(World world, Entity location, ItemStack itemstack) {
-        EntityItem item = new EntityMekaSuitArmor(world, location, itemstack);
+        EntityItem item = new EntityMeka(world, location, itemstack);
         item.isImmuneToFire = true;
+        if (isModuleEnabled(itemstack, MekanismModules.MAGNETIC_UNIT)) {
+            item.setNoPickupDelay();
+        }
         return item;
     }
 
@@ -632,4 +627,10 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     public String getItemStackDisplayName(@Nonnull ItemStack itemstack) {
         return EnumRarity.EPIC.getColor() + super.getItemStackDisplayName(itemstack);
     }
+
+    @Override
+    public boolean isMagnetic(ItemStack stack) {
+        return isModuleEnabled(stack, MekanismModules.MAGNETIC_UNIT);
+    }
+
 }

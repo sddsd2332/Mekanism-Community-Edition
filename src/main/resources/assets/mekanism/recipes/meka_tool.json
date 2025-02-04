@@ -1,6 +1,6 @@
 {
   "result": {
-    "item": "mekanism:mektool"
+    "item": "mekanism:meka_tool"
   },
   "pattern": [
     "AEA",
@@ -16,8 +16,7 @@
       "item": "mekanism:configurator"
     },
     "B": {
-      "item": "mekanism:polyethene",
-      "data": 2
+      "item": "mekanism:hdpe_sheet"
     },
     "C": {
       "item": "mekanism:atomicdisassembler"

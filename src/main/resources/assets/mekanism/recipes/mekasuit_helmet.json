@@ -1,6 +1,6 @@
 {
       "result": {
-            "item": "mekanism:mekasuitleggings"
+            "item": "mekanism:mekasuit_helmet"
       },
       "pattern": [
             "ACA",
@@ -10,8 +10,7 @@
       "type": "mekanism:ore_shaped",
       "key": {
             "A": {
-                  "item": "mekanism:polyethene",
-                  "data": 2
+                  "item": "mekanism:hdpe_sheet"
             },
             "B": {
                   "ore": "PoloniumPellet",
@@ -21,7 +20,7 @@
                   "item": "#CIRCUITULTIMATE"
             },
             "D": {
-                  "item": "minecraft:diamond_leggings"
+                  "item": "minecraft:diamond_helmet"
             },
             "E": {
                   "item": "mekanism:basicblock2",

@@ -29,11 +29,11 @@ public abstract class GuiElement {
     }
 
     public void displayTooltip(String s, int xAxis, int yAxis) {
-        guiObj.olddisplayTooltip(s, xAxis, yAxis);
+        guiObj.displayTooltip(s, xAxis, yAxis);
     }
 
     public void displayTooltips(List<String> list, int xAxis, int yAxis) {
-        guiObj.olddisplayTooltips(list, xAxis, yAxis);
+        guiObj.displayTooltips(list, xAxis, yAxis);
     }
 
     public void offsetX(int xSize) {

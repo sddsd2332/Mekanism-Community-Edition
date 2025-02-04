@@ -261,7 +261,6 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.ConfigurationCard);
         registerItemRender(MekanismItems.SeismicReader);
         registerItemRender(MekanismItems.Substrate);
-        registerItemRender(MekanismItems.Polyethene);
         registerItemRender(MekanismItems.BioFuel);
         registerItemRender(MekanismItems.Flamethrower);
         registerItemRender(MekanismItems.GaugeDropper);
@@ -298,13 +297,11 @@ public class ClientProxy extends CommonProxy {
 
 
         registerItemRender(MekanismItems.MODULE_ENERGY);
+        registerItemRender(MekanismItems.MODULE_MAGNETIC);
         // registerItemRender(MekanismItems.MODULE_COLOR_MODULATION);
         registerItemRender(MekanismItems.MODULE_LASER_DISSIPATION);
         registerItemRender(MekanismItems.MODULE_RADIATION_SHIELDING);
-        if (Mekanism.hooks.DraconicEvolution) {
-            registerItemRender(MekanismItems.MODULE_ENERGY_SHIELD);
-        }
-
+        registerItemRender(MekanismItems.MODULE_ENERGY_SHIELD);
         registerItemRender(MekanismItems.MODULE_EXCAVATION_ESCALATION);
         registerItemRender(MekanismItems.MODULE_ATTACK_AMPLIFICATION);
         registerItemRender(MekanismItems.MODULE_FARMING);
@@ -332,14 +329,17 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.MODULE_HYDRAULIC_PROPULSION);
         registerItemRender(MekanismItems.MODULE_MAGNETIC_ATTRACTION);
         registerItemRender(MekanismItems.MODULE_FROST_WALKER);
-        if (Mekanism.hooks.MekanismMixinHelp) {
-            registerItemRender(MekanismItems.MODULE_ELYTRA);
-            registerItemRender(MekanismItems.HDPE_REINFORCED_ELYTRA);
-        }
+        registerItemRender(MekanismItems.MODULE_ELYTRA);
+        registerItemRender(MekanismItems.HDPE_REINFORCED_ELYTRA);
         registerItemRender(MekanismItems.MODULE_EMERGENCY_RESCUE);
         registerItemRender(MekanismItems.MODULE_ADVANCED_INTERCEPTION_SYSTEM);
         registerItemRender(MekanismItems.MODULE_HEALTH_REGENERATION);
         registerItemRender(MekanismItems.MEKA_TOOL);
+        registerItemRender(MekanismItems.HDPE_PELLET);
+        registerItemRender(MekanismItems.HDPE_ROD);
+        registerItemRender(MekanismItems.HDPE_SHEET);
+        registerItemRender(MekanismItems.HDPE_STICK);
+
         /**
          * ADD END
          */

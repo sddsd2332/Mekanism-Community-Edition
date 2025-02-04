@@ -68,7 +68,7 @@ public class GuiNutritionalLiquifier extends GuiMekanismTile<TileEntityNutrition
                 info.add(LangUtils.localize("gui.gas_no_space"));
             }
             if (output || energy) {
-                this.olddisplayTooltips(info, xAxis, yAxis);
+                this.displayTooltips(info, xAxis, yAxis);
             }
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);

@@ -145,25 +145,25 @@ public class GuiRobitMain extends GuiMekanism {
         int xAxis = mouseX - guiLeft;
         int yAxis = mouseY - guiTop;
         if (followButton.isMouseOver()) {
-            this.olddisplayTooltip(LangUtils.localize("gui.robit.toggleFollow"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.robit.toggleFollow"), xAxis, yAxis);
         } else if (renameButton.isMouseOver()) {
-            this.olddisplayTooltip(LangUtils.localize("gui.robit.rename"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.robit.rename"), xAxis, yAxis);
         } else if (teleportHomeButton.isMouseOver()) {
-            this.olddisplayTooltip(LangUtils.localize("gui.robit.teleport"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.robit.teleport"), xAxis, yAxis);
         } else if (pickupButton.isMouseOver()) {
-            this.olddisplayTooltip(LangUtils.localize("gui.robit.togglePickup"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.robit.togglePickup"), xAxis, yAxis);
         } else if (mainButton.isMouseOver()) {
-            this.olddisplayTooltip(LangUtils.localize("gui.robit"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.robit"), xAxis, yAxis);
         } else if (craftingButton.isMouseOver()) {
-            this.olddisplayTooltip(LangUtils.localize("gui.robit.crafting"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.robit.crafting"), xAxis, yAxis);
         } else if (inventoryButton.isMouseOver()) {
-            this.olddisplayTooltip(LangUtils.localize("gui.robit.inventory"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.robit.inventory"), xAxis, yAxis);
         } else if (smeltingButton.isMouseOver()) {
-            this.olddisplayTooltip(LangUtils.localize("gui.robit.smelting"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.robit.smelting"), xAxis, yAxis);
         } else if (repairButton.isMouseOver()) {
-            this.olddisplayTooltip(LangUtils.localize("gui.robit.repair"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.robit.repair"), xAxis, yAxis);
         } else if (xAxis >= 27 && xAxis <= 27 + 112 && yAxis >= 74 && yAxis <= 74 + 6) {
-            this.olddisplayTooltip(MekanismUtils.getEnergyDisplay(robit.getEnergy(), robit.MAX_ELECTRICITY), xAxis, yAxis);
+            this.displayTooltip(MekanismUtils.getEnergyDisplay(robit.getEnergy(), robit.MAX_ELECTRICITY), xAxis, yAxis);
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }

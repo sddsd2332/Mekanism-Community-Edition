@@ -1,8 +1,12 @@
 package mekanism.common.item;
 
+import mekanism.api.EnumColor;
 import mekanism.api.mixninapi.ElytraMixinHelp;
+import mekanism.common.Mekanism;
 import mekanism.common.MekanismItems;
+import mekanism.common.util.LangUtils;
 import net.minecraft.block.BlockDispenser;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumRarity;
@@ -14,7 +18,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class ItemHDPEElytra extends ItemMekanism implements ElytraMixinHelp {
 
@@ -36,6 +42,13 @@ public class ItemHDPEElytra extends ItemMekanism implements ElytraMixinHelp {
         return stack.getItemDamage() < stack.getMaxDamage() - 1;
     }
 
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(@Nonnull ItemStack itemstack, World world, @Nonnull List<String> list, @Nonnull ITooltipFlag flag) {
+        if (!Mekanism.hooks.MekanismMixinHelp){
+            list.add(EnumColor.DARK_RED + LangUtils.localize("need.installation.mod") + ".");
+        }
+    }
 
     @Nullable
     @Override
@@ -45,8 +58,7 @@ public class ItemHDPEElytra extends ItemMekanism implements ElytraMixinHelp {
 
     @Override
     public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
-        ItemStack stack = new ItemStack(MekanismItems.Polyethene,1,2);
-        return repair.equals(stack);
+        return repair.getItem() == MekanismItems.HDPE_SHEET;
     }
 
     @Override

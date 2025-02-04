@@ -294,8 +294,7 @@ public class GeneralConfig extends BaseConfig {
             "Cost in Joules of using the mektool as a hoe.");
     public final IntOption toolEnergyUsage = new IntOption(this, "general", "toolEnergyUsage", 10,
             "Base Energy (Joules) usage of the mektool. (Gets multiplied by speed factor)");
-    public final BooleanOption toolVeryFastMode = new BooleanOption(this, "general", "toolveryFastMode", true,
-            "Enable the 'Fast' mode for the Atomic Disassembler.");
+//    public final BooleanOption toolVeryFastMode = new BooleanOption(this, "general", "toolveryFastMode", true, "Enable the 'Fast' mode for the Atomic Disassembler.");
     public final IntOption toolMiningCount = new IntOption(this, "general", "toolMiningCount", 256,
             "The max Atomic Disassembler Vein Mining Block Count.");
     public final BooleanOption blacklistFlux = new BooleanOption(this, "general", "BlacklistFluxPower", false,

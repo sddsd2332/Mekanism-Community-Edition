@@ -1,7 +1,6 @@
 {
       "result": {
-            "item": "mekanism:moduleupgrade",
-            "data": 14
+            "item": "mekanism:module_hydraulic_propulsion_unit"
       },
       "pattern": [
             "CDC",

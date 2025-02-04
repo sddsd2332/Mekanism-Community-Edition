@@ -41,11 +41,22 @@ public class ModuleFarmingUnit implements ICustomModule<ModuleFarmingUnit> {
     @Nonnull
     @Override
     public EnumActionResult onItemUse(IModule<ModuleFarmingUnit> module, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        Block block = world.getBlockState(pos).getBlock();
         return MekanismUtils.performActions(
                 //First try to use the disassembler as an axe
                 stripLogsAOE(player, module),
-                () -> useItemAs(player, world, pos, side, module, farmingRadius.get().getRadius(), this::useShovel, MekanismConfig.current().meka.mekaToolEnergyUsageShovel.val()),
-                () -> useItemAs(player, world, pos, side, module, farmingRadius.get().getRadius(), this::useHoe, MekanismConfig.current().meka.mekaToolEnergyUsageHoe.val())
+                () -> {
+                    if (block == Blocks.GRASS) {
+                        return useItemAs(player, world, pos, side, module, farmingRadius.get().getRadius(), this::useShovel, MekanismConfig.current().meka.mekaToolEnergyUsageShovel.val());
+                    }
+                    return EnumActionResult.PASS;
+                },
+                () -> {
+                    if (block == Blocks.DIRT || block == Blocks.GRASS_PATH) {
+                        return useItemAs(player, world, pos, side, module, farmingRadius.get().getRadius(), this::useHoe, MekanismConfig.current().meka.mekaToolEnergyUsageHoe.val());
+                    }
+                    return EnumActionResult.PASS;
+                }
         );
     }
 
@@ -93,10 +104,6 @@ public class ModuleFarmingUnit implements ICustomModule<ModuleFarmingUnit> {
 
 
     private EnumActionResult useShovel(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing facing) {
-        Block blocks = world.getBlockState(pos).getBlock();
-        if (blocks != Blocks.GRASS) {
-            return EnumActionResult.PASS;
-        }
         if (!player.canPlayerEdit(pos.offset(facing), facing, stack)) {
             return EnumActionResult.FAIL;
         } else if (facing != EnumFacing.DOWN && world.isAirBlock(pos.up())) {
@@ -133,10 +140,6 @@ public class ModuleFarmingUnit implements ICustomModule<ModuleFarmingUnit> {
     }
 
     private EnumActionResult useHoe(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing facing) {
-        Block blocks = world.getBlockState(pos).getBlock();
-        if (blocks != Blocks.DIRT || blocks != Blocks.GRASS_PATH) {
-            return EnumActionResult.PASS;
-        }
         if (!player.canPlayerEdit(pos.offset(facing), facing, stack)) {
             return EnumActionResult.FAIL;
         }

@@ -1,7 +1,6 @@
 {
       "result": {
-            "item": "mekanism:moduleupgrade",
-            "data": 1
+            "item": "mekanism:module_attack_amplification_unit"
       },
       "pattern": [
             "CDC",
@@ -11,8 +10,7 @@
       "type": "mekanism:ore_shaped",
       "key": {
             "A": {
-                  "item": "mekanism:polyethene",
-                  "data": 2
+                  "item": "mekanism:hdpe_sheet"
             },
             "B": {
                   "item": "mekanism:modulebase"

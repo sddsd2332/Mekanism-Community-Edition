@@ -64,7 +64,7 @@ public class GuiSolarNeutronActivator extends GuiMekanismTile<TileEntitySolarNeu
                 info.add(LangUtils.localize("gui.gas_no_space"));
             }
             if (outputgas) {
-                this.olddisplayTooltips(info, xAxis, yAxis);
+                this.displayTooltips(info, xAxis, yAxis);
             }
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);

@@ -1,7 +1,6 @@
 {
       "result": {
-            "item": "mekanism:moduleupgrade",
-            "data": 8
+            "item": "mekanism:module_jetpack_unit"
       },
       "pattern": [
             "CDC",

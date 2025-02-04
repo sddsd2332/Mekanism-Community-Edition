@@ -1,7 +1,6 @@
 {
       "result": {
-            "item": "mekanism:moduleupgrade",
-            "data": 3
+            "item": "mekanismgenerators:module_solar_recharging_unit"
       },
       "pattern": [
             "CDC",

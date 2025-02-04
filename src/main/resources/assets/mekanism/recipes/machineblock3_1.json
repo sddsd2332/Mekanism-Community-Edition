@@ -15,8 +15,7 @@
       }],
       "key": {
             "P": {
-                  "item": "mekanism:polyethene",
-                  "data": 2
+                  "item": "mekanism:hdpe_sheet"
             },
             "A": {
                   "ore": "alloyElite",

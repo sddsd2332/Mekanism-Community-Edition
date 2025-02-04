@@ -93,7 +93,7 @@ public class GuiIsotopicCentrifuge extends GuiMekanismTile<TileEntityIsotopicCen
                 info.add(LangUtils.localize("gui.gas_no_space"));
             }
             if (energy || outputgas) {
-                this.olddisplayTooltips(info, xAxis, yAxis);
+                this.displayTooltips(info, xAxis, yAxis);
             }
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);

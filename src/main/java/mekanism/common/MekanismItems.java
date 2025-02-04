@@ -22,7 +22,6 @@ public class MekanismItems {
     public static final Item TeleportationCore = new ItemMekanism().setRarity(EnumRarity.RARE);
     public static final Item ElectrolyticCore = new ItemMekanism().setRarity(EnumRarity.UNCOMMON);
     public static final Item Substrate = new ItemMekanism();
-    public static final Item Polyethene = new ItemHDPE();
     public static final Item BioFuel = new ItemMekanism();
     public static final Item ItemProxy = new ItemProxy();
     public static final Item EnrichedIron = new ItemMekanism();
@@ -103,6 +102,7 @@ public class MekanismItems {
     public static final Item MEKASUIT_BOOTS = new ItemMekaSuitBoots();
 
     public static final ItemModule MODULE_ENERGY = new ItemModule(MekanismModules.ENERGY_UNIT);
+    public static final ItemModule MODULE_MAGNETIC = new ItemModule(MekanismModules.MAGNETIC_UNIT);
     //public static final ItemModule MODULE_COLOR_MODULATION = new ItemModule(MekanismModules.COLOR_MODULATION_UNIT);
     public static final ItemModule MODULE_LASER_DISSIPATION = new ItemModule(MekanismModules.LASER_DISSIPATION_UNIT);
     public static final ItemModule MODULE_RADIATION_SHIELDING = new ItemModule(MekanismModules.RADIATION_SHIELDING_UNIT);
@@ -146,6 +146,11 @@ public class MekanismItems {
     public static final ItemModule MODULE_EMERGENCY_RESCUE = new ItemModule(MekanismModules.EMERGENCY_RESCUE_UNIT);
     public static final ItemModule MODULE_ADVANCED_INTERCEPTION_SYSTEM = new ItemModule(MekanismModules.ADVANCED_INTERCEPTION_SYSTEM_UNIT);
     public static final ItemModule MODULE_HEALTH_REGENERATION = new ItemModule(MekanismModules.HEALTH_REGENERATION_UNIT);
+
+    public static final Item HDPE_PELLET = new ItemMekanism().setRarity(EnumRarity.UNCOMMON);
+    public static final Item HDPE_ROD = new ItemMekanism().setRarity(EnumRarity.UNCOMMON);
+    public static final Item HDPE_SHEET = new ItemMekanism().setRarity(EnumRarity.UNCOMMON);
+    public static final Item HDPE_STICK = new ItemMekanism().setRarity(EnumRarity.UNCOMMON);
     /**
      * ADD END
      */
@@ -206,7 +211,6 @@ public class MekanismItems {
         registry.register(init(CraftingFormula, "CraftingFormula"));
         registry.register(init(SeismicReader, "SeismicReader"));
         registry.register(init(Substrate, "Substrate"));
-        registry.register(init(Polyethene, "Polyethene"));
         registry.register(init(BioFuel, "BioFuel"));
         registry.register(init(Flamethrower, "Flamethrower"));
         registry.register(init(GaugeDropper, "GaugeDropper"));
@@ -241,6 +245,7 @@ public class MekanismItems {
         registry.register(init(MEKASUIT_BOOTS, "mekasuit_boots"));
 
         registry.register(initModule(MODULE_ENERGY));
+        registry.register(initModule(MODULE_MAGNETIC));
         // registry.register(initModule(MODULE_COLOR_MODULATION));
         registry.register(initModule(MODULE_LASER_DISSIPATION));
         registry.register(initModule(MODULE_RADIATION_SHIELDING));
@@ -274,14 +279,18 @@ public class MekanismItems {
         registry.register(initModule(MODULE_MAGNETIC_ATTRACTION));
         registry.register(initModule(MODULE_FROST_WALKER));
 
-        if (Mekanism.hooks.MekanismMixinHelp) {
-            registry.register(initModule(MODULE_ELYTRA));
-            registry.register(init(HDPE_REINFORCED_ELYTRA, "hdpe_elytra"));
-        }
+        registry.register(initModule(MODULE_ELYTRA));
+        registry.register(init(HDPE_REINFORCED_ELYTRA, "hdpe_elytra"));
+
         registry.register(init(MEKA_TOOL, "meka_tool"));
         registry.register(initModule(MODULE_EMERGENCY_RESCUE));
         registry.register(initModule(MODULE_ADVANCED_INTERCEPTION_SYSTEM));
         registry.register(initModule(MODULE_HEALTH_REGENERATION));
+        registry.register(init(HDPE_PELLET, "hdpe_pellet"));
+        registry.register(init(HDPE_ROD, "hdpe_rod"));
+        registry.register(init(HDPE_SHEET, "hdpe_sheet"));
+        registry.register(init(HDPE_STICK, "hdpe_stick"));
+
         /**
          * ADD END
          */

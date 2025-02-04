@@ -3,30 +3,18 @@
     "item": "mekanism:canteen"
   },
   "pattern": [
-    "ABA",
-    "BCB",
-    "DBE"
+    " A ",
+    "ACA",
+    " A "
   ],
-  "type": "minecraft:crafting_shaped",
+  "type": "mekanism:ore_shaped",
   "key": {
     "A": {
-      "ore": "netherStar",
-      "type": "forge:ore_dict"
-    },
-    "B": {
-      "ore": "alloyUltimate",
+      "ore": "ingotTin",
       "type": "forge:ore_dict"
     },
     "C": {
       "item": "minecraft:bowl"
-    },
-    "D": {
-      "ore": "PlutoniumPellet",
-      "type": "forge:ore_dict"
-    },
-    "E": {
-      "ore": "PoloniumPellet",
-      "type": "forge:ore_dict"
     }
   }
 }

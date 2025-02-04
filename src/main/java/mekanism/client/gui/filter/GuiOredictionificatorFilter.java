@@ -107,16 +107,16 @@ public class GuiOredictionificatorFilter extends GuiTextFilterBase<Oredictionifi
         int xAxis = mouseX - guiLeft;
         int yAxis = mouseY - guiTop;
         if (xAxis >= 31 && xAxis <= 43 && yAxis >= 21 && yAxis <= 33) {
-            this.olddisplayTooltip(LangUtils.localize("gui.lastItem"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.lastItem"), xAxis, yAxis);
         } else if (xAxis >= 63 && xAxis <= 75 && yAxis >= 21 && yAxis <= 33) {
-            this.olddisplayTooltip(LangUtils.localize("gui.nextItem"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.nextItem"), xAxis, yAxis);
         } else if (xAxis >= 33 && xAxis <= 129 && yAxis >= 48 && yAxis <= 60) {
-            this.olddisplayTooltip(LangUtils.localize("gui.oreDictCompat"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.oreDictCompat"), xAxis, yAxis);
         } else if (xAxis >= 45 && xAxis <= 61 && yAxis >= 19 && yAxis <= 35) {
             if (!renderStack.isEmpty()) {
                 String name = ItemRegistryUtils.getMod(renderStack);
                 String extra = name.equals("null") ? "" : " (" + name + ")";
-                this.olddisplayTooltip(renderStack.getDisplayName() + extra, xAxis, yAxis);
+                this.displayTooltip(renderStack.getDisplayName() + extra, xAxis, yAxis);
             }
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);

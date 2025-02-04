@@ -99,11 +99,11 @@ public abstract class BaseRecipeCategory<WRAPPER extends IRecipeWrapper> impleme
     }
 
     @Override
-    public void olddisplayTooltip(String s, int xAxis, int yAxis) {
+    public void displayTooltip(String s, int xAxis, int yAxis) {
     }
 
     @Override
-    public void olddisplayTooltips(List<String> list, int xAxis, int yAxis) {
+    public void displayTooltips(List<String> list, int xAxis, int yAxis) {
     }
 
     @Override

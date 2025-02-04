@@ -65,7 +65,7 @@ public class GuiGasTank extends GuiMekanismTile<TileEntityGasTank> {
         int xAxis = mouseX - guiLeft;
         int yAxis = mouseY - guiTop;
         if (xAxis >= 42 && xAxis <= 42 + 118 && yAxis >= 16 && yAxis <= 16 + 12) {
-            this.olddisplayTooltip(tileEntity.gasTank.getGas() != null ? tileEntity.gasTank.getGas().getGas().getLocalizedName() + ": " + (tileEntity.gasTank.getStored() == Integer.MAX_VALUE ? LangUtils.localize("gui.infinite") : tileEntity.gasTank.getStored()) : LangUtils.localize("gui.none"), xAxis, yAxis);
+            this.displayTooltip(tileEntity.gasTank.getGas() != null ? tileEntity.gasTank.getGas().getGas().getLocalizedName() + ": " + (tileEntity.gasTank.getStored() == Integer.MAX_VALUE ? LangUtils.localize("gui.infinite") : tileEntity.gasTank.getStored()) : LangUtils.localize("gui.none"), xAxis, yAxis);
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }

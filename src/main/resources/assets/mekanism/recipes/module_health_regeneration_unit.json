@@ -1,7 +1,6 @@
 {
       "result": {
-            "item": "mekanism:moduleupgrade",
-            "data": 22
+            "item": "mekanism:module_health_regeneration_unit"
       },
       "pattern": [
             "CCC",

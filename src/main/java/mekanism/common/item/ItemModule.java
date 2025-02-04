@@ -5,7 +5,9 @@ import mekanism.api.EnumColor;
 import mekanism.api.gear.ModuleData;
 import mekanism.client.MekKeyHandler;
 import mekanism.client.MekanismKeyHandler;
+import mekanism.common.Mekanism;
 import mekanism.common.MekanismLang;
+import mekanism.common.MekanismModules;
 import mekanism.common.content.gear.IModuleItem;
 import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.util.LangUtils;
@@ -65,6 +67,12 @@ public class ItemModule extends Item implements IModuleItem {
             }
         } else {
             ModuleData<?> moduleData = getModuleData();
+            if (!Mekanism.hooks.MekanismMixinHelp && (moduleData == MekanismModules.ELYTRA_UNIT || moduleData == MekanismModules.MAGNETIC_UNIT)){
+                tooltip.add(EnumColor.DARK_RED + LangUtils.localize("need.installation.mod") + ".");
+            }
+            if (!Mekanism.hooks.DraconicEvolution && moduleData == MekanismModules.ENERGY_SHIELD_UNIT){
+                tooltip.add(EnumColor.DARK_RED + LangUtils.localize("tooltip.install.DR"));
+            }
             tooltip.add(LangUtils.localize(moduleData.getDescriptionTranslationKey()));
             tooltip.add(MekanismLang.MODULE_STACKABLE.translateColored(EnumColor.GREY).getFormattedText() + " " + EnumColor.AQUA + moduleData.getMaxStackSize());
             tooltip.add(EnumColor.GREY + LangUtils.localize("tooltip.hold") + " " + EnumColor.INDIGO + GameSettings.getKeyDisplayString(MekanismKeyHandler.sneakKey.getKeyCode()) + EnumColor.GREY + " " + LangUtils.localize("tooltip.hold_for_supported_items") + ".");

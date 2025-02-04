@@ -9,9 +9,9 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class EntityMekaSuitArmor extends EntityItem {
+public class EntityMeka extends EntityItem {
 
-    public EntityMekaSuitArmor(World world, Entity original, ItemStack stack) {
+    public EntityMeka(World world, Entity original, ItemStack stack) {
         this(world, original.posX, original.posY, original.posZ, stack);
         setPickupDelay(40);
         motionX = original.motionX;
@@ -20,7 +20,7 @@ public class EntityMekaSuitArmor extends EntityItem {
         setItem(stack);
     }
 
-    public EntityMekaSuitArmor(World world, double x, double y, double z, ItemStack stack) {
+    public EntityMeka(World world, double x, double y, double z, ItemStack stack) {
         super(world, x, y, z);
         setItem(stack);
     }

@@ -1,0 +1,31 @@
+{
+      "result": {
+            "item": "mekanism:module_silk_touch_unit"
+      },
+      "pattern": [
+            "ABA",
+            "CDC",
+            "EEE"
+      ],
+      "type": "mekanism:ore_shaped",
+      "key": {
+            "A": {
+                  "ore": "alloyElite",
+                  "type": "forge:ore_dict"
+            },
+            "B": {
+                  "item": "mekanism:basicblock",
+                  "data": 4
+            },
+            "C": {
+                  "item": "minecraft:diamond_pickaxe"
+            },
+            "D": {
+                  "item": "mekanism:modulebase"
+            },
+            "E": {
+                  "ore": "PoloniumPellet",
+                  "type": "forge:ore_dict"
+            }
+      }
+}

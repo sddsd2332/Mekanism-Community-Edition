@@ -85,7 +85,7 @@ public class GuiFluidicPlenisher extends GuiMekanismTile<TileEntityFluidicPlenis
                 info.add(LangUtils.localize("gui.no_fluid"));
             }
             if (energy || fluidamount) {
-                this.olddisplayTooltips(info, xAxis, yAxis);
+                this.displayTooltips(info, xAxis, yAxis);
             }
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);

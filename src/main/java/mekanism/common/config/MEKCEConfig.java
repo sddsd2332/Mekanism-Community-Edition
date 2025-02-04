@@ -71,7 +71,7 @@ public class MEKCEConfig extends BaseConfig {
     public final IntOption MAXspeedmachines = new IntOption(this, "mekce", "Maximumspeedmultiplierforsomemachines", 256,
             "Modify the maximum speed multiplier for some machines", 1, Integer.MAX_VALUE);
 
-    public final BooleanOption EnableBuff = new BooleanOption(this, "mekce", "EnableBuff", false, "If true, a buff effect will be added to the player each time Canteen is used");
+   // public final BooleanOption EnableBuff = new BooleanOption(this, "mekce", "EnableBuff", false, "If true, a buff effect will be added to the player each time Canteen is used");
 
     public final DoubleOption seed = new DoubleOption(this, "mekce", "seed", 1D,
             "When turning seeds into crops, the chance to produce seeds for each operation in Organic Farm").setRequiresGameRestart(true);

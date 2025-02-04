@@ -308,9 +308,9 @@ public class GuiTeleporter extends GuiMekanismTile<TileEntityTeleporter> {
         int yAxis = mouseY - guiTop;
         if (xAxis >= 6 && xAxis <= 24 && yAxis >= 6 && yAxis <= 24) {
             if (getFrequency() == null) {
-                this.olddisplayTooltip(EnumColor.DARK_RED + LangUtils.localize("gui.teleporter.noFreq"), xAxis, yAxis);
+                this.displayTooltip(EnumColor.DARK_RED + LangUtils.localize("gui.teleporter.noFreq"), xAxis, yAxis);
             } else {
-                this.olddisplayTooltip(getStatusDisplay(), xAxis, yAxis);
+                this.displayTooltip(getStatusDisplay(), xAxis, yAxis);
             }
         } else if (xAxis >= -21 && xAxis <= -3 && yAxis >= 116 && yAxis <= 134) {
             List<String> info = new ArrayList<>();
@@ -319,14 +319,14 @@ public class GuiTeleporter extends GuiMekanismTile<TileEntityTeleporter> {
                 info.add(LangUtils.localize("gui.no_energy"));
             }
             if (energy) {
-                this.olddisplayTooltips(info, xAxis, yAxis);
+                this.displayTooltips(info, xAxis, yAxis);
             }
         } else if (!isPortable && colorButton.isMouseOver()) {
             if (tileEntity != null) {
                 List<String> info = new ArrayList<>();
                 info.add(LangUtils.localize("gui.Teleportercolor"));
                 info.add(LangUtils.localize("tooltip.configurator.viewColor") + ":" + tileEntity.color.getColoredName());
-                this.olddisplayTooltips(info, xAxis, yAxis);
+                this.displayTooltips(info, xAxis, yAxis);
             }
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);

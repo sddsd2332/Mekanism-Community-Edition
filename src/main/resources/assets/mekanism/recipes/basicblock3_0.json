@@ -11,8 +11,7 @@
   "type": "mekanism:ore_shaped",
   "key": {
     "A": {
-      "item": "mekanism:polyethene",
-      "data": 2
+      "item": "mekanism:hdpe_sheet"
     },
     "B": {
       "ore": "PoloniumPellet",

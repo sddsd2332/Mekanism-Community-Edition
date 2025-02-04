@@ -23,10 +23,12 @@ public class GuiModuleTweaker extends GuiMekanism<ModuleTweakerContainer> {
 
     private GuiModuleScrollList scrollList;
     private GuiModuleScreen moduleScreen;
+    private InventoryPlayer container;
     private int selected = -1;
 
     public GuiModuleTweaker(InventoryPlayer inventory) {
         super(new ModuleTweakerContainer(inventory));
+        container =inventory;
         xSize = 302;
         ySize += 66;
     }

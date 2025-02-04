@@ -210,7 +210,7 @@ public class GuiThermoelectricBoiler extends GuiMekanismTile<TileEntityBoilerCas
                 info.add(LangUtils.localize("gui.steam_no_space"));
             }
             if (Steam) {
-                this.olddisplayTooltips(info, xAxis, yAxis);
+                this.displayTooltips(info, xAxis, yAxis);
             }
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);

@@ -1,0 +1,31 @@
+{
+  "result": {
+    "item": "mekanism:module_motorized_servo_unit"
+  },
+  "pattern": [
+    "ABA",
+    "CDC",
+    "EEE"
+  ],
+  "type": "mekanism:ore_shaped",
+  "key": {
+    "A": {
+      "ore": "alloyElite",
+      "type": "forge:ore_dict"
+    },
+    "B": {
+      "ore": "circuitElite",
+      "type": "forge:ore_dict"
+    },
+    "C": {
+      "item": "minecraft:packed_ice"
+    },
+    "D": {
+      "item": "mekanism:modulebase"
+    },
+    "E": {
+      "ore": "PoloniumPellet",
+      "type": "forge:ore_dict"
+    }
+  }
+}

@@ -178,13 +178,13 @@ public class GuiSecurityDesk extends GuiMekanismTile<TileEntitySecurityDesk> {
         int xAxis = mouseX - guiLeft;
         int yAxis = mouseY - guiTop;
         if (tileEntity.frequency != null && overrideButton.isMouseOver()) {
-            this.olddisplayTooltip(LangUtils.localize("gui.securityOverride") + ": " + LangUtils.transOnOff(tileEntity.frequency.override), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.securityOverride") + ": " + LangUtils.transOnOff(tileEntity.frequency.override), xAxis, yAxis);
         } else if (publicButton.isMouseOver()) {
-            this.olddisplayTooltip(LangUtils.localize("gui.publicMode"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.publicMode"), xAxis, yAxis);
         } else if (privateButton.isMouseOver()) {
-            this.olddisplayTooltip(LangUtils.localize("gui.privateMode"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.privateMode"), xAxis, yAxis);
         } else if (trustedButton.isMouseOver()) {
-            this.olddisplayTooltip(LangUtils.localize("gui.trustedMode"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.trustedMode"), xAxis, yAxis);
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }

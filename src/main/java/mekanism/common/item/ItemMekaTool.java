@@ -6,6 +6,7 @@ import mekanism.api.EnumColor;
 import mekanism.api.energy.IEnergizedItem;
 import mekanism.api.gear.ICustomModule;
 import mekanism.api.gear.IModule;
+import mekanism.api.gear.Magnetic;
 import mekanism.api.gear.ModuleData;
 import mekanism.client.MekKeyHandler;
 import mekanism.client.MekanismKeyHandler;
@@ -18,6 +19,7 @@ import mekanism.common.content.gear.mekatool.ModuleAttackAmplificationUnit;
 import mekanism.common.content.gear.mekatool.ModuleExcavationEscalationUnit;
 import mekanism.common.content.gear.mekatool.ModuleTeleportationUnit;
 import mekanism.common.content.gear.shared.ModuleEnergyUnit;
+import mekanism.common.entity.EntityMeka;
 import mekanism.common.item.interfaces.IModeItem;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
@@ -28,9 +30,11 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
@@ -50,7 +54,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem, IModeItem {
+public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem, IModeItem, Magnetic {
 
     private final Multimap<String, AttributeModifier> attributes;
 
@@ -75,11 +79,7 @@ public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem,
         setEnergy(charged, ((IEnergizedItem) charged.getItem()).getMaxEnergy(charged));
         list.add(charged);
         ItemStack FullStack = new ItemStack(this);
-        for (ModuleData<?> module : ModuleHelper.get().getAll()) {
-            if (ModuleHelper.get().getSupported(FullStack).contains(module)) {
-                setModule(FullStack, module);
-            }
-        }
+        setAllModule(FullStack);
         setEnergy(FullStack, ((IEnergizedItem) FullStack.getItem()).getMaxEnergy(FullStack));
         list.add(FullStack);
     }
@@ -130,7 +130,7 @@ public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem,
 
     @Override
     public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer player, EntityLivingBase entity, EnumHand hand) {
-        for (Module<?> module : getModules(stack)) {
+        for (Module<?> module : getModules(player.getHeldItem(hand))) {
             if (module.isEnabled()) {
                 return onModuleInteract(module, player, entity, hand);
             }
@@ -347,4 +347,23 @@ public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem,
     }
 
 
+    @Override
+    public boolean isMagnetic(ItemStack stack) {
+        return isModuleEnabled(stack,MekanismModules.MAGNETIC_UNIT);
+    }
+
+    @Override
+    public boolean hasCustomEntity(ItemStack stack) {
+        return true;
+    }
+
+    @Override
+    public Entity createEntity(World world, Entity location, ItemStack itemstack) {
+        EntityItem item = new EntityMeka(world, location, itemstack);
+
+        if (isModuleEnabled(itemstack, MekanismModules.MAGNETIC_UNIT)) {
+            item.setNoPickupDelay();
+        }
+        return item;
+    }
 }

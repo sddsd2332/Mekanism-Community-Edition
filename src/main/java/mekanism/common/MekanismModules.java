@@ -13,7 +13,7 @@ public class MekanismModules {
 
     //Shared
     public static final ModuleData<ModuleEnergyUnit> ENERGY_UNIT = ModuleHelper.register("energy_unit", ModuleEnergyUnit::new, builder -> builder.maxStackSize(8).rarity(EnumRarity.UNCOMMON).noDisable());
-
+    public  static final ModuleData<?> MAGNETIC_UNIT = ModuleHelper.registerMarker("magnetic_unit",builder -> builder.rarity(EnumRarity.UNCOMMON));
     //Shared Armor
     // public static final ModuleData<ModuleColorModulationUnit> COLOR_MODULATION_UNIT = ModuleHelper.register("color_modulation_unit", ModuleColorModulationUnit::new, builder -> builder.rarity(EnumRarity.UNCOMMON).noDisable());
     public static final ModuleData<?> LASER_DISSIPATION_UNIT = ModuleHelper.registerMarker("laser_dissipation_unit", builder -> builder.rarity(EnumRarity.UNCOMMON));

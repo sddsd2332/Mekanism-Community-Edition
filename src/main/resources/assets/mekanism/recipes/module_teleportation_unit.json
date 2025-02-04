@@ -1,0 +1,27 @@
+{
+      "result": {
+            "item": "mekanism:module_teleportation_unit"
+      },
+      "pattern": [
+            "ABA",
+            "ACA",
+            "DDD"
+      ],
+      "type": "mekanism:ore_shaped",
+      "key": {
+            "A": {
+                  "ore": "alloyUltimate",
+                  "type": "forge:ore_dict"
+            },
+            "B": {
+                  "item": "mekanism:teleportationcore"
+            },
+            "C": {
+                  "item": "mekanism:modulebase"
+            },
+            "D": {
+                  "ore": "Antimatter",
+                  "type": "forge:ore_dict"
+            }
+      }
+}

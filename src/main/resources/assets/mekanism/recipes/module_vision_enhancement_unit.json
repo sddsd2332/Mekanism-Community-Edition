@@ -1,7 +1,6 @@
 {
       "result": {
-            "item": "mekanism:moduleupgrade",
-            "data": 5
+            "item": "mekanism:module_vision_enhancement_unit"
       },
       "pattern": [
             "CDC",

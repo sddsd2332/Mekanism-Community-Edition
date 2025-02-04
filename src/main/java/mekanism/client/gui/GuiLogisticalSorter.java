@@ -215,10 +215,10 @@ public class GuiLogisticalSorter extends GuiFilterHolder<TileEntityLogisticalSor
                 int arrowX = filterX + filterW - 12;
 
                 if (getFilterIndex() + i > 0 && overUpArrow(xAxis, yAxis, arrowX, yStart)) {
-                    this.olddisplayTooltip(LangUtils.localize("gui.moveUp"), xAxis, yAxis);
+                    this.displayTooltip(LangUtils.localize("gui.moveUp"), xAxis, yAxis);
                 }
                 if (getFilterIndex() + i < tileEntity.filters.size() - 1 && overDownArrow(xAxis, yAxis, arrowX, yStart)) {
-                    this.olddisplayTooltip(LangUtils.localize("gui.moveDown"), xAxis, yAxis);
+                    this.displayTooltip(LangUtils.localize("gui.moveDown"), xAxis, yAxis);
                 }
             }
         }
@@ -226,16 +226,16 @@ public class GuiLogisticalSorter extends GuiFilterHolder<TileEntityLogisticalSor
         // Draw tooltips for buttons
         if (colorButton.isMouseOver()) {
             if (tileEntity.color != null) {
-                this.olddisplayTooltip(tileEntity.color.getColoredName(), xAxis, yAxis);
+                this.displayTooltip(tileEntity.color.getColoredName(), xAxis, yAxis);
             } else {
-                this.olddisplayTooltip(LangUtils.localize("gui.none"), xAxis, yAxis);
+                this.displayTooltip(LangUtils.localize("gui.none"), xAxis, yAxis);
             }
         } else if (autoEjectButton.isMouseOver()) {
-            this.olddisplayTooltips(MekanismUtils.splitTooltip(LangUtils.localize("mekanism.gui.logisticalSorter.autoEject.tooltip"), ItemStack.EMPTY), xAxis, yAxis);
+            this.displayTooltips(MekanismUtils.splitTooltip(LangUtils.localize("mekanism.gui.logisticalSorter.autoEject.tooltip"), ItemStack.EMPTY), xAxis, yAxis);
         } else if (roundRobinButton.isMouseOver()) {
-            this.olddisplayTooltips(MekanismUtils.splitTooltip(LangUtils.localize("mekanism.gui.logisticalSorter.roundRobin.tooltip"), ItemStack.EMPTY), xAxis, yAxis);
+            this.displayTooltips(MekanismUtils.splitTooltip(LangUtils.localize("mekanism.gui.logisticalSorter.roundRobin.tooltip"), ItemStack.EMPTY), xAxis, yAxis);
         } else if (singleItemButton.isMouseOver()) {
-            this.olddisplayTooltips(MekanismUtils.splitTooltip(LangUtils.localize("mekanism.gui.logisticalSorter.singleItem.tooltip"), ItemStack.EMPTY), xAxis, yAxis);
+            this.displayTooltips(MekanismUtils.splitTooltip(LangUtils.localize("mekanism.gui.logisticalSorter.singleItem.tooltip"), ItemStack.EMPTY), xAxis, yAxis);
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }

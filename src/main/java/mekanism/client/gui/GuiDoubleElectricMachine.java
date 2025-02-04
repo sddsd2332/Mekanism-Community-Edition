@@ -92,7 +92,7 @@ public class GuiDoubleElectricMachine<RECIPE extends DoubleMachineRecipe<RECIPE>
                 info.add(LangUtils.localize("gui.item_no_space"));
             }
             if (energy || outslot) {
-                this.olddisplayTooltips(info, xAxis, yAxis);
+                this.displayTooltips(info, xAxis, yAxis);
             }
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);

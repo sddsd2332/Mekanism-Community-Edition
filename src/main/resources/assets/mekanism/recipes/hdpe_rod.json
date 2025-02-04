@@ -1,7 +1,6 @@
 {
       "result": {
-            "item": "mekanism:polyethene",
-            "data": 1
+            "item": "mekanism:hdpe_rod"
       },
       "pattern": [
             "PP",
@@ -9,7 +8,6 @@
       ],
       "type": "minecraft:crafting_shaped",
       "key": {"P": {
-            "item": "mekanism:polyethene",
-            "data": 0
+            "item": "mekanism:hdpe_pellet"
       }}
 }

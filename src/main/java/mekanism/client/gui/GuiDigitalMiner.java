@@ -150,16 +150,16 @@ public class GuiDigitalMiner extends GuiMekanismTile<TileEntityDigitalMiner> {
         int xAxis = mouseX - guiLeft;
         int yAxis = mouseY - guiTop;
         if (autoEjectButtoninBounds(xAxis, yAxis)) {
-            this.olddisplayTooltip(LangUtils.localize("gui.autoEject") + ":" + LangUtils.transOnOff(tileEntity.doEject), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.autoEject") + ":" + LangUtils.transOnOff(tileEntity.doEject), xAxis, yAxis);
         } else if (autoPullButtoninBounds(xAxis, yAxis)) {
-            this.olddisplayTooltip(LangUtils.localize("gui.digitalMiner.autoPull") + ":" + LangUtils.transOnOff(tileEntity.doPull), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.digitalMiner.autoPull") + ":" + LangUtils.transOnOff(tileEntity.doPull), xAxis, yAxis);
         } else if (silkTouchButtoninBounds(xAxis, yAxis)) {
-            this.olddisplayTooltip(LangUtils.localize("gui.digitalMiner.silkTouch") + ":" + LangUtils.transOnOff(tileEntity.silkTouch), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.digitalMiner.silkTouch") + ":" + LangUtils.transOnOff(tileEntity.silkTouch), xAxis, yAxis);
         } else if (xAxis >= 64 && xAxis <= 80 && yAxis >= 21 && yAxis <= 37) {
             if (!tileEntity.missingStack.isEmpty()) {
-                this.olddisplayTooltip(LangUtils.localize("gui.digitalMiner.missingBlock"), xAxis, yAxis);
+                this.displayTooltip(LangUtils.localize("gui.digitalMiner.missingBlock"), xAxis, yAxis);
             } else {
-                this.olddisplayTooltip(LangUtils.localize("gui.well"), xAxis, yAxis);
+                this.displayTooltip(LangUtils.localize("gui.well"), xAxis, yAxis);
             }
         } else if (xAxis >= -21 && xAxis <= -3 && yAxis >= 116 && yAxis <= 134) {
             List<String> info = new ArrayList<>();
@@ -168,7 +168,7 @@ public class GuiDigitalMiner extends GuiMekanismTile<TileEntityDigitalMiner> {
                 info.add(LangUtils.localize("gui.no_energy"));
             }
             if (energy) {
-                this.olddisplayTooltips(info, xAxis, yAxis);
+                this.displayTooltips(info, xAxis, yAxis);
             }
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);

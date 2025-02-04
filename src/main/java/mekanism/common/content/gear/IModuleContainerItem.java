@@ -83,6 +83,15 @@ public interface IModuleContainerItem extends IItemHUDProvider {
         }
     }
 
+    default void setAllModule(ItemStack stack){
+        for (ModuleData<?> module : ModuleHelper.get().getAll()) {
+            if (ModuleHelper.get().getSupported(stack).contains(module)) {
+                setModule(stack, module);
+            }
+        }
+    }
+
+
     default void setModule(ItemStack stack, ModuleData<?> type) {
         if (!ItemDataUtils.hasData(stack, NBTConstants.MODULES, NBT.TAG_COMPOUND)) {
             ItemDataUtils.setCompound(stack, NBTConstants.MODULES, new NBTTagCompound());

@@ -68,15 +68,15 @@ public abstract class GuiRobit extends GuiMekanism {
         int xAxis = mouseX - guiLeft;
         int yAxis = mouseY - guiTop;
         if (mainButton.isMouseOver()) {
-            this.olddisplayTooltip(LangUtils.localize("gui.robit"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.robit"), xAxis, yAxis);
         } else if (craftingButton.isMouseOver()) {
-            this.olddisplayTooltip(LangUtils.localize("gui.robit.crafting"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.robit.crafting"), xAxis, yAxis);
         } else if (inventoryButton.isMouseOver()) {
-            this.olddisplayTooltip(LangUtils.localize("gui.robit.inventory"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.robit.inventory"), xAxis, yAxis);
         } else if (smeltingButton.isMouseOver()) {
-            this.olddisplayTooltip(LangUtils.localize("gui.robit.smelting"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.robit.smelting"), xAxis, yAxis);
         } else if (repairButton.isMouseOver()) {
-            this.olddisplayTooltip(LangUtils.localize("gui.robit.repair"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.robit.repair"), xAxis, yAxis);
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }

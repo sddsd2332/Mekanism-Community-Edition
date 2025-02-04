@@ -50,7 +50,7 @@ public class GuiBioGenerator extends GuiMekanismTile<TileEntityBioGenerator> {
         int xAxis = mouseX - guiLeft;
         int yAxis = mouseY - guiTop;
         if (xAxis >= 6 && xAxis <= 6 + 6 && yAxis >= 16 && yAxis <= 16 + 54) {
-            this.olddisplayTooltip(tileEntity.bioFuelSlot.fluidStored > 0 ? LangUtils.localize("gui.bioGenerator.bioFuel") + ":" + tileEntity.bioFuelSlot.fluidStored : LangUtils.localize("gui.empty"), xAxis, yAxis);
+            this.displayTooltip(tileEntity.bioFuelSlot.fluidStored > 0 ? LangUtils.localize("gui.bioGenerator.bioFuel") + ":" + tileEntity.bioFuelSlot.fluidStored : LangUtils.localize("gui.empty"), xAxis, yAxis);
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 

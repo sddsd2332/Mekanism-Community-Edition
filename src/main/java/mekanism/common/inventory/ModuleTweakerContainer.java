@@ -109,5 +109,11 @@ public class ModuleTweakerContainer extends Container {
     public ItemStack slotClick(int slotId, int dragType, ClickType clickType, EntityPlayer player) {
         return ItemStack.EMPTY;
     }
+
+
+    @Override
+    public void putStackInSlot(int slotID, ItemStack stack){
+        //覆盖此方法防止因为更新盔甲栏物品造成设置物品栏物品复制
+    }
 }
 

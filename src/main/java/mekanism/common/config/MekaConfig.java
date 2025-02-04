@@ -55,12 +55,12 @@ public class MekaConfig extends BaseConfig {
     public DoubleOption mekaSuitElytraEnergyUsage = new DoubleOption(this, "meka", "elytraEnergyUsage", 32000, "Energy usage (Joules) per second of the MekaSuit when flying with the Elytra Unit.");
     public DoubleOption mekaSuitEnergyUsageSprintBoost = new DoubleOption(this, "meka", "energyUsageSprintBoost", 100, "Energy usage (Joules) of MekaSuit when adding 0.1 to sprint motion.");
     public DoubleOption mekaSuitEnergyUsageGravitationalModulation = new DoubleOption(this, "meka", "energyUsageGravitationalModulation", 1000, "Energy usage (Joules) of MekaSuit per tick when flying via Gravitational Modulation.");
-    public DoubleOption mekaSuitInventoryChargeRate = new DoubleOption(this, "meka", "inventoryChargeRate", 1000, "Charge rate of inventory items (Joules) per tick.");
+  //  public DoubleOption mekaSuitInventoryChargeRate = new DoubleOption(this, "meka", "inventoryChargeRate", 1000, "Charge rate of inventory items (Joules) per tick.");
     public DoubleOption mekaSuitEnergyUsageItemAttraction = new DoubleOption(this, "meka", "energyUsageItemAttraction", 250, "Energy usage (Joules) of MekaSuit per tick of attracting a single item.");
-    public DoubleOption mekaSuitHelmetShielding = new DoubleOption(this, "meka", "mekaSuitHelmetShielding", 25);
-    public DoubleOption mekaSuitBodyShielding = new DoubleOption(this, "meka", "mekaSuitBodyShielding", 40);
-    public DoubleOption mekaSuitPantsShielding = new DoubleOption(this, "meka", "mekaSuitPantsShielding", 20);
-    public DoubleOption mekaSuitBootsShielding = new DoubleOption(this, "meka", "mekaSuitBootsShielding", 15);
+//    public DoubleOption mekaSuitHelmetShielding = new DoubleOption(this, "meka", "mekaSuitHelmetShielding", 25);
+ //   public DoubleOption mekaSuitBodyShielding = new DoubleOption(this, "meka", "mekaSuitBodyShielding", 40);
+ //   public DoubleOption mekaSuitPantsShielding = new DoubleOption(this, "meka", "mekaSuitPantsShielding", 20);
+ //   public DoubleOption mekaSuitBootsShielding = new DoubleOption(this, "meka", "mekaSuitBootsShielding", 15);
     public DoubleOption mekaToolBaseEnergyCapacity = new DoubleOption(this, "meka", "mekaToolbaseEnergyCapacity", 16000000, "Energy capacity (Joules) of the Meka-Tool without any installed upgrades. Quadratically scaled by upgrades.");
     public DoubleOption mekaToolBaseChargeRate = new DoubleOption(this, "meka", "mekaToolBaseChargeRate", 100000, "Amount (joules) of energy the Meka-Tool can accept per tick. Quadratically scaled by upgrades.");
     public DoubleOption mekaSuitMinimumRadiationTime = new DoubleOption(this, "meka", "mekaSuitMinimumRadiationTime", 10);

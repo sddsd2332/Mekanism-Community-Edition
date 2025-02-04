@@ -1,6 +1,6 @@
 {
       "result": {
-            "item": "mekanism:moduleupgrade",
+            "item": "mekanism:module_energy_unit",
             "data": 0
       },
       "pattern": [
@@ -11,8 +11,7 @@
       "type": "mekanism:ore_shaped",
       "key": {
             "A": {
-                  "item": "mekanism:polyethene",
-                  "data": 2
+                  "item": "mekanism:hdpe_sheet"
             },
             "B": {
                   "item": "mekanism:modulebase"

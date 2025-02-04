@@ -1,7 +1,6 @@
 {
       "result": {
-            "item": "mekanism:moduleupgrade",
-            "data": 12
+            "item": "mekanism:module_hydrostatic_repulsor_unit"
       },
       "pattern": [
             "CDC",

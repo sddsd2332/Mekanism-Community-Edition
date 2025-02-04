@@ -131,17 +131,17 @@ public class GuiFormulaicAssemblicator extends GuiMekanismTile<TileEntityFormula
         int xAxis = mouseX - guiLeft;
         int yAxis = mouseY - guiTop;
         if (fillEmptyButton.isMouseOver() && fillEmptyButton.enabled) {
-            this.olddisplayTooltip(LangUtils.localize("gui.fillEmpty"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.fillEmpty"), xAxis, yAxis);
         } else if (encodeFormulaButton.isMouseOver() && encodeFormulaButton.enabled) {
-            this.olddisplayTooltip(LangUtils.localize("gui.encodeFormula"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.encodeFormula"), xAxis, yAxis);
         } else if (craftSingleButton.isMouseOver() && craftSingleButton.enabled) {
-            this.olddisplayTooltip(LangUtils.localize("gui.craftSingle"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.craftSingle"), xAxis, yAxis);
         } else if (craftAvailableButton.isMouseOver() && craftAvailableButton.enabled) {
-            this.olddisplayTooltip(LangUtils.localize("gui.craftAvailable"), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.craftAvailable"), xAxis, yAxis);
         } else if (autoModeButton.isMouseOver() && autoModeButton.enabled) {
-            this.olddisplayTooltip(LangUtils.localize("gui.autoModeToggle") + ": " + LangUtils.transOnOff(tileEntity.autoMode), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.autoModeToggle") + ": " + LangUtils.transOnOff(tileEntity.autoMode), xAxis, yAxis);
         } else if (stockControlButton.isMouseOver() && stockControlButton.enabled) {
-            this.olddisplayTooltip(LangUtils.localize("gui.stockControl") + ": " + LangUtils.transOnOff(tileEntity.stockControl), xAxis, yAxis);
+            this.displayTooltip(LangUtils.localize("gui.stockControl") + ": " + LangUtils.transOnOff(tileEntity.stockControl), xAxis, yAxis);
         } else if (xAxis >= -21 && xAxis <= -3 && yAxis >= 116 && yAxis <= 134) {
             List<String> info = new ArrayList<>();
             boolean energy = tileEntity.getEnergy() < tileEntity.energyPerTick || tileEntity.getEnergy() == 0;
@@ -149,7 +149,7 @@ public class GuiFormulaicAssemblicator extends GuiMekanismTile<TileEntityFormula
                 info.add(LangUtils.localize("gui.no_energy"));
             }
             if (energy) {
-                this.olddisplayTooltips(info, xAxis, yAxis);
+                this.displayTooltips(info, xAxis, yAxis);
             }
         }
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
