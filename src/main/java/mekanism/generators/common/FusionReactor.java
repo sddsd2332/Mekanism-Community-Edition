@@ -181,7 +181,11 @@ public class FusionReactor {
         //Transfer from casing to environment
         double caseAirHeat = caseAirConductivity * lastCaseTemperature;
         caseTemperature -= caseAirHeat / caseHeatCapacity;
-        setBufferedEnergy(getBufferedEnergy() + caseAirHeat * thermocoupleEfficiency);
+        double energy = 1;
+        if (recipe != null){
+            energy = recipe.extraEnergy;
+        }
+        setBufferedEnergy(getBufferedEnergy() + caseAirHeat * thermocoupleEfficiency * energy);
     }
 
     public FusionCoolingRecipe getRecipe() {
@@ -403,8 +407,12 @@ public class FusionReactor {
     }
 
     public double getPassiveGeneration(boolean active, boolean current) {
+        double energy =1;
+        if (getRecipe() != null){
+            energy = getRecipe().extraEnergy;
+        }
         double temperature = current ? caseTemperature : getMaxCasingTemperature(active);
-        return thermocoupleEfficiency * caseAirConductivity * temperature;
+        return thermocoupleEfficiency * caseAirConductivity * temperature * energy;
     }
 
     public int getSteamPerTick(boolean current) {

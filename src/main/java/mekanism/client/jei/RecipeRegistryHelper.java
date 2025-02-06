@@ -8,6 +8,7 @@ import mekanism.client.jei.machine.*;
 import mekanism.client.jei.machine.chemical.*;
 import mekanism.client.jei.machine.other.*;
 import mekanism.common.Mekanism;
+import mekanism.common.MekanismFluids;
 import mekanism.common.base.IFactory.RecipeType;
 import mekanism.common.block.states.BlockStateBasic.BasicBlockType;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
@@ -374,6 +375,18 @@ public class RecipeRegistryHelper {
         registry.addRecipeClickArea(GuiAmbientAccumulatorEnergy.class, 7, 18, 80, 65, Recipe.AMBIENT_ACCUMULATOR.getJEICategory());
         registerRecipeItem(registry, MachineType.AMBIENT_ACCUMULATOR_ENERGY, Recipe.AMBIENT_ACCUMULATOR);
 
+    }
+
+    public static void registerSPS(IModRegistry registry) {
+        if (!MachineType.SPS.isEnabled()) {
+            return;
+        }
+        List<SPSRecipeWrapper> wrappers = new ArrayList<>();
+        wrappers.add(new SPSRecipeWrapper(MekanismFluids.Polonium, MekanismFluids.Antimatter));
+        String name = "mekanism.sps";
+        registry.addRecipes(wrappers, name);
+        registry.addRecipeClickArea(GuiSPS.class, 27, 17, 122, 60, name);
+        registry.addRecipeCatalyst(MachineType.SPS.getStack(), name);
     }
 
     /**

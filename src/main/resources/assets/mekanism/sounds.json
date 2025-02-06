@@ -7,6 +7,14 @@
             "subtitle": "sound_event.mekanism.item.jetpack",
             "category": "player"
       },
+      "tile.machine.sps": {
+            "sounds": [{
+                  "stream": false,
+                  "name": "mekanism:sps"
+            }],
+            "subtitle": "sound_event.mekanism.tile.machine.sps",
+            "category": "block"
+      },
       "tile.machine.laser": {
             "sounds": [{
                   "stream": false,

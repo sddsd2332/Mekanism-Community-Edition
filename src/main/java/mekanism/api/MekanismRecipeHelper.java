@@ -210,4 +210,6 @@ public interface MekanismRecipeHelper {
     void addDigitalAssemblyTableRecipe(ItemStack input, ItemStack input2, ItemStack input3, ItemStack input4, ItemStack input5, ItemStack input6, ItemStack input7, ItemStack input8,ItemStack input9,
                                  FluidStack inputFluid, GasStack inputGas,
                                  ItemStack outputSolid, FluidStack outputFluid, GasStack outputGas, double extraEnergy, int ticks);
+
+    void addFusionCoolingRecipe(FluidStack inputFluid, FluidStack outputFluid,double energy);
 }

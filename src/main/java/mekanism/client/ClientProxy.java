@@ -211,6 +211,7 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAmbientAccumulator.class, new RenderConfigurableMachine<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAmbientAccumulatorEnergy.class, new RenderConfigurableMachine<>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHybridStorage.class, new RenderConfigurableMachine<>());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySPS.class, new RenderConfigurableMachine<>());
     }
 
     @Override
@@ -821,6 +822,7 @@ public class ClientProxy extends CommonProxy {
                     new GuiAmbientAccumulatorEnergy(player.inventory, (TileEntityAmbientAccumulatorEnergy) tileEntity);
             case 74 -> new GuiHybridStorage(player.inventory, (TileEntityHybridStorage) tileEntity);
             case 75 -> new GuiModificationStation(player.inventory, (TileEntityModificationStation) tileEntity);
+            case 76 -> new GuiSPS(player.inventory,(TileEntitySPS) tileEntity);
             default -> null;
         };
     }

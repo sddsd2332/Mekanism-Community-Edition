@@ -246,12 +246,18 @@ public class APIHandler implements MekanismRecipeHelper {
         RecipeHandler.addFusionCoolingRecipe(inputFluid, outputFluid);
     }
 
+    @Override
+    public void addFusionCoolingRecipe(FluidStack inputFluid, FluidStack outputFluid,double energy) {
+        checkPhase();
+        RecipeHandler.addFusionCoolingRecipe(inputFluid, outputFluid,energy);
+    }
+
+    @Override
     public void addDigitalAssemblyTableRecipe(ItemStack input, ItemStack input2, ItemStack input3, ItemStack input4, ItemStack input5, ItemStack input6, ItemStack input7, ItemStack input8,ItemStack input9,
                                                FluidStack inputFluid, GasStack inputGas,
                                               ItemStack outputItem, FluidStack outputFluid, GasStack outputGas, double extraEnergy, int ticks){
         checkPhase();
         RecipeHandler.addDigitalAssemblyTableRecipe(input,input2,input3,input4,input5,input6,input7,input8,input9,inputFluid,inputGas,outputItem,outputFluid,outputGas,extraEnergy,ticks);
-
     }
     /**
      * ADD END

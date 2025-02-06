@@ -14,6 +14,7 @@ import mekanism.client.render.transmitter.RenderMechanicalPipe;
 import mekanism.common.Mekanism;
 import mekanism.common.base.IMetaItem;
 import mekanism.common.base.ISideConfiguration;
+import mekanism.common.lib.Color;
 import mekanism.common.tier.BaseTier;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -233,6 +234,11 @@ public class MekanismRenderer {
     public static void color(int color) {
         GlStateManager.color(getRed(color), getGreen(color), getBlue(color), (color >> 24 & 0xFF) / 255f);
     }
+
+    public static void color(Color color) {
+        GlStateManager.color(color.rf(), color.gf(), color.bf(), color.af());
+    }
+
 
     public static void color(@Nullable FluidStack fluid, float fluidScale) {
         if (fluid != null) {

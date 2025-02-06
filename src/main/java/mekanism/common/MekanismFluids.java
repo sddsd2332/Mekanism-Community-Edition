@@ -58,6 +58,7 @@ public class MekanismFluids {
     public static final Gas NutritionalPaste = new Gas("nutritionalpaste", 0XEB6CA3);
 
     //color gas
+    /*
     public static final Gas WHITE = new Gas("white.name", 16383998);
     public static final Gas ORANGE = new Gas("orange.name", 16351261);
     public static final Gas MAGENTA = new Gas("magenta.name", 13061821);
@@ -74,7 +75,7 @@ public class MekanismFluids {
     public static final Gas GREEN = new Gas("green.name", 6192150);
     public static final Gas RED = new Gas("red.name", 11546150);
     public static final Gas BLACK = new Gas("black.name", 1908001);
-
+     */
 
     /**
      * sddsd2332 add gas
@@ -113,7 +114,7 @@ public class MekanismFluids {
          */
         GasRegistry.register(HydrofluoricAcid).registerFluid("liquidhydrofluricacid");
         GasRegistry.register(Antimatter);
-        GasRegistry.register(FissileFuel);
+        GasRegistry.register(FissileFuel).registerFluid();
         GasRegistry.register(SuperheatedSodium).registerFluid("liquidsuperheatedsodium");
         GasRegistry.register(UraniumHexafluoride);
         GasRegistry.register(Uraniumoxide);
@@ -121,13 +122,14 @@ public class MekanismFluids {
         /**
          *Radioactive material
          * */
-        GasRegistry.register(NuclearWaste).setRadiation(true);
+        GasRegistry.register(NuclearWaste).setRadiation(true).registerFluid();
         GasRegistry.register(Plutonium).setRadiation(true);
         GasRegistry.register(Polonium).setRadiation(true);
         GasRegistry.register(SpentNuclearWaste).setRadiation(true);
 
         GasRegistry.register(Biofuel).setVisible(false);
         //color gas
+        /*
         GasRegistry.register(WHITE);
         GasRegistry.register(ORANGE);
         GasRegistry.register(MAGENTA);
@@ -144,7 +146,7 @@ public class MekanismFluids {
         GasRegistry.register(GREEN);
         GasRegistry.register(RED);
         GasRegistry.register(BLACK);
-
+         */
 
         /** Register sddsd2332 add new gas */
         GasRegistry.register(NutrientSolution);
@@ -176,7 +178,7 @@ public class MekanismFluids {
         FluidRegistry.addBucketForFluid(Lithium.getFluid());
          */
         List<GasStack> list = GasRegistry.getRegisteredGasses().stream().filter(Gas::isRegisterFluid).map(g -> new GasStack(g, Fluid.BUCKET_VOLUME)).collect(Collectors.toList());
-        for (GasStack gas : list){
+        for (GasStack gas : list) {
             FluidRegistry.addBucketForFluid(gas.getGas().getFluid());
         }
     }

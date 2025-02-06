@@ -138,7 +138,9 @@ public class BlockStateMachine extends ExtendedBlockState {
         INDUSTRIAL_ALARM(MachineBlock.MACHINE_BLOCK_4, 9, "IndustrialAlarm", -1, TileEntityIndustrialAlarm::new, false, true, false, BlockStateUtils.ALL_FACINGS, false,false,false),
         HYBRID_STORAGE(MachineBlock.MACHINE_BLOCK_4,10,"Hybrid_Storage",74,TileEntityHybridStorage::new,true,false,false,BlockStateUtils.ALL_FACINGS, false,true,true),
         MODIFICATION_STATION(MachineBlock.MACHINE_BLOCK_4,11,"Modification_Station",75,TileEntityModificationStation::new,true, true, true, Plane.HORIZONTAL, false,false,false),
-        RADIOACTIVE_WASTE_BARREL(MachineBlock.MACHINE_BLOCK_4,12,"radioactive_waste_barrel",-1,TileEntityRadioactiveWasteBarrel::new,false,false,false, Plane.HORIZONTAL,false,false,false);
+        RADIOACTIVE_WASTE_BARREL(MachineBlock.MACHINE_BLOCK_4,12,"radioactive_waste_barrel",-1,TileEntityRadioactiveWasteBarrel::new,false,false,false, Plane.HORIZONTAL,false,false,false),
+        SPS(MachineBlock.MACHINE_BLOCK_4,13,"sps",76,TileEntitySPS::new,true,false,false, Plane.HORIZONTAL,true,false,false);
+
 
         private static final Map<MachineBlock, Int2ReferenceMap<MachineType>> VALID_METAS = new EnumMap<>(MachineBlock.class);
 
@@ -337,6 +339,7 @@ public class BlockStateMachine extends ExtendedBlockState {
                 case AMBIENT_ACCUMULATOR_ENERGY -> MekanismConfig.current().storage.AmbientAccumulatorEnergy.val();
                 case HYBRID_STORAGE -> MekanismConfig.current().storage.HybridStorageEnergy.val();
                 case MODIFICATION_STATION -> MekanismConfig.current().storage.modificationStation.val();
+                case SPS -> 1000000000; //todo
                 default -> 400 * getUsage();
             };
         }

@@ -1,0 +1,36 @@
+{
+  "result": {
+    "item": "mekanism:machineblock4",
+    "data": 13
+  },
+  "pattern": [
+    "AAA",
+    "ABA",
+    "CDC"
+  ],
+  "type": "mekanism:ore_shaped",
+  "conditions": [
+    {
+      "type": "mekanism:recipe_enabled",
+      "machineType": "sps"
+    }
+  ],
+  "key": {
+    "A": {
+      "item" : "mekanism:basicblock3",
+      "data": 0
+    },
+    "B": {
+      "item" : "mekanism:machineblock3",
+      "data": 11
+    },
+    "C": {
+      "item" : "mekanism:basicblock",
+      "data": 8
+    },
+    "D": {
+      "ore": "circuitUltimate",
+      "type": "forge:ore_dict"
+    }
+  }
+}

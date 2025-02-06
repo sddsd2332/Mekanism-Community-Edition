@@ -141,7 +141,8 @@ public class MekanismGenerators implements IModule {
         }
 
         RecipeHandler.addFusionCoolingRecipe(FluidRegistry.getFluidStack("water", 1), FluidRegistry.getFluidStack("steam", 1));
-        RecipeHandler.addFusionCoolingRecipe(FluidRegistry.getFluidStack("liquidsodium", 1), FluidRegistry.getFluidStack("liquidsuperheatedsodium", 2));
+        RecipeHandler.addFusionCoolingRecipe(FluidRegistry.getFluidStack("liquidsodium", 1), FluidRegistry.getFluidStack("liquidsuperheatedsodium", 1));
+        RecipeHandler.addFusionCoolingRecipe(FluidRegistry.getFluidStack("fissilefuel", 1), FluidRegistry.getFluidStack("nuclearwaste", 1),20);
     }
 
     @Override

@@ -89,6 +89,7 @@ public final class RecipeHandler {
         addRecipe(Recipe.COMBINER, new CombinerRecipe(input, extra, output));
     }
 
+
     /**
      * Add a Crusher recipe.
      *
@@ -204,6 +205,7 @@ public final class RecipeHandler {
     public static void addChemicalWasherRecipe(GasStack input, GasStack output) {
         addRecipe(Recipe.CHEMICAL_WASHER, new WasherRecipe(input, output));
     }
+
 
     /**
      * Add a Chemical Crystallizer recipe.
@@ -322,6 +324,10 @@ public final class RecipeHandler {
 
     public static void addFusionCoolingRecipe(FluidStack inputFluid, FluidStack outputFluid) {
         addRecipe(Recipe.FUSION_COOLING, new FusionCoolingRecipe(inputFluid, outputFluid));
+    }
+
+    public static void addFusionCoolingRecipe(FluidStack inputFluid, FluidStack outputFluid,double energy) {
+        addRecipe(Recipe.FUSION_COOLING, new FusionCoolingRecipe(inputFluid, outputFluid,energy));
     }
 
     public static void addDigitalAssemblyTableRecipe(
