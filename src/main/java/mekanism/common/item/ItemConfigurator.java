@@ -3,12 +3,13 @@ package mekanism.common.item;
 import buildcraft.api.tools.IToolWrench;
 import cofh.api.item.IToolHammer;
 import mcp.MethodsReturnNonnullByDefault;
-import mekanism.api.EnumColor;
-import mekanism.api.IConfigurable;
-import mekanism.api.IMekWrench;
-import mekanism.api.NBTConstants;
+import mekanism.api.*;
 import mekanism.api.annotations.FieldsAreNonnullByDefault;
 import mekanism.api.math.MathUtils;
+import mekanism.api.radial.IRadialDataHelper;
+import mekanism.api.radial.RadialData;
+import mekanism.api.radial.mode.IRadialMode;
+import mekanism.api.text.IHasTextComponent;
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.common.Mekanism;
 import mekanism.common.SideData;
@@ -18,8 +19,8 @@ import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.MekanismHooks;
 import mekanism.common.item.ItemConfigurator.ConfiguratorMode;
 import mekanism.common.item.interfaces.IItemHUDProvider;
-import mekanism.common.item.interfaces.IRadialModeItem;
-import mekanism.common.item.interfaces.IRadialSelectorEnum;
+import mekanism.common.lib.radial.IRadialEnumModeItem;
+import mekanism.common.lib.radial.data.RadialDataHelper;
 import mekanism.common.tier.BinTier;
 import mekanism.common.tier.FluidTankTier;
 import mekanism.common.tier.GasTankTier;
@@ -71,7 +72,9 @@ import java.util.Objects;
         @Interface(iface = "buildcraft.api.tools.IToolWrench", modid = MekanismHooks.BUILDCRAFT_MOD_ID),
         @Interface(iface = "cofh.api.item.IToolHammer", modid = MekanismHooks.COFH_API_MOD_ID)
 })
-public class ItemConfigurator extends ItemEnergized implements IMekWrench, IToolWrench, IRadialModeItem<ConfiguratorMode>, IToolHammer, IItemHUDProvider {
+public class ItemConfigurator extends ItemEnergized implements IMekWrench, IToolWrench, IRadialEnumModeItem<ConfiguratorMode>, IToolHammer, IItemHUDProvider {
+
+    public static final Lazy<RadialData<ConfiguratorMode>> LAZY_RADIAL_DATA = Lazy.of(() -> RadialDataHelper.INSTANCE.dataForEnum(Mekanism.rl("configurator_mode"), ConfiguratorMode.class));
 
     public final int ENERGY_PER_CONFIGURE = 400;
     public final int ENERGY_PER_ITEM_DUMP = 8;
@@ -261,17 +264,23 @@ public class ItemConfigurator extends ItemEnergized implements IMekWrench, ITool
     }
 
     public EnumColor getColor(ConfiguratorMode mode) {
-        return mode.getColor();
+        return mode.color();
     }
 
+
     @Override
-    public Class<ConfiguratorMode> getModeClass() {
-        return ConfiguratorMode.class;
+    public String getModeSaveKey() {
+        return NBTConstants.STATE;
     }
 
     @Override
     public ConfiguratorMode getModeByIndex(int ordinal) {
         return ConfiguratorMode.byIndexStatic(ordinal);
+    }
+
+    @Override
+    public @NotNull RadialData<ConfiguratorMode> getRadialData(ItemStack stack) {
+        return LAZY_RADIAL_DATA.get();
     }
 
     public ConfiguratorMode getMode(ItemStack stack) {
@@ -342,7 +351,7 @@ public class ItemConfigurator extends ItemEnergized implements IMekWrench, ITool
         if (mode != newMode) {
             setMode(stack, player, newMode);
             if (displayChangeMessage) {
-                player.sendMessage(new TextComponentGroup(TextFormatting.GRAY).string(Mekanism.LOG_TAG, TextFormatting.DARK_BLUE).string(" ").translation("mekanism.tooltip.configureState", LangUtils.withColor(newMode.getShortText(), newMode.getColor().textFormatting)));
+                player.sendMessage(new TextComponentGroup(TextFormatting.GRAY).string(Mekanism.LOG_TAG, TextFormatting.DARK_BLUE).string(" ").translation("mekanism.tooltip.configureState", LangUtils.withColor(newMode.getTextComponent(), newMode.color.textFormatting)));
             }
         }
     }
@@ -350,7 +359,7 @@ public class ItemConfigurator extends ItemEnergized implements IMekWrench, ITool
     @Nonnull
     @Override
     public ITextComponent getScrollTextComponent(@Nonnull ItemStack stack) {
-        return getMode(stack).getShortText();
+        return getMode(stack).getTextComponent();
     }
 
     /*
@@ -364,7 +373,7 @@ public class ItemConfigurator extends ItemEnergized implements IMekWrench, ITool
     @ParametersAreNonnullByDefault
     @MethodsReturnNonnullByDefault
     @FieldsAreNonnullByDefault
-    public enum ConfiguratorMode implements IRadialSelectorEnum<ConfiguratorMode> {
+    public enum ConfiguratorMode implements IIncrementalEnum<ConfiguratorMode>, IHasTextComponent, IRadialMode {
         CONFIGURATE_ITEMS("configurate", TransmissionType.ITEM, EnumColor.BRIGHT_GREEN, true, null),
         CONFIGURATE_FLUIDS("configurate", TransmissionType.FLUID, EnumColor.BRIGHT_GREEN, true, null),
         CONFIGURATE_GASES("configurate", TransmissionType.GAS, EnumColor.BRIGHT_GREEN, true, null),
@@ -404,7 +413,7 @@ public class ItemConfigurator extends ItemEnergized implements IMekWrench, ITool
 
 
         @Override
-        public ITextComponent getShortText() {
+        public ITextComponent getTextComponent() {
             TextComponentGroup translation = new TextComponentGroup(color.textFormatting).translation("tooltip.configurator." + name);
             if (this.transmissionType != null) {
                 translation.string(" (").translation(transmissionType.getTranslationKey()).string(")");
@@ -413,12 +422,17 @@ public class ItemConfigurator extends ItemEnergized implements IMekWrench, ITool
         }
 
         @Override
-        public ResourceLocation getIcon() {
+        public @NotNull ITextComponent sliceName() {
+            return getTextComponent();
+        }
+
+        @Override
+        public ResourceLocation icon() {
             return icon;
         }
 
         @Override
-        public EnumColor getColor() {
+        public EnumColor color() {
             return color;
         }
 

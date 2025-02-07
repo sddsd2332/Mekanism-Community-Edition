@@ -1,0 +1,33 @@
+{
+  "result": {
+    "item": "mekanism:module_vein_mining_unit"
+  },
+  "pattern": [
+    "CDC",
+    "EBF",
+    "AAA"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "A": {
+      "ore": "PoloniumPellet",
+      "type": "forge:ore_dict"
+    },
+    "B": {
+      "item": "mekanism:modulebase"
+    },
+    "C": {
+      "ore": "alloyElite",
+      "type": "forge:ore_dict"
+    },
+    "D": {
+      "item": "minecraft:diamond_pickaxe"
+    },
+    "E": {
+      "item": "minecraft:diamond_axe"
+    },
+    "F": {
+      "item": "minecraft:diamond_shovel"
+    }
+  }
+}

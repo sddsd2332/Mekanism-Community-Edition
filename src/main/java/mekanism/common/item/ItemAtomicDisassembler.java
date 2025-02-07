@@ -8,14 +8,18 @@ import mekanism.api.IDisableableEnum;
 import mekanism.api.NBTConstants;
 import mekanism.api.energy.IEnergizedItem;
 import mekanism.api.math.MathUtils;
+import mekanism.api.radial.RadialData;
+import mekanism.api.radial.mode.IRadialMode;
+import mekanism.api.text.IHasTextComponent;
 import mekanism.common.Mekanism;
 import mekanism.common.OreDictCache;
 import mekanism.common.block.BlockBounding;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.content.gear.mekatool.ModuleExcavationEscalationUnit.*;
 import mekanism.common.item.ItemAtomicDisassembler.DisassemblerMode;
 import mekanism.common.item.interfaces.IItemHUDProvider;
-import mekanism.common.item.interfaces.IRadialModeItem;
-import mekanism.common.item.interfaces.IRadialSelectorEnum;
+import mekanism.common.lib.radial.IRadialEnumModeItem;
+import mekanism.common.lib.radial.data.RadialDataHelper;
 import mekanism.common.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -50,9 +54,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 
-public class ItemAtomicDisassembler extends ItemEnergized implements IItemHUDProvider, IRadialModeItem<DisassemblerMode> {
+public class ItemAtomicDisassembler extends ItemEnergized implements IItemHUDProvider, IRadialEnumModeItem<DisassemblerMode> {
 
     private final Multimap<String, AttributeModifier> attributes;
+
+
+    private static final Lazy<RadialData<DisassemblerMode>> LAZY_RADIAL_DATA = Lazy.of(() -> RadialDataHelper.INSTANCE.dataForEnum(Mekanism.rl("disassembler_mode"), DisassemblerMode.NORMAL));
 
     public ItemAtomicDisassembler() {
         super(MekanismConfig.current().general.disassemblerBatteryCapacity.val());
@@ -209,8 +216,18 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemHUDPro
     }
 
     @Override
+    public @NotNull RadialData<DisassemblerMode> getRadialData(ItemStack stack) {
+        return LAZY_RADIAL_DATA.get();
+    }
+
+    @Override
     public DisassemblerMode getMode(ItemStack itemStack) {
         return DisassemblerMode.byIndexStatic(ItemDataUtils.getInt(itemStack, NBTConstants.MODE));
+    }
+
+    @Override
+    public String getModeSaveKey() {
+        return "";
     }
 
     @Override
@@ -223,10 +240,6 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemHUDPro
         ItemDataUtils.setInt(stack, NBTConstants.MODE, mode.ordinal());
     }
 
-    @Override
-    public Class<DisassemblerMode> getModeClass() {
-        return DisassemblerMode.class;
-    }
 
     @Nonnull
     @Override
@@ -262,7 +275,7 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemHUDPro
     @Nonnull
     @Override
     public ITextComponent getScrollTextComponent(@Nonnull ItemStack stack) {
-        return getMode(stack).getShortText();
+        return getMode(stack).getTextComponent();
     }
 
     @Override
@@ -280,12 +293,12 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemHUDPro
         return false;
     }
 
-    public enum DisassemblerMode implements IDisableableEnum<DisassemblerMode>, IRadialSelectorEnum<DisassemblerMode> {
-        NORMAL("normal", 20, () -> true, EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_normal.png")),
-        SLOW("slow", 8, () -> MekanismConfig.current().general.disassemblerSlowMode.val(), EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_slow.png")),
-        FAST("fast", 128, () -> MekanismConfig.current().general.disassemblerFastMode.val(), EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_fast.png")),
-        VEIN("vein", 20, () -> MekanismConfig.current().general.disassemblerVeinMining.val(), EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_vein.png")),
-        OFF("off", 0, () -> true, EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "void.png"));
+    public enum DisassemblerMode implements IDisableableEnum<DisassemblerMode>, IHasTextComponent, IRadialMode {
+        NORMAL("normal", 20, () -> true, EnumColor.BRIGHT_GREEN, ExcavationMode.NORMAL.icon()),
+        SLOW("slow", 8, () -> MekanismConfig.current().general.disassemblerSlowMode.val(), EnumColor.BRIGHT_GREEN, ExcavationMode.SLOW.icon()),
+        FAST("fast", 128, () -> MekanismConfig.current().general.disassemblerFastMode.val(), EnumColor.BRIGHT_GREEN, ExcavationMode.EXTREME.icon()),
+        VEIN("vein", 20, () -> MekanismConfig.current().general.disassemblerVeinMining.val(), EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI_RADIAL, "vein_normal.png")),
+        OFF("off", 0, () -> true, EnumColor.BRIGHT_GREEN,ExcavationMode.OFF.icon());
 
         private static final DisassemblerMode[] MODES = values();
 
@@ -323,8 +336,8 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemHUDPro
         }
 
         @Override
-        public ITextComponent getShortText() {
-            return new TextComponentGroup(color.textFormatting).translation("mekanism.tooltip.disassembler." + mode);
+        public ITextComponent sliceName() {
+            return getTextComponent();
         }
 
         public int getEfficiency() {
@@ -336,14 +349,20 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemHUDPro
             return checkEnabled.getAsBoolean();
         }
 
+        @NotNull
         @Override
-        public ResourceLocation getIcon() {
+        public ResourceLocation icon() {
             return icon;
         }
 
         @Override
-        public EnumColor getColor() {
+        public EnumColor color() {
             return color;
+        }
+
+        @Override
+        public ITextComponent getTextComponent() {
+            return new TextComponentGroup(color.textFormatting).translation("mekanism.tooltip.disassembler." + mode);
         }
     }
 

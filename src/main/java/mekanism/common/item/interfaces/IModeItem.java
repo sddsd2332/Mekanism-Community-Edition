@@ -1,5 +1,7 @@
 package mekanism.common.item.interfaces;
 
+import mekanism.common.lib.radial.IGenericRadialModeItem;
+import mekanism.common.lib.radial.IRadialModeItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -34,8 +36,11 @@ public interface IModeItem {
         return isModeItem(stack, slotType, true);
     }
 
-    static boolean isModeItem(@Nonnull ItemStack stack, @Nonnull EntityEquipmentSlot slotType, boolean allowRadial) {
-        return !stack.isEmpty() && stack.getItem() instanceof IModeItem modeItem && modeItem.supportsSlotType(stack, slotType) && (allowRadial || !(stack.getItem() instanceof IRadialModeItem));
+    static boolean isModeItem(@NotNull ItemStack stack, @NotNull EntityEquipmentSlot slotType, boolean allowRadial) {
+        if (!stack.isEmpty() && stack.getItem() instanceof IModeItem modeItem && modeItem.supportsSlotType(stack, slotType)) {
+            return allowRadial || !(modeItem instanceof IGenericRadialModeItem radialModeItem) || radialModeItem.getRadialData(stack) == null;
+        }
+        return false;
     }
 
 

@@ -2,6 +2,9 @@ package mekanism.api.gear;
 
 import mekanism.api.functions.FloatSupplier;
 import mekanism.api.gear.config.ModuleConfigItemCreator;
+import mekanism.api.radial.RadialData;
+import mekanism.api.radial.mode.IRadialMode;
+import mekanism.api.radial.mode.NestedRadialMode;
 import mekanism.api.text.IHasTextComponent;
 import net.minecraft.dispenser.IBlockSource;
 import net.minecraft.entity.EntityLivingBase;
@@ -93,6 +96,38 @@ public interface ICustomModule<MODULE extends ICustomModule<MODULE>> {
     }
 
     /**
+     * Called to check if this module has any radial modes that can be changed when disabled or if it should be skipped. This should be overridden for modules where the
+     * radial menu allows toggling whether the module is active.
+     *
+     * @param module Module instance.
+     *
+     * @return {@code true} if this module has radial modes that can be changed while disabled.
+     *
+     * @since 10.3.2
+     */
+    default boolean canChangeRadialModeWhenDisabled(IModule<MODULE> module) {
+        return false;
+    }
+
+
+    /**
+     * Called to get the text component to display when the mode is changed via the scroll wheel.  This will only be called if {@link ModuleData#handlesModeChange()} is
+     * {@code true}.
+     *
+     * @param module Module instance.
+     * @param stack  The stack to get the mode of.
+     *
+     * @return Mode display text or {@code null} if no text should be displayed.
+     *
+     * @since 10.3.2
+     */
+    @Nullable
+    default ITextComponent getModeScrollComponent(IModule<MODULE> module, ItemStack stack) {
+        return null;
+    }
+
+
+    /**
      * Called to change the mode of the module. This will only be called if {@link ModuleData#handlesModeChange()} is {@code true}. {@link
      * IModule#displayModeChange(EntityPlayer, String, IHasTextComponent)} is provided to help display the mode change when {@code displayChangeMessage} is {@code
      * true}.
@@ -104,6 +139,62 @@ public interface ICustomModule<MODULE extends ICustomModule<MODULE>> {
      * @param displayChangeMessage {@code true} if a message should be displayed when the mode changes
      */
     default void changeMode(IModule<MODULE> module, EntityPlayer player, ItemStack stack, int shift, boolean displayChangeMessage) {
+    }
+
+
+
+    /**
+     * Called by the Meka-Tool to attempt to add all supported radial types of the module. This will only be called if {@link ModuleData#handlesModeChange()} is
+     * {@code true}.
+     *
+     * @param module Module instance.
+     * @param stack  The stack to get the supported radial types of.
+     * @param adder  Consumer used to add any supported radial modes.
+     *
+     * @see #canChangeRadialModeWhenDisabled(IModule)
+     * @since 10.3.2
+     */
+    default void addRadialModes(IModule<MODULE> module, ItemStack stack, Consumer<NestedRadialMode> adder) {
+    }
+
+    /**
+     * Called by the Meka-Tool to attempt to get the mode of the module for the given radial data. This will only be called if {@link ModuleData#handlesModeChange()} is
+     * {@code true}, but may be called when this module does not support or handle the given radial type, so the radial type should be validated.
+     *
+     * @param module     Module instance.
+     * @param stack      The stack to get the mode of.
+     * @param radialData Radial data of the mode being retrieved.
+     * @param <MODE>     Radial Mode.
+     *
+     * @return Radial Mode if this module can handle the given Radial Data, or {@code null} if it can't.
+     *
+     * @see #canChangeRadialModeWhenDisabled(IModule)
+     * @since 10.3.2
+     */
+    @Nullable
+    default <MODE extends IRadialMode> MODE getMode(IModule<MODULE> module, ItemStack stack, RadialData<MODE> radialData) {
+        return null;
+    }
+
+
+    /**
+     * Called by the Meka-Tool to attempt to set the mode of the module for the given radial data. This will only be called if {@link ModuleData#handlesModeChange()} is
+     * {@code true}, but may be called when this module does not support or handle the given radial type, so the radial type should be validated.
+     *
+     * @param module     Module instance.
+     * @param player     The player who is attempting to set the mode.
+     * @param stack      The stack to set the mode of.
+     * @param radialData Radial data of the mode being set.
+     * @param mode       Mode to attempt to set if this module can handle modes of this type.
+     * @param <MODE>     Radial Mode.
+     *
+     * @return {@code true} if this module was able to handle the given radial data.
+     *
+     * @see #canChangeRadialModeWhenDisabled(IModule)
+     * @since 10.3.2
+     */
+    default <MODE extends IRadialMode> boolean setMode(IModule<MODULE> module, EntityPlayer player, ItemStack stack, RadialData<MODE> radialData, MODE mode) {
+        return false;
     }
 
     /**

@@ -12,6 +12,9 @@ import mekanism.api.gear.config.IModuleConfigItem;
 import mekanism.api.gear.config.ModuleBooleanData;
 import mekanism.api.gear.config.ModuleConfigData;
 import mekanism.api.gear.config.ModuleConfigItemCreator;
+import mekanism.api.radial.RadialData;
+import mekanism.api.radial.mode.IRadialMode;
+import mekanism.api.radial.mode.NestedRadialMode;
 import mekanism.api.text.IHasTextComponent;
 import mekanism.api.text.ILangEntry;
 import mekanism.api.text.TextComponentGroup;
@@ -36,6 +39,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -291,7 +295,6 @@ public final class Module<MODULE extends ICustomModule<MODULE>> implements IModu
         customModule.addHUDElements(this, player, list::add);
     }
 
-    /*
     public void addRadialModes(@NotNull ItemStack stack, Consumer<NestedRadialMode> adder) {
         customModule.addRadialModes(this, stack, adder);
     }
@@ -311,7 +314,7 @@ public final class Module<MODULE extends ICustomModule<MODULE>> implements IModu
     public ITextComponent getModeScrollComponent(ItemStack stack) {
         return customModule.getModeScrollComponent(this, stack);
     }
-     */
+
 
     public void changeMode(@Nonnull EntityPlayer player, @Nonnull ItemStack stack, int shift, boolean displayChangeMessage) {
         customModule.changeMode(this, player, stack, shift, displayChangeMessage);
@@ -322,7 +325,8 @@ public final class Module<MODULE extends ICustomModule<MODULE>> implements IModu
         return data.handlesModeChange() && handleModeChange.get() && (isEnabled() || customModule.canChangeModeWhenDisabled(this));
     }
 
-    /*
+
+
     @Override
     public boolean handlesRadialModeChange() {
         return data.handlesModeChange() && (isEnabled() || customModule.canChangeRadialModeWhenDisabled(this));
@@ -334,7 +338,7 @@ public final class Module<MODULE extends ICustomModule<MODULE>> implements IModu
         }
         return false;
     }
-     */
+
 
     public void setModeHandlingDisabledForce() {
         if (data.handlesModeChange()) {

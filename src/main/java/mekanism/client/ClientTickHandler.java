@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import mekanism.api.IClientTicker;
 import mekanism.api.gear.IModule;
 import mekanism.api.gear.SwiftSneakHelp;
+import mekanism.api.radial.RadialData;
 import mekanism.client.gui.GuiRadialSelector;
 import mekanism.client.newgui.GuiModuleTweaker;
 import mekanism.client.render.RenderTickHandler;
@@ -25,12 +26,10 @@ import mekanism.common.item.armor.ItemMekaSuitPants;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.item.interfaces.IJetpackItem.JetpackMode;
 import mekanism.common.item.interfaces.IModeItem;
-import mekanism.common.item.interfaces.IRadialModeItem;
-import mekanism.common.item.interfaces.IRadialSelectorEnum;
+import mekanism.common.lib.radial.IGenericRadialModeItem;
 import mekanism.common.network.PacketModeChange.ModeChangMessage;
 import mekanism.common.network.PacketPortableTeleporter.PortableTeleporterMessage;
 import mekanism.common.network.PacketPortableTeleporter.PortableTeleporterPacketType;
-import mekanism.common.network.PacketRadialModeChange.RadialModeChangeMessage;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -245,16 +244,16 @@ public class ClientTickHandler {
                 }
             }
 
-            ItemStack stack = minecraft.player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
-            if (MekKeyHandler.getIsKeyPressed(MekanismKeyHandler.handModeSwitchKey) && stack.getItem() instanceof IRadialModeItem) {
-                if (minecraft.currentScreen == null || minecraft.currentScreen instanceof GuiRadialSelector) {
-                    updateSelectorRenderer((IRadialModeItem<?>) stack.getItem());
+            if (minecraft.currentScreen == null || minecraft.currentScreen instanceof GuiRadialSelector) {
+                if (!MekKeyHandler.getIsKeyPressed(MekanismKeyHandler.handModeSwitchKey) || (!updateSelectorRenderer(EntityEquipmentSlot.MAINHAND) && !updateSelectorRenderer(EntityEquipmentSlot.OFFHAND))) {
+                    if (minecraft.currentScreen != null) {
+                        //If we currently have a radial selector gui open but shouldn't close it
+                        minecraft.displayGuiScreen(null);
+                    }
                 }
-            } else if (minecraft.currentScreen instanceof GuiRadialSelector) {
-                minecraft.displayGuiScreen(null);
             }
 
-            if (MekKeyHandler.getIsKeyPressed(MekanismKeyHandler.moduleTweakerKey)){
+            if (MekKeyHandler.getIsKeyPressed(MekanismKeyHandler.moduleTweakerKey)) {
                 if (minecraft.player != null && ModuleTweakerContainer.hasTweakableItem(minecraft.player)) {
                     minecraft.displayGuiScreen(new GuiModuleTweaker(minecraft.player.inventory));
                 }
@@ -262,23 +261,23 @@ public class ClientTickHandler {
         }
     }
 
-    private <TYPE extends Enum<TYPE> & IRadialSelectorEnum<TYPE>> void updateSelectorRenderer(IRadialModeItem<TYPE> modeItem) {
-        Class<TYPE> modeClass = modeItem.getModeClass();
-        if (!(minecraft.currentScreen instanceof GuiRadialSelector) || ((GuiRadialSelector<?>) minecraft.currentScreen).getEnumClass() != modeClass) {
-            minecraft.displayGuiScreen(new GuiRadialSelector<>(modeClass, () -> {
-                if (minecraft.player != null) {
-                    ItemStack s = minecraft.player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
-                    if (s.getItem() instanceof IRadialModeItem) {
-                        return ((IRadialModeItem<TYPE>) s.getItem()).getMode(s);
+
+    private boolean updateSelectorRenderer(EntityEquipmentSlot slot) {
+        if (minecraft.player != null) {
+            ItemStack stack = minecraft.player.getItemStackFromSlot(slot);
+            if (stack.getItem() instanceof IGenericRadialModeItem item) {
+                RadialData<?> radialData = item.getRadialData(stack);
+                if (radialData != null) {
+                    if (!(minecraft.currentScreen instanceof GuiRadialSelector screen) || !screen.hasMatchingData(slot, radialData)) {
+                        GuiRadialSelector newSelector = new GuiRadialSelector(slot, radialData, () -> minecraft.player);
+                        newSelector.tryInheritCurrentPath(minecraft.currentScreen);
+                        minecraft.displayGuiScreen(newSelector);
                     }
+                    return true;
                 }
-                return modeItem.getDefaultMode();
-            }, type -> {
-                if (minecraft.player != null) {
-                    Mekanism.packetHandler.sendToServer(new RadialModeChangeMessage(EntityEquipmentSlot.MAINHAND, type.ordinal()));
-                }
-            }));
+            }
         }
+        return false;
     }
 
     @SubscribeEvent

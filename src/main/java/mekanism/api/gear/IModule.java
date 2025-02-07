@@ -1,15 +1,14 @@
 package mekanism.api.gear;
 
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import mcp.MethodsReturnNonnullByDefault;
 import mekanism.api.energy.IEnergizedItem;
-import mekanism.api.math.FloatingLong;
 import mekanism.api.text.IHasTextComponent;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
+
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Interface that describes various methods that modules have.
@@ -48,6 +47,14 @@ public interface IModule<MODULE extends ICustomModule<MODULE>> {
      * @return {@code true} if this module can handle mode changes.
      */
     boolean handlesModeChange();
+
+    /**
+     * Gets if this module type ({@link #getData()}) can currently handle radial mode changes.
+     *
+     * @return {@code true} if this module can handle radial mode changes.
+     * @since 10.3.2
+     */
+    boolean handlesRadialModeChange();
 
     /**
      * Gets if this module type ({@link #getData()}) has any data that should be added to the HUD and if this module is configured to render to the HUD in the Module
@@ -99,9 +106,7 @@ public interface IModule<MODULE extends ICustomModule<MODULE>> {
      * Helper to check if there is at least a certain amount of energy stored in {@link #getEnergyContainer()}.
      *
      * @param energy Minimum amount of required energy to check.
-     *
      * @return {@code true} if there is no energy cost or there is at least that amount of energy stored in the {@link #getEnergyContainer()}.
-     *
      * @since 10.4.0
      */
     boolean hasEnoughEnergy(double energy);
@@ -111,9 +116,7 @@ public interface IModule<MODULE extends ICustomModule<MODULE>> {
      *
      * @param wearer Wearer/User of the item the module is installed on.
      * @param energy Energy amount to check.
-     *
      * @return {@code true} if the energy can be used/provided.
-     *
      * @implNote By default, this method checks players in creative as well.
      */
     boolean canUseEnergy(EntityLivingBase wearer, double energy);
@@ -125,7 +128,6 @@ public interface IModule<MODULE extends ICustomModule<MODULE>> {
      * @param wearer         Wearer/User of the item the module is installed on.
      * @param energy         Energy amount to check.
      * @param ignoreCreative {@code true} to not check the item for energy if the wearer is in creative and just return {@code false} for player's in creative.
-     *
      * @return {@code true} if the energy can be used/provided.
      */
     boolean canUseEnergy(EntityLivingBase wearer, double energy, boolean ignoreCreative);
@@ -138,9 +140,7 @@ public interface IModule<MODULE extends ICustomModule<MODULE>> {
      * @param energyContainer Energy container, most likely gotten from {@link #getEnergyContainer()}.
      * @param energy          Energy amount to check.
      * @param ignoreCreative  {@code true} to not check the item for energy if the wearer is in creative and just return {@code false} for player's in creative.
-     *
      * @return {@code true} if the energy can be used/provided.
-     *
      * @apiNote This method is mostly for use in not having to look up the energy container multiple times.
      */
     boolean canUseEnergy(EntityLivingBase wearer, @Nullable IEnergizedItem energyContainer, double energy, boolean ignoreCreative);
@@ -150,9 +150,7 @@ public interface IModule<MODULE extends ICustomModule<MODULE>> {
      *
      * @param wearer Wearer/User of the item the module is installed on.
      * @param energy Energy to use.
-     *
      * @return Actual amount of energy used.
-     *
      * @implNote By default, this method does not use any energy from players that are in creative.
      */
     double useEnergy(EntityLivingBase wearer, double energy);
@@ -164,7 +162,6 @@ public interface IModule<MODULE extends ICustomModule<MODULE>> {
      * @param wearer       Wearer/User of the item the module is installed on.
      * @param energy       Energy to use.
      * @param freeCreative {@code true} to not use any energy from the item if the wearer is in creative.
-     *
      * @return Actual amount of energy used.
      */
     double useEnergy(EntityLivingBase wearer, double energy, boolean freeCreative);
@@ -177,9 +174,7 @@ public interface IModule<MODULE extends ICustomModule<MODULE>> {
      * @param energyContainer Energy container, most likely gotten from {@link #getEnergyContainer()}.
      * @param energy          Energy to use.
      * @param freeCreative    {@code true} to not use any energy from the item if the wearer is in creative.
-     *
      * @return Actual amount of energy used.
-     *
      * @apiNote This method is mostly for use in not having to look up the energy container multiple times.
      */
     double useEnergy(EntityLivingBase wearer, @Nullable IEnergizedItem energyContainer, double energy, boolean freeCreative);
