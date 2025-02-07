@@ -111,14 +111,9 @@ public class GeneralConfig extends BaseConfig {
     public final IntOption disassemblerEnergyUsage = new IntOption(this, "general", "DisassemblerEnergyUsage", 10,
             "Base Energy (Joules) usage of the Atomic Disassembler. (Gets multiplied by speed factor)");
 
-    public final IntOption disassemblerEnergyUsageHoe = new IntOption(this, "general", "DisassemblerEnergyUsageHoe", 10,
-            "Cost in Joules of using the Atomic Disassembler as a hoe.");
-
     public final IntOption disassemblerEnergyUsageWeapon = new IntOption(this, "general", "DisassemblerEnergyUsageWeapon", 2000,
             "Cost in Joules of using the Atomic Disassembler as a weapon.");
 
-    public final IntOption disassemblerMiningRange = new IntOption(this, "general", "DisassemblerMiningRange", 10,
-            "The Range of the Atomic Disassembler Extended Vein Mining.");
 
     public final IntOption disassemblerMiningCount = new IntOption(this, "general", "DisassemblerMiningCount", 128,
             "The max Atomic Disassembler Vein Mining Block Count.");
@@ -129,7 +124,7 @@ public class GeneralConfig extends BaseConfig {
     public final BooleanOption disassemblerFastMode = new BooleanOption(this, "general", "DisassemblerFastMode", true,
             "Enable the 'Fast' mode for the Atomic Disassembler.");
 
-    public final BooleanOption disassemblerVeinMining = new BooleanOption(this, "general", "DisassemblerVeinMiningMode", true,
+    public final BooleanOption disassemblerVeinMining = new BooleanOption(this, "general", "DisassemblerVeinMiningMode", false,
             "Enable the 'Vein Mining' mode for the Atomic Disassembler.");
 
     public final BooleanOption disassemblerExtendedMining = new BooleanOption(this, "general", "DisassemblerExtendedMiningMode", true,
@@ -143,6 +138,9 @@ public class GeneralConfig extends BaseConfig {
 
     public final DoubleOption disassemblerBatteryCapacity = new DoubleOption(this, "general", "DisassemblerBatteryCapacity", 1000000,
             "Maximum amount (joules) of energy the Atomic Disassembler can contain", 0, Double.MAX_VALUE).setRequiresGameRestart(true);
+
+    public final DoubleOption disassemblerChargeRate = new DoubleOption(this, "general", "disassemblerChargeRate", 5000,
+            "Amount (joules) of energy the Atomic Disassembler can accept per tick.", 0, Double.MAX_VALUE).setRequiresGameRestart(true);
 
     public final IntOption VOICE_PORT = new IntOption(this, "general", "VoicePort", 36123,
             "TCP port for the Voice server to listen on.", 1, 65535);
@@ -300,8 +298,8 @@ public class GeneralConfig extends BaseConfig {
     public final BooleanOption blacklistFlux = new BooleanOption(this, "general", "BlacklistFluxPower", false,
             "Disables Flux Networks power integration. Requires world restart (server-side option in SMP).");
 
-    public final IntOption nutritionalPasteMBPerFood = new IntOption(this,"general","mbPerFood",50,"How much mB of Nutritional Paste equates to one 'half-food.'");
-    public final FloatOption nutritionalPasteSaturation = new FloatOption(this,"general","saturation",0.8F,"Saturation level of Nutritional Paste when eaten.");
+    public final IntOption nutritionalPasteMBPerFood = new IntOption(this, "general", "mbPerFood", 50, "How much mB of Nutritional Paste equates to one 'half-food.'");
+    public final FloatOption nutritionalPasteSaturation = new FloatOption(this, "general", "saturation", 0.8F, "Saturation level of Nutritional Paste when eaten.");
 
     public final TypeConfigManager<MachineType> machinesManager = new TypeConfigManager<>(this, "machines", MachineType.class, MachineType::getValidMachines, MachineType::getBlockName);
     public final EnumMap<BaseTier, TierConfig> tiers = TierConfig.create(this);

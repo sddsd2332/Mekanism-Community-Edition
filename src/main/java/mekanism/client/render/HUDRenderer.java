@@ -7,7 +7,6 @@ import mekanism.common.config.MekanismConfig;
 import mekanism.common.content.gear.HUDElement;
 import mekanism.common.content.gear.IModuleContainerItem;
 import mekanism.common.content.gear.ModuleHelper;
-import mekanism.common.item.ItemMekTool;
 import mekanism.common.item.ItemMekaTool;
 import mekanism.common.item.armor.ItemMekaSuitArmor;
 import mekanism.common.util.LangUtils;
@@ -98,7 +97,7 @@ public class HUDRenderer {
         for (int i = 0; i < ARMOR_SLOTS.length; i++) {
             posX += renderEnergyIcon(player, font, posX, color, ARMOR_ICONS[i], ARMOR_SLOTS[i], showArmorPercent);
         }
-        Predicate<Item> showToolPercent = item -> item instanceof ItemMekTool || item instanceof ItemMekaTool;
+        Predicate<Item> showToolPercent = item ->  item instanceof ItemMekaTool;
         for (EntityEquipmentSlot hand : HAND_SLOTS) {
             posX += renderEnergyIcon(player, font, posX, color, TOOL_ICON, hand, showToolPercent);
         }

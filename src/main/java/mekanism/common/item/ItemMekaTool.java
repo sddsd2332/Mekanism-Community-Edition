@@ -11,6 +11,8 @@ import mekanism.api.gear.ModuleData;
 import mekanism.client.MekKeyHandler;
 import mekanism.client.MekanismKeyHandler;
 import mekanism.common.MekanismModules;
+import mekanism.common.OreDictCache;
+import mekanism.common.block.BlockBounding;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.content.gear.IModuleContainerItem;
 import mekanism.common.content.gear.Module;
@@ -18,11 +20,13 @@ import mekanism.common.content.gear.ModuleHelper;
 import mekanism.common.content.gear.mekatool.ModuleAttackAmplificationUnit;
 import mekanism.common.content.gear.mekatool.ModuleExcavationEscalationUnit;
 import mekanism.common.content.gear.mekatool.ModuleTeleportationUnit;
+import mekanism.common.content.gear.mekatool.ModuleVeinMiningUnit;
 import mekanism.common.content.gear.shared.ModuleEnergyUnit;
 import mekanism.common.entity.EntityMeka;
 import mekanism.common.item.interfaces.IModeItem;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockTripWire;
 import net.minecraft.block.state.IBlockState;
@@ -36,6 +40,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -44,6 +49,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -53,6 +59,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Set;
 
 public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem, IModeItem, Magnetic {
 
@@ -214,22 +221,48 @@ public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem,
     }
 
     @Override
-    public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, EntityPlayer player) {
+    public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, EntityPlayer player) {
         if (player.world.isRemote || player.isCreative()) {
-            return super.onBlockStartBreak(stack, pos, player);
+            return super.onBlockStartBreak(itemstack, pos, player);
         }
         IEnergizedItem energyContainer = this;
         if (energyContainer != null) {
             World world = player.world;
             IBlockState state = world.getBlockState(pos);
-            boolean silk = isModuleEnabled(stack, MekanismModules.SILK_TOUCH_UNIT);
-            double energyRequired = getDestroyEnergy(stack, state.getBlock().getBlockHardness(state, world, pos), silk);
-            if (energyContainer.extract(stack, energyRequired, false) <= (energyRequired)) {
-                // IModule<ModuleVeinMiningUnit> veinMiningUnit = getModule(stack, MekanismModules.VEIN_MINING_UNIT);
-
+            boolean silk = isModuleEnabled(itemstack, MekanismModules.SILK_TOUCH_UNIT);
+            double energyRequired = getDestroyEnergy(itemstack, state.getBlock().getBlockHardness(state, world, pos), silk);
+            if (energyContainer.extract(itemstack, energyRequired, false) >= (energyRequired)) {
+                 IModule<ModuleVeinMiningUnit> veinMiningUnit = getModule(itemstack, MekanismModules.VEIN_MINING_UNIT);
+                //Even though we now handle breaking bounding blocks properly, don't allow vein mining them
+                if (veinMiningUnit != null && veinMiningUnit.isEnabled() && !(state.getBlock() instanceof BlockBounding)) {
+                    Block block = state.getBlock();
+                    if (block == Blocks.LIT_REDSTONE_ORE) {
+                        block = Blocks.REDSTONE_ORE;
+                    }
+                    RayTraceResult raytrace = doRayTrace(state, pos, player);
+                    ItemStack stack = block.getPickBlock(state, raytrace, player.world, pos, player);
+                    List<String> names = OreDictCache.getOreDictName(stack);
+                    boolean isOre = names.stream().anyMatch(s -> s.startsWith("ore") || s.equals("logWood"));
+                    if (isOre || veinMiningUnit.getCustomInstance().isExtended()) {
+                        double baseDestroyEnergy = getDestroyEnergy(silk);
+                        Set<BlockPos> found = ModuleVeinMiningUnit.findPositions(state, pos, world, isOre ? -1 : veinMiningUnit.getCustomInstance().getExcavationRange());
+                        MekanismUtils.veinMineArea(energyContainer, world, pos, (EntityPlayerMP) player, itemstack, this, found, isModuleEnabled(stack, MekanismModules.SHEARING_UNIT), hardness -> getDestroyEnergy(baseDestroyEnergy, hardness), distance -> 0.5 * Math.pow(distance, isOre ? 1.5 : 2), state);
+                    }
+                }
             }
         }
-        return super.onBlockStartBreak(stack, pos, player);
+        return super.onBlockStartBreak(itemstack, pos, player);
+    }
+
+
+    private RayTraceResult doRayTrace(IBlockState state, BlockPos pos, EntityPlayer player) {
+        Vec3d positionEyes = player.getPositionEyes(1.0F);
+        Vec3d playerLook = player.getLook(1.0F);
+        double blockReachDistance = player.getAttributeMap().getAttributeInstance(EntityPlayer.REACH_DISTANCE).getAttributeValue();
+        Vec3d maxReach = positionEyes.add(playerLook.x * blockReachDistance, playerLook.y * blockReachDistance, playerLook.z * blockReachDistance);
+        RayTraceResult res = state.collisionRayTrace(player.world, pos, playerLook, maxReach);
+        //noinspection ConstantConditions - idea thinks it's nonnull due to package level annotations, but it's not
+        return res != null ? res : new RayTraceResult(RayTraceResult.Type.MISS, Vec3d.ZERO, EnumFacing.UP, pos);
     }
 
     private double getDestroyEnergy(boolean silk) {

@@ -94,7 +94,7 @@ public interface ICustomModule<MODULE extends ICustomModule<MODULE>> {
 
     /**
      * Called to change the mode of the module. This will only be called if {@link ModuleData#handlesModeChange()} is {@code true}. {@link
-     * IModule#displayModeChange(EntityPlayer, ITextComponent, IHasTextComponent)} is provided to help display the mode change when {@code displayChangeMessage} is {@code
+     * IModule#displayModeChange(EntityPlayer, String, IHasTextComponent)} is provided to help display the mode change when {@code displayChangeMessage} is {@code
      * true}.
      *
      * @param module               Module instance.

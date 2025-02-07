@@ -41,6 +41,7 @@ public class ModuleChargeDistributionUnit implements ICustomModule<ModuleChargeD
         }
     }
 
+    //TODO
     private void chargeSuit(EntityPlayer player) {
         double energy;
         double energyMax;

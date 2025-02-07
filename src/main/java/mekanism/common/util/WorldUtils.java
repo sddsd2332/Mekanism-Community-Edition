@@ -1,6 +1,7 @@
 package mekanism.common.util;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
@@ -47,7 +48,7 @@ public class WorldUtils {
      * @return the distance to the defined positions
      */
     public static double distanceBetween(BlockPos start, BlockPos end) {
-        return MathHelper.sqrt(start.distanceSqToCenter(end.getX(), end.getY(), end.getZ()));
+        return MathHelper.sqrt(start.distanceSq(end));
     }
 
     /**
@@ -94,5 +95,24 @@ public class WorldUtils {
 
     public static boolean isOutsideBuildHeight(BlockPos pos) {
         return pos.getY() < 0 || pos.getY() >= 256;
+    }
+
+
+    /**
+     * Gets a tile entity if the location is loaded
+     *
+     * @param world world
+     * @param pos   position
+     *
+     * @return tile entity if found, null if either not found or not loaded
+     */
+    @Nullable
+    @Contract("null, _ -> null")
+    public static TileEntity getTileEntity(@Nullable IBlockAccess world, @Nonnull BlockPos pos) {
+        if (!isBlockLoaded(world, pos)) {
+            //If the world is null, or it is a world reader and the block is not loaded, return null
+            return null;
+        }
+        return world.getTileEntity(pos);
     }
 }

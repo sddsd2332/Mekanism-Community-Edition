@@ -47,7 +47,6 @@ import mekanism.common.block.states.BlockStatePlastic.PlasticBlockStateMapper;
 import mekanism.common.block.states.BlockStateTransmitter.TransmitterStateMapper;
 import mekanism.common.block.states.BlockStateTransmitter.TransmitterType;
 import mekanism.common.config.MekanismConfig;
-import mekanism.common.content.gear.IModuleContainerItem;
 import mekanism.common.entity.*;
 import mekanism.common.inventory.InventoryPersonalChest;
 import mekanism.common.item.*;
@@ -284,7 +283,6 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.EmptyCrystals);
         registerItemRender(MekanismItems.FluoriteClump);
         registerItemRender(MekanismItems.ArmoredFreeRunners);
-        registerItemRender(MekanismItems.MekTool);
         //     registerItemRender(MekanismItems.MekAsuitHelmet);
         //    registerItemRender(MekanismItems.MekAsuitChestplate);
         //     registerItemRender(MekanismItems.MekAsuitLeggings);
@@ -310,7 +308,7 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.MODULE_SILK_TOUCH);
         registerItemRender(MekanismItems.MODULE_FORTUNE);
         //registerItemRender(MekanismItems.MODULE_BLASTING);
-        // registerItemRender(MekanismItems.MODULE_VEIN_MINING);
+        registerItemRender(MekanismItems.MODULE_VEIN_MINING);
         registerItemRender(MekanismItems.MODULE_TELEPORTATION);
 
         registerItemRender(MekanismItems.MODULE_ELECTROLYTIC_BREATHING);
@@ -369,7 +367,6 @@ public class ClientProxy extends CommonProxy {
         Item.getItemFromBlock(MekanismBlocks.BasicBlock3).setTileEntityItemStackRenderer(new RenderBasicBlockItem());
         Item.getItemFromBlock(MekanismBlocks.MachineBlock4).setTileEntityItemStackRenderer(new RenderMachineItem());
         MekanismItems.ArmoredFreeRunners.setTileEntityItemStackRenderer(new RenderArmoredFreeRunners());
-        MekanismItems.MekTool.setTileEntityItemStackRenderer(new RenderMekTool());
         MekanismItems.MEKA_TOOL.setTileEntityItemStackRenderer(new RenderMekaTool());
     }
 
@@ -822,7 +819,7 @@ public class ClientProxy extends CommonProxy {
                     new GuiAmbientAccumulatorEnergy(player.inventory, (TileEntityAmbientAccumulatorEnergy) tileEntity);
             case 74 -> new GuiHybridStorage(player.inventory, (TileEntityHybridStorage) tileEntity);
             case 75 -> new GuiModificationStation(player.inventory, (TileEntityModificationStation) tileEntity);
-            case 76 -> new GuiSPS(player.inventory,(TileEntitySPS) tileEntity);
+            case 76 -> new GuiSPS(player.inventory, (TileEntitySPS) tileEntity);
             default -> null;
         };
     }
@@ -975,8 +972,6 @@ public class ClientProxy extends CommonProxy {
         machineModelBake(modelRegistry, "antiprotonic_nucleosynthesizer", MachineType.ANTIPROTONIC_NUCLEOSYNTHESIZER);
         ModelResourceLocation ArmorFreeRunnerRL = getInventoryMRL("ArmoredFreeRunners");
         modelRegistry.putObject(ArmorFreeRunnerRL, RenderArmoredFreeRunners.model = new ItemLayerWrapper(modelRegistry.getObject(FreeRunnerRL)));
-        ModelResourceLocation MekToolRL = getInventoryMRL("MekTool");
-        modelRegistry.putObject(MekToolRL, RenderMekTool.model = new ItemLayerWrapper(modelRegistry.getObject(MekToolRL)));
 
         ModelResourceLocation Meka_Tool = getInventoryMRL("meka_tool");
         modelRegistry.putObject(Meka_Tool, RenderMekaTool.model = new ItemLayerWrapper(modelRegistry.getObject(Meka_Tool)));

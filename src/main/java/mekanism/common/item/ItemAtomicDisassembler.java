@@ -1,90 +1,95 @@
 package mekanism.common.item;
 
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import mekanism.api.Coord4D;
 import mekanism.api.EnumColor;
 import mekanism.api.IDisableableEnum;
 import mekanism.api.NBTConstants;
+import mekanism.api.energy.IEnergizedItem;
 import mekanism.api.math.MathUtils;
 import mekanism.common.Mekanism;
 import mekanism.common.OreDictCache;
+import mekanism.common.block.BlockBounding;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.item.ItemAtomicDisassembler.DisassemblerMode;
 import mekanism.common.item.interfaces.IItemHUDProvider;
 import mekanism.common.item.interfaces.IRadialModeItem;
 import mekanism.common.item.interfaces.IRadialSelectorEnum;
-import mekanism.common.util.ItemDataUtils;
-import mekanism.common.util.LangUtils;
-import mekanism.common.util.MekanismUtils;
-import mekanism.common.util.TextComponentGroup;
+import mekanism.common.util.*;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDirt;
-import net.minecraft.block.BlockDirt.DirtType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.*;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants.WorldEvents;
-import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 
 public class ItemAtomicDisassembler extends ItemEnergized implements IItemHUDProvider, IRadialModeItem<DisassemblerMode> {
 
+    private final Multimap<String, AttributeModifier> attributes;
+
     public ItemAtomicDisassembler() {
         super(MekanismConfig.current().general.disassemblerBatteryCapacity.val());
         setMaxStackSize(1);
         setRarity(EnumRarity.RARE);
+        setNoRepair();
+        ImmutableMultimap.Builder<String, AttributeModifier> builder = ImmutableMultimap.builder();
+        builder.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", -2.4D, 0));
+        this.attributes = builder.build();
     }
 
     @Override
-    public boolean canHarvestBlock(@Nonnull IBlockState state, ItemStack stack) {
-        return state.getBlock() != Blocks.BEDROCK;
+    public boolean canHarvestBlock(IBlockState blockIn) {
+        //Allow harvesting everything, things that are unbreakable are caught elsewhere
+        return true;
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
-    @Override
-    public void addInformation(ItemStack itemstack, World world, List<String> list, ITooltipFlag flag) {
-        super.addInformation(itemstack, world, list, flag);
-        DisassemblerMode mode = getMode(itemstack);
-        list.add(LangUtils.localize("tooltip.mode") + ": " + EnumColor.INDIGO + mode.getModeName());
-        list.add(LangUtils.localize("tooltip.efficiency") + ": " + EnumColor.INDIGO + mode.getEfficiency());
+    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
+        super.addInformation(stack, world, tooltip, flag);
+        DisassemblerMode mode = getMode(stack);
+        tooltip.add(LangUtils.localize("tooltip.mode") + ": " + EnumColor.INDIGO + mode.getModeName());
+        tooltip.add(LangUtils.localize("tooltip.efficiency") + ": " + EnumColor.INDIGO + mode.getEfficiency());
     }
 
+
     @Override
-    public boolean hitEntity(ItemStack itemstack, EntityLivingBase target, EntityLivingBase attacker) {
-        double energy = getEnergy(itemstack);
-        int energyCost = MekanismConfig.current().general.disassemblerEnergyUsageWeapon.val();
+    public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
+        IEnergizedItem energyContainer = this;
+        double energy = energyContainer == null ? 0 : energyContainer.getEnergy(stack);
+        double energyCost = MekanismConfig.current().general.disassemblerEnergyUsageWeapon.val();
         int minDamage = MekanismConfig.current().general.disassemblerDamageMin.val();
         int damageDifference = MekanismConfig.current().general.disassemblerDamageMax.val() - minDamage;
         //If we don't have enough power use it at a reduced power level
         double percent = 1;
-        if (energy < energyCost && energyCost != 0) {
+        if (energy < energyCost) {
             percent = energy / energyCost;
         }
         float damage = (float) (minDamage + damageDifference * percent);
@@ -93,21 +98,92 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemHUDPro
         } else {
             target.attackEntityFrom(DamageSource.causeMobDamage(attacker), damage);
         }
-        if (energy > 0) {
-            setEnergy(itemstack, energy - energyCost);
+        if (energyContainer != null && energy != 0) {
+            energyContainer.extract(stack, energyCost, true);
         }
         return false;
     }
 
     @Override
-    public float getDestroySpeed(ItemStack itemstack, IBlockState state) {
-        return getEnergy(itemstack) != 0 ? getMode(itemstack).getEfficiency() : 1F;
+    public float getDestroySpeed(ItemStack stack, IBlockState state) {
+        IEnergizedItem energyContainer = this;
+        if (energyContainer == null) {
+            return 0;
+        }
+        double energyRequired = getDestroyEnergy(stack, state.getBlock().blockHardness);
+        double energyAvailable = energyContainer.extract(stack, energyRequired, false);
+        if (energyAvailable > energyRequired) {
+            return DisassemblerMode.NORMAL.getEfficiency() * (float) (energyAvailable / energyRequired);
+        }
+        return getMode(stack).getEfficiency();
     }
 
     @Override
-    public boolean onBlockDestroyed(ItemStack itemstack, World world, IBlockState state, BlockPos pos, EntityLivingBase entityliving) {
-        setEnergy(itemstack, getEnergy(itemstack) - getDestroyEnergy(itemstack, state.getBlockHardness(world, pos)));
+    public boolean onBlockDestroyed(ItemStack stack, World world, IBlockState state, BlockPos pos, EntityLivingBase entity) {
+        IEnergizedItem energyContainer = this;
+        if (energyContainer != null) {
+            energyContainer.extract(stack, getDestroyEnergy(stack, state.getBlock().getBlockHardness(state, world, pos)), true);
+        }
         return true;
+    }
+
+    @Override
+    public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, EntityPlayer player) {
+        if (player.world.isRemote || player.isCreative()) {
+            return super.onBlockStartBreak(itemstack, pos, player);
+        }
+        IEnergizedItem energyContainer = this;
+        if (energyContainer != null && getMode(itemstack) == DisassemblerMode.VEIN) {
+            World world = player.world;
+            IBlockState state = world.getBlockState(pos);
+            double baseDestroyEnergy = getDestroyEnergy(itemstack);
+            double energyRequired = getDestroyEnergy(baseDestroyEnergy, state.getBlock().getBlockHardness(state, world, pos));
+            if (energyContainer.extract(itemstack, energyRequired, false) >= (energyRequired)) {
+                //Even though we now handle breaking bounding blocks properly, don't allow vein mining them
+                // only allow mining things that are considered an ore
+
+                Block block = state.getBlock();
+                if (block == Blocks.LIT_REDSTONE_ORE) {
+                    block = Blocks.REDSTONE_ORE;
+                }
+                RayTraceResult raytrace = doRayTrace(state, pos, player);
+                ItemStack stack = block.getPickBlock(state, raytrace, player.world, pos, player);
+                List<String> names = OreDictCache.getOreDictName(stack);
+                boolean is = names.stream().anyMatch(s -> s.startsWith("ore") || s.equals("logWood"));
+                if (!(state.getBlock() instanceof BlockBounding) && is) {
+                    List<BlockPos> found = findPositions(state, pos, world);
+                    MekanismUtils.veinMineArea(energyContainer, world, pos, (EntityPlayerMP) player, itemstack, this, found, false, hardness -> getDestroyEnergy(baseDestroyEnergy, hardness), distance -> 0.5 * Math.pow(distance, 1.5), state);
+                }
+            }
+        }
+        return super.onBlockStartBreak(itemstack, pos, player);
+    }
+
+    private static List<BlockPos> findPositions(IBlockState state, BlockPos location, World world) {
+        List<BlockPos> found = new ArrayList<>();
+        Set<BlockPos> checked = new ObjectOpenHashSet<>();
+        found.add(location);
+        Block startBlock = state.getBlock();
+        int maxCount = MekanismConfig.current().general.disassemblerMiningCount.val() - 1;
+        for (int i = 0; i < found.size(); i++) {
+            BlockPos blockPos = found.get(i);
+            checked.add(blockPos);
+            for (BlockPos pos : BlockPos.getAllInBoxMutable(blockPos.add(-1, -1, -1), blockPos.add(1, 1, 1))) {
+                //We can check contains as mutable
+                if (!checked.contains(pos)) {
+                    Optional<IBlockState> blockState = WorldUtils.getBlockState(world, pos);
+                    if (blockState.isPresent() && startBlock == blockState.get().getBlock()) {
+                        //Make sure to add it as immutable
+                        found.add(pos.toImmutable());
+                        //渲染
+                        if (found.size() > maxCount) {
+                            return found;
+                        }
+                    }
+                }
+            }
+        }
+        return found;
     }
 
     private RayTraceResult doRayTrace(IBlockState state, BlockPos pos, EntityPlayer player) {
@@ -120,158 +196,21 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemHUDPro
         return res != null ? res : new RayTraceResult(RayTraceResult.Type.MISS, Vec3d.ZERO, EnumFacing.UP, pos);
     }
 
-    @Override
-    public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, EntityPlayer player) {
-        super.onBlockStartBreak(itemstack, pos, player);
-        if (!player.world.isRemote && !player.capabilities.isCreativeMode) {
-            DisassemblerMode mode = getMode(itemstack);
-            boolean extended = mode == DisassemblerMode.EXTENDED_VEIN;
-            if (extended || mode == DisassemblerMode.VEIN) {
-                IBlockState state = player.world.getBlockState(pos);
-                Block block = state.getBlock();
-                if (block == Blocks.LIT_REDSTONE_ORE) {
-                    block = Blocks.REDSTONE_ORE;
-                }
-                RayTraceResult raytrace = doRayTrace(state, pos, player);
-                ItemStack stack = block.getPickBlock(state, raytrace, player.world, pos, player);
-                List<String> names = OreDictCache.getOreDictName(stack);
-                boolean isOre = false;
-                for (String s : names) {
-                    if (s.startsWith("ore") || s.equals("logWood")) {
-                        isOre = true;
-                        break;
-                    }
-                }
-                if (isOre || extended) {
-                    Coord4D orig = new Coord4D(pos, player.world);
-                    Set<Coord4D> found = new Finder(player, stack, orig, raytrace, extended ? MekanismConfig.current().general.disassemblerMiningRange.val() : -1).calc();
-                    for (Coord4D coord : found) {
-                        if (coord.equals(orig)) {
-                            continue;
-                        }
-                        int destroyEnergy = getDestroyEnergy(itemstack, coord.getBlockState(player.world).getBlockHardness(player.world, coord.getPos()));
-                        if (getEnergy(itemstack) < destroyEnergy) {
-                            continue;
-                        }
-                        Block block2 = coord.getBlock(player.world);
-                        block2.onBlockHarvested(player.world, coord.getPos(), state, player);
-                        player.world.playEvent(WorldEvents.BREAK_BLOCK_EFFECTS, coord.getPos(), Block.getStateId(state));
-                        block2.dropBlockAsItem(player.world, coord.getPos(), state, 0);
-                        player.world.setBlockToAir(coord.getPos());
-                        setEnergy(itemstack, getEnergy(itemstack) - destroyEnergy);
-                    }
-                }
-            }
-        }
-        return false;
+    private double getDestroyEnergy(ItemStack itemStack, float hardness) {
+        return getDestroyEnergy(getDestroyEnergy(itemStack), hardness);
+    }
+
+    private double getDestroyEnergy(double baseDestroyEnergy, float hardness) {
+        return hardness == 0 ? baseDestroyEnergy / (2) : baseDestroyEnergy;
+    }
+
+    private double getDestroyEnergy(ItemStack itemStack) {
+        return MekanismConfig.current().general.disassemblerEnergyUsage.val() * (getMode(itemStack).getEfficiency());
     }
 
     @Override
-    public boolean isFull3D() {
-        return true;
-    }
-
-    @Nonnull
-    @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (!player.isSneaking()) {
-            ItemStack stack = player.getHeldItem(hand);
-            int diameter = getMode(stack).getDiameter();
-            if (diameter > 0) {
-                Block block = world.getBlockState(pos).getBlock();
-                if (block == Blocks.DIRT || block == Blocks.GRASS_PATH) {
-                    return useItemAs(player, world, pos, side, stack, diameter, this::useHoe);
-                } else if (block == Blocks.GRASS) {
-                    return useItemAs(player, world, pos, side, stack, diameter, this::useShovel);
-                }
-            }
-        }
-        return EnumActionResult.PASS;
-    }
-
-    private EnumActionResult useItemAs(EntityPlayer player, World world, BlockPos pos, EnumFacing side, ItemStack stack, int diameter, ItemUseConsumer consumer) {
-        double energy = getEnergy(stack);
-        int hoeUsage = MekanismConfig.current().general.disassemblerEnergyUsageHoe.val();
-        if (energy < hoeUsage || consumer.use(stack, player, world, pos, side) == EnumActionResult.FAIL) {
-            //Fail if we don't have enough energy or using the item failed
-            return EnumActionResult.FAIL;
-        }
-        double energyUsed = hoeUsage;
-        int radius = (diameter - 1) / 2;
-        for (int x = -radius; x <= radius; x++) {
-            for (int z = -radius; z <= radius; z++) {
-                if (energyUsed + hoeUsage > energy) {
-                    break;
-                } else if ((x != 0 || z != 0) && consumer.use(stack, player, world, pos.add(x, 0, z), side) == EnumActionResult.SUCCESS) {
-                    //Don't attempt to use it on the source location as it was already done above
-                    // If we successfully used it in a spot increment how much energy we used
-                    energyUsed += hoeUsage;
-                }
-            }
-        }
-        setEnergy(stack, energy - energyUsed);
-        return EnumActionResult.SUCCESS;
-    }
-
-    private EnumActionResult useHoe(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing facing) {
-        if (!player.canPlayerEdit(pos.offset(facing), facing, stack)) {
-            return EnumActionResult.FAIL;
-        }
-        int hook = ForgeEventFactory.onHoeUse(stack, player, world, pos);
-        if (hook != 0) {
-            return hook > 0 ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
-        }
-        if (facing != EnumFacing.DOWN && world.isAirBlock(pos.up())) {
-            IBlockState state = world.getBlockState(pos);
-            Block block = state.getBlock();
-            IBlockState newState = null;
-            if (block == Blocks.GRASS || block == Blocks.GRASS_PATH) {
-                newState = Blocks.FARMLAND.getDefaultState();
-            } else if (block == Blocks.DIRT) {
-                DirtType type = state.getValue(BlockDirt.VARIANT);
-                if (type == DirtType.DIRT) {
-                    newState = Blocks.FARMLAND.getDefaultState();
-                } else if (type == DirtType.COARSE_DIRT) {
-                    newState = Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, DirtType.DIRT);
-                }
-            }
-            if (newState != null) {
-                setBlock(stack, player, world, pos, newState);
-                return EnumActionResult.SUCCESS;
-            }
-        }
-        return EnumActionResult.PASS;
-    }
-
-    private EnumActionResult useShovel(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing facing) {
-        if (!player.canPlayerEdit(pos.offset(facing), facing, stack)) {
-            return EnumActionResult.FAIL;
-        } else if (facing != EnumFacing.DOWN && world.isAirBlock(pos.up())) {
-            Block block = world.getBlockState(pos).getBlock();
-            if (block == Blocks.GRASS) {
-                setBlock(stack, player, world, pos, Blocks.GRASS_PATH.getDefaultState());
-                return EnumActionResult.SUCCESS;
-            }
-        }
-        return EnumActionResult.PASS;
-    }
-
-    private void setBlock(ItemStack stack, EntityPlayer player, World worldIn, BlockPos pos, IBlockState state) {
-        worldIn.playSound(player, pos, SoundEvents.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
-        if (!worldIn.isRemote) {
-            worldIn.setBlockState(pos, state, 11);
-            stack.damageItem(1, player);
-        }
-    }
-
-    private int getDestroyEnergy(ItemStack itemStack, float hardness) {
-        int destroyEnergy = MekanismConfig.current().general.disassemblerEnergyUsage.val() * getMode(itemStack).getEfficiency();
-        return hardness == 0 ? destroyEnergy / 2 : destroyEnergy;
-    }
-
-    @Override
-    public Class<DisassemblerMode> getModeClass() {
-        return DisassemblerMode.class;
+    public DisassemblerMode getMode(ItemStack itemStack) {
+        return DisassemblerMode.byIndexStatic(ItemDataUtils.getInt(itemStack, NBTConstants.MODE));
     }
 
     @Override
@@ -280,39 +219,28 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemHUDPro
     }
 
     @Override
-    public DisassemblerMode getMode(ItemStack stack) {
-        return DisassemblerMode.byIndexStatic(ItemDataUtils.getInt(stack, NBTConstants.MODE));
-    }
-
-
-    @Override
     public void setMode(ItemStack stack, EntityPlayer player, DisassemblerMode mode) {
         ItemDataUtils.setInt(stack, NBTConstants.MODE, mode.ordinal());
     }
 
-
     @Override
-    public boolean canSend(ItemStack itemStack) {
-        return false;
+    public Class<DisassemblerMode> getModeClass() {
+        return DisassemblerMode.class;
     }
 
     @Nonnull
     @Override
-    @Deprecated
-    public Multimap<String, AttributeModifier> getItemAttributeModifiers(EntityEquipmentSlot equipmentSlot) {
-        Multimap<String, AttributeModifier> multiMap = super.getItemAttributeModifiers(equipmentSlot);
-        if (equipmentSlot == EntityEquipmentSlot.MAINHAND) {
-            multiMap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", -2.4000000953674316D, 0));
-        }
-        return multiMap;
+    public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
+        return slot == EntityEquipmentSlot.MAINHAND ? attributes : super.getAttributeModifiers(slot, stack);
     }
-
 
     @Override
     public void addHUDStrings(List<String> list, EntityPlayer player, ItemStack stack, EntityEquipmentSlot slotType) {
-        list.add(LangUtils.localize("tooltip.mode") + ": " + EnumColor.INDIGO + getMode(stack).getModeName());
-        list.add(LangUtils.localize("tooltip.efficiency") + ": " + EnumColor.INDIGO + getMode(stack).getEfficiency());
+        DisassemblerMode mode = getMode(stack);
+        list.add(EnumColor.GREY + LangUtils.localize("tooltip.mode") + ": " + EnumColor.INDIGO + mode.getModeName());
+        list.add(EnumColor.GREY + LangUtils.localize("tooltip.efficiency") + ": " + EnumColor.INDIGO + mode.getEfficiency());
     }
+
 
     @Override
     public void changeMode(@NotNull EntityPlayer player, @NotNull ItemStack stack, int shift, boolean displayChangeMessage) {
@@ -326,6 +254,10 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemHUDPro
         }
     }
 
+    @Override
+    public double getMaxTransfer(ItemStack itemStack) {
+        return MekanismConfig.current().general.disassemblerChargeRate.val();
+    }
 
     @Nonnull
     @Override
@@ -333,28 +265,39 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemHUDPro
         return getMode(stack).getShortText();
     }
 
+    @Override
+    public boolean isEnchantable(@Nonnull ItemStack stack) {
+        return false;
+    }
+
+    @Override
+    public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
+        return false;
+    }
+
+    @Override
+    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        return false;
+    }
 
     public enum DisassemblerMode implements IDisableableEnum<DisassemblerMode>, IRadialSelectorEnum<DisassemblerMode> {
-        NORMAL("normal", 20, 3, () -> true, EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_normal.png")),
-        SLOW("slow", 8, 1, () -> MekanismConfig.current().general.disassemblerSlowMode.val(), EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_slow.png")),
-        FAST("fast", 128, 5, () -> MekanismConfig.current().general.disassemblerFastMode.val(), EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_fast.png")),
-        VEIN("vein", 20, 3, () -> MekanismConfig.current().general.disassemblerVeinMining.val(), EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_vein.png")),
-        EXTENDED_VEIN("extended_vein", 20, 3, () -> MekanismConfig.current().general.disassemblerExtendedMining.val(), EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_vein.png")),
-        OFF("off", 0, 0, () -> true, EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "void.png"));
+        NORMAL("normal", 20, () -> true, EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_normal.png")),
+        SLOW("slow", 8, () -> MekanismConfig.current().general.disassemblerSlowMode.val(), EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_slow.png")),
+        FAST("fast", 128, () -> MekanismConfig.current().general.disassemblerFastMode.val(), EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_fast.png")),
+        VEIN("vein", 20, () -> MekanismConfig.current().general.disassemblerVeinMining.val(), EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "disassembler_vein.png")),
+        OFF("off", 0, () -> true, EnumColor.BRIGHT_GREEN, MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "void.png"));
 
         private static final DisassemblerMode[] MODES = values();
+
         private final BooleanSupplier checkEnabled;
         private final String mode;
         private final int efficiency;
-        //Must be odd, or zero
-        private final int diameter;
-        private final ResourceLocation icon;
         private final EnumColor color;
+        private final ResourceLocation icon;
 
-        DisassemblerMode(String mode, int efficiency, int diameter, BooleanSupplier checkEnabled, EnumColor color, ResourceLocation icon) {
+        DisassemblerMode(String mode, int efficiency, BooleanSupplier checkEnabled, EnumColor color, ResourceLocation icon) {
             this.mode = mode;
             this.efficiency = efficiency;
-            this.diameter = diameter;
             this.checkEnabled = checkEnabled;
             this.color = color;
             this.icon = icon;
@@ -379,12 +322,13 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemHUDPro
             return LangUtils.localize("mekanism.tooltip.disassembler." + mode);
         }
 
-        public int getEfficiency() {
-            return efficiency;
+        @Override
+        public ITextComponent getShortText() {
+            return new TextComponentGroup(color.textFormatting).translation("mekanism.tooltip.disassembler." + mode);
         }
 
-        public int getDiameter() {
-            return diameter;
+        public int getEfficiency() {
+            return efficiency;
         }
 
         @Override
@@ -393,90 +337,15 @@ public class ItemAtomicDisassembler extends ItemEnergized implements IItemHUDPro
         }
 
         @Override
-        public ITextComponent getShortText() {
-            return new TextComponentGroup(color.textFormatting).translation("mekanism.tooltip.disassembler." + mode);
+        public ResourceLocation getIcon() {
+            return icon;
         }
 
         @Override
         public EnumColor getColor() {
             return color;
         }
-
-        @Override
-        public ResourceLocation getIcon() {
-            return icon;
-        }
     }
 
-    public static class Finder {
 
-        public static Map<Block, List<Block>> ignoreBlocks = new Object2ObjectOpenHashMap<>();
-
-        static {
-            ignoreBlocks.put(Blocks.REDSTONE_ORE, Arrays.asList(Blocks.REDSTONE_ORE, Blocks.LIT_REDSTONE_ORE));
-            ignoreBlocks.put(Blocks.LIT_REDSTONE_ORE, Arrays.asList(Blocks.REDSTONE_ORE, Blocks.LIT_REDSTONE_ORE));
-        }
-
-        private final EntityPlayer player;
-        public final World world;
-        public final ItemStack stack;
-        public final Coord4D location;
-        public final Set<Coord4D> found = new ObjectOpenHashSet<>();
-        private final RayTraceResult rayTraceResult;
-        private final Block startBlock;
-        private final boolean isWood;
-        private final int maxRange;
-        private final int maxCount;
-
-        public Finder(EntityPlayer p, ItemStack s, Coord4D loc, RayTraceResult traceResult, int range) {
-            player = p;
-            world = p.world;
-            stack = s;
-            location = loc;
-            startBlock = loc.getBlock(world);
-            rayTraceResult = traceResult;
-            isWood = OreDictCache.getOreDictName(stack).contains("logWood");
-            maxRange = range;
-            maxCount = MekanismConfig.current().general.disassemblerMiningCount.val() - 1;
-        }
-
-        public void loop(Coord4D pointer) {
-            if (found.contains(pointer) || found.size() > maxCount) {
-                return;
-            }
-            found.add(pointer);
-            for (EnumFacing side : EnumFacing.VALUES) {
-                Coord4D coord = pointer.offset(side);
-                if (maxRange > 0 && location.distanceTo(coord) > maxRange) {
-                    continue;
-                }
-                if (coord.exists(world)) {
-                    Block block = coord.getBlock(world);
-                    if (checkID(block)) {
-                        ItemStack blockStack = block.getPickBlock(coord.getBlockState(world), rayTraceResult, world, coord.getPos(), player);
-                        if (ItemHandlerHelper.canItemStacksStack(stack, blockStack) || (block == startBlock && isWood && coord.getBlockMeta(world) % 4 == stack.getItemDamage() % 4)) {
-                            loop(coord);
-                        }
-                    }
-                }
-            }
-        }
-
-        public Set<Coord4D> calc() {
-            loop(location);
-            return found;
-        }
-
-        public boolean checkID(Block b) {
-            Block origBlock = location.getBlock(world);
-            List<Block> ignored = ignoreBlocks.get(origBlock);
-            return ignored == null ? b == origBlock : ignored.contains(b);
-        }
-    }
-
-    @FunctionalInterface
-    interface ItemUseConsumer {
-        //Used to reference useHoe and useShovel via lambda references
-        EnumActionResult use(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing facing);
-    }
 }

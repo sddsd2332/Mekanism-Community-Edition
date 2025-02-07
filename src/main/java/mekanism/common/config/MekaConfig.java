@@ -69,7 +69,7 @@ public class MekaConfig extends BaseConfig {
     public DoubleOption mekaSuitModuleRadiationresistance = new DoubleOption(this, "meka", "mekaSuitModuleRadiationresistance", 20D, "Resistance of a radiation shielding unit");
     //  public DoubleOption mekaToolEnergyUsageShearBlock = new DoubleOption(this,"meka","mekaToolEnergyUsageShearBlock",10,"Cost in Joules of using the Meka-Tool to shear blocks (beehives, pumpkins).");
     public DoubleOption mekaToolEnergyUsageShearEntity = new DoubleOption(this, "meka", "mekaToolEnergyUsageShearEntity", 10, "Cost in Joules of using the Meka-Tool to shear entities.");
-    //public BooleanOption mekaToolExtendedMining = new BooleanOption(this,"meka","mekaToolExtendedMining",true,"Enable the 'Extended Vein Mining' mode for the Meka-Tool. (Allows vein mining everything not just ores/logs)");
+    public BooleanOption mekaToolExtendedMining = new BooleanOption(this,"meka","mekaToolExtendedMining",true,"Enable the 'Extended Vein Mining' mode for the Meka-Tool. (Allows vein mining everything not just ores/logs)");
     public DoubleOption mekaToolEnergyUsageHoe = new DoubleOption(this,"meka","mekaToolEnergyUsageHoe",10,"Cost in Joules of using the Meka-Tool as a hoe.");
     public DoubleOption mekaToolEnergyUsageShovel = new DoubleOption(this,"meka","mekaToolEnergyUsageShovel",10,"Cost in Joules of using the Meka-Tool as a shovel for making paths.");
     public FloatOption mekaToolBaseEfficiency = new FloatOption(this,"meka","mekaToolBaseEfficiency",4F,"Efficiency of the Meka-Tool with energy but without any upgrades.");

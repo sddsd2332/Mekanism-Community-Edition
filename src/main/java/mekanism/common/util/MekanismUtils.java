@@ -7,11 +7,10 @@ import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import mekanism.api.Chunk3D;
 import mekanism.api.Coord4D;
-import mekanism.api.EnumColor;
 import mekanism.api.IMekWrench;
+import mekanism.api.energy.IEnergizedItem;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
-import mekanism.api.text.TextComponentGroup;
 import mekanism.api.transmitters.TransmissionType;
 import mekanism.common.*;
 import mekanism.common.base.*;
@@ -38,6 +37,7 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.BlockTripWire;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.FontRenderer;
@@ -54,18 +54,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketEntityEffect;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.stats.StatBase;
+import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.*;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.ChunkCache;
-import net.minecraft.world.EnumSkyBlock;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
+import net.minecraft.world.*;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.UsernameCache;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -74,9 +73,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
+import java.util.function.*;
 
 /**
  * Utilities used by Mekanism. All miscellaneous methods are located here.
@@ -639,7 +636,7 @@ public final class MekanismUtils {
     }
 
     public static ResourceLocation getResource(ResourceType type, String name) {
-        return getResource(Mekanism.MODID, type,name);
+        return getResource(Mekanism.MODID, type, name);
     }
 
     /**
@@ -649,7 +646,7 @@ public final class MekanismUtils {
      * @param name - simple name of file to retrieve as a ResourceLocation
      * @return the corresponding ResourceLocation
      */
-    public static ResourceLocation getResource(String modid,ResourceType type, String name) {
+    public static ResourceLocation getResource(String modid, ResourceType type, String name) {
         return new ResourceLocation(modid, type.getPrefix() + name);
     }
 
@@ -1147,7 +1144,6 @@ public final class MekanismUtils {
         GUI_SLOT("gui/slot"),
         BUTTON("gui/button"),
         BUTTON_TAB("gui/button_tab"),
-        GUI_RADIAL("gui/radial"),
         GAUGE("gui/gauge"),
         GUI_HUD("gui/hud"),
         PROGRESS("gui/progress"),
@@ -1313,6 +1309,58 @@ public final class MekanismUtils {
             return EnumActionResult.FAIL;
         }
         return EnumActionResult.PASS;
+    }
+
+
+    public static void veinMineArea(IEnergizedItem energyContainer, World world, BlockPos pos, EntityPlayerMP player, ItemStack stack, Item usedTool,
+                                    Collection<BlockPos> found, boolean shears, Function<Float, Double> destroyEnergyFunction, DoubleUnaryOperator distanceMultiplier,
+                                    IBlockState sourceState) {
+        double energyUsed = 0;
+        double energyAvailable = energyContainer.getEnergy(stack);
+        energyAvailable = energyAvailable - (destroyEnergyFunction.apply(sourceState.getBlockHardness(world, pos)));
+        for (BlockPos foundPos : found) {
+            if (pos.equals(foundPos)) {
+                continue;
+            }
+            IBlockState targetState = world.getBlockState(foundPos);
+            double destroyEnergy = destroyEnergyFunction.apply(targetState.getBlockHardness(world, foundPos))
+                    * (distanceMultiplier.applyAsDouble(WorldUtils.distanceBetween(pos, foundPos)));
+            if (energyUsed + (destroyEnergy) > (energyAvailable)) {
+                //If we don't have energy to break the block continue
+                //Note: We do not break as given the energy scales with hardness, so it is possible we still have energy to break another block
+                // Given we validate the blocks are the same but their block states may be different thus making them have different
+                // block hardness values in a modded context
+                continue;
+            }
+            int exp = ForgeHooks.onBlockBreakEvent(world, player.interactionManager.getGameType(), player, foundPos);
+            if (exp == -1) {
+                //If we can't actually break the block continue (this allows mods to stop us from vein mining into protected land)
+                continue;
+            }
+            //If we have the shears module installed, and it is a tripwire, disarm it first
+            if (shears && targetState.getBlock() ==Blocks.TRIPWIRE && !targetState.getValue(BlockTripWire.DISARMED)) {
+                targetState = targetState.withProperty(BlockTripWire.DISARMED, true);
+                world.setBlockState(foundPos, targetState, Constants.BlockFlags.NO_RERENDER);
+            }
+            //Otherwise, break the block
+            Block block = targetState.getBlock();
+            //Get the tile now so that we have it for when we try to harvest the block
+            TileEntity tileEntity = WorldUtils.getTileEntity(world, foundPos);
+            //Remove the block
+            if (targetState.getBlock().removedByPlayer(targetState,world, foundPos, player, true)) {
+                block.onPlayerDestroy(world, foundPos, targetState);
+                //Harvest the block allowing it to handle block drops, incrementing block mined count, and adding exhaustion
+                block.harvestBlock(world, player, foundPos, targetState, tileEntity, stack);
+                player.addStat(StatList.getObjectUseStats(usedTool));
+                if (exp > 0) {
+                    //If we have xp drop it
+                    block.dropXpOnBlockBreak(world, foundPos, exp);
+                }
+                //Mark that we used that portion of the energy
+                energyUsed = energyUsed + (destroyEnergy);
+            }
+        }
+        energyContainer.extract(stack,energyUsed, true);
     }
 
 }
