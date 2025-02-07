@@ -25,7 +25,6 @@ import mekanism.common.content.gear.mekatool.ModuleTeleportationUnit;
 import mekanism.common.content.gear.mekatool.ModuleVeinMiningUnit;
 import mekanism.common.content.gear.shared.ModuleEnergyUnit;
 import mekanism.common.entity.EntityMeka;
-import mekanism.common.item.interfaces.IModeItem;
 import mekanism.common.lib.radial.IGenericRadialModeItem;
 import mekanism.common.lib.radial.data.NestingRadialData;
 import mekanism.common.util.LangUtils;
@@ -213,7 +212,7 @@ public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem,
         int damageDifference = maxDamage - minDamage;
         //If we don't have enough power use it at a reduced power level
         double percent = 1;
-        if (energy > (energyCost)) {
+        if (energy < energyCost) {
             if (energyCost == 0) {
                 energyCost = 1;
             }
