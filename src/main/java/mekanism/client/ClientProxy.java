@@ -301,6 +301,8 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.MODULE_LASER_DISSIPATION);
         registerItemRender(MekanismItems.MODULE_RADIATION_SHIELDING);
         registerItemRender(MekanismItems.MODULE_ENERGY_SHIELD);
+        registerItemRender(MekanismItems.MODULE_SEAL);
+
         registerItemRender(MekanismItems.MODULE_EXCAVATION_ESCALATION);
         registerItemRender(MekanismItems.MODULE_ATTACK_AMPLIFICATION);
         registerItemRender(MekanismItems.MODULE_FARMING);

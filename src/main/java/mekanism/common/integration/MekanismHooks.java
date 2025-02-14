@@ -74,6 +74,8 @@ public final class MekanismHooks {
     public static final String MIXINBOOTER_MOD_ID = "mixinbooter";
     public static final String MekanismMixinHelp_MOD_ID = "mekmixinhelp";
     public static final String JEI_MOD_ID = "jei";
+    public static final String GC_MOD_ID = "galacticraftcore";
+    public static final String AR_MOD_ID = "advancedrocketry";
 
     public boolean AE2Loaded = false;
     public boolean BuildCraftLoaded = false;
@@ -92,13 +94,15 @@ public final class MekanismHooks {
     public boolean GTCEULoaded = false;
     public boolean LumenizedLoaded = false;
     public boolean Bloom = false;
-    public boolean NuclearCraft =false;
+    public boolean NuclearCraft = false;
     public boolean Baubles = false;
-    public boolean DraconicEvolution= false;
-    public boolean DraconicAdditions= false;
-    public boolean MixinBooter =false;
+    public boolean DraconicEvolution = false;
+    public boolean DraconicAdditions = false;
+    public boolean MixinBooter = false;
     public boolean MekanismMixinHelp = false;
     public boolean JEI = false;
+    public boolean GC = false;
+    public boolean AR = false;
 
     public void hookPreInit() {
         AE2Loaded = Loader.isModLoaded(APPLIED_ENERGISTICS_2_MOD_ID);
@@ -129,6 +133,8 @@ public final class MekanismHooks {
         MixinBooter = Loader.isModLoaded(MIXINBOOTER_MOD_ID);
         MekanismMixinHelp = Loader.isModLoaded(MekanismMixinHelp_MOD_ID);
         JEI = Loader.isModLoaded(JEI_MOD_ID);
+        GC = Loader.isModLoaded(GC_MOD_ID);
+        AR = Loader.isModLoaded(AR_MOD_ID);
     }
 
     public enum Mods {

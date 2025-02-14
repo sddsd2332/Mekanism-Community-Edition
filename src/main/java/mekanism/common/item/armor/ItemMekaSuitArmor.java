@@ -96,6 +96,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         super(EnumHelper.addArmorMaterial("MEKASUIT", "mekasuit", 0, new int[]{0, 0, 0, 0}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 0), 3, slot);
         setNoRepair();
         setMaxStackSize(1);
+        setCreativeTab(Mekanism.tabMekanism);
         if (slot == EntityEquipmentSlot.HEAD) {
             absorption = 0.15F;
             laserDissipation = 0.15;
@@ -632,5 +633,6 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     public boolean isMagnetic(ItemStack stack) {
         return isModuleEnabled(stack, MekanismModules.MAGNETIC_UNIT);
     }
+
 
 }

@@ -563,6 +563,9 @@ public class Mekanism {
             if (Mekanism.hooks.DraconicEvolution) {
                 ModuleHelper.get().setSupported(stack, MekanismModules.ENERGY_SHIELD_UNIT);
             }
+            if (Mekanism.hooks.GC || Mekanism.hooks.AR){
+                ModuleHelper.get().setSupported(stack, MekanismModules.SEAL_UNIT);
+            }
         }
 
 

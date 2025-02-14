@@ -36,6 +36,8 @@ public class ModuleData<MODULE extends ICustomModule<MODULE>> implements IHasTra
     private String translationKey;
     @Nullable
     private String descriptionTranslationKey;
+    private final boolean canEnable;
+    private final String notEnabled;
 
     /**
      * Creates a new module data from the given builder.
@@ -52,6 +54,8 @@ public class ModuleData<MODULE extends ICustomModule<MODULE>> implements IHasTra
         this.rendersHUD = builder.rendersHUD;
         this.noDisable = builder.noDisable;
         this.disabledByDefault = builder.disabledByDefault;
+        this.canEnable = builder.enable;
+        this.notEnabled = builder.notEnabled;
     }
 
     @Nonnull
@@ -160,6 +164,15 @@ public class ModuleData<MODULE extends ICustomModule<MODULE>> implements IHasTra
         return disabledByDefault;
     }
 
+
+    public final String getNotEnabled() {
+        return notEnabled;
+    }
+
+    public final boolean getCanEnable() {
+        return canEnable;
+    }
+
     @Override
     public String getTranslationKey() {
         if (translationKey == null) {
@@ -221,6 +234,8 @@ public class ModuleData<MODULE extends ICustomModule<MODULE>> implements IHasTra
         private boolean rendersHUD;
         private boolean noDisable;
         private boolean disabledByDefault;
+        private boolean enable = true;
+        private String notEnabled = "";
 
         public ModuleDataBuilder(@Nonnull NonNullSupplier<MODULE> supplier) {
             this.supplier = Objects.requireNonNull(supplier, "Supplier cannot be null.");
@@ -341,6 +356,17 @@ public class ModuleData<MODULE extends ICustomModule<MODULE>> implements IHasTra
                 throw new IllegalStateException("Cannot have a module type that is unable to be disabled and also disabled by default.");
             }
             disabledByDefault = true;
+            return this;
+        }
+
+
+        public ModuleDataBuilder<MODULE> canEnable(boolean enable) {
+            this.enable = enable;
+            return this;
+        }
+
+        public ModuleDataBuilder<MODULE> notEnabled(String name) {
+            this.notEnabled = name;
             return this;
         }
 

@@ -34,6 +34,7 @@ public class ItemModule extends Item implements IModuleItem {
         this.moduleData = moduleData;
     }
 
+
     @Override
     public int getItemStackLimit(ItemStack stack) {
         return getModuleData().getMaxStackSize();
@@ -67,11 +68,8 @@ public class ItemModule extends Item implements IModuleItem {
             }
         } else {
             ModuleData<?> moduleData = getModuleData();
-            if (!Mekanism.hooks.MekanismMixinHelp && (moduleData == MekanismModules.ELYTRA_UNIT || moduleData == MekanismModules.MAGNETIC_UNIT)){
-                tooltip.add(EnumColor.DARK_RED + LangUtils.localize("need.installation.mod") + ".");
-            }
-            if (!Mekanism.hooks.DraconicEvolution && moduleData == MekanismModules.ENERGY_SHIELD_UNIT){
-                tooltip.add(EnumColor.DARK_RED + LangUtils.localize("tooltip.install.DR"));
+            if (getModuleData().getCanEnable() && !getModuleData().getNotEnabled().isEmpty()){
+                tooltip.add(EnumColor.DARK_RED + LangUtils.localize(getModuleData().getNotEnabled()));
             }
             tooltip.add(LangUtils.localize(moduleData.getDescriptionTranslationKey()));
             tooltip.add(MekanismLang.MODULE_STACKABLE.translateColored(EnumColor.GREY).getFormattedText() + " " + EnumColor.AQUA + moduleData.getMaxStackSize());

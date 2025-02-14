@@ -89,10 +89,6 @@ public class MekanismItems {
     public static final Item EmptyCrystals = new ItemMekanism();
     public static final Item FluoriteClump = new ItemMekanism();
     public static final ItemFreeRunners ArmoredFreeRunners = new ItemFreeRunners();
-    //  public static final Item MekAsuitHelmet = new ItemOldMekAsuitHeadArmour();
-    //public static final Item MekAsuitChestplate = new ItemOldMekAsuitBodyArmour();
-    //   public static final Item MekAsuitLeggings = new ItemOldMekAsuitLegsArmour();
-    //   public static final Item MekAsuitBoots = new ItemOldMekAsuitFeetArmour();
 
     public static final Item ModuleBase = new ItemMekanism();
     public static final Item MEKASUIT_HELMET = new ItemMekaSuitHelmet();
@@ -106,6 +102,7 @@ public class MekanismItems {
     public static final ItemModule MODULE_LASER_DISSIPATION = new ItemModule(MekanismModules.LASER_DISSIPATION_UNIT);
     public static final ItemModule MODULE_RADIATION_SHIELDING = new ItemModule(MekanismModules.RADIATION_SHIELDING_UNIT);
     public static final ItemModule MODULE_ENERGY_SHIELD = new ItemModule(MekanismModules.ENERGY_SHIELD_UNIT);
+    public static final ItemModule MODULE_SEAL = new ItemModule(MekanismModules.SEAL_UNIT);
 
     public static final ItemModule MODULE_EXCAVATION_ESCALATION = new ItemModule(MekanismModules.EXCAVATION_ESCALATION_UNIT);
     public static final ItemModule MODULE_ATTACK_AMPLIFICATION = new ItemModule(MekanismModules.ATTACK_AMPLIFICATION_UNIT);
@@ -248,6 +245,7 @@ public class MekanismItems {
         registry.register(initModule(MODULE_LASER_DISSIPATION));
         registry.register(initModule(MODULE_RADIATION_SHIELDING));
         registry.register(initModule(MODULE_ENERGY_SHIELD));
+        registry.register(initModule(MODULE_SEAL));
 
         registry.register(initModule(MODULE_EXCAVATION_ESCALATION));
         registry.register(initModule(MODULE_ATTACK_AMPLIFICATION));

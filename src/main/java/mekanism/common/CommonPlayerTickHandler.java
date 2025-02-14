@@ -12,6 +12,7 @@ import mekanism.common.content.gear.mekasuit.ModuleGravitationalModulatingUnit;
 import mekanism.common.content.gear.mekasuit.ModuleHydraulicPropulsionUnit;
 import mekanism.common.content.gear.mekasuit.ModuleLocomotiveBoostingUnit;
 import mekanism.common.entity.EntityFlame;
+import mekanism.common.integration.MekanismHooks;
 import mekanism.common.item.ItemFlamethrower;
 import mekanism.common.item.ItemFreeRunners;
 import mekanism.common.item.ItemGasMask;
@@ -20,8 +21,10 @@ import mekanism.common.item.armor.ItemMekaSuitArmor;
 import mekanism.common.item.interfaces.IJetpackItem;
 import mekanism.common.item.interfaces.IJetpackItem.JetpackMode;
 import mekanism.common.util.MekanismUtils;
+import micdoodle8.mods.galacticraft.api.event.oxygen.GCCoreOxygenSuffocationEvent;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -40,10 +43,12 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import org.jetbrains.annotations.Nullable;
+import zmaster587.advancedRocketry.api.event.AtmosphereEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -421,7 +426,46 @@ public class CommonPlayerTickHandler {
         }
     }
 
+    @SubscribeEvent
+    @Optional.Method(modid = MekanismHooks.GC_MOD_ID)
+    public void canGCBreathe(GCCoreOxygenSuffocationEvent.Pre event){
+        EntityLivingBase base = event.getEntityLiving();
+        boolean SealHelmet = sealHelmetArmor(base.getItemStackFromSlot(EntityEquipmentSlot.HEAD));
+        boolean SealChest = sealArmor(base.getItemStackFromSlot(EntityEquipmentSlot.CHEST));
+        boolean SealLegs = sealArmor(base.getItemStackFromSlot(EntityEquipmentSlot.LEGS));
+        boolean seaFeet = sealArmor(base.getItemStackFromSlot(EntityEquipmentSlot.FEET));
+        if (SealHelmet && SealChest && SealLegs && seaFeet){
+            event.setCanceled(true);
+        }
+    }
 
+    private boolean sealHelmetArmor(ItemStack stack){
+        if (stack.getItem() instanceof IModuleContainerItem item){
+            return sealArmor(stack) && item.isModuleEnabled(stack,MekanismModules.INHALATION_PURIFICATION_UNIT);
+        }
+        return false;
+    }
 
+    private boolean sealArmor(ItemStack stack){
+        if (stack.getItem() instanceof IModuleContainerItem item){
+            return item.isModuleEnabled(stack, MekanismModules.SEAL_UNIT);
+        }
+        return false;
+    }
+
+    @SubscribeEvent
+    @Optional.Method(modid = MekanismHooks.AR_MOD_ID)
+    public void canARBreathe(AtmosphereEvent.AtmosphereTickEvent event){
+        Entity entity = event.getEntity();
+        if (entity instanceof  EntityLivingBase base){
+            boolean SealHelmet = sealHelmetArmor(base.getItemStackFromSlot(EntityEquipmentSlot.HEAD));
+            boolean SealChest = sealArmor(base.getItemStackFromSlot(EntityEquipmentSlot.CHEST));
+            boolean SealLegs = sealArmor(base.getItemStackFromSlot(EntityEquipmentSlot.LEGS));
+            boolean seaFeet = sealArmor(base.getItemStackFromSlot(EntityEquipmentSlot.FEET));
+            if (SealHelmet && SealChest && SealLegs && seaFeet){
+                event.setCanceled(true);
+            }
+        }
+    }
 
 }

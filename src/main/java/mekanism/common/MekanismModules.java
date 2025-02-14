@@ -6,20 +6,22 @@ import mekanism.common.content.gear.mekasuit.*;
 import mekanism.common.content.gear.mekatool.*;
 import mekanism.common.content.gear.shared.ModuleEnergyUnit;
 import mekanism.common.content.gear.shared.ModuleRadiationShieldingUnit;
+import mekanism.common.integration.MekanismHooks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.EnumRarity;
+import net.minecraftforge.fml.common.Loader;
 
 public class MekanismModules {
 
     //Shared
     public static final ModuleData<ModuleEnergyUnit> ENERGY_UNIT = ModuleHelper.register("energy_unit", ModuleEnergyUnit::new, builder -> builder.maxStackSize(8).rarity(EnumRarity.UNCOMMON).noDisable());
-    public  static final ModuleData<?> MAGNETIC_UNIT = ModuleHelper.registerMarker("magnetic_unit",builder -> builder.rarity(EnumRarity.UNCOMMON));
+    public static final ModuleData<?> MAGNETIC_UNIT = ModuleHelper.registerMarker("magnetic_unit", builder -> builder.rarity(EnumRarity.UNCOMMON).canEnable(!Loader.isModLoaded(MekanismHooks.MekanismMixinHelp_MOD_ID)).notEnabled("need.installation.mod"));
     //Shared Armor
     // public static final ModuleData<ModuleColorModulationUnit> COLOR_MODULATION_UNIT = ModuleHelper.register("color_modulation_unit", ModuleColorModulationUnit::new, builder -> builder.rarity(EnumRarity.UNCOMMON).noDisable());
     public static final ModuleData<?> LASER_DISSIPATION_UNIT = ModuleHelper.registerMarker("laser_dissipation_unit", builder -> builder.rarity(EnumRarity.UNCOMMON));
     public static final ModuleData<ModuleRadiationShieldingUnit> RADIATION_SHIELDING_UNIT = ModuleHelper.register("radiation_shielding_unit", ModuleRadiationShieldingUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.UNCOMMON));
-    public static final ModuleData<?> ENERGY_SHIELD_UNIT = ModuleHelper.registerMarker("energy_shield_unit", builder -> builder.maxStackSize(10).rarity(EnumRarity.RARE));
-
+    public static final ModuleData<?> ENERGY_SHIELD_UNIT = ModuleHelper.registerMarker("energy_shield_unit", builder -> builder.maxStackSize(10).rarity(EnumRarity.RARE).canEnable(!Loader.isModLoaded(MekanismHooks.DraconicEvolution_MOD_ID)).notEnabled("tooltip.install.DR"));
+    public static final ModuleData<?> SEAL_UNIT = ModuleHelper.registerMarker("seal_unit", builder -> builder.maxStackSize(1).canEnable(!Loader.isModLoaded(MekanismHooks.GC_MOD_ID) && !Loader.isModLoaded(MekanismHooks.AR_MOD_ID)).notEnabled("tooltip.install.space"));
     //Meka-Tool
     public static final ModuleData<ModuleExcavationEscalationUnit> EXCAVATION_ESCALATION_UNIT = ModuleHelper.register("excavation_escalation_unit", ModuleExcavationEscalationUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.UNCOMMON).handlesModeChange().rendersHUD());
     public static final ModuleData<ModuleAttackAmplificationUnit> ATTACK_AMPLIFICATION_UNIT = ModuleHelper.register("attack_amplification_unit", ModuleAttackAmplificationUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.UNCOMMON).rendersHUD());
@@ -46,7 +48,7 @@ public class MekanismModules {
     public static final ModuleData<ModuleJetpackUnit> JETPACK_UNIT = ModuleHelper.register("jetpack_unit", ModuleJetpackUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.RARE).handlesModeChange().rendersHUD().exclusive(ModuleData.ExclusiveFlag.OVERRIDE_JUMP));
     public static final ModuleData<ModuleChargeDistributionUnit> CHARGE_DISTRIBUTION_UNIT = ModuleHelper.register("charge_distribution_unit", ModuleChargeDistributionUnit::new, builder -> builder.rarity(EnumRarity.RARE));
     public static final ModuleData<ModuleGravitationalModulatingUnit> GRAVITATIONAL_MODULATING_UNIT = ModuleHelper.register("gravitational_modulating_unit", ModuleGravitationalModulatingUnit::new, builder -> builder.rarity(EnumRarity.EPIC).handlesModeChange().rendersHUD().exclusive(ModuleData.ExclusiveFlag.OVERRIDE_JUMP));
-    public static final ModuleData<ModuleElytraUnit> ELYTRA_UNIT = ModuleHelper.register("elytra_unit", ModuleElytraUnit::new, builder -> builder.rarity(EnumRarity.EPIC).handlesModeChange().modeChangeDisabledByDefault());
+    public static final ModuleData<ModuleElytraUnit> ELYTRA_UNIT = ModuleHelper.register("elytra_unit", ModuleElytraUnit::new, builder -> builder.rarity(EnumRarity.EPIC).handlesModeChange().modeChangeDisabledByDefault().canEnable(!Loader.isModLoaded(MekanismHooks.MekanismMixinHelp_MOD_ID)).notEnabled("need.installation.mod"));
     public static final ModuleData<ModuleHealthRegenerationUnit> HEALTH_REGENERATION_UNIT = ModuleHelper.register("health_regeneration_unit", ModuleHealthRegenerationUnit::new, builder -> builder.maxStackSize(10).rarity(EnumRarity.RARE));
 
     //Pants
