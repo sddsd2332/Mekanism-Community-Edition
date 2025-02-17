@@ -268,7 +268,7 @@ public class ItemBlockGasTank extends ItemBlock implements IGasItem, ISustainedI
         if (itemstack.getCount() > 1) {
             return false;
         }
-        if (getBaseTier(itemstack) != BaseTier.CREATIVE && type.isRadiation()) {
+        if (getBaseTier(itemstack) != BaseTier.CREATIVE && type != null && type.isRadiation()) {
             return false;
         } else {
             return getGas(itemstack) == null || getGas(itemstack).getGas() == type;

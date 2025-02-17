@@ -187,7 +187,7 @@ public class ItemBlockMultiblockGasTank extends ItemBlock implements IGasItem, I
         if (itemstack.getCount() > 1) {
             return false;
         }
-        if (type.isRadiation()) {
+        if (type != null && type.isRadiation()) {
             return false;
         } else {
             return getGas(itemstack) == null || getGas(itemstack).getGas() == type;
