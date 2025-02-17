@@ -24,6 +24,7 @@ public class ModuleGeigerUnit implements ICustomModule<ModuleGeigerUnit> {
 
     private static final ResourceLocation icon = MekanismUtils.getResource(MekanismUtils.ResourceType.GUI_HUD, "geiger_counter.png");
 
+    //TODO
     @Override
     public void addHUDElements(IModule<ModuleGeigerUnit> module, EntityPlayer player, Consumer<IHUDElement> hudElementAdder) {
         if (module.isEnabled()) {

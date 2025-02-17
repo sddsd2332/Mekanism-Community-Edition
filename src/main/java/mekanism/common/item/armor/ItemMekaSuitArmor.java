@@ -1,7 +1,6 @@
 package mekanism.common.item.armor;
 
 import cofh.redstoneflux.api.IEnergyContainerItem;
-import com.brandon3055.draconicevolution.items.armor.ICustomArmor;
 import ic2.api.item.IElectricItemManager;
 import ic2.api.item.IHazmatLike;
 import ic2.api.item.ISpecialElectricItem;
@@ -34,7 +33,6 @@ import mekanism.common.integration.redstoneflux.RFIntegration;
 import mekanism.common.integration.tesla.TeslaItemWrapper;
 import mekanism.common.item.interfaces.IModeItem;
 import mekanism.common.util.ItemDataUtils;
-import mekanism.common.util.ItemNBTHelper;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.settings.GameSettings;
@@ -42,7 +40,6 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -71,10 +68,9 @@ import java.util.*;
         @Optional.Interface(iface = "ic2.api.item.ISpecialElectricItem", modid = MekanismHooks.IC2_MOD_ID),
         @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyContainerItem", modid = MekanismHooks.REDSTONEFLUX_MOD_ID),
         @Optional.Interface(iface = "ic2.api.item.IHazmatLike", modid = MekanismHooks.IC2_MOD_ID),
-        @Optional.Interface(iface = "com.brandon3055.draconicevolution.items.armor.ICustomArmor", modid = MekanismHooks.DraconicEvolution_MOD_ID)
 })
 public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedItem, ISpecialArmor, IModuleContainerItem, IModeItem,
-        ISpecialElectricItem, IEnergyContainerItem, IHazmatLike, ICustomArmor, Magnetic {
+        ISpecialElectricItem, IEnergyContainerItem, IHazmatLike, Magnetic {
 
     private static final Set<DamageSource> ALWAYS_SUPPORTED_SOURCES = new LinkedHashSet<>(Arrays.asList(
             DamageSource.ANVIL, DamageSource.CACTUS, DamageSource.CRAMMING, DamageSource.DRAGON_BREATH,
@@ -177,6 +173,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         return !stack.isEmpty() && super.hasEffect(stack) && IModuleContainerItem.hasOtherEnchants(stack);
     }
 
+
     @Override
     public void getSubItems(@Nonnull CreativeTabs tabs, @Nonnull NonNullList<ItemStack> items) {
         if (!isInCreativeTab(tabs)) {
@@ -198,9 +195,6 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
             } else if (FullStack.getItem() == MekanismItems.MEKASUIT_BODYARMOR) {
                 gasItem.setGas(FullStack, new GasStack(MekanismFluids.Hydrogen, gasItem.getMaxGas(FullStack)));
             }
-        }
-        if (Mekanism.hooks.DraconicEvolution) {
-            ItemNBTHelper.setFloat(FullStack, "ProtectionPoints", getProtectionPoints(FullStack));
         }
         items.add(FullStack);
     }
@@ -507,7 +501,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
 
     @Override
     public Entity createEntity(World world, Entity location, ItemStack itemstack) {
-        EntityItem item = new EntityMeka(world, location, itemstack);
+        EntityMeka item = new EntityMeka(world, location, itemstack);
         item.isImmuneToFire = true;
         if (isModuleEnabled(itemstack, MekanismModules.MAGNETIC_UNIT)) {
             item.setNoPickupDelay();
@@ -515,114 +509,6 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         return item;
     }
 
-    private float getProtectionShare() {
-        return switch (armorType) {
-            case HEAD, FEET -> 0.15F;
-            case CHEST -> 0.40F;
-            case LEGS -> 0.30F;
-            default -> 0;
-        };
-    }
-
-    @Override
-    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
-    public float getProtectionPoints(ItemStack stack) {
-        IModule<?> module = getModule(stack, MekanismModules.ENERGY_SHIELD_UNIT);
-        if (module != null) {
-            int upgradeLevel = module.getInstalledCount();
-            if (module.isEnabled()) {
-                if (MekanismConfig.current().meka.mekaSuitShield.val()) {
-                    return MekanismConfig.current().meka.mekaSuitShieldCapacity.val() * absorption * (int) Math.pow(2, upgradeLevel);
-                } else {
-                    return MekanismConfig.current().meka.mekaSuitShieldCapacity.val() * getProtectionShare() * upgradeLevel;
-                }
-            } else {
-                return ItemNBTHelper.getFloat(stack, "ProtectionPoints", 0);
-            }
-        } else {
-            return 0.0F;
-        }
-    }
-
-    @Override
-    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
-    public float getRecoveryRate(ItemStack stack) {
-        IModule<?> module = getModule(stack, MekanismModules.ENERGY_SHIELD_UNIT);
-        if (module != null && module.isEnabled()) {
-            int upgradeLevel = module.getInstalledCount();
-            if (MekanismConfig.current().meka.mekaSuitRecovery.val()) {
-                return MekanismConfig.current().meka.mekaSuitRecoveryRate.val() * (int) Math.pow(2, upgradeLevel);
-            } else {
-                return MekanismConfig.current().meka.mekaSuitRecoveryRate.val() * (1.0F + upgradeLevel);
-            }
-        } else {
-            return 0.0F;
-        }
-    }
-
-    @Override
-    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
-    public float getSpeedModifier(ItemStack stack, EntityPlayer player) {
-        return 0.0F;
-    }
-
-    @Override
-    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
-    public float getJumpModifier(ItemStack stack, EntityPlayer player) {
-        return 0.0F;
-    }
-
-    @Override
-    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
-    public boolean hasHillStep(ItemStack stack, EntityPlayer player) {
-        return false;
-    }
-
-    @Override
-    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
-    public float getFireResistance(ItemStack stack) {
-        return 0.0F;
-    }
-
-    @Override
-    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
-    public boolean[] hasFlight(ItemStack stack) {
-        return new boolean[]{false, false, false};
-    }
-
-    @Override
-    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
-    public float getFlightSpeedModifier(ItemStack stack, EntityPlayer player) {
-        return 0;
-    }
-
-    @Override
-    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
-    public float getFlightVModifier(ItemStack stack, EntityPlayer player) {
-        return 0;
-    }
-
-    @Override
-    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
-    public int getEnergyPerProtectionPoint() {
-        return MekanismConfig.current().meka.mekaSuitShieldRestoresEnergy.val();
-    }
-
-    @Override
-    @Optional.Method(modid = MekanismHooks.DraconicEvolution_MOD_ID)
-    public void modifyEnergy(ItemStack stack, int modify) {
-        IModule<?> module = getModule(stack, MekanismModules.ENERGY_SHIELD_UNIT);
-        if (module != null) {
-            double energy = getEnergy(stack);
-            energy += modify;
-            if (energy > getMaxEnergy(stack)) {
-                energy = getMaxEnergy(stack);
-            } else if (energy < 0) {
-                energy = 0;
-            }
-            setEnergy(stack, energy);
-        }
-    }
 
     @Override
     public String getItemStackDisplayName(@Nonnull ItemStack itemstack) {

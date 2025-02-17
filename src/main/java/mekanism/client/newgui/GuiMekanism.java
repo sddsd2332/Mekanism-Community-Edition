@@ -117,7 +117,7 @@ public abstract class GuiMekanism<CONTAINER extends Container> extends VirtualSl
     @Override
     public void updateScreen() {
         super.updateScreen();
-        children.stream().filter(child -> child instanceof GuiElement).map(child -> (GuiElement) child).forEach(GuiElement::tick);
+        buttons.stream().filter(child -> child instanceof GuiElement).map(child -> (GuiElement) child).forEach(GuiElement::tick);
         //  windows.forEach(GuiWindow::tick);
     }
 
@@ -187,13 +187,9 @@ public abstract class GuiMekanism<CONTAINER extends Container> extends VirtualSl
         focusListeners.removeIf(element -> !element.isOverlay);
         int prevLeft = guiLeft, prevTop = guiTop;
 
-        java.util.function.Consumer<Widget> remove = (b) -> {
-            buttons.remove(b);
-            children.remove(b);
-        };
+        java.util.function.Consumer<Widget> remove = buttons::remove;
         if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Pre(this, this.buttonList))) {
             this.buttons.clear();
-            this.children.clear();
         }
         super.setWorldAndResolution(minecraft, width, height);
         // windows.forEach(window -> window.resize(prevLeft, prevTop, leftPos, topPos));
@@ -211,9 +207,6 @@ public abstract class GuiMekanism<CONTAINER extends Container> extends VirtualSl
         });
     }
 
-    public List<? extends IGuiEventListener> children() {
-        return this.children;
-    }
 
 
     @Override
@@ -356,13 +349,13 @@ public abstract class GuiMekanism<CONTAINER extends Container> extends VirtualSl
 
     /*
      * @apiNote mouseXOld and mouseYOld are just guessed mappings I couldn't find any usage from a quick glance.
-
+     */
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-       return getFocused() != null && isDragging() && clickedMouseButton == 0 && getFocused().mouseDragged(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+        buttons.forEach(element -> element.mouseDragged(mouseX, mouseY,0,clickedMouseButton, timeSinceLastClick));
     }
-    */
+
 
     /*
     @Nullable

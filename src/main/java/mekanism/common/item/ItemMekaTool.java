@@ -41,7 +41,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -147,16 +146,19 @@ public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem,
 
     @Override
     public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer player, EntityLivingBase entity, EnumHand hand) {
-        for (Module<?> module : getModules(player.getHeldItem(hand))) {
+        for (Module<?> module : getModules(stack)) {
             if (module.isEnabled()) {
-                return onModuleInteract(module, player, entity, hand);
+                EnumActionResult result = onModuleInteract(module, player, entity, hand);
+                if (result != EnumActionResult.PASS && result != EnumActionResult.FAIL) {
+                    return true;
+                }
             }
         }
         return super.itemInteractionForEntity(stack, player, entity, hand);
     }
 
 
-    private <MODULE extends ICustomModule<MODULE>> boolean onModuleInteract(IModule<MODULE> module, @Nonnull EntityPlayer player, @Nonnull EntityLivingBase entity, @Nonnull EnumHand hand) {
+    private <MODULE extends ICustomModule<MODULE>> EnumActionResult onModuleInteract(IModule<MODULE> module, @Nonnull EntityPlayer player, @Nonnull EntityLivingBase entity, @Nonnull EnumHand hand) {
         return module.getCustomInstance().onInteract(module, player, entity, hand);
     }
 
@@ -256,7 +258,7 @@ public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem,
                     if (isOre || veinMiningUnit.getCustomInstance().isExtended()) {
                         double baseDestroyEnergy = getDestroyEnergy(silk);
                         Set<BlockPos> found = ModuleVeinMiningUnit.findPositions(state, pos, world, isOre ? -1 : veinMiningUnit.getCustomInstance().getExcavationRange());
-                        MekanismUtils.veinMineArea(energyContainer, world, pos, (EntityPlayerMP) player, itemstack, this, found, isModuleEnabled(stack, MekanismModules.SHEARING_UNIT), hardness -> getDestroyEnergy(baseDestroyEnergy, hardness), distance -> 0.5 * Math.pow(distance, isOre ? 1.5 : 2), state);
+                        MekanismUtils.veinMineArea(energyContainer, world, pos, (EntityPlayerMP) player, itemstack, this, found, isModuleEnabled(itemstack, MekanismModules.SHEARING_UNIT), hardness -> getDestroyEnergy(baseDestroyEnergy, hardness), distance -> 0.5 * Math.pow(distance, isOre ? 1.5 : 2), state);
                     }
                 }
             }
@@ -408,7 +410,7 @@ public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem,
 
     @Override
     public Entity createEntity(World world, Entity location, ItemStack itemstack) {
-        EntityItem item = new EntityMeka(world, location, itemstack);
+        EntityMeka item = new EntityMeka(world, location, itemstack);
 
         if (isModuleEnabled(itemstack, MekanismModules.MAGNETIC_UNIT)) {
             item.setNoPickupDelay();

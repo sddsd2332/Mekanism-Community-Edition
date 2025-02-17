@@ -101,8 +101,6 @@ public class MekanismItems {
     //public static final ItemModule MODULE_COLOR_MODULATION = new ItemModule(MekanismModules.COLOR_MODULATION_UNIT);
     public static final ItemModule MODULE_LASER_DISSIPATION = new ItemModule(MekanismModules.LASER_DISSIPATION_UNIT);
     public static final ItemModule MODULE_RADIATION_SHIELDING = new ItemModule(MekanismModules.RADIATION_SHIELDING_UNIT);
-    public static final ItemModule MODULE_ENERGY_SHIELD = new ItemModule(MekanismModules.ENERGY_SHIELD_UNIT);
-    public static final ItemModule MODULE_SEAL = new ItemModule(MekanismModules.SEAL_UNIT);
 
     public static final ItemModule MODULE_EXCAVATION_ESCALATION = new ItemModule(MekanismModules.EXCAVATION_ESCALATION_UNIT);
     public static final ItemModule MODULE_ATTACK_AMPLIFICATION = new ItemModule(MekanismModules.ATTACK_AMPLIFICATION_UNIT);
@@ -139,8 +137,6 @@ public class MekanismItems {
     public static final Item HDPE_REINFORCED_ELYTRA = new ItemHDPEElytra();
     public static final ItemMekaTool MEKA_TOOL = new ItemMekaTool();
 
-    public static final ItemModule MODULE_EMERGENCY_RESCUE = new ItemModule(MekanismModules.EMERGENCY_RESCUE_UNIT);
-    public static final ItemModule MODULE_ADVANCED_INTERCEPTION_SYSTEM = new ItemModule(MekanismModules.ADVANCED_INTERCEPTION_SYSTEM_UNIT);
     public static final ItemModule MODULE_HEALTH_REGENERATION = new ItemModule(MekanismModules.HEALTH_REGENERATION_UNIT);
 
     public static final Item HDPE_PELLET = new ItemMekanism().setRarity(EnumRarity.UNCOMMON);
@@ -240,12 +236,12 @@ public class MekanismItems {
         registry.register(init(MEKASUIT_BOOTS, "mekasuit_boots"));
 
         registry.register(initModule(MODULE_ENERGY));
-        registry.register(initModule(MODULE_MAGNETIC));
+        if (Mekanism.hooks.MekanismMixinHelp){
+            registry.register(initModule(MODULE_MAGNETIC));
+        }
         // registry.register(initModule(MODULE_COLOR_MODULATION));
         registry.register(initModule(MODULE_LASER_DISSIPATION));
         registry.register(initModule(MODULE_RADIATION_SHIELDING));
-        registry.register(initModule(MODULE_ENERGY_SHIELD));
-        registry.register(initModule(MODULE_SEAL));
 
         registry.register(initModule(MODULE_EXCAVATION_ESCALATION));
         registry.register(initModule(MODULE_ATTACK_AMPLIFICATION));
@@ -274,13 +270,11 @@ public class MekanismItems {
         registry.register(initModule(MODULE_HYDRAULIC_PROPULSION));
         registry.register(initModule(MODULE_MAGNETIC_ATTRACTION));
         registry.register(initModule(MODULE_FROST_WALKER));
-
-        registry.register(initModule(MODULE_ELYTRA));
-        registry.register(init(HDPE_REINFORCED_ELYTRA, "hdpe_elytra"));
-
+        if (Mekanism.hooks.MekanismMixinHelp) {
+            registry.register(initModule(MODULE_ELYTRA));
+            registry.register(init(HDPE_REINFORCED_ELYTRA, "hdpe_elytra"));
+        }
         registry.register(init(MEKA_TOOL, "meka_tool"));
-        registry.register(initModule(MODULE_EMERGENCY_RESCUE));
-        registry.register(initModule(MODULE_ADVANCED_INTERCEPTION_SYSTEM));
         registry.register(initModule(MODULE_HEALTH_REGENERATION));
         registry.register(init(HDPE_PELLET, "hdpe_pellet"));
         registry.register(init(HDPE_ROD, "hdpe_rod"));

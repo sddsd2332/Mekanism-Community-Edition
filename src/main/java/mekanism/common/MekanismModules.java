@@ -20,8 +20,7 @@ public class MekanismModules {
     // public static final ModuleData<ModuleColorModulationUnit> COLOR_MODULATION_UNIT = ModuleHelper.register("color_modulation_unit", ModuleColorModulationUnit::new, builder -> builder.rarity(EnumRarity.UNCOMMON).noDisable());
     public static final ModuleData<?> LASER_DISSIPATION_UNIT = ModuleHelper.registerMarker("laser_dissipation_unit", builder -> builder.rarity(EnumRarity.UNCOMMON));
     public static final ModuleData<ModuleRadiationShieldingUnit> RADIATION_SHIELDING_UNIT = ModuleHelper.register("radiation_shielding_unit", ModuleRadiationShieldingUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.UNCOMMON));
-    public static final ModuleData<?> ENERGY_SHIELD_UNIT = ModuleHelper.registerMarker("energy_shield_unit", builder -> builder.maxStackSize(10).rarity(EnumRarity.RARE).canEnable(!Loader.isModLoaded(MekanismHooks.DraconicEvolution_MOD_ID)).notEnabled("tooltip.install.DR"));
-    public static final ModuleData<?> SEAL_UNIT = ModuleHelper.registerMarker("seal_unit", builder -> builder.maxStackSize(1).canEnable(!Loader.isModLoaded(MekanismHooks.GC_MOD_ID) && !Loader.isModLoaded(MekanismHooks.AR_MOD_ID)).notEnabled("tooltip.install.space"));
+
     //Meka-Tool
     public static final ModuleData<ModuleExcavationEscalationUnit> EXCAVATION_ESCALATION_UNIT = ModuleHelper.register("excavation_escalation_unit", ModuleExcavationEscalationUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.UNCOMMON).handlesModeChange().rendersHUD());
     public static final ModuleData<ModuleAttackAmplificationUnit> ATTACK_AMPLIFICATION_UNIT = ModuleHelper.register("attack_amplification_unit", ModuleAttackAmplificationUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.UNCOMMON).rendersHUD());
@@ -39,8 +38,7 @@ public class MekanismModules {
     public static final ModuleData<ModuleVisionEnhancementUnit> VISION_ENHANCEMENT_UNIT = ModuleHelper.register("vision_enhancement_unit", ModuleVisionEnhancementUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.RARE).handlesModeChange().rendersHUD().disabledByDefault());
     public static final ModuleData<ModuleNutritionalInjectionUnit> NUTRITIONAL_INJECTION_UNIT = ModuleHelper.register("nutritional_injection_unit", ModuleNutritionalInjectionUnit::new, builder -> builder.rarity(EnumRarity.RARE).rendersHUD());
     public static final ModuleData<ModuleSolarRechargingUnit> SOLAR_RECHARGING_UNIT = ModuleHelper.register("solar_recharging_unit", ModuleSolarRechargingUnit::new, builder -> builder.maxStackSize(8).rarity(EnumRarity.RARE));
-    public static final ModuleData<?> EMERGENCY_RESCUE_UNIT = ModuleHelper.registerMarker("emergency_rescue_unit", builder -> builder.maxStackSize(10).rarity(EnumRarity.EPIC));
-    public static final ModuleData<?> ADVANCED_INTERCEPTION_SYSTEM_UNIT = ModuleHelper.registerMarker("advanced_interception_system_unit", builder -> builder.rarity(EnumRarity.EPIC));
+
 
     //Chestplate
     public static final ModuleData<ModuleDosimeterUnit> DOSIMETER_UNIT = ModuleHelper.register("dosimeter_unit", ModuleDosimeterUnit::new, builder -> builder.rarity(EnumRarity.UNCOMMON).rendersHUD());

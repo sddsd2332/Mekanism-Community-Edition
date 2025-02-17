@@ -45,16 +45,15 @@ public class ModuleShearingUnit implements ICustomModule<ModuleShearingUnit> {
 
      */
 
-    @Nonnull
     @Override
-    public boolean onInteract(IModule<ModuleShearingUnit> module, EntityPlayer player, EntityLivingBase entity, EnumHand hand) {
+    public EnumActionResult onInteract(IModule<ModuleShearingUnit> module, EntityPlayer player, EntityLivingBase entity, EnumHand hand) {
         if (entity instanceof IShearable) {
             IEnergizedItem energyContainer = module.getEnergyContainer();
-            if (energyContainer != null && energyContainer.getEnergy(module.getContainer()) > (MekanismConfig.current().meka.mekaToolEnergyUsageShearEntity.val()) && shearEntity(energyContainer, entity, module.getContainer(), entity.world, entity.getPosition())) {
-                return true;
+            if (energyContainer != null && energyContainer.getEnergy(module.getContainer()) >= (MekanismConfig.current().meka.mekaToolEnergyUsageShearEntity.val()) && shearEntity(energyContainer, entity, module.getContainer(), entity.world, entity.getPosition())){
+                return EnumActionResult.SUCCESS;
             }
         }
-        return false;
+        return EnumActionResult.PASS;
     }
 
     @Nonnull

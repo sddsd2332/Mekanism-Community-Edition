@@ -1,5 +1,6 @@
 package mekanism.client.jei;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import mekanism.api.gas.Gas;
@@ -27,6 +28,7 @@ import mezz.jei.api.ingredients.IIngredientBlacklist;
 import mezz.jei.api.ingredients.IModIngredientRegistration;
 import mezz.jei.api.recipe.IIngredientType;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
+import mezz.jei.api.recipe.IVanillaRecipeFactory;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -218,6 +220,7 @@ public class MekanismJEI implements IModPlugin {
         RecipeRegistryHelper.registerSPS(registry);
 
         if (Mekanism.hooks.MekanismMixinHelp) {
+            IVanillaRecipeFactory factory = registry.getJeiHelpers().getVanillaRecipeFactory();
             Map<ItemStack, List<ItemStack>> items = Maps.newHashMap();
             ItemStack hdpe = new ItemStack(MekanismItems.HDPE_SHEET);
             items.put(hdpe, Lists.newArrayList(new ItemStack(MekanismItems.HDPE_REINFORCED_ELYTRA)));
@@ -230,8 +233,8 @@ public class MekanismJEI implements IModPlugin {
                     damaged2.setItemDamage(damaged2.getMaxDamage() * 3 / 4);
                     ItemStack damaged3 = ingredient.copy();
                     damaged3.setItemDamage(247);
-                    registry.addAnvilRecipe(damaged1, Collections.singletonList(repairMaterial), Collections.singletonList(damaged2));
-                    registry.addAnvilRecipe(damaged2, Collections.singletonList(damaged2), Collections.singletonList(damaged3));
+                    registry.addRecipes(ImmutableList.of(factory.createAnvilRecipe(damaged1, Collections.singletonList(repairMaterial), Collections.singletonList(damaged2))), VanillaRecipeCategoryUid.ANVIL);
+                    registry.addRecipes(ImmutableList.of(factory.createAnvilRecipe(damaged2, Collections.singletonList(damaged2), Collections.singletonList(damaged3))), VanillaRecipeCategoryUid.ANVIL);
                 }
             }
         }

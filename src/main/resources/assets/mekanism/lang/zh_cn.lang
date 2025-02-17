@@ -1998,3 +1998,7 @@ tooltip.install.space=需要安装 Advanced Rocketry 或者GalactiCraft才能工
 item.module_seal_unit.name=密封单元
 module.mekanism.seal_unit=密封单元
 description.mekanism.seal_unit=将MekaSuit盔甲密封起来在太空中移动
+tooltip.install.gc=需要安装 GalactiCraft 才能工作
+item.module_thermal_protection_unit.name=热防护单元
+module.mekanism.thermal_protection_unit=热防护单元
+description.mekanism.thermal_protection_unit=让MekaSuit在太空中导致时不会过热

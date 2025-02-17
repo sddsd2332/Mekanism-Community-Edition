@@ -296,12 +296,13 @@ public class ClientProxy extends CommonProxy {
 
 
         registerItemRender(MekanismItems.MODULE_ENERGY);
-        registerItemRender(MekanismItems.MODULE_MAGNETIC);
+        if (Mekanism.hooks.MekanismMixinHelp) {
+            registerItemRender(MekanismItems.MODULE_MAGNETIC);
+        }
+
         // registerItemRender(MekanismItems.MODULE_COLOR_MODULATION);
         registerItemRender(MekanismItems.MODULE_LASER_DISSIPATION);
         registerItemRender(MekanismItems.MODULE_RADIATION_SHIELDING);
-        registerItemRender(MekanismItems.MODULE_ENERGY_SHIELD);
-        registerItemRender(MekanismItems.MODULE_SEAL);
 
         registerItemRender(MekanismItems.MODULE_EXCAVATION_ESCALATION);
         registerItemRender(MekanismItems.MODULE_ATTACK_AMPLIFICATION);
@@ -330,10 +331,11 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.MODULE_HYDRAULIC_PROPULSION);
         registerItemRender(MekanismItems.MODULE_MAGNETIC_ATTRACTION);
         registerItemRender(MekanismItems.MODULE_FROST_WALKER);
-        registerItemRender(MekanismItems.MODULE_ELYTRA);
-        registerItemRender(MekanismItems.HDPE_REINFORCED_ELYTRA);
-        registerItemRender(MekanismItems.MODULE_EMERGENCY_RESCUE);
-        registerItemRender(MekanismItems.MODULE_ADVANCED_INTERCEPTION_SYSTEM);
+        if (Mekanism.hooks.MekanismMixinHelp) {
+            registerItemRender(MekanismItems.MODULE_ELYTRA);
+            registerItemRender(MekanismItems.HDPE_REINFORCED_ELYTRA);
+        }
+
         registerItemRender(MekanismItems.MODULE_HEALTH_REGENERATION);
         registerItemRender(MekanismItems.MEKA_TOOL);
         registerItemRender(MekanismItems.HDPE_PELLET);
@@ -1083,13 +1085,17 @@ public class ClientProxy extends CommonProxy {
     protected void postInit() {
         Minecraft.getMinecraft().getRenderManager().entityRenderMap.values().forEach(renderer -> {
             if (renderer instanceof RenderLivingBase<?> base) {
-                base.addLayer(new MekanismElytraLayer(base));
-                base.addLayer(new MekaSuitModuleElytra(base));
+                if (Mekanism.hooks.MekanismMixinHelp) {
+                    base.addLayer(new MekanismElytraLayer(base));
+                    base.addLayer(new MekaSuitModuleElytra(base));
+                }
             }
         });
         Minecraft.getMinecraft().getRenderManager().getSkinMap().values().forEach(renderer -> {
-                    renderer.addLayer(new MekanismElytraLayer(renderer));
-                    renderer.addLayer(new MekaSuitModuleElytra(renderer));
+                    if (Mekanism.hooks.MekanismMixinHelp) {
+                        renderer.addLayer(new MekanismElytraLayer(renderer));
+                        renderer.addLayer(new MekaSuitModuleElytra(renderer));
+                    }
                 }
         );
     }

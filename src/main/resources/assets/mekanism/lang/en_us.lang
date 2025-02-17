@@ -2021,3 +2021,7 @@ tooltip.install.space=need to install Advanced Rocketry or GalactiCraft to work
 item.module_seal_unit.name=Sealed unit
 module.mekanism.seal_unit=Sealed unit
 description.mekanism.seal_unit=Seal up the MekaSuit armor to move through space
+tooltip.install.gc=need to install GalactiCraft to work
+item.module_thermal_protection_unit.name=Thermal protection unit
+module.mekanism.thermal_protection_unit=Thermal protection unit
+description.mekanism.thermal_protection_unit=Allows the MekaSuit to be caused in space without overheating

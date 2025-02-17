@@ -212,8 +212,8 @@ public class Mekanism {
         MekanismBlocks.registerBlocks(event.getRegistry());
     }
 
-    @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> event) {
+        @SubscribeEvent
+        public static void registerItems(RegistryEvent.Register<Item> event) {
         // Register items and itemBlocks
         MekanismItems.registerItems(event.getRegistry());
         MekanismBlocks.registerItemBlocks(event.getRegistry());
@@ -560,18 +560,12 @@ public class Mekanism {
 
         for (Item stack : addMekaSuitModules) {
             ModuleHelper.get().setSupported(stack, /*MekanismModules.COLOR_MODULATION_UNIT,*/ MekanismModules.LASER_DISSIPATION_UNIT, MekanismModules.RADIATION_SHIELDING_UNIT);
-            if (Mekanism.hooks.DraconicEvolution) {
-                ModuleHelper.get().setSupported(stack, MekanismModules.ENERGY_SHIELD_UNIT);
-            }
-            if (Mekanism.hooks.GC || Mekanism.hooks.AR){
-                ModuleHelper.get().setSupported(stack, MekanismModules.SEAL_UNIT);
-            }
         }
 
 
         ModuleHelper.get().setSupported(MekanismItems.MEKA_TOOL, MekanismModules.ATTACK_AMPLIFICATION_UNIT, MekanismModules.SILK_TOUCH_UNIT, MekanismModules.FORTUNE_UNIT,/* MekanismModules.BLASTING_UNIT, */MekanismModules.VEIN_MINING_UNIT,MekanismModules.FARMING_UNIT, MekanismModules.SHEARING_UNIT, MekanismModules.TELEPORTATION_UNIT, MekanismModules.EXCAVATION_ESCALATION_UNIT);
 
-        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_HELMET, MekanismModules.ELECTROLYTIC_BREATHING_UNIT, MekanismModules.INHALATION_PURIFICATION_UNIT, MekanismModules.VISION_ENHANCEMENT_UNIT, MekanismModules.NUTRITIONAL_INJECTION_UNIT, MekanismModules.EMERGENCY_RESCUE_UNIT, MekanismModules.ADVANCED_INTERCEPTION_SYSTEM_UNIT);
+        ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_HELMET, MekanismModules.ELECTROLYTIC_BREATHING_UNIT, MekanismModules.INHALATION_PURIFICATION_UNIT, MekanismModules.VISION_ENHANCEMENT_UNIT, MekanismModules.NUTRITIONAL_INJECTION_UNIT);
 
         ModuleHelper.get().setSupported(MekanismItems.MEKASUIT_BODYARMOR, MekanismModules.JETPACK_UNIT, MekanismModules.GRAVITATIONAL_MODULATING_UNIT, MekanismModules.CHARGE_DISTRIBUTION_UNIT, MekanismModules.DOSIMETER_UNIT, MekanismModules.GEIGER_UNIT, MekanismModules.HEALTH_REGENERATION_UNIT);
 

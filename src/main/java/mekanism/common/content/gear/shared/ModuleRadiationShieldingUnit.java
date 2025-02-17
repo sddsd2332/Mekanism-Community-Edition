@@ -1,5 +1,6 @@
 package mekanism.common.content.gear.shared;
 
+import mekanism.api.annotations.ParametersAreNotNullByDefault;
 import mekanism.api.gear.ICustomModule;
 import mekanism.api.gear.IModule;
 import mekanism.api.gear.config.IModuleConfigItem;
@@ -18,6 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.Optional;
 
+@ParametersAreNotNullByDefault
 public class ModuleRadiationShieldingUnit implements ICustomModule<ModuleRadiationShieldingUnit> {
 
 
@@ -25,6 +27,7 @@ public class ModuleRadiationShieldingUnit implements ICustomModule<ModuleRadiati
     private IModuleConfigItem<Boolean> RadiationImmunity;
     private IModuleConfigItem<Boolean> RadiationRangeClearing;
 
+    //TODO
     @Override
     public void init(IModule<ModuleRadiationShieldingUnit> module, ModuleConfigItemCreator configItemCreator) {
         if (Mekanism.hooks.NuclearCraft) {

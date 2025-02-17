@@ -389,24 +389,6 @@ public class ClientTickHandler {
         }
     }
 
-
-    @SubscribeEvent
-    public void GuiScreenEvent(GuiOpenEvent event) {
-        if (event.getGui() instanceof GuiGameOver) {
-            if (minecraft.player instanceof EntityPlayerSP) {
-                ItemStack head = minecraft.player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-                if (!minecraft.player.isEntityAlive()){
-                    if (head.getItem() instanceof IModuleContainerItem item){
-                        if (item.isModuleEnabled(head,MekanismModules.EMERGENCY_RESCUE_UNIT) || item.isModuleEnabled(head,MekanismModules.ADVANCED_INTERCEPTION_SYSTEM_UNIT)){
-                            event.setCanceled(true);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
     @SubscribeEvent
     public void SneakingSpeedBonus(InputUpdateEvent event) {
         EntityPlayer player = event.getEntityPlayer();
