@@ -1743,15 +1743,7 @@ tooltip.radioactive_waste_barrel=一个可以用来“安全”储存放射性�
 tooltip.meka_head.Emergency_rescue=可紧急保护次数:
 item.module.health_regeneration.name=生命恢复单元
 module.Health_regeneration.desc=自动恢复血量
-item.module.emergency_rescue.name=紧急救援单元
-module.Emergency_rescue.desc=当接近死亡时，将自动触发消耗并恢复状态
-module.emergency_rescue.use=警告！使用者遭到强大的打击！已进行拦截！
-tooltip.install.DR=需要安装Draconic Evolution才能工作。
-item.module.energy_shield_unit.name=能量护盾单元
-module.Energy_shield_unit.desc=使用Draconic Evolution护盾来抵挡伤害
-item.module.advanced_interception_system_unit.name=先进能量护盾拦截救援系统单元
-module.Advanced_interception_system_unit.desc=不再受伤
-tooltip.install.DR2=需要安装Draconic Additions才能工作。
+
 item.module.magnetizer_unit.name=磁吸单元
 module.Magnetizer_unit.desc=吸附在身上
 
@@ -1849,13 +1841,11 @@ item.module_inhalation_purification_unit.name=吸入净化单元
 item.module_gyroscopic_stabilization_unit.name=陀螺稳定单元
 item.module_hydrostatic_repulsor_unit.name=静水推进单元
 item.module_hydraulic_propulsion_unit.name=液压推进单元
-item.module_energy_shield_unit.name=能量护盾单元
+
 item.module_motorized_servo_unit.name=马达伺服单元
 item.module_fortune_unit.name=矿物精炼单元
-item.module_geothermal_generator_unit.name=地热能生成单元
-item.module_health_regeneration_unit.name=生命恢复单元
-item.module_advanced_interception_system_unit.name=先进拦截救援系统单元
-item.module_emergency_rescue_unit.name=紧急救援单元
+
+
 
 module.mekanism.attack_amplification_unit=攻击增强单元
 module.mekanism.attack_damage=攻击伤害
@@ -1917,11 +1907,10 @@ module.mekanism.vision_enhancement_unit=视觉增强单元
 module.mekanism.color_modulation_unit=颜色调变单元
 module.mekanism.gyroscopic_stabilization_unit=陀螺稳定单元
 module.mekanism.hydrostatic_repulsor_unit=静水推进单元
-module.mekanism.energy_shield_unit=能量护盾单元
+
 module.mekanism.geothermal_generator_unit=地热能生成单元
 module.mekanism.health_regeneration_unit=生命恢复单元
-module.mekanism.advanced_interception_system_unit=先进拦截救援系统单元
-module.mekanism.emergency_rescue_unit=紧急救援单元
+
 
 description.mekanism.attack_amplification_unit=增强对玩家或生物的近战攻击。
 description.mekanism.charge_distribution_unit=在所有磨损的MekaSuit盔甲上均匀充能。
@@ -1951,13 +1940,13 @@ description.mekanism.vision_enhancement_unit=照亮周围环境，让玩家透�
 description.mekanism.color_modulation_unit=使用先进的全息投影器来调整MekaSuit的视觉颜色。
 description.mekanism.gyroscopic_stabilization_unit=允许使用者如履平地般作业。
 description.mekanism.hydrostatic_repulsor_unit=使用先进的技术推开水，来减少在水中移动感受到的阻力。
-description.mekanism.energy_shield_unit=使用能量护盾来抵挡伤害
+
 description.mekanism.fortune_unit=提高矿物产量。
 description.mekanism.motorized_servo_unit=使用马达伺服单元可在潜行移动时不那么费力。
 description.mekanism.geothermal_generator_unit=驾驭周围环境中的地热能，提升对热源伤害的防御能力。安装多个以加速充能以及获得更强保护。
 description.mekanism.health_regeneration_unit=当玩家血量不足时，自动恢复血量
-description.mekanism.advanced_interception_system_unit=紧急救援单元的升级版本，不会在消耗
-description.mekanism.emergency_rescue_unit=当玩家濒死时，会消耗一次单元进行回复血量
+
+
 disassembler.mekanism.efficiency=效率:
 generic.mekanism.stored=:
 gui.mekanism.true=是
@@ -1994,11 +1983,4 @@ radial.mekanism.vein=矿脉挖掘
 radial.mekanism.vein.extended=拓展矿脉
 radial.mekanism.vein.normal=矿脉
 gui.mekanism.back=返回
-tooltip.install.space=需要安装 Advanced Rocketry 或者GalactiCraft才能工作
-item.module_seal_unit.name=密封单元
-module.mekanism.seal_unit=密封单元
-description.mekanism.seal_unit=将MekaSuit盔甲密封起来在太空中移动
-tooltip.install.gc=需要安装 GalactiCraft 才能工作
-item.module_thermal_protection_unit.name=热防护单元
-module.mekanism.thermal_protection_unit=热防护单元
-description.mekanism.thermal_protection_unit=让MekaSuit在太空中导致时不会过热
+
