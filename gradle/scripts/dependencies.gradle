@@ -91,7 +91,7 @@ dependencies {
     //runtimeOnly 'curse.maven:torch-optimizer-289420:2876934'
     runtimeOnly 'curse.maven:had-enough-characters-640802:4035773'
     runtimeOnly 'curse.maven:better-advancements-272515:2685984'
-    runtimeOnly 'curse.maven:MmmMmmMmmMmm-225738:2503041'
+    runtimeOnly  rfg.deobf(files("libs/TestDummy2-2.0.2.jar"))
     implementation rfg.deobf('curse.maven:ae2-fluid-crafting-rework-623955:5405482')
     implementation rfg.deobf('curse.maven:mekanism-energistics-1027681:5402405')
     implementation rfg.deobf(files('libs/lumenized-1.0.3-dev.jar'))
@@ -110,9 +110,11 @@ dependencies {
     implementation  rfg.deobf("curse.maven:draconic-evolution-223565:3431261")
     implementation  rfg.deobf("curse.maven:draconic-additions-314515:3514704")
 
-    runtimeOnly 'curse.maven:packagedauto-308380:5598426'
-    runtimeOnly 'curse.maven:packageddraconic-833931:5598456'
-    implementation rfg.deobf(files('libs/MekanismMixinHelp-1.0.0-dev.jar'))
+    runtimeOnly 'curse.maven:packagedauto-308380:6028154'
+    runtimeOnly 'curse.maven:packageddraconic-833931:6034816'
+    implementation rfg.deobf(files("libs/MekanismMixinHelp-1.0.4-dev.jar"))
     implementation rfg.deobf(files("libs/nuclearcraft-1.12.2-2o.7.7-dev.jar"))
-
+    implementation rfg.deobf(files("libs/MekanismMoreMekaSuitModules-1.0.0-dev.jar"))
+    compileOnly rfg.deobf(files("libs/Galacticraft-1.12.2-4.0.6.jar"))
+    runtimeOnly files("libs/harvestcraft-1.12.2-zg.jar")
 }

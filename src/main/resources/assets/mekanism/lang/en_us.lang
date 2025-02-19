@@ -1869,6 +1869,7 @@ item.module_hydrostatic_repulsor_unit.name=Hydrostatic Repulsor Unit
 item.module_hydraulic_propulsion_unit.name=Hydraulic Propulsion Unit
 
 item.module_motorized_servo_unit.name=Motorized Servo Unit
+item.module_blasting_unit.name=Blasting Unit
 item.module_fortune_unit.name=Ore Refinement Unit
 item.module_geothermal_generator_unit.name=Geothermal Generator Unit
 
@@ -1933,6 +1934,7 @@ module.mekanism.vision_enhancement_unit=Vision Enhancement Unit
 module.mekanism.color_modulation_unit=Color Modulation Unit
 module.mekanism.gyroscopic_stabilization_unit=Gyroscopic Stabilization Unit
 module.mekanism.hydrostatic_repulsor_unit=Hydrostatic Repulsor Unit
+module.mekanism.blasting_unit=Blasting Unit
 module.mekanism.geothermal_generator_unit=Geothermal Generator Unit
 
 
@@ -1965,7 +1967,7 @@ description.mekanism.vision_enhancement_unit=Brightens the surrounding environme
 description.mekanism.color_modulation_unit=Uses advanced holographic projectors to modulate the perceived color of the MekaSuit.
 description.mekanism.gyroscopic_stabilization_unit=Allows the user to act as though they are on solid ground.
 description.mekanism.hydrostatic_repulsor_unit=Uses advanced technology to repel water, lowering the resistance felt while moving through it.
-description.mekanism.energy_shield_unit=Use energy shields to block damage
+description.mekanism.blasting_unit=Uses controlled explosions to destroy nearby blocks in the target plane.
 description.mekanism.fortune_unit=Increases ore yields.
 description.mekanism.motorized_servo_unit=Uses motorized servos to reduce the strain of sneaking.
 description.mekanism.geothermal_generator_unit=Harnesses geothermal energy from the surrounding environment, and improves protection against damage from heat sources. Install multiple for faster charging and greater protection.
@@ -2008,3 +2010,11 @@ radial.mekanism.vein=Vein Mining
 radial.mekanism.vein.extended=Extended Vein
 radial.mekanism.vein.normal=Vein
 gui.mekanism.back=Back
+radial.mekanism.blasting_power=Blasting Power
+radial.mekanism.blasting_power.extreme=Extreme
+radial.mekanism.blasting_power.high=High
+radial.mekanism.blasting_power.low=Low
+radial.mekanism.blasting_power.med=Medium
+radial.mekanism.blasting_power.off=Off
+module.mekanism.blasting_enabled=Blast Radius:
+module.mekanism.blast_radius=Blast Radius

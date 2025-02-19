@@ -1,5 +1,8 @@
 package mekanism.common.content.gear.mekatool;
 
+import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Reference2BooleanMap;
 import mekanism.api.EnumColor;
 import mekanism.api.gear.ICustomModule;
 import mekanism.api.gear.IModule;
@@ -15,6 +18,7 @@ import mekanism.api.text.IHasTextComponent;
 import mekanism.api.text.TextComponentGroup;
 import mekanism.common.Mekanism;
 import mekanism.common.MekanismLang;
+import mekanism.common.block.BlockBounding;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.item.ItemAtomicDisassembler.DisassemblerMode;
 import mekanism.common.lib.radial.data.RadialDataHelper;
@@ -33,9 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 @ParametersAreNonnullByDefault
@@ -114,31 +116,43 @@ public class ModuleVeinMiningUnit implements ICustomModule<ModuleVeinMiningUnit>
         return excavationRange.get().getRange();
     }
 
-    public static Set<BlockPos> findPositions(IBlockState state, BlockPos location, World world, int maxRange) {
-        Set<BlockPos> found = new LinkedHashSet<>();
-        Set<BlockPos> openSet = new LinkedHashSet<>();
-        openSet.add(location);
-        Block startBlock = state.getBlock();
-        int maxCount = MekanismConfig.current().general.disassemblerMiningCount.val() - 1;
-        while (!openSet.isEmpty()) {
-            BlockPos blockPos = openSet.iterator().next();
-            found.add(blockPos);
-            openSet.remove(blockPos);
-            if (found.size() > maxCount) {
-                return found;
+    public static boolean canVeinBlock(IBlockState state) {
+        //Even though we now handle breaking bounding blocks properly, don't allow vein mining them
+        return !(state.getBlock() instanceof BlockBounding);
+    }
+
+    public static Object2IntMap<BlockPos> findPositions(World world, Map<BlockPos, IBlockState> initial, int extendedRange, Reference2BooleanMap<Block> oreTracker) {
+        Object2IntMap<BlockPos> found = new Object2IntLinkedOpenHashMap<>();
+        int maxVein = MekanismConfig.current().general.disassemblerMiningCount.val();
+        int maxCount = initial.size() + maxVein * oreTracker.size();
+        Map<BlockPos, IBlockState> frontier = new LinkedHashMap<>(initial);
+        TraversalDistance dist = new TraversalDistance(frontier.size());
+        while (!frontier.isEmpty()) {
+            Iterator<Map.Entry<BlockPos, IBlockState>> iterator = frontier.entrySet().iterator();
+            Map.Entry<BlockPos, IBlockState> blockEntry = iterator.next();
+            iterator.remove();
+            BlockPos blockPos = blockEntry.getKey();
+            found.put(blockPos, dist.getDistance());
+            if (found.size() >= maxCount) {
+                break;
             }
-            for (BlockPos pos : BlockPos.getAllInBoxMutable(blockPos.add(-1, -1, -1), blockPos.add(1, 1, 1))) {
-                //We can check contains as mutable
-                if (!found.contains(pos) && (maxRange == -1 || WorldUtils.distanceBetween(location, pos) <= maxRange)) {
-                    Optional<IBlockState> blockState = WorldUtils.getBlockState(world, pos);
-                    if (blockState.isPresent() && startBlock == blockState.get().getBlock()) {
-                        if (!openSet.contains(pos)) {
-                            openSet.add(pos.toImmutable());
+            Block block = blockEntry.getValue().getBlock();
+            boolean isOre = oreTracker.getBoolean(block);
+            //If it is extended or should be treated as an ore
+            if (isOre || extendedRange > dist.getDistance()) {
+                for (BlockPos nextPos : BlockPos.getAllInBoxMutable(blockPos.add(-1, -1, -1), blockPos.add(1, 1, 1))) {
+                    //We can check contains as mutable
+                    if (!found.containsKey(nextPos) && !frontier.containsKey(nextPos)) {
+                        Optional<IBlockState> nextState = WorldUtils.getBlockState(world, nextPos);
+                        if (nextState.isPresent() && nextState.get().getBlock() == block) {
+                            //Make sure to add it as immutable
+                            frontier.put(nextPos.toImmutable(), nextState.get());
                             //渲染？
                         }
                     }
                 }
             }
+            dist.updateDistance(found.size(), frontier.size());
         }
         return found;
     }
@@ -174,6 +188,31 @@ public class ModuleVeinMiningUnit implements ICustomModule<ModuleVeinMiningUnit>
 
         public int getRange() {
             return range;
+        }
+    }
+
+    // Helper class to help calculate the breadth first traversal path distance
+    private static class TraversalDistance {
+
+        // Start at distance 0
+        private int distance = 0;
+        private int next;
+
+        // Initialize with the number of elements at distance 0
+        public TraversalDistance(int next) {
+            this.next = next;
+        }
+
+        // When all elements at distance 0 are found, determine how many elements there are with distance 1 and increment distance
+        public void updateDistance(int found, int frontierSize) {
+            if (found == next) {
+                distance++;
+                next += frontierSize;
+            }
+        }
+
+        public int getDistance() {
+            return distance;
         }
     }
 }

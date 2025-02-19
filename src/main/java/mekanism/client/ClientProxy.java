@@ -310,7 +310,7 @@ public class ClientProxy extends CommonProxy {
         registerItemRender(MekanismItems.MODULE_SHEARING);
         registerItemRender(MekanismItems.MODULE_SILK_TOUCH);
         registerItemRender(MekanismItems.MODULE_FORTUNE);
-        //registerItemRender(MekanismItems.MODULE_BLASTING);
+       registerItemRender(MekanismItems.MODULE_BLASTING);
         registerItemRender(MekanismItems.MODULE_VEIN_MINING);
         registerItemRender(MekanismItems.MODULE_TELEPORTATION);
 

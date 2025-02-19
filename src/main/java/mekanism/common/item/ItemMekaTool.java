@@ -1,7 +1,15 @@
 package mekanism.common.item;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Reference2BooleanArrayMap;
+import it.unimi.dsi.fastutil.objects.Reference2BooleanMap;
+import mekanism.api.AutomationType;
 import mekanism.api.EnumColor;
 import mekanism.api.energy.IEnergizedItem;
 import mekanism.api.gear.ICustomModule;
@@ -15,20 +23,19 @@ import mekanism.client.MekanismKeyHandler;
 import mekanism.common.Mekanism;
 import mekanism.common.MekanismModules;
 import mekanism.common.OreDictCache;
-import mekanism.common.block.BlockBounding;
 import mekanism.common.config.MekanismConfig;
+import mekanism.common.content.gear.IBlastingItem;
 import mekanism.common.content.gear.IModuleContainerItem;
 import mekanism.common.content.gear.Module;
-import mekanism.common.content.gear.mekatool.ModuleAttackAmplificationUnit;
-import mekanism.common.content.gear.mekatool.ModuleExcavationEscalationUnit;
-import mekanism.common.content.gear.mekatool.ModuleTeleportationUnit;
-import mekanism.common.content.gear.mekatool.ModuleVeinMiningUnit;
+import mekanism.common.content.gear.mekatool.*;
 import mekanism.common.content.gear.shared.ModuleEnergyUnit;
 import mekanism.common.entity.EntityMeka;
+import mekanism.common.lib.attribute.AttributeCache;
 import mekanism.common.lib.radial.IGenericRadialModeItem;
 import mekanism.common.lib.radial.data.NestingRadialData;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.common.util.StorageUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockTripWire;
@@ -62,26 +69,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
-public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem, IGenericRadialModeItem, Magnetic {
+public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem, IGenericRadialModeItem, Magnetic, IBlastingItem {
 
     private static final ResourceLocation RADIAL_ID = Mekanism.rl("meka_tool");
 
-
-    private final Multimap<String, AttributeModifier> attributes;
+    private final Int2ObjectMap<AttributeCache> attributeCaches = new Int2ObjectArrayMap<>(ModuleAttackAmplificationUnit.AttackDamage.values().length);
 
     public ItemMekaTool() {
         super(MekanismConfig.current().general.toolBatteryCapacity.val());
         setRarity(EnumRarity.EPIC);
         setMaxStackSize(1);
         setNoRepair();
-        ImmutableMultimap.Builder<String, AttributeModifier> builder = ImmutableMultimap.builder();
-        builder.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", -2.4D, 0));
-        this.attributes = builder.build();
     }
 
     @Override
@@ -172,7 +174,7 @@ public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem,
         //Use raw hardness to get the best guess of if it is zero or not
         double energyRequired = getDestroyEnergy(stack, state.getBlock().blockHardness, isModuleEnabled(stack, MekanismModules.SILK_TOUCH_UNIT));
         double energyAvailable = energyContainer.extract(stack, energyRequired, false);
-        if (energyAvailable > (energyRequired)) {
+        if (energyAvailable < (energyRequired)) {
             //If we can't extract all the energy we need to break it go at base speed reduced by how much we actually have available
             return (float) (MekanismConfig.current().meka.mekaToolBaseEfficiency.val() * (energyAvailable / (energyRequired)));
         }
@@ -184,7 +186,7 @@ public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem,
     public boolean onBlockDestroyed(ItemStack stack, World world, IBlockState state, BlockPos pos, EntityLivingBase entity) {
         IEnergizedItem energyContainer = this;
         if (energyContainer != null) {
-            double energyRequired = getDestroyEnergy(stack, state.getBlock().getBlockHardness(state, world, pos), isModuleEnabled(stack, MekanismModules.SILK_TOUCH_UNIT));
+            double energyRequired = getDestroyEnergy(stack, state.getBlockHardness(world, pos), isModuleEnabled(stack, MekanismModules.SILK_TOUCH_UNIT));
             double extractedEnergy = energyContainer.extract(stack, energyRequired, true);
             if (extractedEnergy == (energyRequired) || entity instanceof EntityPlayer player && player.isCreative()) {
                 //Only disarm tripwires if we had all the energy we tried to use (or are creative). Otherwise, treat it as if we may have failed to disarm it
@@ -199,38 +201,49 @@ public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem,
 
     @Override
     public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
-        IEnergizedItem energyContainer = this;
-        double energy = energyContainer == null ? 0 : energyContainer.getEnergy(stack);
-        double energyCost = 0;
-        int minDamage = MekanismConfig.current().meka.mekaToolBaseDamage.val(), maxDamage = minDamage;
         IModule<ModuleAttackAmplificationUnit> attackAmplificationUnit = getModule(stack, MekanismModules.ATTACK_AMPLIFICATION_UNIT);
         if (attackAmplificationUnit != null && attackAmplificationUnit.isEnabled()) {
-            maxDamage = attackAmplificationUnit.getCustomInstance().getDamage();
-            if (maxDamage > minDamage) {
-                energyCost = MekanismConfig.current().meka.mekaToolEnergyUsageWeapon.val() * ((maxDamage - minDamage) / 4F);
+            //Note: We only have an energy cost if the damage is above base, so we can skip all those checks
+            // if we don't have an enabled attack amplification unit
+            int unitDamage = attackAmplificationUnit.getCustomInstance().getDamage();
+            if (unitDamage > 0) {
+                IEnergizedItem energyContainer = this;
+                if (energyContainer != null && energyContainer.getEnergy(stack) != 0) {
+                    //Try to extract full energy, even if we have a lower damage amount this is fine as that just means
+                    // we don't have enough energy, but we will remove as much as we can, which is how much corresponds
+                    // to the amount of damage we will actually do
+                    energyContainer.extract(stack,MekanismConfig.current().meka.mekaToolEnergyUsageWeapon.val() * (unitDamage / 4D),true);
+                };
             }
-            minDamage = Math.min(minDamage, maxDamage);
-        }
-        int damageDifference = maxDamage - minDamage;
-        //If we don't have enough power use it at a reduced power level
-        double percent = 1;
-        if (energy < energyCost) {
-            if (energyCost == 0) {
-                energyCost = 1;
-            }
-            percent = energy / (energyCost);
-        }
-        float damage = (float) (minDamage + damageDifference * percent);
-        if (attacker instanceof EntityPlayer player) {
-            target.attackEntityFrom(DamageSource.causePlayerDamage(player), damage);
-        } else {
-            target.attackEntityFrom(DamageSource.causeMobDamage(attacker), damage);
-        }
-        if (energyContainer != null && energy != 0) {
-            energyContainer.extract(stack, energyCost, true);
         }
         return false;
     }
+
+    @Override
+    public Map<BlockPos, IBlockState> getBlastedBlocks(World world, EntityPlayer player, ItemStack stack, BlockPos pos, IBlockState state) {
+        //Setup initial set for blasting
+        if (!player.isSneaking()) {
+            IModule<ModuleBlastingUnit> blastingUnit = getModule(stack, MekanismModules.BLASTING_UNIT);
+            if (blastingUnit != null && blastingUnit.isEnabled()) {
+                int radius = blastingUnit.getCustomInstance().getBlastRadius();
+                if (radius > 0 && IBlastingItem.canBlastBlock(world, pos, state)) {
+                    return IBlastingItem.findPositions(world, pos, player, radius);
+                }
+            }
+        }
+        return Collections.emptyMap();
+    }
+
+
+    private Object2IntMap<BlockPos> getVeinedBlocks(World world, ItemStack stack, Map<BlockPos, IBlockState> blocks, Reference2BooleanMap<Block> oreTracker) {
+        IModule<ModuleVeinMiningUnit> veinMiningUnit = getModule(stack, MekanismModules.VEIN_MINING_UNIT);
+        if (veinMiningUnit != null && veinMiningUnit.isEnabled()) {
+            ModuleVeinMiningUnit customInstance = veinMiningUnit.getCustomInstance();
+            return ModuleVeinMiningUnit.findPositions(world, blocks, customInstance.isExtended() ? customInstance.getExcavationRange() : 0, oreTracker);
+        }
+        return blocks.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, be -> 0, (l, r) -> l, Object2IntArrayMap::new));
+    }
+
 
     @Override
     public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, EntityPlayer player) {
@@ -242,24 +255,29 @@ public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem,
             World world = player.world;
             IBlockState state = world.getBlockState(pos);
             boolean silk = isModuleEnabled(itemstack, MekanismModules.SILK_TOUCH_UNIT);
-            double energyRequired = getDestroyEnergy(itemstack, state.getBlock().getBlockHardness(state, world, pos), silk);
+            double modDestroyEnergy = getDestroyEnergy(itemstack, silk);
+            double energyRequired = getDestroyEnergy(modDestroyEnergy, state.getBlockHardness(world, pos));
             if (energyContainer.extract(itemstack, energyRequired, false) >= (energyRequired)) {
-                IModule<ModuleVeinMiningUnit> veinMiningUnit = getModule(itemstack, MekanismModules.VEIN_MINING_UNIT);
-                //Even though we now handle breaking bounding blocks properly, don't allow vein mining them
-                if (veinMiningUnit != null && veinMiningUnit.isEnabled() && !(state.getBlock() instanceof BlockBounding)) {
-                    Block block = state.getBlock();
-                    if (block == Blocks.LIT_REDSTONE_ORE) {
-                        block = Blocks.REDSTONE_ORE;
-                    }
-                    RayTraceResult raytrace = doRayTrace(state, pos, player);
-                    ItemStack stack = block.getPickBlock(state, raytrace, player.world, pos, player);
-                    List<String> names = OreDictCache.getOreDictName(stack);
-                    boolean isOre = names.stream().anyMatch(s -> s.startsWith("ore") || s.equals("logWood"));
-                    if (isOre || veinMiningUnit.getCustomInstance().isExtended()) {
-                        double baseDestroyEnergy = getDestroyEnergy(silk);
-                        Set<BlockPos> found = ModuleVeinMiningUnit.findPositions(state, pos, world, isOre ? -1 : veinMiningUnit.getCustomInstance().getExcavationRange());
-                        MekanismUtils.veinMineArea(energyContainer, world, pos, (EntityPlayerMP) player, itemstack, this, found, isModuleEnabled(itemstack, MekanismModules.SHEARING_UNIT), hardness -> getDestroyEnergy(baseDestroyEnergy, hardness), distance -> 0.5 * Math.pow(distance, isOre ? 1.5 : 2), state);
-                    }
+                Map<BlockPos, IBlockState> blocks = getBlastedBlocks(world, player, itemstack, pos, state);
+                Map<BlockPos, IBlockState> map = new HashMap<>();
+                map.put(pos, state);
+                blocks = blocks.isEmpty() && ModuleVeinMiningUnit.canVeinBlock(state) ? map : blocks;
+                Block block = state.getBlock();
+                if (block == Blocks.LIT_REDSTONE_ORE) {
+                    block = Blocks.REDSTONE_ORE;
+                }
+                RayTraceResult raytrace = doRayTrace(state, pos, player);
+                ItemStack stack = block.getPickBlock(state, raytrace, player.world, pos, player);
+                List<String> names = OreDictCache.getOreDictName(stack);
+                boolean isOre = names.stream().anyMatch(s -> s.startsWith("ore") || s.equals("logWood"));
+                Reference2BooleanMap<Block> oreTracker = blocks.values().stream().collect(Collectors.toMap(IBlockState::getBlock, bs -> isOre, (l, r) -> l, Reference2BooleanArrayMap::new));
+                Object2IntMap<BlockPos> veinedBlocks = getVeinedBlocks(world, itemstack, blocks, oreTracker);
+                if (!veinedBlocks.isEmpty()) {
+                    double baseDestroyEnergy = getDestroyEnergy(silk);
+                    MekanismUtils.veinMineArea(energyContainer, energyRequired, world, pos, (EntityPlayerMP) player, itemstack, this, veinedBlocks,
+                            hardness -> getDestroyEnergy(modDestroyEnergy, hardness),
+                            (hardness, distance, bs) -> getDestroyEnergy(baseDestroyEnergy, hardness) * (0.5 * Math.pow(distance, oreTracker.getBoolean(isOre) ? 1.5 : 2)));
+
                 }
             }
         }
@@ -301,7 +319,37 @@ public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem,
     @Nonnull
     @Override
     public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
-        return slot == EntityEquipmentSlot.MAINHAND ? attributes : super.getAttributeModifiers(slot, stack);
+        if (slot == EntityEquipmentSlot.MAINHAND) {
+            int unitDamage = 0;
+            IModule<ModuleAttackAmplificationUnit> attackAmplificationUnit = getModule(stack, MekanismModules.ATTACK_AMPLIFICATION_UNIT);
+            if (attackAmplificationUnit != null && attackAmplificationUnit.isEnabled()) {
+                unitDamage = attackAmplificationUnit.getCustomInstance().getDamage();
+                if (unitDamage > 0) {
+                    double energyCost = MekanismConfig.current().meka.mekaToolEnergyUsageWeapon.val() * (unitDamage / 4D);
+                    ItemEnergized energyContainer = this;
+                    double energy = energyContainer == null ? 0 : energyContainer.getEnergy(stack);
+                    if (energy < (energyCost)) {
+                        //If we don't have enough power use it at a reduced power level (this will be false the majority of the time)
+                        double bonusDamage = unitDamage * energy / (energyCost);
+                        if (bonusDamage > 0) {
+                            Multimap<String, AttributeModifier> builder = HashMultimap.create();
+                            builder.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier",MekanismConfig.current().meka.mekaToolBaseDamage.val() + bonusDamage, 0));
+                            builder.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", MekanismConfig.current().meka.mekaToolAttackSpeed.val(),0));
+                            return builder;
+                        }
+                        //Use cached attribute map for just doing the base damage
+                        unitDamage = 0;
+                    }
+                }
+            }
+            return attributeCaches.computeIfAbsent(unitDamage, damage -> new AttributeCache(builder -> {
+                builder.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier",
+                        MekanismConfig.current().meka.mekaToolBaseDamage.val() + damage, 0));
+                builder.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier",
+                        MekanismConfig.current().meka.mekaToolAttackSpeed.val(), 0));
+            })).get();
+        }
+        return super.getAttributeModifiers(slot, stack);
     }
 
     @Nonnull
@@ -411,7 +459,6 @@ public class ItemMekaTool extends ItemEnergized implements IModuleContainerItem,
     @Override
     public Entity createEntity(World world, Entity location, ItemStack itemstack) {
         EntityMeka item = new EntityMeka(world, location, itemstack);
-
         if (isModuleEnabled(itemstack, MekanismModules.MAGNETIC_UNIT)) {
             item.setNoPickupDelay();
         }

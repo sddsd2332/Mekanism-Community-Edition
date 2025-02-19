@@ -28,7 +28,7 @@ public class MekanismModules {
     public static final ModuleData<ModuleShearingUnit> SHEARING_UNIT = ModuleHelper.register("shearing_unit", ModuleShearingUnit::new, builder -> builder.rarity(EnumRarity.UNCOMMON).exclusive(ModuleData.ExclusiveFlag.INTERACT_ENTITY, ModuleData.ExclusiveFlag.INTERACT_BLOCK));
     public static final ModuleData<?> SILK_TOUCH_UNIT = ModuleHelper.registerEnchantBased("silk_touch_unit", () -> Enchantments.SILK_TOUCH, builder -> builder.rarity(EnumRarity.RARE).exclusive(ModuleData.ExclusiveFlag.OVERRIDE_DROPS));
     public static final ModuleData<?> FORTUNE_UNIT = ModuleHelper.registerEnchantBased("fortune_unit", () -> Enchantments.FORTUNE, builder -> builder.maxStackSize(3).rarity(EnumRarity.RARE).exclusive(ModuleData.ExclusiveFlag.OVERRIDE_DROPS));
-    //  public static final ModuleData<ModuleBlastingUnit> BLASTING_UNIT = ModuleHelper.register("blasting_unit", ModuleBlastingUnit::new,  builder -> builder.maxStackSize(4).rarity(EnumRarity.RARE).handlesModeChange().rendersHUD());
+     public static final ModuleData<ModuleBlastingUnit> BLASTING_UNIT = ModuleHelper.register("blasting_unit", ModuleBlastingUnit::new,  builder -> builder.maxStackSize(4).rarity(EnumRarity.RARE).handlesModeChange().rendersHUD());
     public static final ModuleData<ModuleVeinMiningUnit> VEIN_MINING_UNIT = ModuleHelper.register("vein_mining_unit", ModuleVeinMiningUnit::new, builder -> builder.maxStackSize(4).rarity(EnumRarity.RARE).handlesModeChange().rendersHUD());
     public static final ModuleData<ModuleTeleportationUnit> TELEPORTATION_UNIT = ModuleHelper.register("teleportation_unit", ModuleTeleportationUnit::new, builder -> builder.rarity(EnumRarity.EPIC).exclusive(ModuleData.ExclusiveFlag.INTERACT_ANY));
 

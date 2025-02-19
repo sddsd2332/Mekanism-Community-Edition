@@ -1,6 +1,7 @@
 package mekanism.common.item.armor;
 
 import cofh.redstoneflux.api.IEnergyContainerItem;
+import com.google.common.collect.Multimap;
 import ic2.api.item.IElectricItemManager;
 import ic2.api.item.IHazmatLike;
 import ic2.api.item.ISpecialElectricItem;
@@ -40,6 +41,8 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -47,12 +50,10 @@ import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.Potion;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.Optional;
@@ -69,7 +70,7 @@ import java.util.*;
         @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyContainerItem", modid = MekanismHooks.REDSTONEFLUX_MOD_ID),
         @Optional.Interface(iface = "ic2.api.item.IHazmatLike", modid = MekanismHooks.IC2_MOD_ID),
 })
-public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedItem, ISpecialArmor, IModuleContainerItem, IModeItem,
+public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedItem, IModuleContainerItem, IModeItem,
         ISpecialElectricItem, IEnergyContainerItem, IHazmatLike, Magnetic {
 
     private static final Set<DamageSource> ALWAYS_SUPPORTED_SOURCES = new LinkedHashSet<>(Arrays.asList(
@@ -82,14 +83,16 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         return Collections.unmodifiableSet(ALWAYS_SUPPORTED_SOURCES);
     }
 
+    public static ArmorMaterial MEKASUIT_MATERIAL = EnumHelper.addArmorMaterial("mekasuit", "mekanism:mekasuit", -1, new int[]{3, 6, 8, 3}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 3);
+
+
     private final float absorption;
     //Full laser dissipation causes 3/4 of the energy to be dissipated and the remaining energy to be refracted
     private final double laserDissipation;
     private final double laserRefraction;
 
-
-    public ItemMekaSuitArmor(EntityEquipmentSlot slot) {
-        super(EnumHelper.addArmorMaterial("MEKASUIT", "mekasuit", 0, new int[]{0, 0, 0, 0}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 0), 3, slot);
+    public ItemMekaSuitArmor(int renderIndex, EntityEquipmentSlot slot) {
+        super(MEKASUIT_MATERIAL, renderIndex, slot);
         setNoRepair();
         setMaxStackSize(1);
         setCreativeTab(Mekanism.tabMekanism);
@@ -120,7 +123,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     }
 
 
-    @Override
+    /*@Override
     public void damageArmor(EntityLivingBase entity, @Nonnull ItemStack stack, DamageSource source, int damage, int slot) {
         if (Mekanism.hooks.IC2Loaded) {
             if (isModuleEnabled(stack, MekanismModules.RADIATION_SHIELDING_UNIT)) {
@@ -131,6 +134,8 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
             }
         }
     }
+
+     */
 
     @Override
     @SideOnly(Side.CLIENT)
@@ -419,6 +424,7 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         return isModuleEnabled(stack, MekanismModules.RADIATION_SHIELDING_UNIT);
     }
 
+    /*
     @Override
     public boolean handleUnblockableDamage(EntityLivingBase entity, @Nonnull ItemStack stack, DamageSource source, double damage, int slot) {
         if (isModuleEnabled(stack, MekanismModules.RADIATION_SHIELDING_UNIT)) {
@@ -426,6 +432,18 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
         }
         return false;
     }
+
+     */
+
+    @Override
+    public @NotNull Multimap<String, AttributeModifier> getItemAttributeModifiers(EntityEquipmentSlot equipmentSlot) {
+        Multimap<String, AttributeModifier> multimap = super.getItemAttributeModifiers(equipmentSlot);
+        if (equipmentSlot == this.armorType) {
+            multimap.put(SharedMonsterAttributes.KNOCKBACK_RESISTANCE.getName(), new AttributeModifier(ARMOR_MODIFIERS[equipmentSlot.getIndex()], "Armor knockback resistance", MekanismConfig.current().meka.mekaSuitKnockbackResistance.val(), 0));
+        }
+        return multimap;
+    }
+
 
     //TODO - 1.18: Switch this to a record
     private static class FoundArmorDetails {

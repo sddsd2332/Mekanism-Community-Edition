@@ -1841,10 +1841,11 @@ item.module_inhalation_purification_unit.name=吸入净化单元
 item.module_gyroscopic_stabilization_unit.name=陀螺稳定单元
 item.module_hydrostatic_repulsor_unit.name=静水推进单元
 item.module_hydraulic_propulsion_unit.name=液压推进单元
-
+item.module_blasting_unit.name=破掘单元
 item.module_motorized_servo_unit.name=马达伺服单元
 item.module_fortune_unit.name=矿物精炼单元
-
+item.module_geothermal_generator_unit.name=地热能生成单元
+item.module_health_regeneration_unit.name=生命恢复单元
 
 
 module.mekanism.attack_amplification_unit=攻击增强单元
@@ -1907,7 +1908,7 @@ module.mekanism.vision_enhancement_unit=视觉增强单元
 module.mekanism.color_modulation_unit=颜色调变单元
 module.mekanism.gyroscopic_stabilization_unit=陀螺稳定单元
 module.mekanism.hydrostatic_repulsor_unit=静水推进单元
-
+module.mekanism.blasting_unit=破掘单元
 module.mekanism.geothermal_generator_unit=地热能生成单元
 module.mekanism.health_regeneration_unit=生命恢复单元
 
@@ -1940,7 +1941,7 @@ description.mekanism.vision_enhancement_unit=照亮周围环境，让玩家透�
 description.mekanism.color_modulation_unit=使用先进的全息投影器来调整MekaSuit的视觉颜色。
 description.mekanism.gyroscopic_stabilization_unit=允许使用者如履平地般作业。
 description.mekanism.hydrostatic_repulsor_unit=使用先进的技术推开水，来减少在水中移动感受到的阻力。
-
+description.mekanism.blasting_unit=爆破摧毁目标面附近的方块。
 description.mekanism.fortune_unit=提高矿物产量。
 description.mekanism.motorized_servo_unit=使用马达伺服单元可在潜行移动时不那么费力。
 description.mekanism.geothermal_generator_unit=驾驭周围环境中的地热能，提升对热源伤害的防御能力。安装多个以加速充能以及获得更强保护。
@@ -1983,4 +1984,11 @@ radial.mekanism.vein=矿脉挖掘
 radial.mekanism.vein.extended=拓展矿脉
 radial.mekanism.vein.normal=矿脉
 gui.mekanism.back=返回
-
+radial.mekanism.blasting_power=破掘强度
+radial.mekanism.blasting_power.extreme=极强
+radial.mekanism.blasting_power.high=强
+radial.mekanism.blasting_power.low=弱
+radial.mekanism.blasting_power.med=正常
+radial.mekanism.blasting_power.off=关
+module.mekanism.blasting_enabled=破掘半径:
+module.mekanism.blast_radius=破掘半径

@@ -10,8 +10,7 @@
   "type": "forge:ore_shaped",
   "key": {
     "A": {
-      "ore": "PoloniumPellet",
-      "type": "forge:ore_dict"
+      "item": "mekanism:hdpe_sheet"
     },
     "B": {
       "item": "mekanism:modulebase"

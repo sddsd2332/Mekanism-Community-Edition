@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import ic2.api.energy.EnergyNet;
 import it.unimi.dsi.fastutil.longs.Long2DoubleArrayMap;
 import it.unimi.dsi.fastutil.longs.Long2DoubleMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import mekanism.api.Chunk3D;
 import mekanism.api.Coord4D;
@@ -54,13 +55,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketEntityEffect;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.*;
-import net.minecraft.world.*;
+import net.minecraft.world.ChunkCache;
+import net.minecraft.world.EnumSkyBlock;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.UsernameCache;
@@ -1313,19 +1316,27 @@ public final class MekanismUtils {
     }
 
 
-    public static void veinMineArea(IEnergizedItem energyContainer, World world, BlockPos pos, EntityPlayerMP player, ItemStack stack, Item usedTool,
-                                    Collection<BlockPos> found, boolean shears, Function<Float, Double> destroyEnergyFunction, DoubleUnaryOperator distanceMultiplier,
-                                    IBlockState sourceState) {
+    public static void veinMineArea(IEnergizedItem energyContainer, double energyRequired, World world, BlockPos pos, EntityPlayerMP player, ItemStack stack, Item usedTool,
+                                    Object2IntMap<BlockPos> found, BlastEnergyFunction blastEnergy, VeinEnergyFunction veinEnergy) {
         double energyUsed = 0;
         double energyAvailable = energyContainer.getEnergy(stack);
-        energyAvailable = energyAvailable - (destroyEnergyFunction.apply(sourceState.getBlockHardness(world, pos)));
-        for (BlockPos foundPos : found) {
+        //Subtract from our available energy the amount that we will require to break the target block
+        energyAvailable = energyAvailable - (energyRequired);
+        for (Object2IntMap.Entry<BlockPos> foundEntry : found.object2IntEntrySet()) {
+            BlockPos foundPos = foundEntry.getKey();
             if (pos.equals(foundPos)) {
                 continue;
             }
             IBlockState targetState = world.getBlockState(foundPos);
-            double destroyEnergy = destroyEnergyFunction.apply(targetState.getBlockHardness(world, foundPos))
-                    * (distanceMultiplier.applyAsDouble(WorldUtils.distanceBetween(pos, foundPos)));
+            if (targetState.getBlock().isAir(targetState, world, pos)) {
+                continue;
+            }
+            float hardness = targetState.getBlockHardness(world, foundPos);
+            if (hardness == -1) {
+                continue;
+            }
+            int distance = foundEntry.getIntValue();
+            double destroyEnergy = distance == 0 ? blastEnergy.calc(hardness) : veinEnergy.calc(hardness, distance, targetState);
             if (energyUsed + (destroyEnergy) > (energyAvailable)) {
                 //If we don't have energy to break the block continue
                 //Note: We do not break as given the energy scales with hardness, so it is possible we still have energy to break another block
@@ -1338,17 +1349,13 @@ public final class MekanismUtils {
                 //If we can't actually break the block continue (this allows mods to stop us from vein mining into protected land)
                 continue;
             }
-            //If we have the shears module installed, and it is a tripwire, disarm it first
-            if (shears && targetState.getBlock() ==Blocks.TRIPWIRE && !targetState.getValue(BlockTripWire.DISARMED)) {
-                targetState = targetState.withProperty(BlockTripWire.DISARMED, true);
-                world.setBlockState(foundPos, targetState, Constants.BlockFlags.NO_RERENDER);
-            }
             //Otherwise, break the block
             Block block = targetState.getBlock();
             //Get the tile now so that we have it for when we try to harvest the block
+            //Get the tile now so that we have it for when we try to harvest the block
             TileEntity tileEntity = WorldUtils.getTileEntity(world, foundPos);
             //Remove the block
-            if (targetState.getBlock().removedByPlayer(targetState,world, foundPos, player, true)) {
+            if (targetState.getBlock().removedByPlayer(targetState, world, foundPos, player, true)) {
                 block.onPlayerDestroy(world, foundPos, targetState);
                 //Harvest the block allowing it to handle block drops, incrementing block mined count, and adding exhaustion
                 block.harvestBlock(world, player, foundPos, targetState, tileEntity, stack);
@@ -1361,7 +1368,24 @@ public final class MekanismUtils {
                 energyUsed = energyUsed + (destroyEnergy);
             }
         }
-        energyContainer.extract(stack,energyUsed, true);
+        energyContainer.extract(stack, energyUsed, true);
+    }
+
+
+
+
+    @FunctionalInterface
+    public interface BlastEnergyFunction {
+
+        double calc(float hardness);
+    }
+
+    @FunctionalInterface
+    public interface VeinEnergyFunction {
+        double calc(float hardness, int distance, IBlockState state);
     }
 
 }
+
+
+

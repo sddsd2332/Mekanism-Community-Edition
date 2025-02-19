@@ -48,37 +48,10 @@ import java.util.UUID;
 public class ItemMekaSuitBodyArmor extends ItemMekaSuitArmor implements IGasItem, IJetpackItem, ElytraMixinHelp, IOverlayRenderAware {
 
     public ItemMekaSuitBodyArmor() {
-        super(EntityEquipmentSlot.CHEST);
+        super(1,EntityEquipmentSlot.CHEST);
     }
 
-    @Override
-    public ArmorProperties getProperties(EntityLivingBase player, @NotNull ItemStack armor, DamageSource source, double damage, int slot) {
-        ArmorProperties properties = new ArmorProperties(0, 0, 0);
-        if (this == MekanismItems.MEKASUIT_BODYARMOR) {
-            properties = new ArmorProperties(1, MekanismConfig.current().meka.MekaSuitBodyarmorDamageRatio.val(), MekanismConfig.current().meka.MekaSuitBodyarmorDamageMax.val());
-            properties.Toughness = MekanismConfig.current().meka.mekaSuitToughness.val();
-        }
 
-        return properties;
-    }
-
-    @Override
-    public int getArmorDisplay(EntityPlayer player, @NotNull ItemStack armor, int slot) {
-        if (armor.getItem() == MekanismItems.MEKASUIT_BODYARMOR) {
-            return MekanismConfig.current().meka.mekaSuitBodyArmorArmor.val();
-        }
-        return 0;
-    }
-
-    @Override
-    public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
-        Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot, stack);
-        UUID uuid = new UUID((getTranslationKey(stack) + slot).hashCode(), 0);
-        if (slot == EntityEquipmentSlot.CHEST) {
-            multimap.put(SharedMonsterAttributes.KNOCKBACK_RESISTANCE.getName(), new AttributeModifier(uuid, "Terrasteel modifier " + EntityEquipmentSlot.CHEST, 4D, 0));
-        }
-        return multimap;
-    }
 
 
     @SideOnly(Side.CLIENT)

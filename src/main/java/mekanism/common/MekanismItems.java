@@ -108,7 +108,7 @@ public class MekanismItems {
     public static final ItemModule MODULE_SHEARING = new ItemModule(MekanismModules.SHEARING_UNIT);
     public static final ItemModule MODULE_SILK_TOUCH = new ItemModule(MekanismModules.SILK_TOUCH_UNIT);
     public static final ItemModule MODULE_FORTUNE = new ItemModule(MekanismModules.FORTUNE_UNIT);
-    /// public static final ItemModule MODULE_BLASTING = new ItemModule(MekanismModules.BLASTING_UNIT);
+     public static final ItemModule MODULE_BLASTING = new ItemModule(MekanismModules.BLASTING_UNIT);
      public static final ItemModule MODULE_VEIN_MINING = new ItemModule(MekanismModules.VEIN_MINING_UNIT);
     public static final ItemModule MODULE_TELEPORTATION = new ItemModule(MekanismModules.TELEPORTATION_UNIT);
 
@@ -249,7 +249,7 @@ public class MekanismItems {
         registry.register(initModule(MODULE_SHEARING));
         registry.register(initModule(MODULE_SILK_TOUCH));
         registry.register(initModule(MODULE_FORTUNE));
-        // registry.register(initModule(MODULE_BLASTING));
+        registry.register(initModule(MODULE_BLASTING));
         registry.register(initModule(MODULE_VEIN_MINING));
         registry.register(initModule(MODULE_TELEPORTATION));
 
