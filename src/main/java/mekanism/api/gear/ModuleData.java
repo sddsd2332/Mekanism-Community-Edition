@@ -5,6 +5,7 @@ import mekanism.api.annotations.FieldsAreNonnullByDefault;
 import mekanism.api.annotations.NonNullSupplier;
 import mekanism.api.gear.config.ModuleConfigItemCreator;
 import mekanism.api.text.IHasTranslationKey;
+import mekanism.common.MekanismItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
@@ -72,7 +73,11 @@ public class ModuleData<MODULE extends ICustomModule<MODULE>> implements IHasTra
     }
 
     public ItemStack getStack() {
-        return stack;
+        if (stack == null){
+            return new ItemStack(MekanismItems.ModuleBase); //防止有人忘记注册物品类型，然后加上了支持该模块的物品，造成打开模块配置界面崩溃
+        }else {
+            return stack;
+        }
     }
 
     /**

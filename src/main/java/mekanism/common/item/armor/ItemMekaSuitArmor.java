@@ -438,8 +438,18 @@ public abstract class ItemMekaSuitArmor extends ItemArmor implements IEnergizedI
     @Override
     public @NotNull Multimap<String, AttributeModifier> getItemAttributeModifiers(EntityEquipmentSlot equipmentSlot) {
         Multimap<String, AttributeModifier> multimap = super.getItemAttributeModifiers(equipmentSlot);
+        double amount = 0;
+        if (equipmentSlot == EntityEquipmentSlot.HEAD) {
+            amount = 1.5D;
+        }else if (equipmentSlot == EntityEquipmentSlot.CHEST){
+            amount = 4D;
+        }else if (equipmentSlot == EntityEquipmentSlot.LEGS){
+            amount = 3D;
+        }else if (equipmentSlot == EntityEquipmentSlot.FEET){
+            amount = 1.5D;
+        }
         if (equipmentSlot == this.armorType) {
-            multimap.put(SharedMonsterAttributes.KNOCKBACK_RESISTANCE.getName(), new AttributeModifier(ARMOR_MODIFIERS[equipmentSlot.getIndex()], "Armor knockback resistance", MekanismConfig.current().meka.mekaSuitKnockbackResistance.val(), 0));
+            multimap.put(SharedMonsterAttributes.KNOCKBACK_RESISTANCE.getName(), new AttributeModifier(ARMOR_MODIFIERS[equipmentSlot.getIndex()], "Armor knockback resistance", amount, 0));
         }
         return multimap;
     }

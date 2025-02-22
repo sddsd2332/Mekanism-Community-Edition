@@ -79,7 +79,6 @@ public class MekaConfig extends BaseConfig {
     public DoubleOption mekaToolMaxTeleportReach = new DoubleOption(this, "meka", "mekaToolMaxTeleportReach", 100, "Maximum distance a player can teleport with the Meka-Tool.");
     public DoubleOption mekaToolEnergyUsageTeleport = new DoubleOption(this, "meka", "mekaToolEnergyUsageTeleport", 1000, "Cost in Joules of using the Meka-Tool to teleport 10 blocks.");
     public DoubleOption mekaEnergyUsageHealthRegeneration = new DoubleOption(this, "meka", "mekaEnergyUsageHealthRegeneration", 100, "How much energy regeneration is needed for a health regeneration");
-    public FloatOption mekaSuitKnockbackResistance = new FloatOption(this, "meka", "mekaSuitKnockbackResistance", 0.25F, "Knockback resistance value of the MekaSuit.", 0, 100);
 
     public final Map<DamageSource, FloatOption> mekaSuitDamageRatios = create();
 
