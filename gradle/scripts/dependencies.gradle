@@ -112,7 +112,7 @@ dependencies {
 
     runtimeOnly 'curse.maven:packagedauto-308380:6028154'
     runtimeOnly 'curse.maven:packageddraconic-833931:6034816'
-    implementation rfg.deobf(files("libs/MekanismMixinHelp-1.0.4-dev.jar"))
+    implementation rfg.deobf(files("libs/MekanismMixinHelp-1.0.5-dev.jar"))
     implementation rfg.deobf(files("libs/nuclearcraft-1.12.2-2o.7.7-dev.jar"))
     implementation rfg.deobf(files("libs/MekanismMoreMekaSuitModules-1.0.0-dev.jar"))
     compileOnly rfg.deobf(files("libs/Galacticraft-1.12.2-4.0.6.jar"))
