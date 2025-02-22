@@ -15,6 +15,7 @@ import mekanism.common.tile.component.TileComponentUpgrade;
 import mekanism.common.tile.prefab.TileEntityEffectsBlock;
 import mekanism.common.util.CableUtils;
 import mekanism.common.util.MekanismUtils;
+import mekanism.multiblockmachine.common.MekanismMultiblockMachine;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachineGenerator.MultiblockMachineGeneratorType;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -46,11 +47,11 @@ public abstract class TileEntityMultiblockGenerator extends TileEntityEffectsBlo
      * @param name      - full name of this generator
      * @param maxEnergy - how much energy this generator can store
      */
-    public TileEntityMultiblockGenerator(String soundPath, String name, double maxEnergy, double out, int slot) {
-        super("gen." + soundPath, name, maxEnergy);
+    public TileEntityMultiblockGenerator(String soundPath, MultiblockMachineGeneratorType type, double maxEnergy, double out, int slot) {
+        super("gen." + soundPath, type.getBlockName(), maxEnergy);
         output = out;
         controlType = RedstoneControl.DISABLED;
-        upgradeComponent = new TileComponentUpgrade(this, slot, Upgrade.THREAD, false);
+        upgradeComponent = new TileComponentUpgrade(this, slot, Upgrade.THREAD, MekanismMultiblockMachine.proxy, type.blockType.getBlock(), type.meta,type.guiId);
     }
 
     public int Thread() {

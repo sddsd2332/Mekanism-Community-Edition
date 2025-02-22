@@ -47,7 +47,7 @@ public class ItemBlockMultiblockGasTank extends ItemBlock implements IGasItem, I
     public ItemBlockMultiblockGasTank(Block block) {
         super(block);
         metaBlock = block;
-      //  setMaxStackSize(1);
+        //  setMaxStackSize(1);
         setCreativeTab(MekanismMultiblockMachine.tabMekanismMultiblockMachine);
     }
 

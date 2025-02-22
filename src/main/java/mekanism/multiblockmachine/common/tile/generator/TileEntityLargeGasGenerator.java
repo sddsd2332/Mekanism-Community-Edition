@@ -14,6 +14,7 @@ import mekanism.common.capabilities.Capabilities;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.util.*;
 import mekanism.multiblockmachine.client.render.bloom.generator.BloomRendererLargeGasGenerator;
+import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachineGenerator.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -47,7 +48,7 @@ public class TileEntityLargeGasGenerator extends TileEntityMultiblockGenerator i
     private boolean rendererInitialized = false;
 
     public TileEntityLargeGasGenerator() {
-        super("gas", "LargeGasGenerator", MekanismConfig.current().multiblock.LargeGasGeneratorStorage.val(), MekanismConfig.current().multiblock.LargeGasGeneratorOut.val(), 2);
+        super("gas", MultiblockMachineGeneratorType.LARGE_GAS_GENERATOR, MekanismConfig.current().multiblock.LargeGasGeneratorStorage.val(), MekanismConfig.current().multiblock.LargeGasGeneratorOut.val(), 2);
         inventory = NonNullListSynchronized.withSize(3, ItemStack.EMPTY);
         fuelTank = new GasTank(MAX_GAS);
         upgradeComponent.setSupported(Upgrade.ENERGY);

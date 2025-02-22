@@ -12,6 +12,7 @@ import mekanism.common.util.ChargeUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.NonNullListSynchronized;
 import mekanism.multiblockmachine.client.render.bloom.generator.BloomRenderLargeWindGenerator;
+import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachineGenerator.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -50,7 +51,7 @@ public class TileEntityLargeWindGenerator extends TileEntityMultiblockGenerator 
     private boolean rendererInitialized = false;
 
     public TileEntityLargeWindGenerator() {
-        super("wind", "LargeWindGenerator", MekanismConfig.current().multiblock.largewindGeneratorStorage.val(), MekanismConfig.current().multiblock.largewindGeneratorOut.val(), 1);
+        super("wind", MultiblockMachineGeneratorType.LARGE_WIND_GENERATOR, MekanismConfig.current().multiblock.largewindGeneratorStorage.val(), MekanismConfig.current().multiblock.largewindGeneratorOut.val(), 1);
         inventory = NonNullListSynchronized.withSize(SLOTS.length + 1, ItemStack.EMPTY);
         upgradeComponent.setSupported(Upgrade.ENERGY);
     }

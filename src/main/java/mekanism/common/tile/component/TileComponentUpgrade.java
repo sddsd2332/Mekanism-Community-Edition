@@ -4,9 +4,11 @@ import io.netty.buffer.ByteBuf;
 import mekanism.api.TileNetworkList;
 import mekanism.common.Mekanism;
 import mekanism.common.Upgrade;
+import mekanism.common.base.IGuiProvider;
 import mekanism.common.base.ITileComponent;
 import mekanism.common.base.IUpgradeItem;
 import mekanism.common.tile.prefab.TileEntityContainerBlock;
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.EnumMap;
@@ -35,8 +37,10 @@ public class TileComponentUpgrade implements ITileComponent {
      * The inventory slot the upgrade slot of this component occupies.
      */
     private int upgradeSlot;
-    private boolean isBack;
-
+    private int guiIDs;
+    private Block block;
+    private int meta;
+    private IGuiProvider guiProvider;
 
     public TileComponentUpgrade(TileEntityContainerBlock tile, int slot) {
         tileEntity = tile;
@@ -44,24 +48,29 @@ public class TileComponentUpgrade implements ITileComponent {
         setSupported(Upgrade.SPEED);
         setSupported(Upgrade.ENERGY);
         tile.components.add(this);
-        isBack = true;
     }
 
-    public TileComponentUpgrade(TileEntityContainerBlock tile, int slot,boolean isBackButton) {
+    public TileComponentUpgrade(TileEntityContainerBlock tile, int slot, IGuiProvider guiProvider, Block block, int meta, int guiid) {
         tileEntity = tile;
         upgradeSlot = slot;
         setSupported(Upgrade.SPEED);
         setSupported(Upgrade.ENERGY);
         tile.components.add(this);
-        isBack = isBackButton;
+        this.block = block;
+        this.meta = meta;
+        this.guiProvider = guiProvider;
+        guiIDs = guiid;
     }
 
-    public TileComponentUpgrade(TileEntityContainerBlock tile, int slot, Upgrade upgrade,boolean isBackButton) {
+    public TileComponentUpgrade(TileEntityContainerBlock tile, int slot,Upgrade upgrade, IGuiProvider guiProvider,  Block block, int meta, int guiid) {
         tileEntity = tile;
         upgradeSlot = slot;
         setSupported(upgrade);
         tile.components.add(this);
-        isBack = isBackButton;
+        this.guiProvider = guiProvider;
+        this.block = block;
+        this.meta = meta;
+        guiIDs = guiid;
     }
 
 
@@ -216,11 +225,20 @@ public class TileComponentUpgrade implements ITileComponent {
     public void invalidate() {
     }
 
-    public boolean setBackButton(boolean back) {
-        return isBack = back;
+
+    public int getid() {
+        return guiIDs;
     }
 
-    public boolean getBackButton() {
-        return isBack;
+    public IGuiProvider guiProvider() {
+        return guiProvider;
+    }
+
+    public int getMeta() {
+        return meta;
+    }
+
+    public Block getBlock() {
+        return block;
     }
 }

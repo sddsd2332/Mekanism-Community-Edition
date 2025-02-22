@@ -11,6 +11,7 @@ import mekanism.common.tile.component.TileComponentSecurity;
 import mekanism.common.tile.component.TileComponentUpgrade;
 import mekanism.common.tile.prefab.TileEntityEffectsBlock;
 import mekanism.common.util.MekanismUtils;
+import mekanism.multiblockmachine.common.MekanismMultiblockMachine;
 import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachine.MultiblockMachineType;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -35,14 +36,14 @@ public abstract class TileEntityMultiblockMachine extends TileEntityEffectsBlock
     public TileComponentUpgrade upgradeComponent;
     public TileComponentSecurity securityComponent = new TileComponentSecurity(this);
 
-    public TileEntityMultiblockMachine(String sound,MultiblockMachineType type,int slot) {
+    public TileEntityMultiblockMachine(String sound, MultiblockMachineType type, int slot) {
         super(sound, type.getBlockName(), type.getStorage());
         energyPerTick = BASE_ENERGY_PER_TICK = type.getUsage();
-        upgradeComponent = new TileComponentUpgrade(this,slot ,false);
+        upgradeComponent = new TileComponentUpgrade(this, slot, MekanismMultiblockMachine.proxy, type.typeBlock.getBlock(), type.meta, type.guiId);
         upgradeComponent.setSupported(Upgrade.MUFFLING);
     }
 
-    public int Thread(){
+    public int Thread() {
         int thread = 1;
         if (upgradeComponent.isUpgradeInstalled(Upgrade.THREAD)) {
             thread = upgradeComponent.getUpgrades(Upgrade.THREAD) + 1;

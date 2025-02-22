@@ -10,6 +10,7 @@ import mekanism.common.capabilities.Capabilities;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.util.*;
 import mekanism.multiblockmachine.client.render.bloom.generator.BloomRenderLargeHeatGenerator;
+import mekanism.multiblockmachine.common.block.states.BlockStateMultiblockMachineGenerator.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -48,7 +49,7 @@ public class TileEntityLargeHeatGenerator extends TileEntityMultiblockGenerator 
     private boolean rendererInitialized = false;
 
     public TileEntityLargeHeatGenerator() {
-        super("heat", "LargeHeatGenerator", MekanismConfig.current().multiblock.largeHeatGeneratorStorage.val(), MekanismConfig.current().multiblock.largeHeatGeneratorOut.val(), 2);
+        super("heat", MultiblockMachineGeneratorType.LARGE_HEAT_GENERATOR, MekanismConfig.current().multiblock.largeHeatGeneratorStorage.val(), MekanismConfig.current().multiblock.largeHeatGeneratorOut.val(), 2);
         inventory = NonNullListSynchronized.withSize(3, ItemStack.EMPTY);
     }
 

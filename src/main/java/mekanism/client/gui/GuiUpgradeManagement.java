@@ -6,15 +6,19 @@ import mekanism.client.gui.element.*;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.common.Mekanism;
 import mekanism.common.Upgrade;
+import mekanism.common.base.IGuiProvider;
 import mekanism.common.base.IUpgradeTile;
+import mekanism.common.block.BlockMachine;
 import mekanism.common.block.states.BlockStateMachine.MachineType;
 import mekanism.common.inventory.container.ContainerUpgradeManagement;
 import mekanism.common.network.PacketRemoveUpgrade.RemoveUpgradeMessage;
+import mekanism.common.network.PacketSimpleGui;
 import mekanism.common.network.PacketSimpleGui.SimpleGuiMessage;
 import mekanism.common.tile.component.TileComponentUpgrade;
 import mekanism.common.util.LangUtils;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
+import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -25,6 +29,7 @@ import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 
@@ -73,9 +78,18 @@ public class GuiUpgradeManagement extends GuiMekanism {
     protected void actionPerformed(GuiButton guibutton) throws IOException {
         super.actionPerformed(guibutton);
         TileEntity tile = (TileEntity) tileEntity;
+        Block block = tileEntity.getComponent().getBlock();
+        int meta = tileEntity.getComponent().getMeta();
         if (guibutton.id == backButton.id) {
-            int guiId = MachineType.get(tile.getBlockType(), tile.getBlockMetadata()).guiId;
-            Mekanism.packetHandler.sendToServer(new SimpleGuiMessage(Coord4D.get(tile), 0, guiId));
+            if (tile.getBlockType() instanceof BlockMachine) {
+                int guiId = MachineType.get(tile.getBlockType(), tile.getBlockMetadata()).guiId;
+                Mekanism.packetHandler.sendToServer(new SimpleGuiMessage(Coord4D.get(tile), 0, guiId));
+            } else if (tile.getBlockType() == block && tile.getBlockMetadata() == meta) {
+                int guiId = tileEntity.getComponent().getid();
+                List<IGuiProvider> handlers = PacketSimpleGui.handlers;
+                int hand = handlers.indexOf(tileEntity.getComponent().guiProvider());
+                Mekanism.packetHandler.sendToServer(new SimpleGuiMessage(Coord4D.get(tile), hand, guiId));
+            }
         } else if (guibutton.id == removeButton.id) {
             if (selectedType != null) {
                 Mekanism.packetHandler.sendToServer(new RemoveUpgradeMessage(Coord4D.get(tile), selectedType.ordinal(), Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? 1 : 0));
@@ -101,8 +115,8 @@ public class GuiUpgradeManagement extends GuiMekanism {
 
     private void updateEnabledButtons() {
         removeButton.enabled = selectedType != null;
-        backButton.enabled = tileEntity.getComponent().getBackButton();
-        backButton.visible = tileEntity.getComponent().getBackButton();
+        //       backButton.enabled = tileEntity.getComponent().getBackButton();
+        //    backButton.visible = tileEntity.getComponent().getBackButton();
     }
 
 
