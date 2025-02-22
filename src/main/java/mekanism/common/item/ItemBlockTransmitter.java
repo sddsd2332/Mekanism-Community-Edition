@@ -183,24 +183,25 @@ public class ItemBlockTransmitter extends ItemBlockMultipartAble implements ITie
     }
 
     @Override
-    public void renderItemOverlayIntoGUI(@NotNull ItemStack stack, int xPosition, int yPosition) {
-        if (!Mekanism.hooks.MekanismMixinHelp && !Mekanism.hooks.JEI) {
-            if (!stack.isEmpty() && stack.getItem() instanceof ItemBlockTransmitter transmitter) {
-                TransmissionType transmission = TransmitterType.values()[stack.getItemDamage()].getTransmission();
-                if (transmission == TransmissionType.GAS || transmission == TransmissionType.HEAT || transmission == TransmissionType.ENERGY) {
-                    GlStateManager.pushMatrix();
-                    GlStateManager.translate(0, 0, 200);
-                    TransmitterType type = TransmitterType.get(stack.getItemDamage());
-                    String name = type.getTranslationKey();
-                    if (type.hasTiers()) {
-                        BaseTier tier = transmitter.getBaseTier(stack);
-                        name = tier.getSimpleName() + name;
-                    }
-                    Minecraft.getMinecraft().renderEngine.bindTexture(MekanismUtils.getResource(MekanismUtils.ResourceType.GUI_ICONS, name.toLowerCase(Locale.ROOT) + ".png"));
-                    GuiUtils.blit(xPosition, yPosition, 0, 0, 16, 16, 16, 16);
-                    GlStateManager.popMatrix();
+    public boolean renderItemOverlayIntoGUI(@NotNull ItemStack stack, int xPosition, int yPosition) {
+        if (stack.getItem() instanceof ItemBlockTransmitter transmitter) {
+            TransmissionType transmission = TransmitterType.values()[stack.getItemDamage()].getTransmission();
+            if (transmission == TransmissionType.GAS || transmission == TransmissionType.HEAT || transmission == TransmissionType.ENERGY) {
+                GlStateManager.pushMatrix();
+                GlStateManager.translate(0, 0, 200);
+                TransmitterType type = TransmitterType.get(stack.getItemDamage());
+                String name = type.getTranslationKey();
+                if (type.hasTiers()) {
+                    BaseTier tier = transmitter.getBaseTier(stack);
+                    name = tier.getSimpleName() + name;
                 }
+                Minecraft.getMinecraft().renderEngine.bindTexture(MekanismUtils.getResource(MekanismUtils.ResourceType.GUI_ICONS, name.toLowerCase(Locale.ROOT) + ".png"));
+                GuiUtils.blit(xPosition, yPosition, 0, 0, 16, 16, 16, 16);
+                GlStateManager.popMatrix();
+                return true;
             }
         }
+        return false;
     }
+
 }

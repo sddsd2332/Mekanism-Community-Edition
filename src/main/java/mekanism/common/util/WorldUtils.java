@@ -115,4 +115,18 @@ public class WorldUtils {
         }
         return world.getTileEntity(pos);
     }
+
+
+    /**
+     * Marks a chunk as dirty if it is currently loaded
+     */
+    public static void markChunkDirty(World world, BlockPos pos) {
+        if (isBlockLoaded(world, pos)) {
+            world.getChunk(pos).markDirty();
+        }
+        //TODO: This line below is now (1.16+) called by the mark chunk dirty method (without even validating if it is loaded).
+        // And with it causes issues where chunks are easily ghost loaded. Why was it added like that and do we need to somehow
+        // also update neighboring comparators
+        //world.updateComparatorOutputLevel(pos, world.getBlockState(pos).getBlock()); //Notify neighbors of changes
+    }
 }

@@ -236,7 +236,7 @@ public class ItemMekaSuitBodyArmor extends ItemMekaSuitArmor implements IGasItem
 
 
     @Override
-    public void renderItemOverlayIntoGUI(@NotNull ItemStack stack, int xPosition, int yPosition) {
+    public boolean renderItemOverlayIntoGUI(@NotNull ItemStack stack, int xPosition, int yPosition) {
         if (!stack.isEmpty() && hasModule(stack, MekanismModules.JETPACK_UNIT)) {
             GlStateManager.disableLighting();
             GlStateManager.disableDepth();
@@ -256,7 +256,9 @@ public class ItemMekaSuitBodyArmor extends ItemMekaSuitArmor implements IGasItem
             GlStateManager.enableTexture2D();
             GlStateManager.enableLighting();
             GlStateManager.enableDepth();
+            return true;
         }
+        return false;
     }
 
     private double getDurabilityForDisplayGas(ItemStack stack) {

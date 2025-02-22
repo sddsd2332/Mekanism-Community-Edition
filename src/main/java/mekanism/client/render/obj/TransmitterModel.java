@@ -245,24 +245,16 @@ public class TransmitterModel extends OBJBakedModelBase {
         public IBakedModel handleItemState(@Nonnull IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
             if (itemCache == null) {
                 List<String> visible = new ArrayList<>();
-                if (!Mekanism.hooks.JEI || Mekanism.hooks.MekanismMixinHelp){
-                    TransmissionType transmission = BlockStateTransmitter.TransmitterType.values()[stack.getItemDamage()].getTransmission();
-                    if (transmission == TransmissionType.ITEM || transmission == TransmissionType.FLUID) {
-                        for (EnumFacing side : EnumFacing.VALUES) {
-                            visible.add(side.getName() + (side.getAxis() == Axis.Y ? "NORMAL" : "NONE"));
-                        }
-                    } else {
-                        for (EnumFacing side : EnumFacing.VALUES) {
-                            visible.add(side.getName() + "NONE");
-                        }
-                    }
-                } else {
+                TransmissionType transmission = BlockStateTransmitter.TransmitterType.values()[stack.getItemDamage()].getTransmission();
+                if (transmission == TransmissionType.ITEM || transmission == TransmissionType.FLUID) {
                     for (EnumFacing side : EnumFacing.VALUES) {
                         visible.add(side.getName() + (side.getAxis() == Axis.Y ? "NORMAL" : "NONE"));
                     }
+                } else {
+                    for (EnumFacing side : EnumFacing.VALUES) {
+                        visible.add(side.getName() + "NONE");
+                    }
                 }
-
-
                 itemCache = new TransmitterModel(baseModel, getModel(), new OBJState(visible, true), vertexFormat, textureMap, transformationMap);
                 itemCache.tempStack = stack;
             }

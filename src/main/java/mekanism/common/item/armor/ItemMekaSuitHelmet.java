@@ -1,6 +1,5 @@
 package mekanism.common.item.armor;
 
-import com.google.common.collect.Multimap;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
@@ -10,7 +9,6 @@ import mekanism.client.model.mekasuitarmour.ModelMekAsuitHead;
 import mekanism.client.model.mekasuitarmour.ModuleSolarHelmet;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.common.MekanismFluids;
-import mekanism.common.MekanismItems;
 import mekanism.common.MekanismModules;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.interfaces.IOverlayRenderAware;
@@ -21,14 +19,11 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -37,12 +32,11 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.UUID;
 
 public class ItemMekaSuitHelmet extends ItemMekaSuitArmor implements IGasItem, EnderMaskMixinHelp, IOverlayRenderAware {
 
     public ItemMekaSuitHelmet() {
-        super(0,EntityEquipmentSlot.HEAD);
+        super(0, EntityEquipmentSlot.HEAD);
     }
 
 
@@ -160,8 +154,8 @@ public class ItemMekaSuitHelmet extends ItemMekaSuitArmor implements IGasItem, E
     }
 
     @Override
-    public void renderItemOverlayIntoGUI(@NotNull ItemStack stack, int xPosition, int yPosition) {
-        if (!stack.isEmpty() && hasModule(stack,MekanismModules.NUTRITIONAL_INJECTION_UNIT)) {
+    public boolean renderItemOverlayIntoGUI(@NotNull ItemStack stack, int xPosition, int yPosition) {
+        if (!stack.isEmpty() && hasModule(stack, MekanismModules.NUTRITIONAL_INJECTION_UNIT)) {
             GlStateManager.disableLighting();
             GlStateManager.disableDepth();
             GlStateManager.disableTexture2D();
@@ -180,7 +174,9 @@ public class ItemMekaSuitHelmet extends ItemMekaSuitArmor implements IGasItem, E
             GlStateManager.enableTexture2D();
             GlStateManager.enableLighting();
             GlStateManager.enableDepth();
+            return true;
         }
+        return false;
     }
 
     private double getDurabilityForDisplayGas(ItemStack stack) {

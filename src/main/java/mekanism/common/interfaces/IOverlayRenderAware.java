@@ -5,5 +5,5 @@ import net.minecraft.item.ItemStack;
 import javax.annotation.Nonnull;
 
 public interface IOverlayRenderAware {
-    void renderItemOverlayIntoGUI(@Nonnull ItemStack stack, int xPosition, int yPosition);
+    boolean renderItemOverlayIntoGUI(@Nonnull ItemStack stack, int xPosition, int yPosition);
 }
