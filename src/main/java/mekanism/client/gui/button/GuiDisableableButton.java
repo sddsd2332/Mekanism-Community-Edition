@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -122,6 +123,8 @@ public class GuiDisableableButton extends GuiButton {
             int halfHeightBottom = height % 2 == 0 ? halfHeightTop : halfHeightTop + 1;
             ResourceLocation Texture = (overlay == ImageOverlay.CHECKMARK_DIGITAL || Toggleborders) ? Button_Digital : overlay == ImageOverlay.DUMP ? Button_BLACK : Button;
             mc.getTextureManager().bindTexture(Texture);
+            GlStateManager.enableBlend();
+            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             GlStateManager.disableDepth();
             drawTexturedModalRect(x, y, 0, position, halfWidthLeft, halfHeightTop);
             drawTexturedModalRect(x, y + halfHeightTop, 0, position + 20 - halfHeightBottom, halfWidthLeft, halfHeightBottom);
@@ -144,6 +147,7 @@ public class GuiDisableableButton extends GuiButton {
                     fontrenderer.drawString(displayString, (int) centerX, y, getTextColor(hovered));
                 }
             }
+            GlStateManager.disableBlend();
             GlStateManager.enableDepth();
         }
     }

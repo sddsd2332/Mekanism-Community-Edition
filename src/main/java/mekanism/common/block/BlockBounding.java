@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 public class BlockBounding extends Block {
 
     @Nullable
-    private static BlockPos getMainBlockPos(IBlockAccess world, BlockPos thisPos) {
+    public static BlockPos getMainBlockPos(IBlockAccess world, BlockPos thisPos) {
         TileEntity te = world.getTileEntity(thisPos);
         if (te instanceof TileEntityBoundingBlock block && !thisPos.equals(block.getMainPos())) {
             return block.getMainPos();

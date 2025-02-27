@@ -9,7 +9,10 @@ import mekanism.common.InfuseStorage;
 import mekanism.common.Mekanism;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -19,6 +22,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -62,26 +66,26 @@ public class GuiUtils {
         //Middle
         if (centerWidth > 0) {
             //Top Middle
-            blitTiled( leftEdgeEnd, top, centerWidth, topHeight, texSideWidth, 0, texCenterWidth, texSideHeight, textureWidth, textureHeight);
+            blitTiled(leftEdgeEnd, top, centerWidth, topHeight, texSideWidth, 0, texCenterWidth, texSideHeight, textureWidth, textureHeight);
             if (centerHeight > 0) {
                 //Center
-                blitTiled( leftEdgeEnd, topEdgeEnd, centerWidth, centerHeight, texSideWidth, texSideHeight, texCenterWidth, texCenterHeight, textureWidth, textureHeight);
+                blitTiled(leftEdgeEnd, topEdgeEnd, centerWidth, centerHeight, texSideWidth, texSideHeight, texCenterWidth, texCenterHeight, textureWidth, textureHeight);
             }
             //Bottom Middle
-            blitTiled( leftEdgeEnd, bottomEdgeStart, centerWidth, sideHeight, texSideWidth, textureHeight - sideHeight, texCenterWidth, texSideHeight, textureWidth, textureHeight);
+            blitTiled(leftEdgeEnd, bottomEdgeStart, centerWidth, sideHeight, texSideWidth, textureHeight - sideHeight, texCenterWidth, texSideHeight, textureWidth, textureHeight);
         }
 
         if (centerHeight > 0) {
             //Left Middle
-            blitTiled( left, topEdgeEnd, leftWidth, centerHeight, 0, texSideHeight, texSideWidth, texCenterHeight, textureWidth, textureHeight);
+            blitTiled(left, topEdgeEnd, leftWidth, centerHeight, 0, texSideHeight, texSideWidth, texCenterHeight, textureWidth, textureHeight);
             //Right Middle
-            blitTiled( rightEdgeStart, topEdgeEnd, sideWidth, centerHeight, textureWidth - sideWidth, texSideHeight, texSideWidth, texCenterHeight, textureWidth, textureHeight);
+            blitTiled(rightEdgeStart, topEdgeEnd, sideWidth, centerHeight, textureWidth - sideWidth, texSideHeight, texSideWidth, texCenterHeight, textureWidth, textureHeight);
         }
 
         //Top Right Corner
-        blit( rightEdgeStart, top, textureWidth - sideWidth, 0, sideWidth, topHeight, textureWidth, textureHeight);
+        blit(rightEdgeStart, top, textureWidth - sideWidth, 0, sideWidth, topHeight, textureWidth, textureHeight);
         //Bottom Right Corner
-        blit( rightEdgeStart, bottomEdgeStart, textureWidth - sideWidth, textureHeight - sideHeight, sideWidth, sideHeight, textureWidth, textureHeight);
+        blit(rightEdgeStart, bottomEdgeStart, textureWidth - sideWidth, textureHeight - sideHeight, sideWidth, sideHeight, textureWidth, textureHeight);
     }
 
     public static void blitTiled(int x, int y, int width, int height, int texX, int texY, int texDrawWidth, int texDrawHeight, int textureWidth, int textureHeight) {
@@ -90,7 +94,7 @@ public class GuiUtils {
         int drawWidth = width, drawHeight = height;
         for (int tileX = 0; tileX < xTiles; tileX++) {
             for (int tileY = 0; tileY < yTiles; tileY++) {
-                blit( x + texDrawWidth * tileX, y + texDrawHeight * tileY, texX, texY, Math.min(drawWidth, texDrawWidth), Math.min(drawHeight, texDrawHeight), textureWidth, textureHeight);
+                blit(x + texDrawWidth * tileX, y + texDrawHeight * tileY, texX, texY, Math.min(drawWidth, texDrawWidth), Math.min(drawHeight, texDrawHeight), textureWidth, textureHeight);
                 drawHeight -= texDrawHeight;
             }
             drawWidth -= texDrawWidth;
@@ -148,11 +152,11 @@ public class GuiUtils {
         drawTiledSprite(xPosition, yPosition, yOffset, desiredWidth, desiredHeight, sprite, textureWidth, textureHeight, zLevel, tilingDirection, true);
     }
 
-    public static void drawTiledSprite(int xPosition, int yPosition, int yOffset, int desiredWidth, int desiredHeight, TextureAtlasSprite sprite, int textureWidth, int textureHeight, int zLevel, TilingDirection tilingDirection, boolean blend) {
+    public static void drawTiledSprite(int xPosition, int yPosition, int yOffset, int desiredWidth, int desiredHeight, TextureAtlasSprite sprite, int textureWidth, int textureHeight, int zLevel, TilingDirection tilingDirection, boolean blendAlpha) {
         if (desiredWidth == 0 || desiredHeight == 0 || textureWidth == 0 || textureHeight == 0) {
             return;
         }
-
+        MekanismRenderer.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         int xTileCount = desiredWidth / textureWidth;
         int xRemainder = desiredWidth - (xTileCount * textureWidth);
         int yTileCount = desiredHeight / textureHeight;
@@ -164,11 +168,14 @@ public class GuiUtils {
         float vMax = sprite.getMaxV();
         float uDif = uMax - uMin;
         float vDif = vMax - vMin;
-
+        if (blendAlpha) {
+            GlStateManager.pushMatrix();
+            GlStateManager.enableBlend();
+            GlStateManager.enableAlpha();
+        }
         //Note: We still use the tesselator as that is what GuiGraphics#innerBlit does
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferbuilder = tessellator.getBuffer();
-        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
+        BufferBuilder vertexBuffer = Tessellator.getInstance().getBuffer();
+        vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
         for (int xTile = 0; xTile <= xTileCount; xTile++) {
             int width = (xTile == xTileCount) ? xRemainder : textureWidth;
@@ -207,13 +214,19 @@ public class GuiUtils {
                     vLocalMin = vMin + vLocalDif;
                     vLocalMax = vMax;
                 }
-                bufferbuilder.pos(x, y + textureHeight, zLevel).tex(uLocalMin, vLocalMax).endVertex();
-                bufferbuilder.pos(shiftedX, y + textureHeight, zLevel).tex(uLocalMax, vLocalMax).endVertex();
-                bufferbuilder.pos(shiftedX, y + maskTop, zLevel).tex(uLocalMax, vLocalMin).endVertex();
-                bufferbuilder.pos(x, y + maskTop, zLevel).tex(uLocalMin, vLocalMin).endVertex();
+                vertexBuffer.pos(x, y + textureHeight, zLevel).tex(uLocalMin, vLocalMax).endVertex();
+                vertexBuffer.pos(shiftedX, y + textureHeight, zLevel).tex(uLocalMax, vLocalMax).endVertex();
+                vertexBuffer.pos(shiftedX, y + maskTop, zLevel).tex(uLocalMax, vLocalMin).endVertex();
+                vertexBuffer.pos(x, y + maskTop, zLevel).tex(uLocalMin, vLocalMin).endVertex();
             }
         }
-        tessellator.draw();
+        vertexBuffer.endVertex();
+        Tessellator.getInstance().draw();
+        if (blendAlpha) {
+            GlStateManager.disableAlpha();
+            GlStateManager.disableBlend();
+            GlStateManager.popMatrix();
+        }
     }
 
     public enum TilingDirection {
