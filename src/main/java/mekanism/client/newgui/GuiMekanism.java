@@ -188,9 +188,11 @@ public abstract class GuiMekanism<CONTAINER extends Container> extends VirtualSl
         int prevLeft = guiLeft, prevTop = guiTop;
 
         java.util.function.Consumer<Widget> remove = buttons::remove;
+        /*
         if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Pre(this, this.buttonList))) {
             this.buttons.clear();
         }
+         */
         super.setWorldAndResolution(minecraft, width, height);
         // windows.forEach(window -> window.resize(prevLeft, prevTop, leftPos, topPos));
         prevElements.forEach(e -> {
